@@ -51,7 +51,7 @@ flowchart TD
 
 | File | Use |
 |------|-----|
-| [`UI_COMPONENTS_GUIDE.md`](./UI_COMPONENTS_GUIDE.md) | What to import, when to use each component, key props (`DashboardShell`, `Card` + compound parts, `Table` data API + `TableRoot` / `TableHeader` / `TableBody` / …, `Tabs`, `Accordion`, `ButtonGroup`, `Stepper`, `Breadcrumb`, `Popover` / `DropdownMenu`, `FileUpload`, `Switch`, `Badge` / `Chip` / `Tag`, `Calendar` / `DatePicker`, charts + `ChartTooltip`), and **subpath imports** (`/charts`, `/shell`, `/table`) for smaller bundles |
+| [`UI_COMPONENTS_GUIDE.md`](./UI_COMPONENTS_GUIDE.md) | What to import, when to use each component, key props (`DashboardShell`, `Card` + compound parts, `Table` data API + `TableRoot` / `TableHeader` / `TableBody` / …, **`Select`** flat + **`groups`** / `<optgroup>`, **`Combobox`** search / icons / multi, **`Tabs`** (`variant`, `listLayout`, `activationMode`, `contentAnimation`, triggers), **`Stepper`** (`trackMode`, `appearance`, `StepperStep` markers), `Accordion`, `ButtonGroup`, `Breadcrumb`, `Popover` / `DropdownMenu`, `FileUpload`, `Switch`, `Badge` / `Chip` / `Tag`, `Calendar` / `DatePicker`, charts + `ChartTooltip`), and **subpath imports** (`/charts`, `/shell`, `/table`) for smaller bundles |
 | [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) | Designer source of truth: layout, spacing, cards, modals, accessibility |
 | [`design-system/tokens.md`](./design-system/tokens.md) | Token import path, theme hooks, token do/don't, and border tokens (`--color-border-default` vs `--color-border-subtle`) |
 | [`AI_USAGE_GUIDE.md`](./AI_USAGE_GUIDE.md) | How AI should read the docs and generate applications correctly |

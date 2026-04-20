@@ -157,16 +157,31 @@ Key props:
 
 ### `Combobox`
 
-Use when you need **search**, **icon + label** rows, **grouped sections** in the panel, or **multi-select**.
+Use when you need **search**, **icon + label** rows, **grouped sections** in the panel, or **multi-select**. Built with `Popover` + `role="listbox"` (not a native `<select>`).
 
-Key props:
+Exports: `Combobox` (from the main package entry).
 
-- `options` or `groups`
-- `searchable`, `searchPlaceholder`
-- `multiple`
-- `value` / `onValueChange` (`string` or `string[]` when `multiple`)
+Types (for props and data): `ComboboxProps`, `ComboboxOption`, `ComboboxGroup`.
 
-`Combobox` is built with `Popover` + a `role="listbox"` panel; keep **`Select`** for simple native fields so bundles stay smaller when only basic dropdowns are needed.
+**Data shape**
+
+- Flat: `options: ComboboxOption[]` where each item has `value`, `label`, optional `disabled`, optional `icon` (React node, shown in the list and in the trigger for a single selection).
+- Grouped: `groups: ComboboxGroup[]` with `{ label: string; options: ComboboxOption[] }` (flat `options` is ignored).
+
+**Key props**
+
+- `label`, `placeholder`, `value` / `defaultValue`, `onValueChange` (second argument can be the selected option(s)).
+- `searchable`, `searchPlaceholder` — filter options by label/value in the panel.
+- `multiple` — `value` becomes `string[]`; checkmarks for selected rows.
+- `size`: `"sm"` | `"md"` | `"lg"`, `error`, `helperText`, `fullWidth`, `disabled`, `listMinWidth`.
+
+**When to use `Select` instead**
+
+- Native mobile pickers, minimal JS, or only plain-text options → **`Select`**. **`Combobox`** adds bundle size; use it only when you need search, icons in the list, groups in the custom panel, or multi-select UX.
+
+**Storybook**
+
+- **Design System → Molecules → Combobox** — search, icons, groups, multi-select examples.
 
 ### `CheckBox` and `RadioGroup`
 
@@ -225,13 +240,27 @@ Use for switching panels of related content without full page navigation.
 
 Exports: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`.
 
-Consider:
+**Visual & layout**
 
-- orientation (horizontal vs vertical) and list layout when space is tight
-- activation mode (manual vs automatic) for accessibility
-- animation options for content transitions
-- **`triggerLayout`**: `inline` (icon and label on one row) vs `stacked` (icon above label)
-- **`triggerAlign`**: `start` | `center` (default) | `end` — horizontal alignment of icon+label inside each tab (LTR); optional per-`TabsTrigger` overrides
+- **`variant`**: `line` (underline indicator, default), `minimal` (soft fill on active), `segmented` (single rounded track, sliding pill — shadcn-style).
+- **`orientation`**: `horizontal` | `vertical`.
+- **`listLayout`**: `wrap` (default) | `nowrap` (single row, horizontal scroll) | `equal` (equal-width tabs on one row).
+- **`size`**: `sm` | `md`.
+- **`triggerLayout`**: `inline` (icon + label on one row, default) vs `stacked` (icon above label); applies to triggers that pass `icon`.
+- **`triggerAlign`**: `start` | `center` (default) | `end` — horizontal alignment of icon+label inside each trigger (LTR); can be overridden per `TabsTrigger`.
+
+**Behavior & motion**
+
+- **`activationMode`**: `automatic` (arrow keys move focus and select; default) vs `manual` (arrows move focus only; Enter/Space or click to select) — align with Radix-style expectations.
+- **`contentAnimation`**: `none` | `fade` | `fade-slide` (panel enter animation; default `fade`).
+
+**Theming (optional)**
+
+- `dividerColor`, `dividerWidth`, `indicatorColor`, `indicatorWidth`, `inactiveTextColor`, `activeTextColor`, `tabFontSize` — tune strip and indicator to match your shell.
+
+**Storybook**
+
+- **Design System → Molecules → Tabs** — variants, layouts, and activation modes.
 
 ### `Accordion`
 
@@ -255,14 +284,32 @@ Exports: `ButtonGroup`, `ButtonGroupSeparator`, `ButtonGroupText`.
 
 ### `Stepper`
 
-Use for checkout, onboarding, and multi-step flows.
+Use for checkout, onboarding, and multi-step flows with a **horizontal** track and round **markers** per step.
 
 Exports: `Stepper`, `StepperStep`.
 
-Consider:
+Types: `StepperProps`, `StepperStepProps`, `StepperAppearance`, `StepperSize`, `StepperTrackMode`, `StepperContextValue`.
 
-- step state (complete / current / upcoming) and optional track modes
-- sizes and alignment with forms and `Card` content
+**`Stepper` props**
+
+- **`value`** / **`defaultValue`** / **`onValueChange`** — controlled or uncontrolled step index (0-based).
+- **`linear`** — when `true`, steps after the current one are not clickable (use app “Next” to advance); previous steps stay clickable.
+- **`trackMode`**: `continuous` (single progress fill along the stem), `segments` (tint each gap when the step before is complete), `none` (neutral gaps only).
+- **`progressValue`** — `0–100` for the continuous bar when you need custom completion (defaults from active index).
+- **`appearance`**: `default` | `emphasized` — thicker stem, gradient fill, stronger ring on the current step.
+- **`size`**: `sm` | `md`, **`scrollable`** — horizontal scroll when there are many steps, **`ariaLabel`** — for the `<nav>` landmark.
+
+**`StepperStep` props**
+
+- **`label`** (required), optional **`description`** under the label.
+- **`icon`** — centered in the round marker (e.g. preview eye); use with **`markerText`** / step index as needed.
+- **`markerText`** — short text or number inside the circle when `icon` is not set (default is `stepIndex + 1`).
+- **`showCheckWhenComplete`** — default `true` (checkmark when complete); set `false` to keep `icon` / `markerText` after the step is done.
+- **`disabled`** — disable that step’s control.
+
+**Storybook**
+
+- **Design System → Molecules → Stepper** — track modes, sizes, scrollable, **Stepper · Icons** (custom markers + preview patterns).
 
 ### `Breadcrumb`
 
@@ -555,10 +602,11 @@ Shared expectations:
 - OTP: `OtpBox variant="boxes" length={6}`
 - Dates: `DatePicker` (or standalone `Calendar` for custom flows)
 - Settings or metrics panels: `Card` compound API (`CardHeader`, `CardTitle`, `CardContent`, …) or legacy card props
-- Tabbed settings or content: `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent`
+- Tabbed settings or content: `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent` (`variant`, `listLayout`, `activationMode` as needed)
 - FAQ / collapsible sections: `Accordion`
 - Segmented actions: `ButtonGroup`
-- Wizard steps: `Stepper` + `StepperStep`
+- Wizard steps: `Stepper` + `StepperStep` (`trackMode`, `appearance`, `icon` / `markerText` on steps for rich markers)
+- Rich dropdown (search, icons, multi): `Combobox`; simple native list: `Select` (or `groups` for `<optgroup>`)
 - Page trail: `Breadcrumb` + `BreadcrumbItem`
 - Anchored menu: `Popover` or `DropdownMenu`
 - File pickers: `FileUpload` / `Dropzone`

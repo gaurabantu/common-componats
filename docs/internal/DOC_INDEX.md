@@ -9,7 +9,7 @@ Use this folder when you are maintaining the library, consuming it in an app, re
 - [`../README.md`](../README.md) — full documentation flow and numbered list
 - [`../AGENTS.md`](../AGENTS.md)
 - [`../AI_USAGE_GUIDE.md`](../AI_USAGE_GUIDE.md)
-- [`../UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md) — full component catalog (patterns, `Card` compound API, `Table` data + semantic primitives, forms, shell, charts including `ChartTooltip`)
+- [`../UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md) — full component catalog (patterns, `Card` compound API, `Table` data + semantic primitives, `Select`/`Combobox`, `Tabs`, `Stepper`, forms, shell, charts including `ChartTooltip`)
 - [`../design-system/DESIGN_SYSTEM.md`](../design-system/DESIGN_SYSTEM.md)
 - [`../design-system/tokens.md`](../design-system/tokens.md) — includes `--color-border-subtle` vs `--color-border-default`
 

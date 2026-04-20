@@ -285,13 +285,13 @@ Shell UX rules (dashboard / enterprise): [`docs/internal/SIDEBAR_NAVIGATION_SYST
 - password field: `Input type="password" showToggleIcon`
 - sensitive field: `Input mask disableClipboard`
 - search bar: `InputSearch onSearch={...}`
-- rich dropdown (search, icons, multi): `Combobox`; simple native list: `Select`
+- rich dropdown (search, icons, multi): `Combobox`; simple native list or `<optgroup>` sections: `Select` with `options` or `groups` (details in [`docs/UI_COMPONENTS_GUIDE.md`](docs/UI_COMPONENTS_GUIDE.md))
 - OTP entry: `OtpBox variant="boxes" length={6}`
 - date field: `DatePicker` (popover uses `Calendar`; `Calendar` is also available standalone)
-- tabbed UI: `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent`
+- tabbed UI: `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent` — use `variant` (`line` | `minimal` | `segmented`), `listLayout`, `activationMode`, and `contentAnimation` as needed (see guide)
 - expandable FAQ: `Accordion` compound API
 - grouped actions: `ButtonGroup` (+ optional `ButtonGroupSeparator`)
-- wizard / steps: `Stepper` + `StepperStep`
+- wizard / steps: `Stepper` + `StepperStep` — `trackMode`, `appearance`, `linear`; per-step `icon`, `markerText`, `showCheckWhenComplete` (see guide; Storybook **Stepper · Icons**)
 - trail / hierarchy: `Breadcrumb` + `BreadcrumbItem`
 - anchored menu: `Popover` or `DropdownMenu`
 - file uploads: `FileUpload` / `Dropzone`
@@ -386,9 +386,9 @@ Canonical docs live under **`docs/`** (start with [`docs/README.md`](docs/README
 - `Table` default export is the data-driven grid; `TableRoot` + `TableHeader` / `TableBody` / … are the semantic markup API (`Table.Root`, …)
 - charts are native SVG; no external charting library is required
 - import from `ui-common-components` for the full surface, or from `ui-common-components/charts`, `/shell`, or `/table` when you only need that area (smaller JS)
+- TypeScript: `ComboboxProps`, `ComboboxOption`, `ComboboxGroup`; `SelectProps`, `SelectOptionGroup`; `StepperProps`, `StepperStepProps`, `StepperAppearance`, `StepperTrackMode`, and related stepper types are exported from the main entry
 - decorative UI lines use **`--color-border-subtle`** where implemented; inputs and strong chrome still use **`--color-border-default`** (see design system)
 
 ## License
 
 MIT
-# common-componats
