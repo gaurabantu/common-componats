@@ -1,13 +1,4 @@
 import type { StorybookConfig } from "@storybook/react-webpack5";
-import type { Configuration } from "webpack";
-
-/** GitHub project Pages (`https://<user>.github.io/<repo>/`) needs asset URLs under `/<repo>/`. Storybook 8 webpack has no `--base`; CI sets `STORYBOOK_BASE_PATH`. */
-function previewPublicPath(): string | undefined {
-  const raw = process.env.STORYBOOK_BASE_PATH?.trim();
-  if (!raw) return undefined;
-  const withSlash = raw.endsWith("/") ? raw : `${raw}/`;
-  return withSlash.startsWith("/") ? withSlash : `/${withSlash}`;
-}
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -38,13 +29,12 @@ const config: StorybookConfig = {
     reactDocgen: "react-docgen",
   },
   webpackFinal: async (cfg) => {
-    const base = previewPublicPath();
-    if (base) {
-      const w = cfg as Configuration;
-      w.output = w.output ?? {};
-      w.output.publicPath = base;
-    }
-
+    /**
+     * Do not set `output.publicPath` to `/<repo>/` for GitHub project Pages. The static output is
+     * already served under `https://<user>.github.io/<repo>/`; Storybook’s default relative URLs
+     * resolve correctly. Setting `publicPath` to the repo segment breaks chunk imports (double path,
+     * loaders stuck on “Preparing story”).
+     */
     cfg.resolve = cfg.resolve ?? {};
     cfg.resolve.extensions = [...(cfg.resolve.extensions ?? []), ".ts", ".tsx"];
 

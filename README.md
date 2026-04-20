@@ -364,9 +364,9 @@ Canonical docs live under **`docs/`** (start with [`docs/README.md`](docs/README
 - **Local:** `npm run storybook` — [http://localhost:6006](http://localhost:6006). Use the toolbar for **Theme** (light / dark, sets `data-theme` on `<html>`) and **Viewport** (375, 768, 1440).
 - **Story layouts:** reuse `sb-page`, `sb-section-title`, `sb-card`, `sb-card-header`, `sb-inline`, `sb-grid`, `sb-swatch`, `sb-stack`, etc. from [`.storybook/preview.css`](.storybook/preview.css) so Docs/Canvas demos share one token-based pattern (avoids missing layout CSS and overlapping examples).
 - **Static build:** `npm run build-storybook` writes to `storybook-static/` (ignored by git).
-- **GitHub Pages:** push to `main` runs [`.github/workflows/deploy-storybook.yml`](.github/workflows/deploy-storybook.yml). It sets `STORYBOOK_BASE_PATH=/<repo-name>/` (same name as the GitHub repository) and runs `storybook build` — Storybook 8 has no `--base` flag; `.storybook/main.ts` maps that env to webpack `output.publicPath` for project Pages URLs.
+- **GitHub Pages:** push to `main` runs [`.github/workflows/deploy-storybook.yml`](.github/workflows/deploy-storybook.yml). It runs `storybook build` with default asset paths — for GitHub **project** Pages (`https://<owner>.github.io/<repo>/`), do **not** set webpack `publicPath` to `/<repo>/`; that duplicates the path and breaks preview chunks (infinite “Preparing story” loaders).
   - **One-time setup:** **Settings → Pages → Build and deployment → Source:** **GitHub Actions** (not “Deploy from a branch”). After the first successful run, the live URL appears on that page and in the workflow summary — typically `https://<owner>.github.io/<repo>/`.
-  - **Manual build** (match CI): `STORYBOOK_BASE_PATH="/<your-repo-name>/" npx storybook build -o storybook-static` then upload `storybook-static/` to any static host if you do not use GitHub Pages.
+  - **Manual build** (match CI): `npx storybook build -o storybook-static` then upload `storybook-static/` to any static host if you do not use GitHub Pages.
 
 ## Development scripts
 
