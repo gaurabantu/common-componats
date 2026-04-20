@@ -1,0 +1,75 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Design System/Introduction" />
+
+# UX Governance — UI Common Components
+
+**Desktop-first · WCAG 2.2 AA · Token-driven (`tokens.css`)**
+
+This Storybook documents the shared library shipped as `ui-common-components`. Styles use CSS variables so apps can override tokens in global CSS. Use the **toolbar** to switch **theme** (light / dark) and **viewport** (mobile, tablet, desktop 1440).
+
+---
+
+## Authoritative docs (repository)
+
+In the repo, read these in order (see `docs/README.md`):
+
+- **`docs/UI_COMPONENTS_GUIDE.md`** — component selection, imports, and APIs  
+- **`docs/design-system/DESIGN_SYSTEM.md`** — layout, spacing, accessibility  
+- **`docs/design-system/tokens.md`** — token import and `--color-border-subtle` vs `--color-border-default`  
+- **`docs/AI_USAGE_GUIDE.md`** — rules for AI-assisted development  
+
+Storybook shows **live examples**; the Markdown guides are the **contract** for naming and governance.
+
+---
+
+## Package surface (aligned with `src/index.tsx`)
+
+### Forms & input
+
+`Input` (TextInput), `InputSearch`, `TextArea`, `Select` (native), `Combobox` (search / icons / multi), `CheckBox`, `Switch`, `RadioGroup`, `OtpBox`, `DatePicker`
+
+### Display & content
+
+`TextView`, `GradientText`, `Divider`, `ProgressBar`, `ToolTip`, `Hyperlink`, `Icon`, `Avtar`, `Badge`, `Chip`, `Tag`
+
+### Layout & structure
+
+`Form`, `Grid`, `GridItem`, `Card` (+ `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, `CardFooter`)
+
+### Patterns / molecules
+
+`Tabs`, `Accordion`, `ButtonGroup`, `Stepper`, `Breadcrumb`, `Popover`, `DropdownMenu`, `FileUpload`, `Dropzone`, `Calendar`, `Modal`, `AlertDialog`, `Table` (+ semantic table primitives)
+
+### Shell & navigation
+
+`DashboardShell` (prefer over legacy `AppShell`), `AppSidebar`, `AppTopbar`
+
+### Charts (native SVG)
+
+`LineChart`, `BarChart`, `PieChart`, `AreaChart`, `ChartTooltip`
+
+### Bundles
+
+Subpaths reduce JS: `ui-common-components/charts`, `/shell`, `/table` (see root **`README.md`**).
+
+---
+
+## Browse in the sidebar
+
+- **Design System → Introduction** — this page  
+- **Design System → Dashboard** — full shell overview  
+- **Design System → Atoms** — primitives  
+- **Design System → Molecules** — composed components (search **Stepper** for the default stories; **Stepper · Icons** for `icon` / `markerText` on `StepperStep`)  
+
+---
+
+## Dark mode
+
+Tokens respond to **`data-theme="dark"`** on `<html>`. Use the Storybook **Theme** toolbar control to preview without changing code.
+
+---
+
+## Accessibility
+
+`addon-a11y` is configured for **manual** runs (large stories can freeze if axe runs on every navigation). Open the **Accessibility** panel and run checks when reviewing a component.

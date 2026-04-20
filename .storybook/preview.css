@@ -1,0 +1,119 @@
+/**
+ * Storybook renders stories inside the preview iframe. Without a full height chain on
+ * `html` → `body` → `#storybook-root` → `#root`, percentage/`h-full` shells collapse and
+ * flex children with `overflow-y: auto` never get a bounded height — so nothing scrolls.
+ */
+html,
+body,
+#storybook-root,
+#root {
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+}
+
+/**
+ * Demo layout utilities (`sb-*`) for `*.stories.tsx` — token-based, Storybook iframe only.
+ * Import via `preview.tsx` with `globals.css` so tokens exist. Use these for consistent
+ * Docs/Canvas blocks: page title → subtitle → card → header → grid or inline examples.
+ */
+.sb-page {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 0 0 var(--space-4, 2rem);
+}
+
+.sb-section-title {
+  margin: 0 0 var(--space-2, 0.5rem);
+  font-size: var(--text-h3-size, 1.125rem);
+  font-weight: var(--text-h3-weight, 600);
+  line-height: 1.35;
+  color: var(--color-text-primary, #0d0d0d);
+}
+
+.sb-section-subtitle {
+  margin: 0 0 var(--space-3, 1rem);
+  font-size: var(--text-body-size, 0.875rem);
+  line-height: 1.5;
+  color: var(--color-text-secondary, #525252);
+}
+
+.sb-card {
+  box-sizing: border-box;
+  padding: var(--space-4, 1.25rem);
+  margin-bottom: var(--space-3, 1rem);
+  background: var(--color-bg-surface, #f4f4f5);
+  border: 1px solid var(--color-border-subtle, #e4e4e7);
+  border-radius: var(--radius-lg, 8px);
+}
+
+[data-theme="dark"] .sb-card {
+  background: var(--color-bg-surface, #18181b);
+  border-color: var(--color-border-subtle, #3f3f46);
+}
+
+.sb-card-header {
+  margin-bottom: var(--space-3, 1rem);
+}
+
+.sb-card-title {
+  margin: 0 0 var(--space-1, 0.25rem);
+  font-size: var(--text-body-size, 0.875rem);
+  font-weight: 600;
+  color: var(--color-text-primary, #0d0d0d);
+}
+
+.sb-card-hint {
+  margin: 0;
+  font-size: var(--text-small-size, 0.8125rem);
+  line-height: 1.45;
+  color: var(--color-text-secondary, #525252);
+}
+
+/* Row of controls / buttons (wraps on narrow Docs panes) */
+.sb-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3, 0.75rem);
+  align-items: center;
+}
+
+/* Matrix of labeled examples — fixes overlapping “staircase” when classes were undefined */
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: var(--space-4, 1rem);
+  align-items: start;
+}
+
+.sb-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2, 0.5rem);
+  min-width: 0;
+}
+
+.sb-swatch-label {
+  font-size: var(--text-small-size, 0.75rem);
+  font-weight: 500;
+  color: var(--color-text-secondary, #525252);
+}
+
+.sb-divider {
+  height: 1px;
+  margin: var(--space-3, 1rem) 0;
+  background: var(--color-border-subtle, #e4e4e7);
+}
+
+.sb-story-max-w {
+  max-width: 28rem;
+}
+
+/* Single-column stack for vertical variant lists */
+.sb-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  align-items: flex-start;
+}

@@ -1,0 +1,141 @@
+/* Popover / Dropdown — fixed layer, token elevation */
+
+.ds-popover__content {
+  box-sizing: border-box;
+  min-width: 180px;
+  max-width: min(360px, calc(100vw - 16px));
+  padding: var(--space-1, 8px);
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--color-border-default, #999999);
+  background-color: var(--color-bg-elevated, #ffffff);
+  color: var(--color-text-primary, #0d0d0d);
+  box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.1));
+  font-family: var(--font-family, "Inter", system-ui, sans-serif);
+  font-size: var(--text-secondary-size, 14px);
+  line-height: 1.45;
+  outline: none;
+  z-index: var(--z-dropdown, 100);
+}
+
+.ds-popover__content:focus-visible {
+  outline: 2px solid var(--color-focus-ring, #ff4d0d);
+  outline-offset: 2px;
+}
+
+/* Optional caret toward trigger — position via --popover-arrow-x (px from panel left) */
+.ds-popover__content--with-pointer {
+  overflow: visible;
+}
+
+.ds-popover__content-scroll {
+  max-height: inherit;
+  overflow: auto;
+}
+
+/* --popover-arrow-x = horizontal center of pointer (px from panel left) */
+
+.ds-popover__content--with-pointer[data-arrow-edge="top"]::before {
+  content: "";
+  position: absolute;
+  left: var(--popover-arrow-x, 50%);
+  top: -8px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 7px 8px 7px;
+  border-color: transparent transparent var(--color-border-default, #999999) transparent;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ds-popover__content--with-pointer[data-arrow-edge="top"]::after {
+  content: "";
+  position: absolute;
+  left: var(--popover-arrow-x, 50%);
+  top: -6px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 7px 6px;
+  border-color: transparent transparent var(--color-bg-elevated, #ffffff) transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ds-popover__content--with-pointer[data-arrow-edge="bottom"]::before {
+  content: "";
+  position: absolute;
+  left: var(--popover-arrow-x, 50%);
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 7px 0 7px;
+  border-color: var(--color-border-default, #999999) transparent transparent transparent;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ds-popover__content--with-pointer[data-arrow-edge="bottom"]::after {
+  content: "";
+  position: absolute;
+  left: var(--popover-arrow-x, 50%);
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 7px 6px 0 6px;
+  border-color: var(--color-bg-elevated, #ffffff) transparent transparent transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ds-dropdown-menu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: var(--space-1, 8px) var(--space-2, 16px);
+  border: none;
+  border-radius: var(--radius-sm, 3px);
+  background: transparent;
+  color: var(--color-text-primary, #0d0d0d);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ds-dropdown-menu__item:hover:not(:disabled) {
+  background-color: var(--color-theme-surface-hover, var(--color-mist-20, #fafafa));
+}
+
+.ds-dropdown-menu__item:focus {
+  outline: none;
+}
+
+.ds-dropdown-menu__item:focus-visible {
+  outline: 2px solid var(--color-focus-ring, #ff4d0d);
+  outline-offset: -2px;
+}
+
+.ds-dropdown-menu__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ds-dropdown-menu__item--danger {
+  color: var(--color-state-error, #dc3545);
+}
+
+.ds-dropdown-menu__item--danger:hover:not(:disabled) {
+  background-color: color-mix(
+    in srgb,
+    var(--color-state-error, #dc3545) 8%,
+    var(--color-bg-elevated, #ffffff)
+  );
+}

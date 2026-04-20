@@ -1,0 +1,132 @@
+/* ButtonGroup — role="group"; joins .btn-base segments (shadcn-style) */
+
+.ds-button-group {
+  display: inline-flex;
+  min-width: 0;
+  font-family: var(--font-family, "Inter", system-ui, sans-serif);
+}
+
+.ds-button-group[data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.ds-button-group[data-orientation="vertical"] {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Nested groups: spacing between sub-groups */
+.ds-button-group .ds-button-group {
+  margin: 0;
+}
+
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group + .ds-button-group {
+  margin-inline-start: var(--space-1, 8px);
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group + .ds-button-group {
+  margin-block-start: var(--space-1, 8px);
+}
+
+/* Joined button segments — overlap borders only when two segments touch (no separator between) */
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment {
+  position: relative;
+  z-index: 0;
+  border-radius: 0;
+}
+
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment + .ds-button-group__segment {
+  margin-inline-start: -1.5px;
+}
+
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:first-of-type {
+  border-start-start-radius: var(--radius-md, 8px);
+  border-end-start-radius: var(--radius-md, 8px);
+}
+
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:last-of-type {
+  border-start-end-radius: var(--radius-md, 8px);
+  border-end-end-radius: var(--radius-md, 8px);
+}
+
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:focus-visible,
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:hover {
+  z-index: 1;
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment {
+  position: relative;
+  z-index: 0;
+  border-radius: 0;
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment + .ds-button-group__segment {
+  margin-block-start: -1.5px;
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:first-of-type {
+  border-start-start-radius: var(--radius-md, 8px);
+  border-start-end-radius: var(--radius-md, 8px);
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:last-of-type {
+  border-end-start-radius: var(--radius-md, 8px);
+  border-end-end-radius: var(--radius-md, 8px);
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:focus-visible,
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:hover {
+  z-index: 1;
+}
+
+/* Separator */
+.ds-button-group__separator {
+  flex-shrink: 0;
+  align-self: stretch;
+  background-color: var(--color-border-subtle, var(--color-mist-60));
+}
+
+.ds-button-group__separator[data-orientation="vertical"] {
+  width: 1px;
+  min-height: 100%;
+  margin-inline: 0;
+}
+
+.ds-button-group__separator[data-orientation="horizontal"] {
+  height: 1px;
+  width: 100%;
+  min-height: 0;
+  margin-block: 0;
+}
+
+.ds-button-group[data-orientation="horizontal"] > .ds-button-group__separator[data-orientation="vertical"] {
+  margin-inline: -1px;
+}
+
+.ds-button-group[data-orientation="vertical"] > .ds-button-group__separator[data-orientation="horizontal"] {
+  margin-block: -1px;
+}
+
+/* Label / static text */
+.ds-button-group__text {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-2, 16px);
+  padding-block: var(--space-1, 8px);
+  font-size: var(--text-secondary-size, 14px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #757575);
+  white-space: nowrap;
+}
+
+.ds-button-group[data-orientation="vertical"] .ds-button-group__text {
+  white-space: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-button-group > .ds-button-group__segment {
+    transition: none;
+  }
+}

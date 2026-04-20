@@ -1,0 +1,218 @@
+/* Modal animations */
+.modal-root {
+  font-family: var(--font-family, "Inter"), system-ui, -apple-system, sans-serif;
+}
+
+/* Backdrop fade */
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalBackdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Dialog fade */
+@keyframes modalDialogFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalDialogFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Dialog slide */
+@keyframes modalDialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalDialogSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Dialog scale */
+@keyframes modalDialogScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modalDialogScaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.modal-backdrop {
+  transition: opacity 0.2s ease-out;
+}
+
+.modal-backdrop.modal-backdrop--entering {
+  animation: modalBackdropFadeIn 0.2s ease-out forwards;
+}
+
+.modal-backdrop.modal-backdrop--exiting {
+  animation: modalBackdropFadeOut 0.2s ease-out forwards;
+}
+
+.modal-dialog {
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.modal-dialog.modal-dialog--fade.modal-dialog--entering {
+  animation: modalDialogFadeIn 0.225s ease-out forwards;
+}
+
+.modal-dialog.modal-dialog--fade.modal-dialog--exiting {
+  animation: modalDialogFadeOut 0.2s ease-out forwards;
+}
+
+.modal-dialog.modal-dialog--slide.modal-dialog--entering {
+  animation: modalDialogSlideIn 0.225s ease-out forwards;
+}
+
+.modal-dialog.modal-dialog--slide.modal-dialog--exiting {
+  animation: modalDialogSlideOut 0.2s ease-out forwards;
+}
+
+.modal-dialog.modal-dialog--scale.modal-dialog--entering {
+  animation: modalDialogScaleIn 0.225s ease-out forwards;
+}
+
+.modal-dialog.modal-dialog--scale.modal-dialog--exiting {
+  animation: modalDialogScaleOut 0.2s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-dialog {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .modal-backdrop.modal-backdrop--entering,
+  .modal-backdrop.modal-backdrop--exiting {
+    opacity: 1;
+  }
+
+  .modal-dialog.modal-dialog--entering,
+  .modal-dialog.modal-dialog--exiting {
+    opacity: 1;
+  }
+}
+
+/* AlertDialog icon animation */
+@keyframes alertDialogIconPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes alertDialogIconBounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.alert-dialog-icon--animated {
+  animation: alertDialogIconPulse 2s ease-in-out infinite;
+}
+
+.alert-dialog-icon--bounce {
+  animation: alertDialogIconBounce 0.4s ease-out forwards;
+}
+
+/* AlertDialog animated SVG icons */
+.alert-dialog-svg--success .alert-dialog-checkmark {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: alertDialogCheckDraw 0.5s ease-out 0.2s forwards;
+}
+
+@keyframes alertDialogCheckDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.alert-dialog-svg--success {
+  animation: alertDialogIconPulse 2s ease-in-out 0.8s infinite;
+}
+
+.alert-dialog-svg--error {
+  animation: alertDialogIconPulse 2s ease-in-out 0.3s infinite;
+}
+
+.alert-dialog-svg--warning {
+  animation: alertDialogIconPulse 2s ease-in-out 0.3s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alert-dialog-icon--animated,
+  .alert-dialog-icon--bounce,
+  .alert-dialog-svg--success,
+  .alert-dialog-svg--error,
+  .alert-dialog-svg--warning,
+  .alert-dialog-svg--success .alert-dialog-checkmark {
+    animation: none !important;
+  }
+}

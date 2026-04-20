@@ -1,0 +1,92 @@
+/* Floating chart tooltip — pointer-relative, clamped, token-driven */
+
+.ds-chart-tooltip {
+  position: absolute;
+  z-index: 20;
+  min-width: 140px;
+  max-width: min(280px, calc(100% - 16px));
+  padding: var(--space-1, 8px) var(--space-2, 16px);
+  border-radius: var(--radius-md, 8px);
+  font-family: var(--font-family, "Inter", system-ui, sans-serif);
+  font-size: var(--text-secondary-size, 13px);
+  line-height: 1.45;
+  pointer-events: none;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 8px 24px rgba(15, 23, 42, 0.1);
+  text-align: left;
+}
+
+.ds-chart-tooltip--motion {
+  transition:
+    left 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+
+.ds-chart-tooltip--enter {
+  animation: ds-chart-tooltip-enter 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes ds-chart-tooltip-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ds-chart-tooltip__label {
+  font-weight: 600;
+  font-size: var(--text-secondary-size, 13px);
+  margin-bottom: var(--space-1, 8px);
+  padding-bottom: var(--space-1, 8px);
+  color: inherit;
+}
+
+.ds-chart-tooltip__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-chart-tooltip__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 8px);
+}
+
+.ds-chart-tooltip__dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.ds-chart-tooltip__name {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-text-secondary, #757575);
+}
+
+.ds-chart-tooltip__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-chart-tooltip--motion {
+    transition: none;
+  }
+
+  .ds-chart-tooltip--enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

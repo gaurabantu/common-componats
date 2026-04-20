@@ -1,0 +1,69 @@
+<!--
+  Storybook manager shell (sidebar, toolbar). Lighthouse audits the whole tab, including this.
+  - Viewport: Storybook may inject user-scalable=no; we normalize after load.
+  - Buttons: icon-only toolbar buttons get aria-label from title when present.
+-->
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
+/>
+<meta
+  name="description"
+  content="UX Governance design system — ui-common-components Storybook."
+/>
+<script>
+  (function () {
+    "use strict";
+    function safeViewportContent() {
+      return "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover";
+    }
+    function enforceViewport() {
+      var metas = document.querySelectorAll('meta[name="viewport"]');
+      if (metas.length === 0) {
+        var m = document.createElement("meta");
+        m.setAttribute("name", "viewport");
+        m.setAttribute("content", safeViewportContent());
+        document.head.insertBefore(m, document.head.firstChild);
+        return;
+      }
+      metas.forEach(function (el) {
+        var c = el.getAttribute("content") || "";
+        if (/user-scalable\s*=\s*no/i.test(c)) {
+          el.setAttribute("content", safeViewportContent());
+          return;
+        }
+        var match = /maximum-scale\s*=\s*([^,;]+)/i.exec(c);
+        if (match) {
+          var v = parseFloat(match[1], 10);
+          if (!isNaN(v) && v < 5) el.setAttribute("content", safeViewportContent());
+        }
+      });
+    }
+    function fixUnlabeledButtons() {
+      document.querySelectorAll("button").forEach(function (btn) {
+        if (btn.getAttribute("aria-label") || btn.getAttribute("aria-labelledby")) return;
+        var txt = (btn.textContent || "").replace(/\s+/g, " ").trim();
+        if (txt.length) return;
+        var label =
+          btn.getAttribute("title") ||
+          btn.getAttribute("data-tooltip") ||
+          (btn.querySelector("svg title") && btn.querySelector("svg title").textContent.trim()) ||
+          "";
+        if (label) btn.setAttribute("aria-label", label);
+      });
+    }
+    function run() {
+      enforceViewport();
+      fixUnlabeledButtons();
+    }
+    var t;
+    function schedule() {
+      clearTimeout(t);
+      t = setTimeout(run, 50);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+    else run();
+    window.addEventListener("load", run);
+    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>

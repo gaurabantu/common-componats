@@ -1,0 +1,27 @@
+export {
+  default as Table,
+  TableRoot,
+  TableCaption,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "../components/molecules/Table";
+export type {
+  TableColumn,
+  TableProps,
+  TableSearchProps,
+  TableLayout,
+  TableVariant,
+  TableTheme,
+  TableRootProps,
+  TableCaptionProps,
+  TableHeaderProps,
+  TableBodyProps,
+  TableFooterProps,
+  TableRowProps,
+  TableHeadProps,
+  TableCellProps,
+} from "../components/molecules/Table";

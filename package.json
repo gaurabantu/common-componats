@@ -1,0 +1,119 @@
+{
+  "name": "ui-common-components",
+  "version": "0.0.1",
+  "description": "Reusable React components — UX Governance Design System (Tailwind + CSS tokens, WCAG 2.2 AA)",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./charts": {
+      "types": "./dist/charts.d.ts",
+      "import": "./dist/charts.mjs",
+      "require": "./dist/charts.js"
+    },
+    "./shell": {
+      "types": "./dist/shell.d.ts",
+      "import": "./dist/shell.mjs",
+      "require": "./dist/shell.js"
+    },
+    "./table": {
+      "types": "./dist/table.d.ts",
+      "import": "./dist/table.mjs",
+      "require": "./dist/table.js"
+    },
+    "./dist/index.css": {
+      "default": "./dist/index.css"
+    },
+    "./index.css": {
+      "default": "./dist/index.css"
+    },
+    "./design-system/tokens.css": "./src/design-system/tokens.css",
+    "./tailwind.preset.js": "./tailwind.preset.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src/design-system"
+  ],
+  "style": "src/design-system/tokens.css",
+  "unpkg": "dist/index.mjs",
+  "jsdelivr": "dist/index.mjs",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
+    "dev:app": "next dev -p 3005",
+    "dev:lib": "tsup --config tsup.config.ts --watch",
+    "next:dev": "next dev -p 3005",
+    "next:build": "next build",
+    "next:start": "next start -p 3005",
+    "clean": "rimraf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "next": ">=14",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "ui-pan-validators": "0.0.1"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "ui-pan-validators": {
+      "optional": true
+    }
+  },
+  "overrides": {
+    "@storybook/addon-essentials": "$storybook",
+    "@storybook/addon-interactions": "$storybook",
+    "@storybook/addon-links": "$storybook",
+    "@storybook/blocks": "$storybook",
+    "@storybook/react": "$storybook",
+    "@storybook/react-webpack5": "$storybook",
+    "@storybook/test": "$storybook"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^8.6.18",
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/addon-interactions": "^8.6.18",
+    "@storybook/addon-links": "^8.6.18",
+    "@storybook/blocks": "^8.6.18",
+    "@storybook/react": "^8.6.18",
+    "@storybook/react-webpack5": "^8.6.18",
+    "@storybook/test": "^8.6.18",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "@vitejs/plugin-react": "^5.1.4",
+    "autoprefixer": "^10.4.20",
+    "css-loader": "^7.1.2",
+    "jsdom": "^28.1.0",
+    "next": "16.0.10",
+    "postcss": "^8.4.49",
+    "postcss-loader": "^8.1.1",
+    "react": "19.1.2",
+    "react-dom": "19.1.2",
+    "rimraf": "5.0.10",
+    "storybook": "^8.6.18",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.15",
+    "ts-loader": "^9.5.4",
+    "tsup": "6.7.0",
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "react-day-picker": "^9.14.0"
+  }
+}

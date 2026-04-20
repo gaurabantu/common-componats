@@ -1,0 +1,13 @@
+/* Focus ring — WCAG 2.2 AA; tokens from design system */
+.ucs-switch__control:focus {
+  outline: none;
+}
+
+.ucs-switch__control:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+.ucs-switch__control:disabled:focus-visible {
+  outline: none;
+}

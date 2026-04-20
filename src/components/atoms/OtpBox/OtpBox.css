@@ -1,0 +1,233 @@
+/* OtpBox — polished design (MUI / Ant Design inspired) */
+
+.otp-box-root {
+  font-family: var(--font-family, "Inter"), system-ui, sans-serif;
+  width: fit-content;
+}
+
+.otp-box-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.otp-box-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-text-primary, #0d0d0d);
+  font-size: var(--text-secondary-size, 14px);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.otp-box-root[data-disabled] .otp-box-label {
+  color: var(--color-text-secondary, #757575);
+}
+
+/* ========== SINGLE INPUT (outlined, filled, underlined) ========== */
+
+.otp-box-input {
+  display: block;
+  width: 280px;
+  height: 52px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  margin: 0;
+  font-family: "ui-monospace", "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  line-height: 48px;
+  color: var(--color-text-primary, #0d0d0d);
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.otp-box-input::placeholder {
+  color: var(--color-text-secondary, #9ca3af);
+  letter-spacing: 0.2em;
+  font-weight: 400;
+}
+
+.otp-box-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.otp-box-input:focus {
+  outline: none;
+}
+
+/* --- Outlined --- */
+.otp-box--outlined .otp-box-input {
+  background: var(--color-bg-surface, #ffffff);
+  border: 2px solid var(--color-border-default, #d1d5db);
+  border-radius: var(--radius-lg, 8px);
+}
+
+.otp-box--outlined .otp-box-input:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-text-primary, #374151);
+}
+
+.otp-box--outlined .otp-box-input:focus {
+  border-color: var(--button-primary-focus-ring, #3B82F6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.otp-box--outlined.otp-box--error .otp-box-input {
+  border-color: var(--color-state-error, #DC3545);
+}
+
+.otp-box--outlined.otp-box--error .otp-box-input:focus {
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+/* --- Filled --- */
+.otp-box--filled .otp-box-input {
+  background: #f1f3f5;
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg, 8px);
+}
+
+.otp-box--filled .otp-box-input:hover:not(:disabled):not(:focus) {
+  background: #e9ecef;
+}
+
+.otp-box--filled .otp-box-input:focus {
+  background: var(--color-bg-surface, #ffffff);
+  border-color: var(--button-primary-focus-ring, #3B82F6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.otp-box--filled.otp-box--error .otp-box-input {
+  border-color: var(--color-state-error, #DC3545);
+  background: #fff5f5;
+}
+
+/* --- Underlined --- */
+.otp-box--underlined .otp-box-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-border-default, #d1d5db);
+  border-radius: 0;
+  padding-left: 8px;
+  padding-right: 8px;
+  line-height: 50px;
+}
+
+.otp-box--underlined .otp-box-input:hover:not(:disabled):not(:focus) {
+  border-bottom-color: var(--color-text-primary, #374151);
+}
+
+.otp-box--underlined .otp-box-input:focus {
+  border-bottom-color: var(--button-primary-focus-ring, #3B82F6);
+  border-bottom-width: 2px;
+  box-shadow: none;
+}
+
+.otp-box--underlined.otp-box--error .otp-box-input {
+  border-bottom-color: var(--color-state-error, #DC3545);
+}
+
+/* ========== BOXES VARIANT (individual cells) ========== */
+.otp-box-cells {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.otp-box-cell {
+  display: block;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+  font-family: "ui-monospace", "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
+  color: var(--color-text-primary, #0d0d0d);
+  background: var(--color-bg-surface, #ffffff);
+  border: 2px solid var(--color-border-default, #d1d5db);
+  border-radius: var(--radius-lg, 8px);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.otp-box-cell:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-text-primary, #374151);
+}
+
+.otp-box-cell:focus {
+  border-color: var(--button-primary-focus-ring, #3B82F6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.otp-box-cell:disabled {
+  background: var(--color-bg-page, #f3f4f6);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.otp-box--boxes.otp-box--error .otp-box-cell {
+  border-color: var(--color-state-error, #DC3545);
+}
+
+.otp-box--boxes.otp-box--error .otp-box-cell:focus {
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+/* ========== SIZE VARIANTS ========== */
+
+/* Small */
+.otp-box--sm .otp-box-input {
+  width: 240px;
+  height: 44px;
+  font-size: 18px;
+  letter-spacing: 0.3em;
+  line-height: 40px;
+}
+
+.otp-box--sm .otp-box-cells {
+  gap: 8px;
+}
+
+/* Large */
+.otp-box--lg .otp-box-input {
+  width: 340px;
+  height: 60px;
+  font-size: 28px;
+  letter-spacing: 0.4em;
+  line-height: 56px;
+}
+
+.otp-box--lg .otp-box-cells {
+  gap: 12px;
+}
+
+/* ========== ERROR MESSAGE ========== */
+.otp-box-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: var(--text-small-size, 12px);
+  font-weight: 500;
+  color: var(--color-state-error, #DC3545);
+  line-height: 1.4;
+}
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  .otp-box-input,
+  .otp-box-cell {
+    transition: none;
+  }
+}

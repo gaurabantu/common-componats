@@ -1,0 +1,122 @@
+/* Card — compound layout (token-driven; works with data-theme / dark) */
+
+.card-root {
+  --card-padding: var(--space-3);
+}
+
+.card-root--sm {
+  --card-padding: var(--space-2);
+}
+
+.card-inner--compound {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Header — title + description column, action top-right (shadcn-style grid) */
+.card-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: start;
+  column-gap: var(--space-2);
+  row-gap: var(--space-0);
+  padding: var(--card-padding) var(--card-padding) var(--space-2);
+}
+
+.card-root--sm .card-header {
+  padding-bottom: var(--space-1);
+}
+
+.card-title {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--text-h4-size);
+  font-weight: var(--text-h4-weight);
+  line-height: 1.4;
+}
+
+.card-root--sm .card-title {
+  font-size: var(--text-secondary-size);
+  font-weight: 600;
+}
+
+.card-description {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary-size);
+  line-height: 1.5;
+}
+
+.card-root--sm .card-description {
+  font-size: var(--text-small-size, 12px);
+}
+
+.card-action {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  align-self: start;
+  flex-shrink: 0;
+}
+
+/* Content: stacks with header; first-only gets top padding */
+.card-content {
+  padding: 0 var(--card-padding) var(--card-padding);
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.card-inner--compound > .card-content:first-child {
+  padding-top: var(--card-padding);
+}
+
+.card-header + .card-content {
+  padding-top: 0;
+}
+
+.card-content--no-padding {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.card-header + .card-content.card-content--no-padding {
+  padding-top: 0;
+}
+
+.card-inner--compound > .card-content.card-content--no-padding:first-child {
+  padding-top: var(--card-padding);
+}
+
+/* Footer */
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--card-padding) var(--card-padding);
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary-size);
+  line-height: 1.5;
+}
+
+.card-footer--border {
+  border-top: 1px solid var(--color-border-subtle, var(--color-mist-60));
+}
+
+.card-footer--no-border {
+  border-top: none;
+  padding-top: var(--card-padding);
+}
+
+.card-header + .card-footer:not(.card-footer--no-border) {
+  padding-top: var(--space-2);
+}

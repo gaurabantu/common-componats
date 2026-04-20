@@ -1,0 +1,44 @@
+# Builds Storybook and publishes to the gh-pages branch for GitHub Pages.
+# Enable Pages: Settings → Pages → Source: Deploy from a branch → branch "gh-pages" / "/ (root)".
+
+name: Deploy Storybook
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: storybook-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build Storybook
+        env:
+          # GitHub Project Pages: https://<owner>.github.io/<repo>/
+          STORYBOOK_BASE: ${{ github.event.repository.name }}
+        run: npx storybook build -o storybook-static --base "/${STORYBOOK_BASE}/"
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./storybook-static
+          force_orphan: true
