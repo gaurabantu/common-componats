@@ -1,4 +1,4 @@
-# Builds Storybook with --base /<repo>/ and deploys to GitHub Pages (Actions source).
+# Builds Storybook with STORYBOOK_BASE_PATH=/<repo>/ (see .storybook/main.ts). Storybook 8 has no --base CLI flag.
 # One-time: Repo → Settings → Pages → Build and deployment → Source: GitHub Actions.
 
 name: Deploy Storybook to GitHub Pages
@@ -34,7 +34,9 @@ jobs:
         run: npm ci
 
       - name: Build Storybook
-        run: npx storybook build -o storybook-static --base /${{ github.event.repository.name }}/
+        env:
+          STORYBOOK_BASE_PATH: /${{ github.event.repository.name }}/
+        run: npx storybook build -o storybook-static
 
       - uses: actions/upload-pages-artifact@v3
         with:
