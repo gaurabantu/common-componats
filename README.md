@@ -364,8 +364,9 @@ Canonical docs live under **`docs/`** (start with [`docs/README.md`](docs/README
 - **Local:** `npm run storybook` — [http://localhost:6006](http://localhost:6006). Use the toolbar for **Theme** (light / dark, sets `data-theme` on `<html>`) and **Viewport** (375, 768, 1440).
 - **Story layouts:** reuse `sb-page`, `sb-section-title`, `sb-card`, `sb-card-header`, `sb-inline`, `sb-grid`, `sb-swatch`, `sb-stack`, etc. from [`.storybook/preview.css`](.storybook/preview.css) so Docs/Canvas demos share one token-based pattern (avoids missing layout CSS and overlapping examples).
 - **Static build:** `npm run build-storybook` writes to `storybook-static/` (ignored by git).
-- **GitHub Pages:** push to `main` runs [`.github/workflows/deploy-storybook.yml`](.github/workflows/deploy-storybook.yml), which builds with `--base /<repo>/` and publishes the `gh-pages` branch via [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages). In the repo, **Settings → Pages → Build and deployment → Branch:** `gh-pages` / **folder:** `/ (root)`. The site URL is `https://<owner>.github.io/<repo>/`.
-- **Manual Pages build** (match CI): `npx storybook build -o storybook-static --base "/<your-repo-name>/"` then deploy the `storybook-static` folder.
+- **GitHub Pages:** push to `main` runs [`.github/workflows/deploy-storybook.yml`](.github/workflows/deploy-storybook.yml). It builds with `--base /<repo-name>/` (same name as the GitHub repository) and deploys via **GitHub Actions → Pages** (not a `gh-pages` branch).
+  - **One-time setup:** **Settings → Pages → Build and deployment → Source:** **GitHub Actions** (not “Deploy from a branch”). After the first successful run, the live URL appears on that page and in the workflow summary — typically `https://<owner>.github.io/<repo>/`.
+  - **Manual build** (match CI): `npx storybook build -o storybook-static --base "/<your-repo-name>/"` then upload `storybook-static/` to any static host if you do not use GitHub Pages.
 
 ## Development scripts
 
