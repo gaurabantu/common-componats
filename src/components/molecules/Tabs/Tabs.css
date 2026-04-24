@@ -411,7 +411,7 @@
 }
 
 .ds-tabs__trigger:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #ff4d0d);
+  outline: 2px solid var(--color-focus-ring, #0066cc);
   outline-offset: 2px;
 }
 

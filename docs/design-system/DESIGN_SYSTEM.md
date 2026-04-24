@@ -1,6 +1,6 @@
 # UX Governance — Developer Design System Reference
-> **Version:** 1.0 | **Viewport:** Desktop-First 1440px | **Compliance:** WCAG 2.2 AA
-> All hex values are reference examples. Implementation **must** use CSS variable tokens.
+> **Version:** 2.0.0 | **Viewport:** Desktop-First 1440px | **Compliance:** WCAG 2.2 AA
+> All hex values are reference examples. Implementation **must** use CSS variable tokens. **Tokens:** [tokens.md](./tokens.md) · **Alias for links:** [UX-Governance-Design-System.md](./UX-Governance-Design-System.md)
 
 ---
 
@@ -36,7 +36,7 @@
 | Token | CSS Variable | Hex | Usage |
 |---|---|---|---|
 | color/brand/primary | `--color-brand-primary` | `#0D0D0D` | Primary brand colour, headers |
-| color/brand/secondary | `--color-brand-secondary` | `#FF4D00` | Accent for interactive states, focus rings |
+| color/brand/secondary | `--color-brand-secondary` | `#FF4D00` | Accent, emphasis, secondary interactive highlights (not the default **keyboard** focus — use `--color-border-focus` / `--color-focus-ring`) |
 | color/brand/link | `--color-brand-link` | `#002475` | Linked text, navigational links |
 | color/text/primary | `--color-text-primary` | `#0D0D0D` | Main body text |
 | color/text/secondary | `--color-text-secondary` | `#757575` | Sub-headers, labels, secondary text |
@@ -55,14 +55,22 @@
 
 | Variant | How to enable | Summary |
 |--------|----------------|---------|
-| Classic blue (light) — default | No attribute needed; or `data-theme="blue"` / class `theme-blue` on `<html>` (same tokens as `:root`) | Gray page, neutral borders, blue primary (`#2563EB`), noir/lavender accents. |
-| Green (light) | `data-theme="green"` or class `theme-green` | Green primary CTA uses `--color-theme-primary` `#15803D`, hover `#166534`, active `#14532D`, disabled `#86EFAC`. Mint page (`#ecfdf5`), teal text. |
-| Green (dark) | `data-theme="green-dark"` or class `theme-green-dark` | Deep teal surfaces; lighter emerald primary with dark label text. |
-| Dark (neutral / blue CTA) | `data-theme="dark"` or class `dark` | Slate surfaces; blue primary tokens. |
+| Classic blue (light) — default | No attribute; or `data-theme="blue"` / `theme-blue` on `<html>` | Gray page, neutral borders, blue **interaction** theme (`#2563EB` family); **filled** primary CTA remains Noir (see §10). |
+| Green (light) | `data-theme="green"` or `theme-green` | Green **interaction** — `#15803D` / hover / active / disabled; remapped `button` / outline tokens in `tokens.css`. |
+| Green (dark) | `data-theme="green-dark"` or `theme-green-dark` | Deep teal surfaces; lighter emerald primary with dark label text. |
+| Dark (neutral / blue CTA) | `data-theme="dark"` or `dark` | Slate surfaces; blue primary tokens. |
+| Ion Mist (backgrounds) | `data-theme="mist"` or `theme-mist` | Lighter gray page, sidebar, and card surfaces. |
+| Custom (example rose) | `data-theme="custom"` or `theme-custom` | Only the six `--color-theme-*` slots (§42) swap to the rose set. |
+| Blue + Mist | `data-theme="blue-mist"` or `theme-blue-mist` | Blue **interaction** + Mist backgrounds; **focus ring** for outlines uses a brand tint via `--color-focus-ring` in `tokens.css`. |
+| Green + Mist | `data-theme="green-mist"` or `theme-green-mist` | Green **interaction** + Mist backgrounds; **focus ring** brand tint. |
 
 Do **not** combine conflicting `data-theme` values on the same root. For dark + green brand, use **`green-dark`**.
 
-Primary **focus rings** stay `#FF4D00` in the green light theme so keyboard focus stays highly visible (WCAG 2.2 AA).
+### Focus (v2.0.0)
+
+- **`--color-border-focus`** / **`--color-focus-ring`:** default **`#0066CC`** on **classic light**, **`data-theme="blue"`**, and **`dark`** (strong contrast on gray structural borders `#999` / slate). **`#FF4D00`** remains **`--color-brand-secondary`** (accents), not the default focus border token.
+- **Green (light):** `#0D0D0D` for `--color-border-focus` / `--color-focus-ring` (strong on mint). **Green-dark:** `#E2E8F0` (light ring on dark teal; distinct from brand mint).
+- **Named** themes (`blue-mist`, `green-mist`, `custom`, etc.) may set a **tinted** `--color-focus-ring` per the theme block. Do not override focus tokens to a low-contrast colour.
 
 ---
 
@@ -178,7 +186,7 @@ Primary **focus rings** stay `#FF4D00` in the green light theme so keyboard focu
 | Default | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | — |
 | Hover | `#1A1A1A` | `#1A1A1A` | `#FFFFFF` | — |
 | Active | `#000000` | `#000000` | `#FFFFFF` | — |
-| Focus | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | `#FF4D00` |
+| Focus | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | `var(--color-border-focus)` (default `#0066CC`; `green` `#0D0D0D`; `green-dark` `#E2E8F0`) |
 | Disabled | `#2B2B2B` | `#2B2B2B` | `#B3B3B3` | — |
 
 ### Secondary (Outline)
@@ -201,7 +209,7 @@ Primary **focus rings** stay `#FF4D00` in the green light theme so keyboard focu
 --button-primary-active-bg:     #000000;
 --button-primary-disabled-bg:   #2B2B2B;
 --button-primary-disabled-text: #B3B3B3;
---button-primary-focus-ring:    #FF4D00;
+--button-primary-focus-ring:    var(--color-border-focus); /* #0066CC default */
 ```
 
 ---
@@ -499,7 +507,7 @@ All spacing must be multiples of 8px. No arbitrary values. No exceptions.
 | `--color-border-default` | `#999999` | Standard UI borders and dividers (Noir-40) |
 | `--color-border-interactive` | `#757575` | Interactive component borders (≥3:1 on white) |
 | `--color-border-strong` | `#0D0D0D` | High-contrast interactive borders |
-| `--color-border-focus` | `#FF4D00` | Primary focus ring (keyboard/mouse) |
+| `--color-border-focus` | `#0066CC` (default); `#0D0D0D` on `green`; `#E2E8F0` on `green-dark` | Primary focus ring (keyboard/mouse) |
 | `--color-border-selected` | `#B9A7FF` | Selected state outline (Lavender-40) |
 | `--color-border-error` | `#DC3545` | Critical error field border (3px thick) |
 
@@ -550,7 +558,7 @@ Shadow colour is **always** `#000000` at varying opacity. Never tint shadows. Ne
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `--color-brand-primary` | `#0D0D0D` | Primary brand, headers, key elements ("Core Noir") |
-| `--color-brand-secondary` | `#FF4D00` | Interactive focus states, focus rings, emphasis |
+| `--color-brand-secondary` | `#FF4D00` | Accents, emphasis, secondary interactive highlights (default **focus** border is `--color-border-focus` / `--color-focus-ring`, not this token) |
 | `--color-brand-link` | `#002475` | Linked text, navigational links (web only) |
 
 ### Text
@@ -698,7 +706,7 @@ Consistent layering across platforms. Every positioned element must use a token 
 | Default | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | — |
 | Hover | `#1A1A1A` | `#1A1A1A` | `#FFFFFF` | — |
 | Active/Pressed | `#000000` | `#000000` | `#FFFFFF` | — |
-| Focus | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | `#FF4D00` 2px offset |
+| Focus | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | `var(--color-border-focus)` 2px offset (default `#0066CC`; `green` / `green-dark` as in `tokens.css`) |
 | Disabled | `#2B2B2B` | `#2B2B2B` | `#B3B3B3` | — (50% opacity) |
 | Loading | `#0D0D0D` | `#0D0D0D` | spinner `#FFFFFF` | — |
 
@@ -730,7 +738,7 @@ Consistent layering across platforms. Every positioned element must use a token 
 - **Primary Fill:** Maximum 1 per screen. The single most important action.
 - **Hierarchy:** Fill → Outlined → Ghost → Destructive (for dangerous actions only)
 - **Icon size:** Always 20px (`--size-icon-ui`) inside buttons
-- **Focus ring:** Always `#FF4D00`. Never change. Never remove.
+- **Focus ring:** Use `var(--color-border-focus)` / `var(--color-focus-ring)` from `tokens.css` (default **`#0066CC`**; **`#0D0D0D`** on `green`; **`#E2E8F0`** on `green-dark`). Do not remove focus styles.
 - **Disabled:** 50% opacity + `cursor: not-allowed` (web) / dimmed + non-tappable (mobile)
 - **Min touch target:** 44×44px on all platforms
 - **Radius:** `--radius-md` (6px) is default. Allowed: 2, 3, 4, 6, 8px.
@@ -925,7 +933,7 @@ After generating any UI, the AI must self-check:
 | Thumb | `--switch-thumb` | `#FFFFFF` |
 | Border (On) | `--switch-border-on` | `#0D0D0D` 1.5px |
 | Border (Off) | `--switch-border-off` | `#999999` 1.5px |
-| Focus Ring | `--switch-focus-ring` | `#FF4D00` 2px, 2px offset |
+| Focus Ring | `--switch-focus-ring` | `var(--color-border-focus)` 2px, 2px offset (default `#0066CC`; `green` `#0D0D0D`; `green-dark` `#E2E8F0`) |
 | Disabled | — | 50% opacity + `cursor: not-allowed` |
 
 ### Size Variants
@@ -1040,7 +1048,7 @@ Cards group related content into a single container, provide visual separation f
 |-------|--------|--------|------------|
 | Default | `--shadow-sm` | None | — |
 | Hover | `--shadow-md` | None | Cursor: pointer |
-| Focus | `--shadow-sm` | `--border-medium` (2px) solid `--color-border-focus` (#FF4D00) | Focus ring visible (keyboard nav) |
+| Focus | `--shadow-sm` | `--border-medium` (2px) solid `--color-border-focus` (default `#0066CC`) | Focus ring visible (keyboard nav) |
 | Active/Pressed | `--shadow-xs` | None | Slight depression feel |
 | Disabled | `--shadow-none` | `--border-thin` solid `--color-border-default` | Opacity: `--opacity-disabled` (0.5), cursor: not-allowed |
 
@@ -1085,7 +1093,7 @@ Cards group related content into a single container, provide visual separation f
 |-------|----------|----------|----------------|
 | **Default** | 1px border, no shadow | shadow-sm, no border | shadow-sm, indicator hidden |
 | **Hover** | No change | shadow-md, cursor pointer | shadow-md, cursor pointer |
-| **Focus** | Not focusable | 2px #FF4D00 outline, 2px offset | 2px #FF4D00 outline, 2px offset |
+| **Focus** | Not focusable | 2px `var(--color-border-focus)` outline, 2px offset | 2px `var(--color-border-focus)` outline, 2px offset |
 | **Active** | — | shadow-xs (pressed) | shadow-xs, indicator visible (#B9A7FF) |
 | **Selected** | — | — | Indicator visible, remains on shadow-sm |
 | **Disabled** | 50% opacity | 50% opacity, shadow-none, 1px border | 50% opacity, shadow-none, indicator hidden |
@@ -1149,7 +1157,7 @@ Cards group related content into a single container, provide visual separation f
 | Keyboard Nav | Elevated cards must be focusable via Tab key. Enter/Space activates the card action. |
 | Screen Reader | Interactive cards: `role="link"` or `role="button"` with descriptive `aria-label`. Static cards: no role needed. |
 | Colour-Only | Indicator bar must NOT be the sole indicator of active state — pair with `aria-current="true"` or `aria-selected="true"` |
-| Contrast | Card border (#999999) on page bg (#E0E0E0) = 1.3:1 — acceptable for decorative borders. Focus ring (#FF4D00) on white = 4.6:1 — passes AA. |
+| Contrast | Card border (#999999) on page bg (#E0E0E0) = 1.3:1 — acceptable for decorative borders. Default focus ring (`#0066CC` via `--color-border-focus`) on white meets AA for focus visibility. |
 
 ### AI Validation Rules
 
@@ -1674,7 +1682,7 @@ Before outputting any Modal component, the AI must verify:
   --color-border-default: #999999;
   --color-border-interactive: #757575;
   --color-border-strong: #0D0D0D;
-  --color-border-focus: #FF4D00;
+  --color-border-focus: #0066CC;
   --color-border-selected: #B9A7FF;
   --color-border-error: #DC3545;
 
@@ -1739,7 +1747,7 @@ Before outputting any Modal component, the AI must verify:
   --button-primary-active-bg: #000000;
   --button-primary-disabled-bg: #2B2B2B;
   --button-primary-disabled-text: #B3B3B3;
-  --button-primary-focus-ring: #FF4D00;
+  --button-primary-focus-ring: var(--color-border-focus);
   --color-bg-button-primary: #0D0D0D;
   --color-text-on-primary: #FFFFFF;
   --color-bg-button-primary-inverse: #FFFFFF;
@@ -1756,7 +1764,7 @@ Before outputting any Modal component, the AI must verify:
   --switch-thumb: #FFFFFF;
   --switch-border-on: #0D0D0D;
   --switch-border-off: #999999;
-  --switch-focus-ring: #FF4D00;
+  --switch-focus-ring: var(--color-border-focus);
   --switch-sm-track-w: 36px;
   --switch-sm-track-h: 20px;
   --switch-sm-thumb: 14px;
@@ -1889,7 +1897,7 @@ Before outputting any Modal component, the AI must verify:
 
 ### Buttons
 8. **Primary Fill:** 1 per screen maximum.
-9. **Focus ring:** Always `#FF4D00`. Never change.
+9. **Focus ring:** Follow `tokens.css` — default blue `#0066CC` on classic light; `green` / `green-dark` use their theme values (`#0D0D0D` / `#E2E8F0`), not brand orange.
 10. **Disabled:** 50% opacity, non-interactive cursor/state.
 11. **Radius:** Allowed 2/3/4/6/8px for buttons; 4/8/10px for cards.
 
@@ -2195,17 +2203,18 @@ Theme cannot touch anything in these four categories. Violations must be refused
 
 ---
 
-### Focus Ring Rule — CONSTANT
+### Focus — tokens (`v2.0.0` runtime)
 
-> **The focus ring is `#FF4D00` (`--color-brand-secondary`). Always. Regardless of theme. It never changes.**
+- **Default (classic light, `blue`, `dark`):** `--color-border-focus` and `--color-focus-ring` are **`#0066CC`** (strong on structural gray borders). **`--color-brand-secondary`** remains **`#FF4D00`** for accents, not the default focus border.
+- **Green (light) / green-dark:** focus in `tokens.css` is **`#0D0D0D`** and **`#E2E8F0`** respectively (no orange; brand orange stays on `--color-brand-secondary` where used).
+- **Combined themes** (`blue-mist`, `green-mist`, etc.): may set a tinted `--color-focus-ring` in `tokens.css` — do not use low-contrast values.
 
-| Token | Value | Themed? |
-|-------|-------|---------|
-| `--color-focus-ring` | `#FF4D00` | **NO — constant across all themes** |
+| Token | Default (light) | Themed? |
+|-------|-----------------|---------|
+| `--color-border-focus` | `#0066CC` | **Yes** — e.g. `#0D0D0D` on `green`, `#E2E8F0` on `green-dark` |
+| `--color-focus-ring` | Usually matches `--color-border-focus` | **Yes** in named theme blocks |
 
-**Why?** The focus ring is an accessibility indicator, not a brand element. It must remain consistent and recognizable regardless of which theme is active. Users who rely on keyboard navigation need a predictable, high-visibility focus indicator that doesn't shift with cosmetic changes.
-
-Tailwind: Always use `focus-visible:ring-brand-secondary` or `focus-visible:ring-[#FF4D00]`. Never `ring-[var(--color-theme-primary)]`.
+**Implementation:** use `outline-color: var(--color-focus-ring, var(--color-border-focus))` (see component CSS). For Tailwind, prefer a token that maps to `var(--color-focus-ring)` from `tokens.css`, not `ring-[var(--color-theme-primary)]` for primary CTA fill colour.
 
 ---
 
@@ -2220,8 +2229,9 @@ Tailwind: Always use `focus-visible:ring-brand-secondary` or `focus-visible:ring
   --color-theme-disabled: #2B2B2B;
   --color-theme-text: #FFFFFF;
 
-  /* CONSTANT — never overridden by theme */
-  --color-focus-ring: #FF4D00;
+  /* Default focus — blue; green / green-dark themes override in tokens.css */
+  --color-border-focus: #0066CC;
+  --color-focus-ring: #0066CC;
 }
 
 /* ─── Blue Theme ─── */
@@ -2232,7 +2242,7 @@ Tailwind: Always use `focus-visible:ring-brand-secondary` or `focus-visible:ring
   --color-theme-active: #1E3A8A;
   --color-theme-disabled: #93B4F5;
   --color-theme-text: #FFFFFF;
-  /* --color-focus-ring: NOT overridden. Stays #FF4D00. */
+  /* focus: default #0066CC from :root; optional theme tint in real tokens.css */
 }
 
 /* ─── Green Theme ─── */
@@ -2243,7 +2253,7 @@ Tailwind: Always use `focus-visible:ring-brand-secondary` or `focus-visible:ring
   --color-theme-active: #14532D;
   --color-theme-disabled: #86EFAC;
   --color-theme-text: #FFFFFF;
-  /* --color-focus-ring: NOT overridden. Stays #FF4D00. */
+  /* In repo tokens.css: green → #0D0D0D, green-dark → #E2E8F0 for --color-border-focus */
 }
 
 /* ─── Custom Theme (example) ─── */
@@ -2254,7 +2264,7 @@ Tailwind: Always use `focus-visible:ring-brand-secondary` or `focus-visible:ring
   --color-theme-active: var(--custom-brand-darkest);
   --color-theme-disabled: var(--custom-brand-lighter);
   --color-theme-text: #FFFFFF; /* or #0D0D0D if brand is light */
-  /* --color-focus-ring: STILL #FF4D00. */
+  /* --color-focus-ring: see tokens.css; do not set to a failing contrast */
 }
 ```
 
@@ -2269,7 +2279,7 @@ Tailwind: Always use `focus-visible:ring-brand-secondary` or `focus-visible:ring
 | Primary Fill active | `var(--color-theme-active)` |
 | Primary Fill disabled | `var(--color-theme-disabled)` |
 | Primary Fill text | `var(--color-theme-text)` |
-| Focus ring (ALL buttons) | `var(--color-focus-ring)` → always `#FF4D00` |
+| Focus ring (typical) | `var(--color-border-focus)` / `var(--color-focus-ring)` (default `#0066CC`; `green` / `green-dark` as in `tokens.css`) |
 | CTA inverse bg (on dark) | `#FFFFFF` (constant) |
 | CTA inverse text (on dark) | `var(--color-theme-primary)` |
 
@@ -2315,7 +2325,7 @@ These requests MUST be refused. They violate theme governance.
 | "Make the modal background blue" | **REFUSE** | Modals use `--color-bg-elevated` — surface, locked |
 | "Change the text colour to blue" | **REFUSE** | Text uses `--color-text-primary` — structural, locked |
 | "Make destructive buttons red" | **REFUSE** | Destructive follows hierarchy (Section 27), not colour |
-| "Change the focus ring to match the theme" | **REFUSE** | Focus ring is `#FF4D00` constant — accessibility invariant |
+| "Change the focus ring to match the theme" | **REFUSE** ad hoc | Do not bind focus to `var(--color-theme-primary)`. Use or extend a **named** `data-theme` in `tokens.css` (e.g. `blue-mist`). Default focus is `#0066CC`; `green` / `green-dark` have dedicated focus tokens. |
 | "Theme the border colours" | **REFUSE** | Borders are structural — `--color-border-*` tokens are locked |
 | "Use a random colour for the primary" | **REFUSE** | All theme values must be tokens. No arbitrary hex without a token definition. |
 | "Change the sidebar background" | **REFUSE** | Sidebar bg is structural (`--color-brand-primary` or `--color-bg-surface`), not themed |
@@ -2325,7 +2335,7 @@ These requests MUST be refused. They violate theme governance.
 
 | User Says | Action |
 |-----------|--------|
-| "Make it blue" | Set `--color-theme-primary: #1A56DB` + derived hover/active/disabled. Buttons, CTAs, switch ON tracks change. Focus ring stays `#FF4D00`. Everything else stays. |
+| "Make it blue" | Set `--color-theme-primary: #1A56DB` + derived hover/active/disabled. Buttons, CTAs, switch ON tracks change. Default **focus** stays **`#0066CC`** in `tokens.css` unless a named block says otherwise. Everything else structural stays. |
 | "Use green branding" | Set `--color-theme-primary: #15803D` + derived. Same scope. |
 | "Change primary to #E11D48" | Create custom theme: `--color-theme-primary: #E11D48`. Derive hover/active. Verify contrast ≥4.5:1 with white text. If fails, use `--color-theme-text: #0D0D0D`. |
 | "Make the whole app blue" | **Still** only buttons/CTAs/switches change. "Whole app" does not expand the theme scope. |
@@ -2342,7 +2352,7 @@ When deriving a new theme from a brand colour:
 3. **Active:** Darken by 20–25% → `--color-theme-active`
 4. **Disabled:** Lighten to 40% saturation → `--color-theme-disabled`
 5. **Text:** White (`#FFFFFF`) if primary is dark. Black (`#0D0D0D`) if primary is light. Must pass 4.5:1 contrast.
-6. **Focus ring:** Do NOT derive. It stays `#FF4D00`.
+6. **Focus ring:** Do NOT derive from `--color-theme-primary`. Use `tokens.css` (`#0066CC` default; `green` / `green-dark` as defined there). Add new tints only in reviewed theme blocks.
 
 **Contrast check formula:** Theme primary bg → theme text must achieve ≥4.5:1. If the brand colour is too light (e.g., yellow, light green), flip text to `#0D0D0D`.
 
@@ -2350,8 +2360,8 @@ When deriving a new theme from a brand colour:
 
 ### AI Rules for Theming — Strict
 
-1. **Theme ONLY affects the 5 `--color-theme-*` tokens.** No other tokens change.
-2. **Focus ring is `#FF4D00`. Always.** Never `var(--color-theme-primary)`. Never derived from theme.
+1. **Theme ONLY affects the six `--color-theme-*` tokens** plus approved theme blocks in `tokens.css`. Structural tokens stay locked.
+2. **Default focus** uses `--color-border-focus` / `--color-focus-ring` (typically `#0066CC`); **not** `var(--color-theme-primary)`. `green` / `green-dark` set dedicated focus colours in `tokens.css`.
 3. **Buttons reference `var(--color-theme-primary)`** for fill — not `--color-brand-primary`.
 4. **Contrast must pass.** Theme primary → theme text ≥ 4.5:1. AI must verify before outputting.
 5. **Never theme structural elements.** Text, borders, shadows, cards, modals, backgrounds, grays = immutable.
@@ -2364,7 +2374,7 @@ When deriving a new theme from a brand colour:
 ### Theme Validation Checklist
 
 - [ ] Only 5 `--color-theme-*` tokens changed?
-- [ ] Focus ring is still `#FF4D00` (not themed)?
+- [ ] Focus still uses `tokens.css` (default blue; `green` / `green-dark` as defined) — not ad-hoc theme primary?
 - [ ] Typography, spacing, grid, layout all unchanged?
 - [ ] Card, modal, toast, page backgrounds unchanged?
 - [ ] Noir/Ash/Mist colour families unchanged?

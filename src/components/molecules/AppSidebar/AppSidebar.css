@@ -13,7 +13,7 @@
   --sidebar-hover: rgba(255, 255, 255, 0.08);
   --sidebar-active-bg: rgba(255, 255, 255, 0.1);
   --sidebar-active-tint: rgba(255, 255, 255, 0.04);
-  --sidebar-focus: #ff4d00;
+  --sidebar-focus: var(--color-focus-ring, #0066cc);
   --sidebar-border: rgba(255, 255, 255, 0.06);
   --sidebar-border-strong: rgba(255, 255, 255, 0.08);
   --sidebar-nav-icon: var(--sidebar-text-muted);

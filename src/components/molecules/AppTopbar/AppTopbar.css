@@ -11,7 +11,7 @@
   --app-topbar-border: rgba(0, 0, 0, 0.08);
   --app-topbar-hover: rgba(0, 0, 0, 0.04);
   --app-topbar-active-bg: rgba(0, 0, 0, 0.07);
-  --app-topbar-focus-ring: var(--color-focus-ring, #ff4d00);
+  --app-topbar-focus-ring: var(--color-focus-ring, #0066cc);
   --app-topbar-shadow: 0 1px 0 var(--app-topbar-border);
   --app-topbar-z: 50;
   --app-topbar-pad-x: var(--space-2, 16px);
