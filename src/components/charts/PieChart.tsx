@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import type { ChartLayoutProps } from "./Chart.types";
 import { CHART_THEME_COLORS } from "./Chart.types";
 import { ChartTooltip } from "./ChartTooltip";
+import { resolveChartAnimation, useChartAnimationProgress } from "./useChartAnimation";
 import { arcPath, polarToCartesian } from "./utils";
 
 const DEFAULT_COLORS = [
@@ -49,9 +50,22 @@ const PieChartComponent: React.FC<PieChartProps> = ({
   theme = "light",
   tooltipFollowPointer = true,
   tooltipAnimation = true,
+  chartAnimation = true,
   className = "",
   style = {},
 }) => {
+  const animCfg = resolveChartAnimation(chartAnimation, "pie");
+  const animKey = useMemo(() => `${data.map((d) => d.value).join(",")}-${data.length}`, [data]);
+
+  const animProgress = useChartAnimationProgress(
+    animCfg.enabled,
+    animCfg.durationMs,
+    animCfg.easing,
+    animKey
+  );
+
+  const scaleFactor = 0.08 + animProgress * 0.92;
+
   const themeColors = CHART_THEME_COLORS[theme];
   const containerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -165,45 +179,48 @@ const PieChartComponent: React.FC<PieChartProps> = ({
           preserveAspectRatio="xMidYMid meet"
           onMouseLeave={handleMouseLeave}
         >
-          {slices.map((slice, i) => (
-            <path
-              key={i}
-              d={arcPath(cx, cy, or, slice.startDeg, slice.endDeg, ir)}
-              fill={slice.color}
-              stroke={themeColors.tooltipBg}
-              strokeWidth={2}
-              opacity={hovered !== null && hovered !== i ? 0.5 : 1}
-              onMouseEnter={(e) => handleSlicePointer(e, i)}
-              onMouseMove={(e) => handleSlicePointer(e, i)}
-              style={{ cursor: "pointer" }}
-            >
-              {!showTooltip && (
-                <title>
-                  {slice.name}: {slice.value} ({((slice.value / total) * 100).toFixed(1)}%)
-                </title>
-              )}
-            </path>
-          ))}
-          {showLabels &&
-            slices.map((slice, i) => {
-              const midDeg = (slice.startDeg + slice.endDeg) / 2;
-              const labelR = ir + (or - ir) * 0.5;
-              const { x: lx, y: ly } = polarToCartesian(cx, cy, labelR, midDeg);
-              return (
-                <text
-                  key={i}
-                  x={lx}
-                  y={ly}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fontSize={11}
-                  fill={themeColors.tooltipText}
-                  style={{ pointerEvents: "none" }}
-                >
-                  {((slice.value / total) * 100).toFixed(0)}%
-                </text>
-              );
-            })}
+          <g transform={`translate(${cx} ${cy}) scale(${scaleFactor}) translate(${-cx} ${-cy})`}>
+            {slices.map((slice, i) => (
+              <path
+                key={i}
+                d={arcPath(cx, cy, or, slice.startDeg, slice.endDeg, ir)}
+                fill={slice.color}
+                stroke={themeColors.tooltipBg}
+                strokeWidth={2}
+                opacity={hovered !== null && hovered !== i ? 0.5 : 1}
+                onMouseEnter={(e) => handleSlicePointer(e, i)}
+                onMouseMove={(e) => handleSlicePointer(e, i)}
+                style={{ cursor: "pointer" }}
+              >
+                {!showTooltip && (
+                  <title>
+                    {slice.name}: {slice.value} ({((slice.value / total) * 100).toFixed(1)}%)
+                  </title>
+                )}
+              </path>
+            ))}
+            {showLabels &&
+              slices.map((slice, i) => {
+                const midDeg = (slice.startDeg + slice.endDeg) / 2;
+                const labelR = ir + (or - ir) * 0.5;
+                const { x: lx, y: ly } = polarToCartesian(cx, cy, labelR, midDeg);
+                return (
+                  <text
+                    key={i}
+                    x={lx}
+                    y={ly}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={11}
+                    fill={themeColors.tooltipText}
+                    opacity={animProgress}
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {((slice.value / total) * 100).toFixed(0)}%
+                  </text>
+                );
+              })}
+          </g>
         </svg>
       </div>
       {showTooltip && tooltip && (

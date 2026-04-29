@@ -176,7 +176,8 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     border: borderSpec,
     background: "var(--color-bg-surface)",
     boxShadow: boxShadowResolved,
-    transition: "box-shadow 180ms ease, transform 180ms ease",
+    transition:
+      "box-shadow var(--duration-fast) var(--easing-default), transform var(--duration-fast) var(--easing-default)",
     transform: hoverable && isHovered && isElevated ? "translateY(-1px)" : "translateY(0)",
     ...(compound ? ({ "--card-padding": paddingVar } as React.CSSProperties) : {}),
     ...style,
@@ -309,6 +310,7 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
       data-card-variant={resolvedVariant}
       data-card-size={compound ? size : undefined}
       data-selected={showIndicator ? "true" : undefined}
+      data-card-hoverable={Boolean(hoverable && isElevated) ? "true" : undefined}
       onMouseEnter={(event) => {
         setIsHovered(true);
         onMouseEnter?.(event);

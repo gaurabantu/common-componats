@@ -142,6 +142,7 @@ export type {
   AccordionType,
   AccordionVariant,
   AccordionMotion,
+  AccordionDensity,
 } from "./components/molecules/Accordion/Accordion.types";
 export type {
   ButtonGroupProps,
@@ -182,7 +183,11 @@ export type { TextInputProps as InputProps } from "./components/atoms/TextInput/
 export type { TooltipIconProps } from "./components/atoms/ToolTip/TooltipIcon.types";
 export type { AvatarProps } from "./components/atoms/Avatar/Avatar.types";
 export type { DatePickerProps } from "./components/atoms/DatePicker/DatePicker.types";
-export type { TextInputSearchProps as InputSearchProps } from "./components/atoms/TextInputSearch";
+export type {
+  TextInputSearchProps as InputSearchProps,
+  SearchButtonDisplay,
+  SearchActionButtonProps,
+} from "./components/atoms/TextInputSearch";
 export type {
   CalendarProps,
   CalendarAnimation,

@@ -1,4 +1,5 @@
 import React from "react";
+import type { SearchActionButtonProps, SearchButtonDisplay } from "../../atoms/TextInputSearch";
 
 export type SortDirection = "asc" | "desc" | null;
 
@@ -37,8 +38,12 @@ export interface TableSearchProps {
   maxWidth?: number | string;
   /** Show clear button when value exists */
   showClearButton?: boolean;
-  /** Show search/action button on right */
+  /** Show search/action `Button` on the right */
   showSearchButton?: boolean;
+  /** `icon` (default) vs `text` label — see **`InputSearch`** */
+  searchButtonDisplay?: SearchButtonDisplay;
+  /** Pass-through to the trailing **`Button`** on **`InputSearch`** */
+  searchActionButtonProps?: SearchActionButtonProps;
 }
 
 export interface TableProps<T = Record<string, unknown>> {

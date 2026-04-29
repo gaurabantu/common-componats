@@ -21,6 +21,7 @@ import type {
   PopoverTriggerProps,
 } from "./Popover.types";
 import { computePopoverPosition } from "./popoverPosition";
+import { useRipple } from "../../common/useRipple";
 import "./Popover.css";
 
 function cls(...parts: (string | false | undefined)[]): string {
@@ -130,7 +131,7 @@ export const PopoverContent = React.memo(function PopoverContent({
   role: roleProp,
   onKeyDown,
   style,
-  showPointer = false,
+  showPointer = true,
   ...rest
 }: PopoverContentProps) {
   const ctx = usePopoverContext("PopoverContent");
@@ -283,6 +284,7 @@ export const DropdownMenuTrigger = forwardRef<HTMLButtonElement, Omit<PopoverTri
 export const DropdownMenuContent = React.memo(function DropdownMenuContent({
   children,
   className,
+  showPointer = false,
   onKeyDown,
   ...rest
 }: Omit<PopoverContentProps, "role">) {
@@ -319,6 +321,7 @@ export const DropdownMenuContent = React.memo(function DropdownMenuContent({
   return (
     <PopoverContent
       {...rest}
+      showPointer={showPointer}
       role="menu"
       aria-orientation="vertical"
       className={className}
@@ -335,11 +338,15 @@ export const DropdownMenuItem = React.memo(function DropdownMenuItem({
   onSelect,
   variant = "default",
   disabled = false,
+  ripple = true,
   onClick,
   type = "button",
+  onPointerDown,
   ...rest
 }: DropdownMenuItemProps) {
   const ctx = usePopoverContext("DropdownMenuItem");
+  const rippleEnabled = ripple !== false && !disabled;
+  const rippleApi = useRipple(rippleEnabled);
 
   return (
     <button
@@ -350,8 +357,13 @@ export const DropdownMenuItem = React.memo(function DropdownMenuItem({
       className={cls(
         "ds-dropdown-menu__item",
         variant === "danger" && "ds-dropdown-menu__item--danger",
+        rippleEnabled && "ucs-ripple-parent",
         className
       )}
+      onPointerDown={(e) => {
+        rippleApi.onPointerDown(e);
+        onPointerDown?.(e);
+      }}
       onClick={(e) => {
         onClick?.(e);
         if (disabled) return;
@@ -359,7 +371,8 @@ export const DropdownMenuItem = React.memo(function DropdownMenuItem({
         ctx.setOpen(false);
       }}
     >
-      {children}
+      {rippleApi.RippleOverlay}
+      <span className="ds-dropdown-menu__item-inner">{children}</span>
     </button>
   );
 });

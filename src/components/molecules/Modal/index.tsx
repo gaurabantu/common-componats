@@ -91,24 +91,34 @@ export default function Modal({
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen && showCloseButton && closeOnEscape) {
+      if (e.key === "Escape" && isOpen && closeOnEscape) {
         handleClose();
       }
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, handleClose, showCloseButton, closeOnEscape]);
+  }, [isOpen, handleClose, closeOnEscape]);
 
-  // Focus trap when open
+  // Focus trap + initial focus on first focusable control (AlertDialog has no title bar close)
   useEffect(() => {
     if (!isOpen) return;
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const getFocusable = () => Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector)).filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
+    const focusableSelector =
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const getFocusable = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+        (el) => el.getAttribute("aria-hidden") !== "true" && el.offsetParent !== null,
+      );
 
-    dialog.focus();
+    const focusInitial = () => {
+      const focusable = getFocusable();
+      const first = focusable[0];
+      if (first) first.focus();
+      else dialog.focus();
+    };
+    requestAnimationFrame(focusInitial);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;
@@ -141,7 +151,7 @@ export default function Modal({
   const backdropZIndex = isStackedBackground ? zIndex - 2 : zIndex;
   const dialogZIndex = isStackedBackground ? zIndex - 1 : zIndex + 1;
 
-  const handleBackdropClick = closeOnBackdropClick && showCloseButton ? handleClose : undefined;
+  const handleBackdropClick = closeOnBackdropClick ? handleClose : undefined;
 
   const modalContent = (
     <div className="modal-root">

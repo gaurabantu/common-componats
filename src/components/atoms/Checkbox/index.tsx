@@ -1,11 +1,18 @@
-import React from 'react';
-import { CheckboxProps } from './Checkbox.types';
+import React from "react";
+import { CheckboxProps } from "./Checkbox.types";
 import {
   defaultCheckboxColorClass,
   defaultLabelColorClass,
   defaultCheckboxInputLabelSpacing,
-} from './Checkbox.config';
-import { cls } from './Checkbox.utils';
+} from "./Checkbox.config";
+import { cls } from "./Checkbox.utils";
+import "../ucs-choice-controls.css";
+
+const CheckboxGlyph = () => (
+  <svg className="ucs-cc-checkbox-check" aria-hidden viewBox="0 0 12 12">
+    <path className="ucs-cc-checkbox-checkpath" d="M2.75 6.05 L5.15 9.05 L9.95 3.25" />
+  </svg>
+);
 
 const Checkbox = React.memo<CheckboxProps>(function Checkbox({
   label,
@@ -17,7 +24,7 @@ const Checkbox = React.memo<CheckboxProps>(function Checkbox({
   checkboxColorClass = defaultCheckboxColorClass,
   labelColorClass = defaultLabelColorClass,
   inputLabelSpacingClass = defaultCheckboxInputLabelSpacing,
-  className = '',
+  className = "",
   shape = "default",
   rounded = "3",
   withShadow = false,
@@ -33,7 +40,6 @@ const Checkbox = React.memo<CheckboxProps>(function Checkbox({
     bgSurface: "var(--color-bg-surface, #FFFFFF)",
     borderDefault: "var(--color-border-default, #999999)",
     accentLavender: "var(--color-accent-lavender-10, #EEE7FF)",
-    focusRing: "var(--button-primary-focus-ring, #3B82F6)",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))",
   } as const;
 
@@ -52,25 +58,28 @@ const Checkbox = React.memo<CheckboxProps>(function Checkbox({
     gap: 8,
     width: shape === "box" ? "100%" : "auto",
     padding: shape === "box" ? "12px" : 0,
-    border: shape === "box" ? `1.5px solid ${checked ? colors.brand : colors.borderDefault}` : "none",
+    border:
+      shape === "box"
+        ? `1.5px solid ${checked ? colors.brand : colors.borderDefault}`
+        : "none",
     borderRadius: shape === "box" ? roundedStyle : undefined,
-    backgroundColor: shape === "box"
-      ? checked ? colors.accentLavender : colors.bgSurface
-      : "transparent",
+    backgroundColor:
+      shape === "box"
+        ? checked
+          ? colors.accentLavender
+          : colors.bgSurface
+        : "transparent",
     boxShadow: shape === "box" && withShadow && !disabled ? colors.shadow : "none",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.6 : 1,
     userSelect: "none",
     pointerEvents: disabled ? "none" : "auto",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: 18,
-    height: 18,
-    margin: "2px 0 0 0",
-    flexShrink: 0,
-    accentColor: colors.brand,
-    cursor: disabled ? "not-allowed" : "pointer",
+    ...(shape === "box"
+      ? {
+          transition:
+            "border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.2s ease",
+        }
+      : {}),
   };
 
   const labelStyle: React.CSSProperties = {
@@ -82,7 +91,7 @@ const Checkbox = React.memo<CheckboxProps>(function Checkbox({
   return (
     <label
       htmlFor={checkboxId}
-      className={cls(className)}
+      className={cls("ucs-cc-checkbox-root", className)}
       style={wrapperStyle}
     >
       <input
@@ -101,9 +110,18 @@ const Checkbox = React.memo<CheckboxProps>(function Checkbox({
               ? ariaLabelledBy
               : undefined
         }
-        className={cls(shape === "default" ? checkboxColorClass : "", inputLabelSpacingClass)}
-        style={inputStyle}
+        className="peer ucs-cc-checkbox-native"
       />
+      <span
+        aria-hidden="true"
+        className={cls(
+          "ucs-cc-checkbox-face",
+          shape === "default" ? checkboxColorClass : "",
+          inputLabelSpacingClass,
+        )}
+      >
+        <CheckboxGlyph />
+      </span>
       <span
         id={`${checkboxId}-label`}
         className={cls(labelColorClass)}

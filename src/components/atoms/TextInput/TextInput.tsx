@@ -28,6 +28,8 @@ import {
   isEntityName
 } from "../../../utils/uiPanValidators";
 import { Masker } from "../../../utils/uiPanValidators";
+import { roundedToCssCorner } from "./TextInput.utils";
+import { HEADER_SEARCH_LAYOUT } from "./TextInput.config";
 import VisibilityOnIcon from '../../../assets/visibility_on.svg';
 import VisibilityOffIcon from '../../../assets/visibility_off.svg';
 import ErrorIcon from "../../../assets/error.svg";
@@ -76,6 +78,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   onPressEnter,
   status: statusProp,
   variant = "outlined",
+  trailingRail = "default",
   size = "md",
   ...rest
 }, ref) => {
@@ -526,14 +529,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
     setIsFocused(true);
   };
 
-  const roundedStyle =
-    rounded === "0" ? 0
-      : rounded === "1" ? "var(--radius-xs, 2px)"
-        : rounded === "2" ? "var(--radius-sm, 3px)"
-          : rounded === "3" ? "var(--radius-base, 4px)"
-            : rounded === "4" ? "var(--radius-md, 6px)"
-              : rounded === "5" ? "var(--radius-lg, 8px)"
-                : "9999px";
+  const roundedStyle = roundedToCssCorner(rounded);
 
   const getInputType = () => {
     if (showValue) return "text";
@@ -543,7 +539,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
 
   const hasValue = (displayValue?.trim() ?? "") !== "";
   const resolvedStatus = statusProp ?? (error ? "error" : verified ? "success" : undefined);
-  const sizeConfig = {
+  const baseSizeTokens = {
     sm: {
       minHeight: 32,
       horizontalPadding: 10,
@@ -563,7 +559,52 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
       fontSize: "var(--text-body-size)",
     },
   } as const;
-  const currentSize = sizeConfig[size];
+
+  const isHeaderSearchRail = validation === "headerSearch";
+  const isIntegratedRail =
+    trailingRail === "integrated" && isHeaderSearchRail;
+  const hdr = isHeaderSearchRail ? HEADER_SEARCH_LAYOUT[size] : undefined;
+  type FieldRailMetrics = {
+    minHeight: number;
+    horizontalPadding: number;
+    addonPadding: number;
+    fontSize: string;
+    inputLineHeight: number;
+    suffixPadLeft: number;
+    suffixPadRight: number;
+    prefixPadLR: number;
+    clearIconPx: number;
+    clearPadX: number;
+    decorativeTrailingPx: number;
+  };
+  const fieldMetrics: FieldRailMetrics = hdr
+    ? {
+        minHeight: hdr.shellMinHeight,
+        horizontalPadding: hdr.horizontalPadding,
+        addonPadding: baseSizeTokens[size].addonPadding,
+        fontSize: baseSizeTokens[size].fontSize,
+        inputLineHeight: hdr.inputLineHeight,
+        suffixPadLeft: hdr.suffixPadLeft,
+        suffixPadRight: hdr.suffixPadRight,
+        prefixPadLR: hdr.prefixAddonPadding,
+        clearIconPx: hdr.clearIconSize,
+        clearPadX: hdr.clearHitPaddingX,
+        decorativeTrailingPx: hdr.decorativeTrailingSearchIcon,
+      }
+    : {
+        minHeight: baseSizeTokens[size].minHeight,
+        horizontalPadding: baseSizeTokens[size].horizontalPadding,
+        addonPadding: baseSizeTokens[size].addonPadding,
+        fontSize: baseSizeTokens[size].fontSize,
+        inputLineHeight: 1.5,
+        suffixPadLeft: baseSizeTokens[size].addonPadding,
+        suffixPadRight: baseSizeTokens[size].addonPadding,
+        prefixPadLR: baseSizeTokens[size].addonPadding,
+        clearIconPx: 14,
+        clearPadX: baseSizeTokens[size].addonPadding,
+        decorativeTrailingPx: 16,
+      };
+
   const shouldShowToggle = showToggleIcon && type === "password";
   const colors = {
     textPrimary: "var(--color-text-primary, #0D0D0D)",
@@ -589,7 +630,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   const wrapperStyle: React.CSSProperties =
     variant === "filled"
       ? {
-          minHeight: currentSize.minHeight,
+          minHeight: fieldMetrics.minHeight,
           borderRadius: roundedStyle,
           boxSizing: "border-box",
           backgroundColor: colors.bgPage,
@@ -597,7 +638,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
         }
       : variant === "borderless"
         ? {
-            minHeight: currentSize.minHeight,
+            minHeight: fieldMetrics.minHeight,
             borderRadius: roundedStyle,
             boxSizing: "border-box",
             backgroundColor: "transparent",
@@ -605,7 +646,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
           }
         : variant === "underlined"
           ? {
-              minHeight: currentSize.minHeight,
+              minHeight: fieldMetrics.minHeight,
               borderRadius: 0,
               boxSizing: "border-box",
               backgroundColor: "transparent",
@@ -614,7 +655,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
               borderBottomColor: resolvedBorderColor,
             }
           : {
-              minHeight: currentSize.minHeight,
+              minHeight: fieldMetrics.minHeight,
               borderRadius: roundedStyle,
               boxSizing: "border-box",
               backgroundColor: colors.bgSurface,
@@ -626,7 +667,14 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
     suffix !== undefined
       ? suffix
       : type === "search"
-        ? <Icon src={SearchIcon} alt="" width={16} height={16} />
+        ? (
+            <Icon
+              src={SearchIcon}
+              alt=""
+              width={fieldMetrics.decorativeTrailingPx}
+              height={fieldMetrics.decorativeTrailingPx}
+            />
+          )
         : null;
   const hasRightAddons = Boolean(resolvedSuffix || (allowClear && hasValue && !disabled) || shouldShowToggle);
   const charCount = displayValue?.length ?? 0;
@@ -634,19 +682,30 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   // The wrapper owns the visible border/background so variants stay consistent.
   const fieldWrapperStyle: React.CSSProperties = {
     ...wrapperStyle,
+    ...(isHeaderSearchRail ? { maxHeight: fieldMetrics.minHeight } : {}),
     display: "grid",
-    alignItems: "center",
+    alignItems: "stretch",
     overflow: "hidden",
     width: fullWidth ? "100%" : "auto",
     gridTemplateColumns: `${prefix ? "auto " : ""}minmax(0, 1fr)${hasRightAddons ? " auto" : ""}`,
     transition: "border-color 150ms, box-shadow 150ms, background-color 150ms",
+    ...(isIntegratedRail ? { gap: 0 } : {}),
+    ...(isIntegratedRail
+      ? ({
+          "--ucs-textfield-outer-radius":
+            roundedStyle === 0 ? "0" : roundedStyle,
+        } as React.CSSProperties)
+      : {}),
   };
+
+  const suffixPadLeft = isIntegratedRail ? 0 : fieldMetrics.suffixPadLeft;
+  const suffixPadRight = isIntegratedRail ? 0 : fieldMetrics.suffixPadRight;
 
   // Keep the native input visually flat; the field shell renders the border.
   const inputElementStyle: React.CSSProperties = {
-    height: currentSize.minHeight,
-    fontSize: currentSize.fontSize,
-    lineHeight: 1.5,
+    height: fieldMetrics.minHeight,
+    fontSize: fieldMetrics.fontSize,
+    lineHeight: fieldMetrics.inputLineHeight,
     boxSizing: "border-box",
     display: "block",
     width: "100%",
@@ -663,8 +722,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
     caretColor: colors.textPrimary,
     paddingTop: 0,
     paddingBottom: 0,
-    paddingLeft: prefix ? 0 : currentSize.horizontalPadding,
-    paddingRight: hasRightAddons ? 0 : currentSize.horizontalPadding,
+    paddingLeft: prefix ? 0 : fieldMetrics.horizontalPadding,
+    paddingRight: hasRightAddons ? 0 : fieldMetrics.horizontalPadding,
   };
 
   return (
@@ -688,7 +747,10 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
         className={[
           disabled ? "opacity-50 cursor-not-allowed" : "",
           borderColorClass,
-        ].join(" ")}
+          isIntegratedRail ? "ucs-text-input-field--integrated-rail" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
         style={fieldWrapperStyle}
       >
         {/* PREFIX */}
@@ -701,8 +763,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
               alignSelf: "stretch",
               flexShrink: 0,
               color: colors.textSecondary,
-              paddingLeft: currentSize.addonPadding,
-              paddingRight: currentSize.addonPadding,
+              paddingLeft: fieldMetrics.prefixPadLR,
+              paddingRight: fieldMetrics.prefixPadLR,
             }}
           >
             {prefix}
@@ -729,23 +791,30 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
           aria-invalid={resolvedStatus === "error"}
           aria-required={required}
           placeholder={placeholder}
-          className="disabled:cursor-not-allowed"
+          className={[
+            "disabled:cursor-not-allowed",
+            getInputType() === "search" ? "ucs-text-input--search" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
           style={inputElementStyle}
           {...rest}
         />
   
-        {/* SUFFIX / CLEAR / TOGGLE – grouped so they always stay inside the field */}
+        {/* SUFFIX / CLEAR / TOGGLE — order: integrated rail puts clear immediately before trailing suffix (Material-style search bar). */}
         {hasRightAddons && (
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems: isIntegratedRail ? "stretch" : "center",
               alignSelf: "stretch",
               flexShrink: 0,
               height: "100%",
+              ...(isIntegratedRail ? { minHeight: fieldMetrics.minHeight } : {}),
             }}
           >
-            {resolvedSuffix && (
+            {(() => {
+              const suffixJsx = resolvedSuffix ? (
               <div
                 style={{
                   display: "flex",
@@ -754,15 +823,16 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
                   alignSelf: "stretch",
                   flexShrink: 0,
                   color: colors.textSecondary,
-                  paddingLeft: currentSize.addonPadding,
-                  paddingRight: currentSize.addonPadding,
+                  paddingLeft: suffixPadLeft,
+                  paddingRight: suffixPadRight,
                 }}
               >
                 {resolvedSuffix}
               </div>
-            )}
+              ) : null;
 
-            {allowClear && hasValue && !disabled && (
+              const clearJsx =
+                allowClear && hasValue && !disabled ? (
               <button
                 type="button"
                 onClick={handleClear}
@@ -773,9 +843,9 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
                   alignItems: "center",
                   justifyContent: "center",
                   height: "100%",
-                  minWidth: currentSize.minHeight,
-                  paddingLeft: currentSize.addonPadding,
-                  paddingRight: currentSize.addonPadding,
+                  minWidth: isHeaderSearchRail ? (isIntegratedRail ? 28 : 26) : fieldMetrics.minHeight,
+                  paddingLeft: fieldMetrics.clearPadX,
+                  paddingRight: fieldMetrics.clearPadX,
                   boxSizing: "border-box",
                   cursor: "pointer",
                   color: "inherit",
@@ -783,11 +853,11 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
                 }}
                 aria-label="Clear"
               >
-                <Icon src={CloseIcon} alt="" height={14} width={14} aria-hidden />
+                <Icon src={CloseIcon} alt="" height={fieldMetrics.clearIconPx} width={fieldMetrics.clearIconPx} aria-hidden />
               </button>
-            )}
+                ) : null;
 
-            {shouldShowToggle && (
+              const toggleJsx = shouldShowToggle ? (
               <button
                 type="button"
                 onClick={handleToggleVisibility}
@@ -798,9 +868,9 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
                   alignItems: "center",
                   justifyContent: "center",
                   height: "100%",
-                  minWidth: currentSize.minHeight,
-                  paddingLeft: currentSize.addonPadding,
-                  paddingRight: currentSize.addonPadding,
+                  minWidth: fieldMetrics.minHeight,
+                  paddingLeft: fieldMetrics.addonPadding,
+                  paddingRight: fieldMetrics.addonPadding,
                   boxSizing: "border-box",
                   cursor: "pointer",
                   color: "inherit",
@@ -817,7 +887,25 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
                   width={toggleIconSize}
                 />
               </button>
-            )}
+              ) : null;
+
+              if (isIntegratedRail) {
+                return (
+                  <>
+                    {clearJsx}
+                    {suffixJsx}
+                    {toggleJsx}
+                  </>
+                );
+              }
+              return (
+                <>
+                  {suffixJsx}
+                  {clearJsx}
+                  {toggleJsx}
+                </>
+              );
+            })()}
           </div>
         )}
       </div>

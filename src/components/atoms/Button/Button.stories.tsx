@@ -416,27 +416,34 @@ export const WithIcon: Story = {
 };
 
 export const IconOnly: Story = {
+  /** Do not inherit meta `children: "Button"` — icon-only means no label node. */
   args: {
     variant: "primary",
     size: "md",
     icon: CloseIcon,
     ariaLabel: "Close",
+    children: "",
   },
-  render: (args) => (
-    <div className="sb-page">
-      <h3 className="sb-section-title">Icon only</h3>
-      <p className="sb-section-subtitle">Square button sizing for icons.</p>
-      <div className="sb-card">
-        <div className="sb-card-header">
-          <p className="sb-card-title">Icon-only sizes</p>
-          <p className="sb-card-hint">sm / md / lg</p>
-        </div>
-        <div className="sb-inline">
-          <Button {...args} size="sm" ariaLabel="Close small" />
-          <Button {...args} size="md" ariaLabel="Close medium" />
-          <Button {...args} size="lg" ariaLabel="Close large" />
+  render: (args) => {
+    const { children: _noLabel, ...props } = args;
+    return (
+      <div className="sb-page">
+        <h3 className="sb-section-title">Icon only</h3>
+        <p className="sb-section-subtitle">
+          Square touch targets (§20). No visible label — use <code>ariaLabel</code> for accessibility.
+        </p>
+        <div className="sb-card">
+          <div className="sb-card-header">
+            <p className="sb-card-title">Icon-only sizes</p>
+            <p className="sb-card-hint">sm / md / lg</p>
+          </div>
+          <div className="sb-inline">
+            <Button {...props} size="sm" ariaLabel="Close (small)" />
+            <Button {...props} size="md" ariaLabel="Close (medium)" />
+            <Button {...props} size="lg" ariaLabel="Close (large)" />
+          </div>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };

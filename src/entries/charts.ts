@@ -19,4 +19,7 @@ export type {
   ChartTheme,
   ChartTooltipItem,
   ChartTooltipProps,
+  ChartAnimationConfig,
+  ChartAnimationOption,
+  ChartEasingPreset,
 } from "../components/charts";

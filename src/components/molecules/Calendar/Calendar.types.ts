@@ -60,7 +60,7 @@ export interface CalendarTheme {
   boxShadow?: string;
 }
 
-export type CalendarCaptionLayout = "label" | "dropdown";
+export type CalendarCaptionLayout = "label" | "dropdown" | "menus";
 
 export interface CalendarProps {
   /**
@@ -73,8 +73,8 @@ export interface CalendarProps {
    */
   hideNavigation?: boolean;
   /**
-   * Month/year presentation: centered label with chevrons (shadcn-like) or dropdown selects.
-   * @default "dropdown"
+   * Month/year header: `"label"` (title only), `"dropdown"` (native selects), `"menus"` (button + anchored lists; default — no bordered native selects).
+   * @default "menus"
    */
   captionLayout?: CalendarCaptionLayout;
   /** Selected date (controlled) */

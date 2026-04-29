@@ -44,11 +44,13 @@ export const MarketStandard: Story = {
   args: {
     placeholder: "Search markets...",
     fullWidth: true,
+    showClearButton: false,
   },
   parameters: {
     docs: {
       description: {
-        story: "Market standard: left icon only, no right-side search or clear. Use showClearButton/showSearchButton to opt in.",
+        story:
+          "Minimal variant: prefix icon, no clear (`showClearButton={false}`). By default, InputSearch shows a clear control when there is text.",
       },
     },
   },
@@ -75,7 +77,7 @@ export const SearchAction: Story = {
               color: "var(--color-text-secondary, #757575)",
             }}
           >
-            {searched ? `Search: ${searched}` : "Type text and press Enter or click Search"}
+            {searched ? `Search: ${searched}` : "Clear is off by default beside the action; pass showClearButton to enable it. Press Enter or tap the trailing button."}
           </div>
         </div>
       );
@@ -88,15 +90,41 @@ export const SearchAction: Story = {
     placeholder: "Search here...",
     fullWidth: true,
     showSearchButton: true,
+    searchButtonDisplay: "icon",
   },
 };
 
+/** Text **`Button`** on the right (`searchButtonDisplay="text"`). */
+export const SearchActionText: Story = {
+  render: (args) => {
+    const Demo = () => {
+      const [value, setValue] = useState("");
+      const [searched, setSearched] = useState("");
+      return (
+        <div style={{ width: "100%", maxWidth: 520 }}>
+          <InputSearch {...args} value={value} onChange={setValue} onSearch={setSearched} />
+          <p style={{ marginTop: 12, fontSize: 12, color: "var(--color-text-secondary)" }}>Sent: {searched || "(none)"}</p>
+        </div>
+      );
+    };
+    return <Demo />;
+  },
+  args: {
+    leftIcon: SearchIcon,
+    placeholder: "Keywords…",
+    fullWidth: true,
+    showSearchButton: true,
+    searchButtonDisplay: "text",
+    searchButtonLabel: "Apply",
+  },
+};
+
+/** Default behavior: clear appears when the field has text. */
 export const WithClearButton: Story = {
   render: (args) => <Controlled {...args} />,
   args: {
-    placeholder: "Search with clear...",
+    placeholder: "Type to see clear...",
     fullWidth: true,
-    showClearButton: true,
   },
 };
 

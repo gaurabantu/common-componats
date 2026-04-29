@@ -31,7 +31,8 @@ export interface PopoverContentProps extends HTMLAttributes<HTMLDivElement> {
   role?: "dialog" | "region" | "menu" | "none";
   /**
    * Show a small pointer toward the trigger so the panel reads as anchored to the button/icon.
-   * Default is off (plain box).
+   * @default true — plain box: pass `showPointer={false}`.
+   * `DropdownMenuContent` defaults to `false`.
    */
   showPointer?: boolean;
 }
@@ -43,4 +44,6 @@ export interface DropdownMenuItemProps extends ButtonHTMLAttributes<HTMLButtonEl
   /** Destructive action styling */
   variant?: "default" | "danger";
   disabled?: boolean;
+  /** Press ripple; off when disabled. @default true */
+  ripple?: boolean;
 }

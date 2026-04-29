@@ -57,8 +57,39 @@ export const iconOnlySizeClasses: Record<ButtonSize, string> = {
 
 export const radiusClass = "btn-rounded-md";
 
+/**
+ * Icon beside label — smaller than standalone UI icons (cap-height vs font-size).
+ * Icon-only tiles use `defaultIconOnlySizeBySize` instead.
+ */
+export const defaultIconWithLabelSizeBySize: Record<
+  ButtonSize,
+  { width: number; height: number }
+> = {
+  xxs: { width: 10, height: 10 },
+  xs: { width: 12, height: 12 },
+  sm: { width: 13, height: 13 },
+  md: { width: 14, height: 14 },
+  lg: { width: 16, height: 16 },
+};
+
+/** Icon-only: slightly larger glyphs inside square hit targets (better balance vs text+icon). */
+export const defaultIconOnlySizeBySize: Record<
+  ButtonSize,
+  { width: number; height: number }
+> = {
+  xxs: { width: 12, height: 12 },
+  xs: { width: 14, height: 14 },
+  sm: { width: 18, height: 18 },
+  md: { width: 20, height: 20 },
+  lg: { width: 24, height: 24 },
+};
+
+/** @deprecated Use `defaultIconWithLabelSizeBySize` — same map. */
+export const defaultIconSizeBySize = defaultIconWithLabelSizeBySize;
+
+/** Back-compat default — `lg` with label (16px). */
 export const defaultIconConfig = {
-  width: 20,
-  height: 20,
+  width: defaultIconWithLabelSizeBySize.lg.width,
+  height: defaultIconWithLabelSizeBySize.lg.height,
   color: "currentColor",
 };

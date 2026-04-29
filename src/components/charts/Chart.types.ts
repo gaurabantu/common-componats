@@ -23,6 +23,26 @@ export interface ChartTooltipItem {
   color: string;
 }
 
+/** Easing presets for chart entrance (CSS-like names; implemented in `useChartAnimation.ts`). */
+export type ChartEasingPreset = "linear" | "ease-in" | "ease-out" | "ease-in-out" | "default";
+
+/**
+ * Optional entrance animation (line stroke draw, area fill fade, bar grow, pie scale).
+ * Respects `prefers-reduced-motion` in the browser.
+ */
+export interface ChartAnimationConfig {
+  /** @default true */
+  enabled?: boolean;
+  /** Duration in milliseconds @default ~750 line/area/pie, ~600 bar */
+  durationMs?: number;
+  easing?: ChartEasingPreset;
+  /** Bar chart: grow bars in sequence (left to right) */
+  barStagger?: boolean;
+}
+
+/** `true` = default animation; `false` = off; object = fine-tune */
+export type ChartAnimationOption = boolean | ChartAnimationConfig;
+
 /** Shared chart layout props */
 export interface ChartLayoutProps {
   width?: number | string;
@@ -50,6 +70,12 @@ export interface ChartLayoutProps {
    * @default true
    */
   showCrosshair?: boolean;
+  /**
+   * Entrance animation: stroke draw (line / area outline), fill fade (area), bar grow, pie donut scale-out.
+   * `true` = defaults; `false` = static; passes design tokens timings via `{ durationMs, easing }`.
+   * Honors `prefers-reduced-motion`.
+   */
+  chartAnimation?: ChartAnimationOption;
   className?: string;
   style?: React.CSSProperties;
 }

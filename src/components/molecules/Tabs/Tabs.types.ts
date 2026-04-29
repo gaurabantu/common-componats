@@ -43,8 +43,10 @@ export type TabsActivationMode = "automatic" | "manual";
  * - `none` — no animation
  * - `fade` — opacity only
  * - `fade-slide` — opacity + short vertical motion
+ * - `scale` — opacity + subtle scale
+ * - `slide-horizontal` — opacity + slight horizontal motion (entering from the side)
  */
-export type TabsContentAnimation = "none" | "fade" | "fade-slide";
+export type TabsContentAnimation = "none" | "fade" | "fade-slide" | "scale" | "slide-horizontal";
 
 /** Context value exposed for advanced composition (mirrors common tabs APIs). */
 export interface TabsContextValue {
@@ -78,7 +80,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChang
    */
   activationMode?: TabsActivationMode;
   /**
-   * Animation when a tab panel becomes visible (new panel mount or switch).
+   * Panel enter animation: `fade` | `fade-slide` | `scale` | `slide-horizontal` | `none`.
    * @default "fade"
    */
   contentAnimation?: TabsContentAnimation;

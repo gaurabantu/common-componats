@@ -31,7 +31,7 @@ export interface AlertDialogProps {
   confirmDisabled?: boolean;
   /** Size: sm, md, lg */
   size?: "sm" | "md" | "lg";
-  /** Close on backdrop click */
+  /** Close on backdrop tap/click; defaults to `false` when `destructive` */
   closeOnBackdropClick?: boolean;
   /** Close on Escape */
   closeOnEscape?: boolean;

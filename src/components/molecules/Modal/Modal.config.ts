@@ -1,7 +1,8 @@
 export const defaultModalOptions = {
   size: "md" as const,
   animation: "fade" as const,
-  animationDuration: 225,
+  /** Matches DESIGN_SYSTEM §18 `--duration-normal` (modals/dropdowns) */
+  animationDuration: 300,
   closeAfterTransition: true,
   closeOnBackdropClick: true,
   closeOnEscape: true,

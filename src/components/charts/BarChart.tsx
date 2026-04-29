@@ -4,6 +4,7 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import type { ChartDataPoint, ChartDataSeries, ChartLayoutProps } from "./Chart.types";
 import { CHART_THEME_COLORS } from "./Chart.types";
 import { ChartTooltip } from "./ChartTooltip";
+import { resolveChartAnimation, barProgressForIndex, useChartAnimationProgress } from "./useChartAnimation";
 import { getValueExtent, scaleLinear } from "./utils";
 
 const DEFAULT_COLORS = [
@@ -47,9 +48,22 @@ const BarChartComponent: React.FC<BarChartProps> = ({
   theme = "light",
   tooltipFollowPointer = true,
   tooltipAnimation = true,
+  chartAnimation = true,
   className = "",
   style = {},
 }) => {
+  const animCfg = resolveChartAnimation(chartAnimation, "bar");
+  const animKey = useMemo(
+    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${layout}`,
+    [data.length, series, xAxisKey, layout],
+  );
+  const animProgress = useChartAnimationProgress(
+    animCfg.enabled,
+    animCfg.durationMs,
+    animCfg.easing,
+    animKey
+  );
+
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor ?? themeColors.gridColor;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -155,6 +169,10 @@ const BarChartComponent: React.FC<BarChartProps> = ({
         )}
         {layout === "vertical" &&
           data.map((row, idx) => {
+            const barGrowth = animCfg.barStagger
+              ? barProgressForIndex(animProgress, idx, Math.max(1, data.length), true)
+              : animProgress;
+
             const groupX =
               m.left +
               (idx / Math.max(1, data.length)) * innerW +
@@ -163,15 +181,16 @@ const BarChartComponent: React.FC<BarChartProps> = ({
             return series.map((s, si) => {
               const v = Number(row[s.dataKey]) ?? 0;
               const barH = innerH - yScale(v);
+              const shownH = Math.max(0, barH * barGrowth);
               const x = groupX + si * (barWidth + barGap);
-              const y = m.top + yScale(v);
+              const y = m.top + innerH - shownH;
               return (
                 <g key={`${idx}-${s.dataKey}`}>
                   <rect
                     x={x}
                     y={y}
                     width={barWidth}
-                    height={Math.max(0, barH)}
+                    height={shownH}
                     fill={s.color ?? colors[si % colors.length]}
                     rx={r}
                     ry={r}
@@ -183,12 +202,15 @@ const BarChartComponent: React.FC<BarChartProps> = ({
           })}
         {layout === "horizontal" &&
           data.map((row, idx) => {
+            const barGrowth = animCfg.barStagger
+              ? barProgressForIndex(animProgress, idx, Math.max(1, data.length), true)
+              : animProgress;
+
             const groupY = m.top + ((idx + 0.5) / data.length) * innerH;
-            const maxVal = Math.max(...series.map((s) => Number(row[s.dataKey]) ?? 0));
-            const barLen = (Number(maxVal) / (yMax - yMin || 1)) * innerW;
             return series.map((s, si) => {
               const v = Number(row[s.dataKey]) ?? 0;
               const len = (v / (yMax - yMin || 1)) * innerW;
+              const shownLen = len * barGrowth;
               const x = m.left;
               const y = groupY - (barCount * barWidth) / 2 + si * (barWidth + barGap);
               return (
@@ -196,7 +218,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
                   key={`${idx}-${s.dataKey}`}
                   x={x}
                   y={y}
-                  width={len}
+                  width={shownLen}
                   height={barWidth}
                   fill={s.color ?? colors[si % colors.length]}
                   rx={r}

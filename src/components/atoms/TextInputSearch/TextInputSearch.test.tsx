@@ -13,9 +13,14 @@ describe("TextInputSearch", () => {
     expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
   });
 
-  it("renders Ant-style text search button when showSearchButton", () => {
+  it('renders trailing Button (icon mode) when showSearchButton', () => {
+    render(<TextInputSearch value="" onChange={() => {}} showSearchButton />);
+    expect(screen.getByRole("button", { name: "Search" })).toBeInTheDocument();
+  });
+
+  it('renders labeled text Button when searchButtonDisplay="text"', () => {
     render(
-      <TextInputSearch value="" onChange={() => {}} showSearchButton searchButtonLabel="Go" />
+      <TextInputSearch value="" onChange={() => {}} showSearchButton searchButtonDisplay="text" searchButtonLabel="Go" />
     );
     expect(screen.getByRole("button", { name: "Go" })).toBeInTheDocument();
   });

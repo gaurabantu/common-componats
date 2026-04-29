@@ -59,6 +59,195 @@
   --cell-size: var(--cal-cell-size, 2.25rem);
 }
 
+/* Anchored month/year menus (captionLayout="menus") — avoids native bordered selects */
+.calendar-caption-btn {
+  display: inline-flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1, 8px);
+  padding: var(--space-1, 8px) var(--space-2, 16px);
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--cal-cell-radius, var(--radius-sm, 6px));
+  background: transparent;
+  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  font: inherit;
+  font-size: var(--cal-cell-font, 14px);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast, 200ms) var(--easing-default),
+    color var(--duration-fast, 200ms) var(--easing-default);
+}
+
+.calendar-caption-btn:hover:not(:disabled) {
+  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary, #2563eb) 10%, transparent));
+  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+}
+
+.calendar-caption-btn:focus {
+  outline: none;
+}
+
+.calendar-caption-btn:focus-visible {
+  outline: 2px solid var(--cal-focus-ring, var(--color-focus-ring, #0066cc));
+  outline-offset: 2px;
+}
+
+.calendar-caption-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.calendar-caption-popup {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: var(--space-1, 8px);
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--cal-border, var(--color-border-default, #e5e7eb));
+  background: var(--cal-bg, var(--color-bg-elevated, #ffffff));
+  box-shadow: var(--cal-shadow, var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.1)));
+}
+
+.calendar-caption-popup--month {
+  min-width: min(260px, 100vw - 24px);
+}
+
+.calendar-caption-popup--year {
+  max-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-width: 88px;
+}
+
+.calendar-month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-1, 8px);
+}
+
+.calendar-month-grid__btn {
+  min-height: 44px;
+  padding: var(--space-1, 8px);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 8px);
+  background: transparent;
+  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  font: inherit;
+  font-size: var(--cal-cell-font, 13px);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default),
+    border-color var(--duration-instant, 100ms) var(--easing-default),
+    box-shadow var(--duration-instant, 100ms) var(--easing-default);
+}
+
+.calendar-month-grid__btn:hover:not(.is-selected) {
+  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary, #2563eb) 8%, transparent));
+}
+
+/* Selected: subtle chip (tint + primary text), not a solid filled button — matches common DayPicker / Material-style pickers */
+.calendar-month-grid__btn.is-selected {
+  background: color-mix(
+    in srgb,
+    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 12%,
+    var(--color-bg-elevated, #ffffff)
+  );
+  color: var(--cal-primary, var(--button-primary-default-bg, #2563eb));
+  font-weight: 700;
+  border-color: color-mix(
+    in srgb,
+    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 28%,
+    transparent
+  );
+  box-shadow: none;
+}
+
+.calendar-month-grid__btn.is-selected:hover {
+  background: color-mix(
+    in srgb,
+    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 18%,
+    var(--color-bg-elevated, #ffffff)
+  );
+}
+
+.calendar-month-grid__btn:focus-visible {
+  outline: 2px solid var(--cal-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+.calendar-year-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.calendar-year-list__btn {
+  width: 100%;
+  min-height: 40px;
+  padding: var(--space-1, 8px) var(--space-2, 16px);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 8px);
+  background: transparent;
+  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  font: inherit;
+  font-size: var(--cal-cell-font, 14px);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default),
+    border-color var(--duration-instant, 100ms) var(--easing-default);
+}
+
+.calendar-year-list__btn:hover:not(.is-selected) {
+  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary, #2563eb) 8%, transparent));
+}
+
+.calendar-year-list__btn.is-selected {
+  background: color-mix(
+    in srgb,
+    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 12%,
+    var(--color-bg-elevated, #ffffff)
+  );
+  color: var(--cal-primary, var(--button-primary-default-bg, #2563eb));
+  font-weight: 700;
+  border-color: color-mix(
+    in srgb,
+    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 28%,
+    transparent
+  );
+}
+
+.calendar-year-list__btn.is-selected:hover {
+  background: color-mix(
+    in srgb,
+    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 18%,
+    var(--color-bg-elevated, #ffffff)
+  );
+}
+
+.calendar-year-list__btn:focus-visible {
+  outline: 2px solid var(--cal-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-caption-btn,
+  .calendar-month-grid__btn,
+  .calendar-year-list__btn {
+    transition: none;
+  }
+}
+
 /* shadcn-like: tighter caption when using label layout */
 .calendar-root--caption-label .calendar-caption-label {
   line-height: 1.3;

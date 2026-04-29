@@ -4,7 +4,7 @@ This folder is the **canonical source of truth** for design rules.
 
 | File | Purpose |
 |------|---------|
-| [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) | Full design governance: spacing, hierarchy, cards, modals, accessibility, theme rules |
+| [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) | Full design governance — includes **[§35a](DESIGN_SYSTEM.md#35a-interaction-glossary-feedback-routing-flows-agents)** (B1 glossary, B2 feedback map, B3 retry & modal flows linked to **[§27](DESIGN_SYSTEM.md#27-modal--dialog)**) |
 | [`tokens.md`](./tokens.md) | Quick token import and implementation reference (v2.0.0 theme table, focus model) |
 | [`UX-Governance-Design-System.md`](./UX-Governance-Design-System.md) | Stable link alias → canonical content in `DESIGN_SYSTEM.md` |
 

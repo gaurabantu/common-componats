@@ -320,6 +320,7 @@ Use the library token system as the source of truth. Refer to `README.md` for th
 33. [Navigation Patterns](#33-navigation-patterns)
 34. [Empty States & Loading States](#34-empty-states--loading-states)
 35. [Feedback & Notifications](#35-feedback--notifications)
+35a. [Interaction glossary & feedback routing (agents)](#35a-interaction-glossary-feedback-routing-flows-agents)
 36. [CSS Variables Reference](#36-css-variables-reference)
 37. [Governance Rules Summary](#37-governance-rules-summary)
 38. [Persistent Primary CTA After Hero Exit — Web Only](#38-persistent-primary-cta-after-hero-exit--web-only)
@@ -1651,6 +1652,64 @@ Before outputting any Modal component, the AI must verify:
 - Action button (optional): Ghost style, `#FFFFFF` text
 - Success feedback: always show — never silently succeed
 - Error feedback: always show — include actionable guidance
+
+---
+
+## 35a. Interaction glossary, feedback routing, flows (agents)
+
+> **Purpose:** Shared vocabulary and routing rules for **agents and humans** (FRDs, codegen, design review). Reduces one-off decisions per screen. Use with **§18 Animation & Motion**, **[§27 Modal / Dialog](#27-modal--dialog)**, **[§34 Empty States & Loading States](#34-empty-states--loading-states)**, and **[§35 Feedback & Notifications](#35-feedback--notifications)**.
+
+### B1 — Interaction glossary
+
+| Term | Definition | Notes |
+|------|------------|--------|
+| **Hover** | Pointer resting on a target without activating it. Optional affordance: surface tint, shadow lift, border emphasis. | **Web pointer** only. **Never** the only way to discover an action (touch has no hover). |
+| **Focus** | Target is active for keyboard or assistive tech (`:focus-visible`). | Use **`--color-border-focus` / `--color-focus-ring`** (**§3 Focus**, **§31**). Required on controls, dialogs, composite widgets. |
+| **Press / active** | Pointer or key down while activating (`:active`). Often one step darker than hover. | **§19 Button States**. On **touch**, this is the main transient feedback — use where **hover** does not exist (see **§26 Cards** mobile note). |
+| **Select** | A durable choice: list/table row, tab, radio, checkbox, combobox value. | Distinct from hover; typically **`--color-border-selected`** or component-specific selected styling. |
+| **Expand / collapse** | Shows or hides more content (`Accordion`, expandable **Table** rows, trees). | Motion obeys **§18**; respect **`prefers-reduced-motion`**. |
+| **Dismiss** | Closes an ephemeral layer: **Modal** (Cancel, backdrop if allowed, Escape if allowed), **Toast**, **Popover** / **Dropdown** (outside click / Escape). | **Destructive** flows require an explicit safe exit — see **B3** and **[§27](#27-modal--dialog)**. |
+
+**Mobile and touch (align with §32):**
+
+- **Do not require hover** for core actions; pair with **visible control**, **press/active**, or **selection** state.
+- Touch targets **≥ 44×44px** minimum (**§31**).
+
+### B2 — Feedback map (surface selection)
+
+| Situation | Prefer | Escalate / avoid |
+|-----------|--------|-------------------|
+| **Success — async / off-screen action** | **Toast** success variant (**§35**). | If user must stay on the same form without noise, a subtle **inline** success near the action is acceptable. **Never** silent success (**§35**). |
+| **Success — field-level** | Inline validation / helper (muted success). | Usually **not** toast (avoids stacking next to inputs). |
+| **Error — field validation** | **Inline** + **`--border-thick`** + message (**§25**). | Toast only if the user already navigated away from the field. |
+| **Error — section or page load failed** | **Empty / error state** layout (**§34**) with **Retry** **or** error **Toast** with actionable copy. | Full-screen block only for hard stops (see below). |
+| **Error — must acknowledge** | **AlertDialog** `variant="error"` or blocking **Modal** when flow cannot continue. | Use sparingly; most errors stay **inline + toast**. |
+| **Warning — non-blocking** | Contextual **Toast** warning **or** inline compact banner in the region. | If the user **must** choose → **Modal** / **AlertDialog** `variant="warning"`. |
+| **Confirmation — safe** | **Modal** default or **AlertDialog** (info / success acknowledgement). **[§27](#27-modal--dialog)**. | Single clear primary (**§21** hierarchy). |
+| **Confirmation — destructive / irreversible** | **AlertDialog** with **destructive** pattern — hierarchy via placement, **never** red-filled primary (**§27**, destructive subsection). |
+| **Long-running / processing** | **Skeleton** (**§34**), **button loading**, **determinate/indeterminate progress** where needed. | **Avoid** toast spam for progress ticks; optionally **one** toast on completion/failure via **Toast** variants. |
+
+**Rules of thumb:** **Toast** = transient outcomes the user might not see otherwise (**§35** stack limit). **Inline** = error/success tied to visible UI. **Modal** = interrupt only when consequence or scope requires (**§27** intro).
+
+### B3 — Flow patterns (retry, destructive vs info)
+
+#### Retry flow
+
+1. **When:** Loads fail (network, API, segment error) — **[§34 — Error States](#34-empty-states--loading-states)**.
+2. **Layout:** Mandatory **Ion Mist** empty scaffold: icon (**§34**), **H3**, short explanation (what broke in plain language).
+3. **Primary action:** **Retry** — retriggers fetch with obvious **loading** state (button spinner / skeleton — **§34**, **§19**).
+4. **Guardrails:** Debounce duplicate retries; swap **Retry** for **Sign in** / **Contact support** when retry will not succeed (403, revoked token).
+5. **Toast vs inline:** Prefer **inline / empty Retry** while the user is on that page; use **toast** if failure surfaces after navigation or globally.
+
+#### Destructive vs info modal — cross-reference **[§27](#27-modal--dialog)**
+
+| Scenario | Approach | Details in §27 |
+|----------|----------|----------------|
+| Delete, revoke access, discard unsaved edits, exit without saving | **Destructive** modal semantics | Variant table (**Modal / Destructive**); **Destructive Modal — NO RED BUTTONS**; Cancel left, destructive **Outlined/Ghost** right; backdrop dismiss **off** unless product explicitly overrides (library **`AlertDialog`**: **`destructive`** defaults **`closeOnBackdropClick`** unset → **false**). |
+| Alert, acknowledgement, moderate-risk confirm | **Info** / **`AlertDialog`** non-destructive | **Modal / Info**; Escape and backdrop behaviour per **[§27](#27-modal--dialog)** rules. |
+| Timed toast equivalent | **Semantic toast** rows (**§35**) | Success / warning / error / info accent bars — not interchangeable with destructive **Modal** framing. |
+
+**Agents:** Prefer linking to existing **§27** sections over paraphrasing button colours; **`Modal`** / **`AlertDialog`** in **`UI_COMPONENTS_GUIDE`** mirror these rules.
 
 ---
 

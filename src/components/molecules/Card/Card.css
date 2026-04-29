@@ -120,3 +120,11 @@
 .card-header + .card-footer:not(.card-footer--no-border) {
   padding-top: var(--space-2);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-card-hoverable="true"] {
+    transform: none !important;
+    transition:
+      box-shadow var(--duration-instant, 100ms) var(--easing-default) !important;
+  }
+}

@@ -41,4 +41,9 @@ export interface SelectProps
   rounded?: "0" | "1" | "2" | "3" | "4" | "5" | "pill";
   status?: "error" | "warning" | "success";
   allowPlaceholderSelection?: boolean;
+  /**
+   * When true, chevron rotates on `:focus-within` (native select must not use duplicate background arrows).
+   * @default true
+   */
+  animatedChevron?: boolean;
 }

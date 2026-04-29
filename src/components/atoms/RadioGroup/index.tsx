@@ -1,14 +1,12 @@
-
-import React from 'react';
-import { RadioButtonProps, RadioGroupProps } from './RadioGroup.types';
+import React from "react";
+import { RadioButtonProps, RadioGroupProps } from "./RadioGroup.types";
 import {
   defaultRadioColorClass,
   defaultLabelColorClass,
-} from './RadioGroup.config';
-import { cls } from './RadioGroup.utils';
-import TextView from '../TextView';
-
-
+} from "./RadioGroup.config";
+import { cls } from "./RadioGroup.utils";
+import TextView from "../TextView";
+import "../ucs-choice-controls.css";
 
 const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabIndex?: number }> = ({
   label,
@@ -24,7 +22,7 @@ const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabInd
   tabIndex,
   shape = "default",
   rounded = "3",
-  withShadow = false
+  withShadow = false,
 }) => {
   const isBox = shape === "box";
   const id = `${name}-${value}`;
@@ -54,25 +52,27 @@ const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabInd
     width: isBox ? "100%" : undefined,
     minWidth: isBox ? "160px" : undefined,
     padding: isBox ? "12px" : 0,
-    border: isBox ? `1.5px solid ${checked ? colors.brand : colors.borderDefault}` : "none",
+    border:
+      isBox
+        ? `1.5px solid ${checked ? colors.brand : colors.borderDefault}`
+        : "none",
     borderRadius: isBox ? roundedStyle : undefined,
     backgroundColor: isBox
-      ? checked ? colors.accentLavender : colors.bgSurface
+      ? checked
+        ? colors.accentLavender
+        : colors.bgSurface
       : "transparent",
     boxShadow: isBox && withShadow && !disabled ? colors.shadow : "none",
     cursor: disabled ? "not-allowed" : "pointer",
     userSelect: "none",
     opacity: disabled ? 0.6 : 1,
     pointerEvents: disabled ? "none" : "auto",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    flexShrink: 0,
-    width: 16,
-    height: 16,
-    margin: "2px 0 0 0",
-    accentColor: colors.brand,
-    cursor: disabled ? "not-allowed" : "pointer",
+    ...(isBox
+      ? {
+          transition:
+            "border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.2s ease",
+        }
+      : {}),
   };
 
   const labelStyle: React.CSSProperties = {
@@ -85,12 +85,11 @@ const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabInd
   return (
     <label
       htmlFor={id}
-      className={cls(itemMarginClass)}
+      className={cls("ucs-cc-radio-root", itemMarginClass)}
       style={wrapperStyle}
     >
       <input
         id={id}
-        className={cls(radioColorClass)}
         type="radio"
         name={name}
         value={value}
@@ -98,8 +97,14 @@ const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabInd
         disabled={disabled}
         onChange={onChange}
         tabIndex={tabIndex}
-        style={inputStyle}
+        className="peer ucs-cc-radio-native"
       />
+      <span
+        aria-hidden="true"
+        className={cls("ucs-cc-radio-face", radioColorClass)}
+      >
+        <span className="ucs-cc-radio-dot" />
+      </span>
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
         <span
@@ -126,7 +131,6 @@ const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabInd
   );
 };
 
-
 const RadioGroup: React.FC<RadioGroupProps> = ({
   options,
   name,
@@ -138,7 +142,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   gap = "12px",
   radioColorClass,
   labelColorClass,
-  ariaLabelledBy
+  ariaLabelledBy,
 }) => {
   const labelledById = ariaLabelledBy ?? `${name}-label`;
   const fixedGridStyle =
@@ -146,7 +150,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       ? {
         display: "grid",
         gap,
-        gridTemplateColumns: `repeat(${columns}, minmax(${minWidth}, 1fr))`
+        gridTemplateColumns: `repeat(${columns}, minmax(${minWidth}, 1fr))`,
       }
       : {};
 
@@ -155,7 +159,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       ? {
         display: "grid",
         gap,
-        gridTemplateColumns: `repeat(auto-fit, minmax(${minWidth}, 1fr))`
+        gridTemplateColumns: `repeat(auto-fit, minmax(${minWidth}, 1fr))`,
       }
       : {};
 
@@ -165,12 +169,12 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     alignItems: layout === "horizontal" ? "flex-start" : undefined,
     gap: layout === "horizontal" ? gap : undefined,
     ...fixedGridStyle,
-    ...autoGridStyle
+    ...autoGridStyle,
   };
   const itemMarginClass = "";
 
-  const hasCheckedValue = options.some(opt => opt.value === selectedValue);
-  const firstEnabledIndex = options.findIndex(opt => !opt.disabled);
+  const hasCheckedValue = options.some((opt) => opt.value === selectedValue);
+  const firstEnabledIndex = options.findIndex((opt) => !opt.disabled);
 
   return (
     <fieldset
@@ -215,6 +219,5 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     </fieldset>
   );
 };
-
 
 export default RadioGroup;

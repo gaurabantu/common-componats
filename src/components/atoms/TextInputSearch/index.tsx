@@ -1,16 +1,30 @@
 import React from "react";
 import Icon, { type IconSource } from "../Icon";
 import TextInput from "../TextInput/TextInput";
+import Button from "../Button";
 import SearchIcon from "../../../assets/search.svg";
+import type { ButtonProps } from "../Button/Button.types";
+import { HEADER_SEARCH_LAYOUT } from "../TextInput/TextInput.config";
+import { roundedToCssCorner } from "../TextInput/TextInput.utils";
+import { railButtonSize } from "./TextInputSearch.utils";
+import "./TextInputSearch.css";
 
-/** Market-standard search input: left icon only by default. No right-side search/clear unless opted in. */
+/** Right-side action (`showSearchButton`) — icon-filled vs text label. */
+export type SearchButtonDisplay = "icon" | "text";
+
+/** Passed to trailing `Button` (always rendered as `<button type="button">`, not `<a>`). */
+export type SearchActionButtonProps = Omit<
+  Partial<Extract<ButtonProps, { href?: undefined }>>,
+  "onClick" | "disabled" | "loading" | "href" | "type"
+>;
+
+/** Search field with optional trailing action powered by `Button` (colors, variants, icon/text). */
 export interface TextInputSearchProps {
   id?: string;
-  /** Left icon (default: search magnifier). Set to null to hide. */
+  /** Left icon (default: magnifier). Set to `null` to hide. */
   leftIcon?: IconSource | null;
   leftIconHeight?: number;
   leftIconWidth?: number;
-  /** Icon color. Default: var(--color-text-primary) for visibility in light/dark themes. */
   leftIconColor?: string;
   placeholder?: string;
   value?: string;
@@ -25,24 +39,48 @@ export interface TextInputSearchProps {
   containerClassName?: string;
   containerStyle?: React.CSSProperties;
   ariaLabel?: string;
-  /** Show clear (X) button when value exists. Default: false (market standard). Alias: Ant Design `allowClear`. */
-  showClearButton?: boolean;
   /**
-   * Show Ant-style enter button on the right (text label, not a second search icon).
-   * Default: false (prefix icon + Enter only, like common MUI patterns).
+   * Clear control when text exists.
+   * When omitted with `showSearchButton`, defaults to `false`. Pass `true` to show both clear and action.
    */
+  showClearButton?: boolean;
+  /** Show `Button` action on the right (`onSearch` / Enter). */
   showSearchButton?: boolean;
-  /** Label for the optional right search button. Default: "Search". */
+  /**
+   * Action content: `icon` — compact icon-only; `text` — label from `searchButtonLabel`.
+   * @default "icon"
+   */
+  searchButtonDisplay?: SearchButtonDisplay;
+  searchButtonIcon?: IconSource;
+  searchButtonIconWidth?: number;
+  searchButtonIconHeight?: number;
+  searchButtonAriaLabel?: string;
+  /** @default "Search" */
   searchButtonLabel?: string;
-  /** Custom right action (overrides showSearchButton when provided). */
+  searchActionButtonProps?: SearchActionButtonProps;
+  /** Custom right slot (overrides `showSearchButton`). */
   suffix?: React.ReactNode;
+  /**
+   * Overrides join between field and trailing action. Omit to use **`integrated`** when the built-in
+   * search button is shown (single Material-style bar).
+   */
+  trailingRail?: "default" | "integrated";
 }
+
+function railKey(inputSize: string): keyof typeof HEADER_SEARCH_LAYOUT {
+  if (inputSize === "lg") return "lg";
+  if (inputSize === "md") return "md";
+  return "sm";
+}
+
+/** Corner token for the search shell — trailing action right edge uses the same value (see `roundedToCssCorner`). */
+const SEARCH_SHELL_ROUNDED = "3" as const;
 
 const TextInputSearch: React.FC<TextInputSearchProps> = ({
   id = "search",
   leftIcon = SearchIcon,
-  leftIconHeight = 18,
-  leftIconWidth = 18,
+  leftIconHeight,
+  leftIconWidth,
   leftIconColor = "var(--color-text-primary)",
   placeholder = "Search...",
   value = "",
@@ -56,54 +94,147 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
   containerClassName = "text-input-search-wrapper",
   containerStyle = {},
   ariaLabel = "Search input",
-  showClearButton = false,
+  showClearButton,
   showSearchButton = false,
+  searchButtonDisplay = "icon",
+  searchButtonIcon,
+  searchButtonIconWidth,
+  searchButtonIconHeight,
+  searchButtonAriaLabel,
   searchButtonLabel = "Search",
+  searchActionButtonProps,
   suffix,
+  trailingRail: trailingRailProp,
 }) => {
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
   const resolvedSize = size || "sm";
+  const hdr = HEADER_SEARCH_LAYOUT[railKey(resolvedSize)];
+  /** With a trailing search action, hide clear by default to avoid duplicate right-side chrome; opt in with showClearButton. */
+  const allowClearResolved =
+    showClearButton !== undefined ? showClearButton : !showSearchButton;
+
   const handleSearch = () => {
     if (disabled) return;
     onSearch?.(value);
   };
 
-  const searchEnterButton =
-    resolvedSize === "lg" ? { fontSize: "var(--text-body-size)", paddingX: 12 as const }
-      : resolvedSize === "md" ? { fontSize: "var(--text-body-size)", paddingX: 10 as const }
-        : { fontSize: "var(--text-small-size)", paddingX: 8 as const };
+  const {
+    variant = "primary",
+    size: actionSizeProp,
+    rounded,
+    icon: btnIconPass,
+    iconWidth: btnIconWidthProp,
+    iconHeight: btnIconHeightProp,
+    iconColor: btnIconColorProp,
+    ariaLabel: btnAriaPass,
+    className: actionClassName,
+    children: btnChildren,
+    ripple = true,
+    style: userSearchActionStyles,
+    ...restSearchActionBtn
+  } = searchActionButtonProps ?? {};
 
-  /** Suppress TextInput’s default trailing search icon when we only use the leading icon (Ant/MUI-style). */
+  const mergedRounded = rounded ?? "3";
+  const trailingRailResolved: "default" | "integrated" =
+    trailingRailProp ??
+    (showSearchButton && suffix === undefined ? "integrated" : "default");
+  const useIntegratedRail = trailingRailResolved === "integrated";
+
+  const displayIconSrc =
+    searchButtonDisplay === "icon"
+      ? (btnIconPass ?? searchButtonIcon ?? SearchIcon)
+      : btnIconPass;
+
+  const iconInset = Math.round(hdr.searchActionInsetHeight * 0.48);
+  const iw =
+    btnIconWidthProp
+    ?? searchButtonIconWidth
+    ?? iconInset;
+  const ih = btnIconHeightProp ?? searchButtonIconHeight ?? iw;
+
+  const prefixIconSize =
+    leftIconHeight != null ? leftIconHeight : Math.round(hdr.shellMinHeight * 0.42);
+  const prefixIconWidth = leftIconWidth ?? prefixIconSize;
+
+  const iconOnlyName =
+    searchButtonDisplay === "icon"
+      ? (btnAriaPass ?? searchButtonAriaLabel ?? searchButtonLabel)
+      : undefined;
+
+  const trailingCorner = roundedToCssCorner(SEARCH_SHELL_ROUNDED);
+
+  const mergedActionStyle: React.CSSProperties = useIntegratedRail
+    ? {
+        ...(userSearchActionStyles && typeof userSearchActionStyles === "object"
+          ? userSearchActionStyles
+          : {}),
+        alignSelf: "stretch",
+        height: "100%",
+        minHeight: hdr.shellMinHeight,
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
+        borderTopRightRadius: trailingCorner,
+        borderBottomRightRadius: trailingCorner,
+        boxSizing: "border-box",
+        ...(searchButtonDisplay === "icon"
+          ? {
+              paddingLeft: hdr.integratedIconPadX,
+              paddingRight: hdr.integratedIconPadX,
+            }
+          : {}),
+      }
+    : {
+        ...(userSearchActionStyles && typeof userSearchActionStyles === "object"
+          ? userSearchActionStyles
+          : {}),
+        height: hdr.searchActionInsetHeight,
+        minHeight: 0,
+        alignSelf: "center",
+        boxSizing: "border-box",
+      };
+  if (searchButtonDisplay === "icon") {
+    mergedActionStyle.minWidth = 0;
+  }
+
   const suffixForInput =
-    suffix !== undefined
-      ? suffix
-      : showSearchButton
-        ? (
-          <button
-            type="button"
-            onClick={handleSearch}
-            disabled={disabled}
-            className="shrink-0 font-medium text-[var(--color-brand-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--button-primary-focus-ring,var(--color-brand-primary))]"
-            style={{
-              all: "unset",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              alignSelf: "stretch",
-              boxSizing: "border-box",
-              cursor: disabled ? "not-allowed" : "pointer",
-              fontSize: searchEnterButton.fontSize,
-              lineHeight: 1.2,
-              paddingLeft: searchEnterButton.paddingX,
-              paddingRight: searchEnterButton.paddingX,
-              whiteSpace: "nowrap",
-            }}
-          >
-            {searchButtonLabel}
-          </button>
-        )
-        : null;
+    suffix !== undefined ? (
+      suffix
+    ) : showSearchButton ? (
+      <span
+        className={
+          useIntegratedRail
+            ? "ucs-search-input__integrated-action-slot inline-flex h-full min-h-0 shrink-0 items-stretch self-stretch"
+            : "ucs-search-input__integrated-action-slot inline-flex shrink-0 items-center"
+        }
+      >
+        <Button
+          {...restSearchActionBtn}
+          type="button"
+          variant={variant}
+          size={actionSizeProp ?? railButtonSize(resolvedSize)}
+          rounded={useIntegratedRail ? "0" : mergedRounded}
+          disabled={disabled}
+          ripple={ripple}
+          onClick={handleSearch}
+          style={mergedActionStyle}
+          className={["ucs-search-input__inline-action shrink-0", actionClassName]
+            .filter(Boolean)
+            .join(" ")}
+          icon={(searchButtonDisplay === "icon" || btnIconPass) && displayIconSrc ? displayIconSrc : undefined}
+          iconWidth={(searchButtonDisplay === "icon" || btnIconPass) && displayIconSrc ? iw : undefined}
+          iconHeight={(searchButtonDisplay === "icon" || btnIconPass) && displayIconSrc ? ih : undefined}
+          iconColor={btnIconColorProp}
+          ariaLabel={
+            searchButtonDisplay === "icon"
+              ? iconOnlyName
+              : (btnAriaPass ?? searchButtonAriaLabel ?? undefined)
+          }
+        >
+          {searchButtonDisplay === "text" ? btnChildren ?? searchButtonLabel : undefined}
+        </Button>
+      </span>
+    ) : null;
 
   return (
     <div
@@ -131,14 +262,14 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
         fullWidth={fullWidth}
         disabled={disabled}
         variant="outlined"
-        rounded="3"
-        allowClear={showClearButton}
+        rounded={SEARCH_SHELL_ROUNDED}
+        allowClear={allowClearResolved}
         prefix={
           leftIcon ? (
             <Icon
               src={leftIcon}
-              height={leftIconHeight}
-              width={leftIconWidth}
+              height={prefixIconSize}
+              width={prefixIconWidth}
               color={leftIconColor}
               aria-hidden="true"
             />
@@ -150,6 +281,7 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
         aria-invalid={!!errorMessage}
         aria-describedby={errorMessage ? errorId : undefined}
         className={className}
+        trailingRail={trailingRailResolved}
       />
 
       {errorMessage && (

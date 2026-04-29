@@ -6,6 +6,7 @@ export interface CheckboxProps {
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
+  /** Optional classes on the custom checkbox shell (supports Tailwind `peer-checked:` alongside the visually hidden input marked `peer`). */
   checkboxColorClass?: string;
   labelColorClass?: string;
   inputLabelSpacingClass?: string;

@@ -6,6 +6,7 @@ export interface RadioButtonProps {
   checked?: boolean;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Optional classes on the animated radio ring (`peer` works for Tailwind modifiers). */
   radioColorClass?: string;
   labelColorClass?: string;
   shape?: "default" | "box";

@@ -74,7 +74,7 @@
   width: var(--stepper-progress-pct, 0%);
   max-width: 100%;
   background: var(--color-state-success, #28a745);
-  transition: width 0.25s ease;
+  transition: width var(--duration-normal, 300ms) var(--easing-default);
 }
 
 /* Emphasized: thicker stem + gradient progress */
@@ -164,9 +164,9 @@
   line-height: 1;
   color: var(--color-text-secondary, #757575);
   transition:
-    border-color 0.15s ease,
-    background-color 0.15s ease,
-    color 0.15s ease;
+    border-color var(--duration-instant, 100ms) var(--easing-default),
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default);
 }
 
 .ds-stepper__marker-btn[data-state="complete"] .ds-stepper__marker {
@@ -315,5 +315,15 @@
 
   .ds-stepper:not(.ds-stepper--scroll) .ds-stepper__grid {
     min-width: max(100%, calc((var(--stepper-count, 3) * 2 - 1) * 64px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-stepper__track-line--fill {
+    transition: none;
+  }
+
+  .ds-stepper__marker {
+    transition: none;
   }
 }

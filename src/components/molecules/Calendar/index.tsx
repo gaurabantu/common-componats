@@ -53,10 +53,24 @@ function ChevronRight({ size = 16 }: { size?: number }) {
   );
 }
 
+function ChevronDownSmall({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M5 7.5L10 12.5L15 7.5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const Calendar: React.FC<CalendarProps> = ({
   month: monthProp,
   hideNavigation = false,
-  captionLayout = "dropdown",
+  captionLayout = "menus",
   value,
   onChange,
   defaultValue,
@@ -214,6 +228,37 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const slideDirectionRef = useRef<"prev" | "next">("next");
   const isInitialMountRef = useRef(true);
+  const [captionPick, setCaptionPick] = useState<"month" | "year" | null>(null);
+  const captionMenusRef = useRef<HTMLDivElement>(null);
+
+  const monthShortLabels = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, m) =>
+        new Date(2024, m, 1).toLocaleDateString(undefined, { month: "short" })
+      ),
+    []
+  );
+
+  useEffect(() => {
+    setCaptionPick(null);
+  }, [visibleMonth]);
+
+  useEffect(() => {
+    if (!captionPick) return;
+    const onPointerDown = (e: MouseEvent) => {
+      if (captionMenusRef.current?.contains(e.target as Node)) return;
+      setCaptionPick(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCaptionPick(null);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [captionPick]);
 
   const handlePrevMonth = () => {
     isInitialMountRef.current = false;
@@ -261,7 +306,7 @@ const Calendar: React.FC<CalendarProps> = ({
     background: resolvedBackground,
     boxShadow: theme.boxShadow ?? boxShadow,
     fontFamily: theme.fontFamily,
-    overflow: "hidden",
+    overflow: captionLayout === "menus" ? "visible" : "hidden",
     transition: "box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease",
     transform: hoverable && isHovered ? "translateY(-2px)" : "translateY(0)",
     ...stylesProp?.root,
@@ -355,7 +400,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <div
-      className={`calendar-root calendar-root--variant-${variant} ${captionLayout === "label" ? "calendar-root--caption-label" : ""} ${className}`.trim()}
+      className={`calendar-root calendar-root--variant-${variant} ${captionLayout === "label" ? "calendar-root--caption-label" : ""} ${captionLayout === "menus" ? "calendar-root--caption-menus" : ""} ${className}`.trim()}
       style={containerStyle}
       onMouseEnter={() => hoverable && setIsHovered(true)}
       onMouseLeave={() => hoverable && setIsHovered(false)}
@@ -386,6 +431,104 @@ const Calendar: React.FC<CalendarProps> = ({
             }}
           >
             {captionLabel}
+          </div>
+        ) : captionLayout === "menus" ? (
+          <div
+            ref={captionMenusRef}
+            style={{ display: "flex", gap: 8, flex: 1, minWidth: 0, position: "relative" }}
+          >
+            <div style={{ flex: "1.25 1 0", minWidth: 0, position: "relative" }}>
+              <button
+                type="button"
+                disabled={disabled || readOnly}
+                className="calendar-caption-btn"
+                aria-haspopup="dialog"
+                aria-expanded={captionPick === "month"}
+                aria-label="Choose month"
+                onClick={() => {
+                  if (disabled || readOnly) return;
+                  setCaptionPick((p) => (p === "month" ? null : "month"));
+                }}
+              >
+                <span>{monthShortLabels[visibleMonth.getMonth()]}</span>
+                <ChevronDownSmall />
+              </button>
+              {captionPick === "month" && (
+                <div
+                  className="calendar-caption-popup calendar-caption-popup--month"
+                  role="dialog"
+                  aria-label="Month"
+                >
+                  <div className="calendar-month-grid">
+                    {monthShortLabels.map((lbl, m) => {
+                      const selected = m === visibleMonth.getMonth();
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          className={
+                            selected ? "calendar-month-grid__btn is-selected" : "calendar-month-grid__btn"
+                          }
+                          onClick={() => {
+                            handleMonthChange(m);
+                            setCaptionPick(null);
+                          }}
+                        >
+                          {lbl}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div style={{ flex: "1 1 0", minWidth: 0, position: "relative" }}>
+              <button
+                type="button"
+                disabled={disabled || readOnly}
+                className="calendar-caption-btn"
+                aria-haspopup="dialog"
+                aria-expanded={captionPick === "year"}
+                aria-label="Choose year"
+                onClick={() => {
+                  if (disabled || readOnly) return;
+                  setCaptionPick((p) => (p === "year" ? null : "year"));
+                }}
+              >
+                <span>{visibleMonth.getFullYear()}</span>
+                <ChevronDownSmall />
+              </button>
+              {captionPick === "year" && (
+                <div
+                  className="calendar-caption-popup calendar-caption-popup--year"
+                  role="dialog"
+                  aria-label="Year"
+                >
+                  <div className="calendar-year-list">
+                    {yearOptions.map((opt) => {
+                      const selected = opt.value === visibleMonth.getFullYear();
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          className={
+                            selected ?
+                              "calendar-year-list__btn is-selected"
+                            : "calendar-year-list__btn"
+                          }
+                          onClick={() => {
+                            handleYearChange(opt.value);
+                            setCaptionPick(null);
+                          }}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
         <div style={{ display: "flex", gap: 8, flex: 1, minWidth: 0 }}>

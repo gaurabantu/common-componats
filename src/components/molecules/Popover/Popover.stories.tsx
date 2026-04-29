@@ -83,13 +83,13 @@ export const IconTrigger: Story = {
   ),
 };
 
-/** Optional `showPointer` — caret toward the trigger; default is a plain box (no pointer). */
-export const WithPointer: Story = {
+/** Optional `showPointer={false}` — plain panel without the trigger arrow (popover default is anchored with a caret). */
+export const PlainPopover: Story = {
   render: () => (
     <Popover>
-      <PopoverTrigger>Open with pointer</PopoverTrigger>
-      <PopoverContent showPointer>
-        <p style={{ margin: 0 }}>Panel visually anchored to the trigger via a small arrow.</p>
+      <PopoverTrigger>Open plain panel</PopoverTrigger>
+      <PopoverContent showPointer={false}>
+        <p style={{ margin: 0 }}>Floating card without a caret (use for wide panels or when the arrow would clip).</p>
       </PopoverContent>
     </Popover>
   ),

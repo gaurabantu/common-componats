@@ -22,6 +22,13 @@ describe("Select", () => {
     expect(handleChange).toHaveBeenCalled();
   });
 
+  it("blurs after change when animated chevron is on so the arrow returns to down", async () => {
+    render(<Select options={options} value="" onChange={() => {}} />);
+    const el = screen.getByRole("combobox") as HTMLSelectElement;
+    await userEvent.selectOptions(el, "1");
+    expect(document.activeElement).not.toBe(el);
+  });
+
   it("renders optgroups when groups are provided", () => {
     render(
       <Select

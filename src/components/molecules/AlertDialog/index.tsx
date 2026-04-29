@@ -63,7 +63,7 @@ export default function AlertDialog({
   destructive = false,
   confirmDisabled = false,
   size = "md",
-  closeOnBackdropClick = true,
+  closeOnBackdropClick,
   closeOnEscape = true,
   zIndex = 400,
   confirmButtonVariant,
@@ -75,6 +75,7 @@ export default function AlertDialog({
   cancelButtonBackground,
   cancelButtonBorder,
 }: AlertDialogProps) {
+  const allowBackdropDismiss = closeOnBackdropClick ?? !destructive;
   const sizeMap = { sm: "sm" as const, md: "md" as const, lg: "lg" as const };
 
   const handleConfirm = () => {
@@ -96,7 +97,7 @@ export default function AlertDialog({
       hideFooter={true}
       hideHeader={true}
       showCloseButton={false}
-      closeOnBackdropClick={closeOnBackdropClick}
+      closeOnBackdropClick={allowBackdropDismiss}
       closeOnEscape={closeOnEscape}
       zIndex={zIndex}
       animation="scale"

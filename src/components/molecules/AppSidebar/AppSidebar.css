@@ -24,7 +24,7 @@
   --sidebar-section-gap: 24px;
   --sidebar-pad-x: 16px;
   --sidebar-radius-item: 6px;
-  --sidebar-transition: 200ms ease;
+  --sidebar-transition: var(--duration-fast, 200ms) var(--easing-default);
   --sidebar-icon: 24px;
 
   box-sizing: border-box;
@@ -98,7 +98,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .app-sidebar {
-    --sidebar-transition: 45ms ease;
+    --sidebar-transition: var(--duration-instant, 100ms) linear;
   }
 }
 
@@ -128,7 +128,9 @@
   background: transparent;
   color: var(--sidebar-text-muted);
   cursor: pointer;
-  transition: background-color 80ms ease, color 80ms ease;
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default);
 }
 
 .app-sidebar__collapse:hover {
@@ -279,7 +281,9 @@
   text-align: left;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 80ms ease, font-weight 80ms ease;
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    font-weight var(--duration-instant, 100ms) var(--easing-default);
 }
 
 .app-sidebar__link:hover:not(:disabled),
@@ -462,7 +466,9 @@
   color: var(--sidebar-utility-icon);
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 80ms ease, color 80ms ease;
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default);
 }
 
 .app-sidebar__action svg {
@@ -499,7 +505,7 @@
   color: inherit;
   cursor: pointer;
   text-align: left;
-  transition: background-color 80ms ease;
+  transition: background-color var(--duration-instant, 100ms) var(--easing-default);
 }
 
 .app-sidebar__profile:hover {

@@ -75,6 +75,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     rounded = "4",
     status,
     allowPlaceholderSelection = true,
+    animatedChevron = true,
     ...rest
   } = props;
 
@@ -88,6 +89,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     const selectedOption = findOptionInSelect(selectedValue, options, groups);
     onChange?.(event);
     onValueChange?.(selectedValue, selectedOption);
+    // Native select keeps focus after picking an option, so :focus-within stays true and the
+    // chevron stays rotated; blur restores the default (down) state for the animated chevron.
+    if (animatedChevron !== false) {
+      event.currentTarget.blur();
+    }
   };
 
   const isDisabled = rest.disabled;
@@ -174,12 +180,15 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     fontSize: currentSize.fontSize,
     lineHeight: 1.5,
     cursor: isDisabled ? "not-allowed" : "pointer",
-    backgroundImage:
-      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23757575' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: `right ${currentSize.paddingX}px center`,
     transition: "border-color 150ms, background-color 150ms",
   };
+
+  if (!animatedChevron) {
+    selectStyle.backgroundImage =
+      'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 20 20\' fill=\'none\'%3E%3Cpath d=\'M5 7.5L10 12.5L15 7.5\' stroke=\'%23757575\' stroke-width=\'1.8\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")';
+    selectStyle.backgroundRepeat = "no-repeat";
+    selectStyle.backgroundPosition = `right ${currentSize.paddingX}px center`;
+  }
 
   const helperStyle: React.CSSProperties = {
     marginTop: 8,
@@ -197,16 +206,19 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         </label>
       )}
 
-      <select
-        ref={ref}
-        id={selectId}
-        className={className}
-        style={selectStyle}
-        aria-invalid={!!error || resolvedStatus === "error"}
-        value={value}
-        onChange={handleChange}
-        {...rest}
+      <div
+        className={`ucs-select-shell${animatedChevron !== false ? " ucs-select-shell--chevron-animated" : ""}`}
       >
+        <select
+          ref={ref}
+          id={selectId}
+          className={className}
+          style={selectStyle}
+          aria-invalid={!!error || resolvedStatus === "error"}
+          value={value}
+          onChange={handleChange}
+          {...rest}
+        >
         {placeholder && (
           <option value="" disabled={!allowPlaceholderSelection}>
             {placeholder}
@@ -243,7 +255,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                 </option>
               );
             })}
-      </select>
+        </select>
+      </div>
       {helperMessage && <p style={helperStyle}>{helperMessage}</p>}
     </div>
   );

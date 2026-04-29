@@ -121,10 +121,12 @@ Key props:
 - `onChange`
 - `onSearch`
 - `placeholder`
-- `showClearButton`
-- `showSearchButton`
+- `showClearButton` — when **`showSearchButton`** is on and this is omitted, clear is **`false`** (avoids clearance X beside the action). Set **`showClearButton={true}`** to show both. Otherwise default is **`true`** when there is no search button.
+- `showSearchButton` — trailing **`Button`** wired to **`onSearch`** and Enter
+- **`searchButtonDisplay`** — `"icon"` (default, icon-only) or **`"text"`** (label via **`searchButtonLabel`**)
+- **`searchButtonIcon`**, **`searchButtonLabel`**, **`searchButtonAriaLabel`**, **`searchActionButtonProps`** — forward **`variant`**, **`backgroundColor`**, **`gradient`**, **`icon`**, and other **`Button`** props without replacing the wired **`onClick`**
 - `leftIcon`
-- `suffix`
+- `suffix` (full custom right slot; overrides **`showSearchButton`**)
 
 ### `TextArea`
 
@@ -588,6 +590,7 @@ Shared expectations:
 - token-friendly colors
 - interactive tooltips (pointer-aligned, clamped position) and legend support
 - optional tooltip motion and pointer-follow behavior where exposed on chart props
+- **entrance animation:** `chartAnimation` on each chart — `true` (default), `false` to disable, or `{ durationMs, easing, barStagger? }` (`barStagger` for `BarChart`). **Line/Area:** stroke draw + area fill fade; **Bar:** bars grow from baseline; **Pie:** scale-in from center. Honors `prefers-reduced-motion`.
 - on `LineChart` / `AreaChart`, optional crosshair or active-point emphasis when enabled
 - `ChartTooltip` exported for advanced or custom tooltip composition
 - configurable size and layout

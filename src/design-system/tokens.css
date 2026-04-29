@@ -156,6 +156,22 @@
   --button-height-sm: 36px;
   --button-height-md: 40px;
   --button-height-lg: 44px;
+  /** Horizontal inset per tier — 8px grid (`12` | `16` | `16` | `20` | `24`) paired with `--button-height-*` */
+  --button-padding-x-xxs: 12px;
+  --button-padding-x-xs: 16px;
+  --button-padding-x-sm: 16px;
+  --button-padding-x-md: 20px;
+  --button-padding-x-lg: 24px;
+
+  /** Default icon sizing per tier (`lg` aligns with `--size-icon-ui` 20px) */
+  --button-icon-xxs: 12px;
+  --button-icon-xs: 14px;
+  --button-icon-sm: 16px;
+  --button-icon-md: 18px;
+  --button-icon-lg: 20px;
+
+  /** Icon-only primary tier — slightly larger hit area than `--layout-touch-target-min` */
+  --button-icon-only-lg-hit: 48px;
 
   /* --- v2.0.0 — caption alias (same as small; see tokens.md) --- */
   --text-caption-size: var(--text-small-size);
@@ -620,7 +636,7 @@
     --button-primary-focus-ring: Highlight;
   }
 
-  button.btn-base:focus-visible {
+  :is(button, a).btn-base:focus-visible {
     outline: 2px solid Highlight;
     outline-offset: 2px;
   }
@@ -641,63 +657,63 @@
 }
 
 /* Button: force variant styles to win everywhere (Canvas + Docs) */
-button.btn-primary,
-#storybook-root button.btn-primary,
-.docblock-preview button.btn-primary,
-button.btn-base.btn-primary {
+:is(button, a).btn-primary,
+#storybook-root :is(button, a).btn-primary,
+.docblock-preview :is(button, a).btn-primary,
+:is(button, a).btn-base.btn-primary {
   background-color: var(--button-primary-default-bg) !important;
   color: var(--button-primary-default-text) !important;
   border-color: var(--button-primary-default-bg) !important;
 }
-button.btn-secondary,
-#storybook-root button.btn-secondary,
-.docblock-preview button.btn-secondary,
-button.btn-base.btn-secondary {
+:is(button, a).btn-secondary,
+#storybook-root :is(button, a).btn-secondary,
+.docblock-preview :is(button, a).btn-secondary,
+:is(button, a).btn-base.btn-secondary {
   background-color: var(--button-secondary-bg) !important;
   color: var(--button-secondary-text) !important;
   border-color: var(--button-secondary-bg) !important;
 }
-button.btn-outline-primary,
-#storybook-root button.btn-outline-primary,
-.docblock-preview button.btn-outline-primary {
+:is(button, a).btn-outline-primary,
+#storybook-root :is(button, a).btn-outline-primary,
+.docblock-preview :is(button, a).btn-outline-primary {
   background-color: transparent !important;
   color: var(--button-outline-primary-text) !important;
   border-color: var(--button-outline-primary-border) !important;
   border-width: 1.5px !important;
 }
-button.btn-outline-secondary,
-#storybook-root button.btn-outline-secondary,
-.docblock-preview button.btn-outline-secondary {
+:is(button, a).btn-outline-secondary,
+#storybook-root :is(button, a).btn-outline-secondary,
+.docblock-preview :is(button, a).btn-outline-secondary {
   background-color: transparent !important;
   color: var(--button-outline-secondary-text) !important;
   border-color: var(--button-outline-secondary-border) !important;
   border-width: 1.5px !important;
 }
-button.btn-success,
-#storybook-root button.btn-success,
-.docblock-preview button.btn-success {
+:is(button, a).btn-success,
+#storybook-root :is(button, a).btn-success,
+.docblock-preview :is(button, a).btn-success {
   background-color: var(--button-success-bg) !important;
   color: var(--button-success-text) !important;
   border-color: var(--button-success-bg) !important;
 }
-button.btn-danger,
-#storybook-root button.btn-danger,
-.docblock-preview button.btn-danger {
+:is(button, a).btn-danger,
+#storybook-root :is(button, a).btn-danger,
+.docblock-preview :is(button, a).btn-danger {
   background-color: var(--button-danger-bg) !important;
   color: var(--button-danger-text) !important;
   border-color: var(--button-danger-bg) !important;
 }
-button.btn-warning,
-#storybook-root button.btn-warning,
-.docblock-preview button.btn-warning {
+:is(button, a).btn-warning,
+#storybook-root :is(button, a).btn-warning,
+.docblock-preview :is(button, a).btn-warning {
   background-color: var(--button-warning-bg) !important;
   color: var(--button-warning-text) !important;
   border-color: var(--button-warning-bg) !important;
 }
-button.btn-link,
-#storybook-root button.btn-link,
-.docblock-preview button.btn-link,
-button.btn-base.btn-link {
+:is(button, a).btn-link,
+#storybook-root :is(button, a).btn-link,
+.docblock-preview :is(button, a).btn-link,
+:is(button, a).btn-base.btn-link {
   background-color: transparent !important;
   color: var(--button-link-color) !important;
   border-width: 0 !important;
@@ -706,7 +722,7 @@ button.btn-base.btn-link {
 }
 
 /* Button base (shared) — use button selector so we override Tailwind/base resets */
-button.btn-base {
+:is(button, a).btn-base {
   font-family: var(--font-family);
   font-weight: 500;
   line-height: 1.5;
@@ -714,26 +730,28 @@ button.btn-base {
   border-style: solid;
   border-width: 1.5px;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background-color var(--duration-fast, 200ms) var(--easing-default),
+    border-color var(--duration-fast, 200ms) var(--easing-default),
+    color var(--duration-fast, 200ms) var(--easing-default);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
 }
-button.btn-base:focus-visible {
+:is(button, a).btn-base:focus-visible {
   outline: 2px solid var(--button-primary-focus-ring);
   outline-offset: 2px;
 }
-button.btn-base:disabled {
+:is(button, a).btn-base:is(:disabled, [aria-disabled="true"]) {
   cursor: not-allowed;
   opacity: 1;
 }
 
 /* Gradient button — uses CSS variables so React can set per-instance gradients */
-button.btn-base.btn-gradient,
-a.btn-base.btn-gradient,
-#storybook-root button.btn-base.btn-gradient,
-.docblock-preview button.btn-base.btn-gradient {
+:is(button, a).btn-base.btn-gradient,
+#storybook-root :is(button, a).btn-base.btn-gradient,
+.docblock-preview :is(button, a).btn-base.btn-gradient {
   background-color: transparent !important;
   background-image: var(
     --button-gradient-bg,
@@ -743,20 +761,17 @@ a.btn-base.btn-gradient,
   border-color: transparent !important;
 }
 
-button.btn-base.btn-gradient:hover:not(:disabled),
-a.btn-base.btn-gradient:hover:not([aria-disabled="true"]) {
+:is(button, a).btn-base.btn-gradient:hover:not(:disabled, [aria-disabled="true"]) {
   background-image: var(--button-gradient-hover-bg, var(--button-gradient-bg)) !important;
   border-color: transparent !important;
 }
 
-button.btn-base.btn-gradient:active:not(:disabled),
-a.btn-base.btn-gradient:active:not([aria-disabled="true"]) {
+:is(button, a).btn-base.btn-gradient:active:not(:disabled, [aria-disabled="true"]) {
   background-image: var(--button-gradient-active-bg, var(--button-gradient-hover-bg, var(--button-gradient-bg))) !important;
   border-color: transparent !important;
 }
 
-button.btn-base.btn-gradient:disabled,
-a.btn-base.btn-gradient[aria-disabled="true"] {
+:is(button, a).btn-base.btn-gradient:is(:disabled, [aria-disabled="true"]) {
   background-image: none !important;
   background-color: var(--button-primary-disabled-bg, #9ca3af) !important;
   color: var(--button-primary-disabled-text, #ffffff) !important;
@@ -764,246 +779,270 @@ a.btn-base.btn-gradient[aria-disabled="true"] {
 }
 
 /* Variant: primary (filled / solid) */
-button.btn-primary {
+:is(button, a).btn-primary {
   background-color: var(--button-primary-default-bg);
   color: var(--button-primary-default-text);
   border-color: var(--button-primary-default-bg);
 }
-button.btn-primary:hover:not(:disabled) {
+:is(button, a).btn-primary:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-primary-hover-bg);
   border-color: var(--button-primary-hover-bg);
 }
-button.btn-primary:active:not(:disabled) {
+:is(button, a).btn-primary:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-primary-active-bg);
   border-color: var(--button-primary-active-bg);
 }
-button.btn-primary:disabled {
+:is(button, a).btn-primary:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-primary-disabled-bg) !important;
   color: var(--button-primary-disabled-text) !important;
   border-color: var(--button-primary-disabled-bg) !important;
 }
 
 /* Variant: secondary — filled with secondary color (not outline) */
-button.btn-secondary {
+:is(button, a).btn-secondary {
   background-color: var(--button-secondary-bg);
   color: var(--button-secondary-text);
   border-color: var(--button-secondary-bg);
 }
-button.btn-secondary:hover:not(:disabled) {
+:is(button, a).btn-secondary:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-hover-bg);
   border-color: var(--button-secondary-hover-bg);
 }
-button.btn-secondary:active:not(:disabled) {
+:is(button, a).btn-secondary:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-active-bg);
   border-color: var(--button-secondary-active-bg);
 }
-button.btn-secondary:disabled {
+:is(button, a).btn-secondary:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-disabled-bg) !important;
   color: var(--button-secondary-disabled-text) !important;
   border-color: var(--button-secondary-disabled-bg) !important;
 }
 
 /* Variant: outlinePrimary — outline is primary color, inner is NOT fill (transparent) */
-button.btn-outline-primary {
+:is(button, a).btn-outline-primary {
   background-color: transparent;
   color: var(--button-outline-primary-text);
   border-color: var(--button-outline-primary-border);
   border-width: 1.5px;
 }
-button.btn-outline-primary:hover:not(:disabled) {
+:is(button, a).btn-outline-primary:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-outline-primary-hover-bg);
   border-color: var(--button-outline-primary-border);
   color: var(--button-outline-primary-text);
 }
-button.btn-outline-primary:active:not(:disabled) {
+:is(button, a).btn-outline-primary:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-outline-primary-active-bg);
   border-color: var(--button-outline-primary-border);
 }
-button.btn-outline-primary:disabled {
+:is(button, a).btn-outline-primary:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
   color: var(--color-text-secondary) !important;
   border-color: var(--color-border-default) !important;
 }
 
 /* Variant: outlineSecondary — outline is secondary color, inner is NOT fill (transparent) */
-button.btn-outline-secondary {
+:is(button, a).btn-outline-secondary {
   background-color: transparent;
   color: var(--button-outline-secondary-text);
   border-color: var(--button-outline-secondary-border);
   border-width: 1.5px;
 }
-button.btn-outline-secondary:hover:not(:disabled) {
+:is(button, a).btn-outline-secondary:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-outline-secondary-hover-bg);
   border-color: var(--button-outline-secondary-border);
   color: var(--button-outline-secondary-text);
 }
-button.btn-outline-secondary:active:not(:disabled) {
+:is(button, a).btn-outline-secondary:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-outline-secondary-active-bg);
   border-color: var(--button-outline-secondary-border);
 }
-button.btn-outline-secondary:disabled {
+:is(button, a).btn-outline-secondary:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
   color: var(--color-text-secondary) !important;
   border-color: var(--color-border-default) !important;
 }
 
 /* Variant: success — green fill */
-button.btn-success {
+:is(button, a).btn-success {
   background-color: var(--button-success-bg);
   color: var(--button-success-text);
   border-color: var(--button-success-bg);
 }
-button.btn-success:hover:not(:disabled) {
+:is(button, a).btn-success:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-success-hover-bg);
   border-color: var(--button-success-hover-bg);
 }
-button.btn-success:active:not(:disabled) {
+:is(button, a).btn-success:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-success-active-bg);
   border-color: var(--button-success-active-bg);
 }
-button.btn-success:disabled {
+:is(button, a).btn-success:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-success-disabled-bg) !important;
   color: var(--button-success-disabled-text) !important;
   border-color: var(--button-success-disabled-bg) !important;
 }
 
 /* Variant: danger — red fill */
-button.btn-danger {
+:is(button, a).btn-danger {
   background-color: var(--button-danger-bg);
   color: var(--button-danger-text);
   border-color: var(--button-danger-bg);
 }
-button.btn-danger:hover:not(:disabled) {
+:is(button, a).btn-danger:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-danger-hover-bg);
   border-color: var(--button-danger-hover-bg);
 }
-button.btn-danger:active:not(:disabled) {
+:is(button, a).btn-danger:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-danger-active-bg);
   border-color: var(--button-danger-active-bg);
 }
-button.btn-danger:disabled {
+:is(button, a).btn-danger:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-danger-disabled-bg) !important;
   color: var(--button-danger-disabled-text) !important;
   border-color: var(--button-danger-disabled-bg) !important;
 }
 
 /* Variant: warning — amber fill */
-button.btn-warning {
+:is(button, a).btn-warning {
   background-color: var(--button-warning-bg);
   color: var(--button-warning-text);
   border-color: var(--button-warning-bg);
 }
-button.btn-warning:hover:not(:disabled) {
+:is(button, a).btn-warning:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-warning-hover-bg);
   border-color: var(--button-warning-hover-bg);
 }
-button.btn-warning:active:not(:disabled) {
+:is(button, a).btn-warning:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-warning-active-bg);
   border-color: var(--button-warning-active-bg);
 }
-button.btn-warning:disabled {
+:is(button, a).btn-warning:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-warning-disabled-bg) !important;
   color: var(--button-warning-disabled-text) !important;
   border-color: var(--button-warning-disabled-bg) !important;
 }
 
 /* Variant: ghost (transparent, no border) */
-button.btn-ghost {
+:is(button, a).btn-ghost {
   background-color: transparent;
   color: var(--color-text-primary);
   border-color: transparent;
 }
-button.btn-ghost:hover:not(:disabled) {
+:is(button, a).btn-ghost:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--color-theme-surface-hover);
   border-color: transparent;
 }
-button.btn-ghost:active:not(:disabled) {
+:is(button, a).btn-ghost:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--color-mist-40);
   border-color: transparent;
 }
-button.btn-ghost:disabled {
+:is(button, a).btn-ghost:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
   color: var(--color-text-secondary) !important;
   border-color: transparent !important;
 }
 
 /* Variant: link (text link style) */
-button.btn-link {
+:is(button, a).btn-link {
   background-color: transparent;
   color: var(--button-link-color);
   border-width: 0;
   border-color: transparent;
   text-decoration: none;
 }
-button.btn-link:hover:not(:disabled) {
+:is(button, a).btn-link:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: transparent;
   text-decoration: underline;
   color: var(--button-link-hover-color);
 }
-button.btn-link:active:not(:disabled) {
+:is(button, a).btn-link:active:not(:disabled, [aria-disabled="true"]) {
   background-color: transparent;
 }
-button.btn-link:disabled {
+:is(button, a).btn-link:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
   color: var(--color-text-secondary) !important;
   text-decoration: none;
 }
 
 /* Size: with text — §20 (xxs … lg map to height tiers) */
-button.btn-size-xxs {
+:is(button, a).btn-size-xxs {
   min-height: var(--button-height-xxs);
   padding-top: 2px;
   padding-bottom: 2px;
-  padding-left: 12px;
-  padding-right: 12px;
+  padding-left: var(--button-padding-x-xxs);
+  padding-right: var(--button-padding-x-xxs);
   font-size: 12px;
+  line-height: 1.3;
 }
-button.btn-size-xs {
+:is(button, a).btn-size-xs {
   min-height: var(--button-height-xs);
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: var(--button-padding-x-xs);
+  padding-right: var(--button-padding-x-xs);
   font-size: 14px;
+  line-height: 1.35;
 }
-button.btn-size-sm {
+:is(button, a).btn-size-sm {
   min-height: var(--button-height-sm);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: var(--button-padding-x-sm);
+  padding-right: var(--button-padding-x-sm);
+  font-size: 14px;
+  line-height: 1.35;
+}
+:is(button, a).btn-size-md {
+  min-height: var(--button-height-md);
   padding-top: 6px;
   padding-bottom: 6px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: var(--button-padding-x-md);
+  padding-right: var(--button-padding-x-md);
   font-size: 14px;
+  line-height: 1.35;
 }
-button.btn-size-md {
-  min-height: var(--button-height-md);
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 16px;
-  padding-right: 16px;
-  font-size: 14px;
-}
-button.btn-size-lg {
+:is(button, a).btn-size-lg {
   min-height: var(--button-height-lg);
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: var(--button-padding-x-lg);
+  padding-right: var(--button-padding-x-lg);
   font-size: 16px;
+  line-height: 1.35;
 }
 
-/* Size: icon only — min 44×44 touch target (WCAG 2.5.8) */
-button.btn-icon-only-xxs,
-button.btn-icon-only-xs,
-button.btn-icon-only-sm,
-button.btn-icon-only-md {
-  min-width: 44px;
-  min-height: 44px;
+/* Size: icon only — fixed square footprint + WCAG touch minimum; glyphs sized in Button (`defaultIconOnlySizeBySize`). */
+:is(button, a).btn-icon-only-xxs,
+:is(button, a).btn-icon-only-xs,
+:is(button, a).btn-icon-only-sm,
+:is(button, a).btn-icon-only-md {
+  box-sizing: border-box;
+  width: var(--layout-touch-target-min);
+  height: var(--layout-touch-target-min);
+  min-width: var(--layout-touch-target-min);
+  min-height: var(--layout-touch-target-min);
   padding: 0;
+  flex-shrink: 0;
+  justify-content: center;
 }
-button.btn-icon-only-lg {
-  min-width: 48px;
-  min-height: 48px;
+:is(button, a).btn-icon-only-lg {
+  box-sizing: border-box;
+  width: var(--button-icon-only-lg-hit, 48px);
+  height: var(--button-icon-only-lg-hit, 48px);
+  min-width: var(--button-icon-only-lg-hit, 48px);
+  min-height: var(--button-icon-only-lg-hit, 48px);
   padding: 0;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+:is(button, a).btn-icon-only-xxs.ucs-ripple-parent .btn-ripple-inner,
+:is(button, a).btn-icon-only-xs.ucs-ripple-parent .btn-ripple-inner,
+:is(button, a).btn-icon-only-sm.ucs-ripple-parent .btn-ripple-inner,
+:is(button, a).btn-icon-only-md.ucs-ripple-parent .btn-ripple-inner,
+:is(button, a).btn-icon-only-lg.ucs-ripple-parent .btn-ripple-inner {
+  justify-content: center;
+  width: 100%;
 }
 
 /* Icon spacing (no inline styles): margin between icon and text */
@@ -1024,9 +1063,12 @@ button.btn-icon-only-lg {
 .btn-icon-gap-left-12 { margin-left: 12px !important; }
 .btn-icon-gap-left-16 { margin-left: 16px !important; }
 
-/* Button: full width (no Tailwind dependency) */
-.btn-full-width {
+/* Button: full width — safe in flex layouts */
+:is(button, a).btn-full-width {
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Button: border radius options (use design tokens) */
@@ -1058,15 +1100,181 @@ button.btn-icon-only-lg {
   border-right-color: transparent;
   border-radius: 9999px;
   display: inline-block;
+  vertical-align: middle;
   animation: btn-spin 0.8s linear infinite;
+}
+:is(button, a).btn-loading.btn-size-xxs .btn-spinner,
+:is(button, a).btn-loading.btn-size-xs .btn-spinner {
+  width: 12px;
+  height: 12px;
+  border-width: 1.75px;
+}
+:is(button, a).btn-loading.btn-size-sm .btn-spinner {
+  width: 13px;
+  height: 13px;
+  border-width: 1.85px;
+}
+:is(button, a).btn-loading.btn-size-md .btn-spinner {
+  width: 14px;
+  height: 14px;
+}
+:is(button, a).btn-loading.btn-size-lg .btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+:is(button, a).btn-loading.btn-icon-only-xxs .btn-spinner,
+:is(button, a).btn-loading.btn-icon-only-xs .btn-spinner {
+  width: 12px;
+  height: 12px;
+  border-width: 1.75px;
+}
+:is(button, a).btn-loading.btn-icon-only-sm .btn-spinner {
+  width: 13px;
+  height: 13px;
+  border-width: 1.85px;
+}
+:is(button, a).btn-loading.btn-icon-only-md .btn-spinner {
+  width: 14px;
+  height: 14px;
+}
+:is(button, a).btn-loading.btn-icon-only-lg .btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
   .btn-spinner {
     animation: none;
   }
+  :is(button, a).btn-base {
+    transition-duration: var(--duration-instant, 100ms);
+  }
 }
-button.btn-loading,
-a.btn-loading {
+:is(button, a).btn-loading {
   cursor: not-allowed;
   opacity: 0.9;
+}
+
+/* Ripple (Button, dropdown items) — DESIGN_SYSTEM §18 durations */
+button.ucs-ripple-parent {
+  position: relative;
+}
+a.ucs-ripple-parent {
+  position: relative;
+}
+.ds-dropdown-menu__item.ucs-ripple-parent {
+  position: relative;
+}
+
+button.ucs-ripple-parent:not(:disabled):not(.btn-loading),
+a.ucs-ripple-parent:not([aria-disabled="true"]),
+.ds-dropdown-menu__item.ucs-ripple-parent:not(:disabled) {
+  overflow: hidden;
+}
+
+.ucs-ripple-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.ucs-ripple-wave {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  margin-top: -12px;
+  border-radius: 50%;
+  background: color-mix(in srgb, currentColor 22%, transparent);
+  transform: scale(0);
+  animation: ucs-ripple-wave var(--duration-normal, 300ms) var(--easing-exit, ease-out) forwards;
+}
+
+@keyframes ucs-ripple-wave {
+  to {
+    transform: scale(18);
+    opacity: 0;
+  }
+}
+
+.btn-ripple-inner {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: inherit;
+  gap: inherit;
+  flex: inherit;
+  min-height: inherit;
+  width: inherit;
+}
+
+.btn-ripple-inner--full {
+  width: 100%;
+  justify-content: center;
+}
+
+a.ucs-ripple-parent.btn-base {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ucs-ripple-wave {
+    animation: none;
+    opacity: 0 !important;
+  }
+}
+
+/* Native Select — animated chevron (::after overlay); omit native background-image when `.ucs-select-shell--chevron-animated` */
+.ucs-select-shell {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.ucs-select-shell--chevron-animated::after {
+  content: "";
+  position: absolute;
+  right: var(--ucs-select-chevron-inset, 14px);
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  background: center / contain no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23757575' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  transition: transform var(--duration-fast, 200ms) var(--easing-default);
+}
+
+.ucs-select-shell--chevron-animated:focus-within::after {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ucs-select-shell--chevron-animated::after {
+    transition: none;
+  }
+}
+
+/* `type="search"` — hide browser clear/results UI; use TextInput `allowClear` for a single custom control. */
+input.ucs-text-input--search::-webkit-search-cancel-button,
+input.ucs-text-input--search::-webkit-search-results-button,
+input.ucs-text-input--search::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+input.ucs-text-input--search::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+input.ucs-text-input--search::-moz-search-clear-button {
+  display: none;
 }

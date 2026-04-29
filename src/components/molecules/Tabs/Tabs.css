@@ -91,17 +91,21 @@
     0 2px 8px rgba(0, 0, 0, 0.06);
   pointer-events: none;
   transition:
-    left 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
-    top 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
-    width 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
-    height 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.12s ease;
+    left var(--duration-fast, 200ms) var(--easing-default),
+    top var(--duration-fast, 200ms) var(--easing-default),
+    width var(--duration-fast, 200ms) var(--easing-default),
+    height var(--duration-fast, 200ms) var(--easing-default),
+    opacity var(--duration-instant, 100ms) ease;
   will-change: left, top, width, height;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ds-tabs__segment-pill {
-    transition: opacity 0.1s ease;
+    transition: opacity var(--duration-instant, 100ms) ease;
+  }
+
+  .ds-tabs[data-variant="segmented"] .ds-tabs__trigger {
+    transition: opacity var(--duration-instant, 100ms) ease;
   }
 }
 
@@ -115,8 +119,8 @@
   position: relative;
   z-index: 1;
   transition:
-    color 0.18s ease,
-    background-color 0.18s ease;
+    color var(--duration-fast, 200ms) var(--easing-default),
+    background-color var(--duration-fast, 200ms) var(--easing-default);
 }
 
 .ds-tabs[data-variant="segmented"] .ds-tabs__trigger[data-state="active"] {
@@ -324,9 +328,9 @@
   cursor: pointer;
   border-radius: var(--radius-sm, 3px) var(--radius-sm, 3px) 0 0;
   transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background-color 0.2s ease;
+    color var(--duration-fast, 200ms) var(--easing-default),
+    border-color var(--duration-fast, 200ms) var(--easing-default),
+    background-color var(--duration-fast, 200ms) var(--easing-default);
 }
 
 .ds-tabs[data-size="sm"] .ds-tabs__trigger {
@@ -451,11 +455,41 @@
 }
 
 .ds-tabs[data-content-animation="fade"] .ds-tabs__panel:not([hidden]) {
-  animation: ds-tabs-panel-fade-in 0.2s ease-out;
+  animation: ds-tabs-panel-fade-in var(--duration-fast, 200ms) var(--easing-exit, ease-out);
 }
 
 .ds-tabs[data-content-animation="fade-slide"] .ds-tabs__panel:not([hidden]) {
-  animation: ds-tabs-panel-fade-slide-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: ds-tabs-panel-fade-slide-in var(--duration-fast, 200ms) var(--easing-enter);
+}
+
+@keyframes ds-tabs-panel-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ds-tabs-panel-slide-h {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ds-tabs[data-content-animation="scale"] .ds-tabs__panel:not([hidden]) {
+  animation: ds-tabs-panel-scale-in var(--duration-fast, 200ms) var(--easing-enter);
+}
+
+.ds-tabs[data-content-animation="slide-horizontal"] .ds-tabs__panel:not([hidden]) {
+  animation: ds-tabs-panel-slide-h var(--duration-fast, 200ms) var(--easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {

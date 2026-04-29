@@ -1,4 +1,5 @@
-/* Modal animations */
+/* Modal animations — tokens: DESIGN_SYSTEM §18 (duration / easing) */
+
 .modal-root {
   font-family: var(--font-family, "Inter"), system-ui, -apple-system, sans-serif;
 }
@@ -88,43 +89,45 @@
 }
 
 .modal-backdrop {
-  transition: opacity 0.2s ease-out;
+  transition: opacity var(--duration-fast, 200ms) var(--easing-exit, ease-out);
 }
 
 .modal-backdrop.modal-backdrop--entering {
-  animation: modalBackdropFadeIn 0.2s ease-out forwards;
+  animation: modalBackdropFadeIn var(--duration-fast, 200ms) var(--easing-enter, ease-out) forwards;
 }
 
 .modal-backdrop.modal-backdrop--exiting {
-  animation: modalBackdropFadeOut 0.2s ease-out forwards;
+  animation: modalBackdropFadeOut var(--duration-fast, 200ms) var(--easing-exit, ease-out) forwards;
 }
 
 .modal-dialog {
-  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  transition:
+    opacity var(--duration-fast, 200ms) var(--easing-default, ease-out),
+    transform var(--duration-fast, 200ms) var(--easing-default, ease-out);
 }
 
 .modal-dialog.modal-dialog--fade.modal-dialog--entering {
-  animation: modalDialogFadeIn 0.225s ease-out forwards;
+  animation: modalDialogFadeIn var(--duration-normal, 300ms) var(--easing-enter, ease-out) forwards;
 }
 
 .modal-dialog.modal-dialog--fade.modal-dialog--exiting {
-  animation: modalDialogFadeOut 0.2s ease-out forwards;
+  animation: modalDialogFadeOut var(--duration-fast, 200ms) var(--easing-exit, ease-out) forwards;
 }
 
 .modal-dialog.modal-dialog--slide.modal-dialog--entering {
-  animation: modalDialogSlideIn 0.225s ease-out forwards;
+  animation: modalDialogSlideIn var(--duration-normal, 300ms) var(--easing-enter, ease-out) forwards;
 }
 
 .modal-dialog.modal-dialog--slide.modal-dialog--exiting {
-  animation: modalDialogSlideOut 0.2s ease-out forwards;
+  animation: modalDialogSlideOut var(--duration-fast, 200ms) var(--easing-exit, ease-out) forwards;
 }
 
 .modal-dialog.modal-dialog--scale.modal-dialog--entering {
-  animation: modalDialogScaleIn 0.225s ease-out forwards;
+  animation: modalDialogScaleIn var(--duration-normal, 300ms) var(--easing-enter, ease-out) forwards;
 }
 
 .modal-dialog.modal-dialog--scale.modal-dialog--exiting {
-  animation: modalDialogScaleOut 0.2s ease-out forwards;
+  animation: modalDialogScaleOut var(--duration-fast, 200ms) var(--easing-exit, ease-out) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -142,6 +145,7 @@
   .modal-dialog.modal-dialog--entering,
   .modal-dialog.modal-dialog--exiting {
     opacity: 1;
+    transform: none;
   }
 }
 
@@ -174,18 +178,18 @@
 }
 
 .alert-dialog-icon--animated {
-  animation: alertDialogIconPulse 2s ease-in-out infinite;
+  animation: alertDialogIconPulse var(--duration-slow, 500ms) var(--easing-default, ease-in-out) infinite;
 }
 
 .alert-dialog-icon--bounce {
-  animation: alertDialogIconBounce 0.4s ease-out forwards;
+  animation: alertDialogIconBounce var(--duration-normal, 300ms) var(--easing-exit, ease-out) forwards;
 }
 
 /* AlertDialog animated SVG icons */
 .alert-dialog-svg--success .alert-dialog-checkmark {
   stroke-dasharray: 50;
   stroke-dashoffset: 50;
-  animation: alertDialogCheckDraw 0.5s ease-out 0.2s forwards;
+  animation: alertDialogCheckDraw var(--duration-normal, 300ms) var(--easing-exit, ease-out) 0.2s forwards;
 }
 
 @keyframes alertDialogCheckDraw {
@@ -195,15 +199,15 @@
 }
 
 .alert-dialog-svg--success {
-  animation: alertDialogIconPulse 2s ease-in-out 0.8s infinite;
+  animation: alertDialogIconPulse var(--duration-slow, 500ms) var(--easing-default, ease-in-out) 0.8s infinite;
 }
 
 .alert-dialog-svg--error {
-  animation: alertDialogIconPulse 2s ease-in-out 0.3s infinite;
+  animation: alertDialogIconPulse var(--duration-slow, 500ms) var(--easing-default, ease-in-out) 0.3s infinite;
 }
 
 .alert-dialog-svg--warning {
-  animation: alertDialogIconPulse 2s ease-in-out 0.3s infinite;
+  animation: alertDialogIconPulse var(--duration-slow, 500ms) var(--easing-default, ease-in-out) 0.3s infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

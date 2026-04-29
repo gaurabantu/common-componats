@@ -1,11 +1,13 @@
 import React from "react";
+import { useRipple } from "../../common/useRipple";
 import { ButtonProps } from "./Button.types";
 import {
   variantClasses,
   sizeClasses,
   iconOnlySizeClasses,
   radiusClass,
-  defaultIconConfig,
+  defaultIconOnlySizeBySize,
+  defaultIconWithLabelSizeBySize,
   type ButtonVariant,
   type ButtonSize,
 } from "./Button.config";
@@ -58,6 +60,7 @@ const Button = React.memo(function Button({
   className = "",
   ariaLabel,
   preserveIconColor = false,
+  ripple = true,
   href,
   ...rest
 }: ButtonProps) {
@@ -109,8 +112,12 @@ const Button = React.memo(function Button({
     .filter(Boolean)
     .join(" ");
 
-  const finalIconWidth = iconWidth ?? defaultIconConfig.width;
-  const finalIconHeight = iconHeight ?? defaultIconConfig.height;
+  const iconSizeDefaults =
+    isIconOnly
+      ? defaultIconOnlySizeBySize[sizeKey]
+      : defaultIconWithLabelSizeBySize[sizeKey];
+  const finalIconWidth = iconWidth ?? iconSizeDefaults.width;
+  const finalIconHeight = iconHeight ?? iconSizeDefaults.height;
 
   const gapPx = Math.min(16, Math.max(0, iconGap));
   const gapSnap = [0, 4, 8, 12, 16].reduce((a, b) => (Math.abs(b - gapPx) < Math.abs(a - gapPx) ? b : a));
@@ -144,7 +151,7 @@ const Button = React.memo(function Button({
     );
   };
 
-  const { style: restStyle, ...restWithoutStyle } = rest;
+  const { style: restStyle, onPointerDown: restOnPointerDown, ...restWithoutStyle } = rest;
   const mergedStyle = hasOverrides ? { ...restStyle, ...styleOverrides } : restStyle;
 
   const content = (
@@ -157,6 +164,36 @@ const Button = React.memo(function Button({
   );
 
   const isDisabled = Boolean((rest as any).disabled) || loading;
+  const rippleEnabled = ripple !== false && !isDisabled;
+  const rippleApi = useRipple(rippleEnabled);
+
+  const pointerDown =
+    (e: React.PointerEvent<HTMLButtonElement & HTMLAnchorElement>) => {
+      rippleApi.onPointerDown(e as React.PointerEvent<HTMLElement>);
+      restOnPointerDown?.(e);
+    };
+
+  const innerClass = [
+    "btn-ripple-inner",
+    fullWidth || block ? "btn-ripple-inner--full" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const surfaceClass =
+    rippleEnabled ?
+      `${baseClass} ucs-ripple-parent`.trim()
+    : baseClass;
+
+  const body =
+    rippleEnabled ?
+      <>
+        {rippleApi.RippleOverlay}
+        <span className={innerClass}>{content}</span>
+      </>
+    : (
+        content
+      );
 
   if (href) {
     const { onClick, ...linkRest } = restWithoutStyle as React.AnchorHTMLAttributes<HTMLAnchorElement>;
@@ -164,12 +201,13 @@ const Button = React.memo(function Button({
       <a
         {...linkRest}
         href={isDisabled ? undefined : href}
-        className={baseClass}
+        className={surfaceClass}
         style={mergedStyle}
         aria-label={computedAriaLabel ?? undefined}
         aria-disabled={isDisabled || undefined}
         data-variant={dsVariant}
         data-raw-variant={variant}
+        onPointerDown={rippleEnabled ? pointerDown : (restOnPointerDown as React.PointerEventHandler<HTMLAnchorElement>)}
         onClick={(e) => {
           if (isDisabled) {
             e.preventDefault();
@@ -179,7 +217,7 @@ const Button = React.memo(function Button({
           onClick?.(e);
         }}
       >
-        {content}
+        {body}
       </a>
     );
   }
@@ -188,14 +226,15 @@ const Button = React.memo(function Button({
   return (
     <button
       {...buttonRest}
-      className={baseClass}
+      className={surfaceClass}
       style={mergedStyle}
       disabled={isDisabled}
       aria-label={computedAriaLabel ?? undefined}
       data-variant={dsVariant}
       data-raw-variant={variant}
+      onPointerDown={rippleEnabled ? pointerDown : (restOnPointerDown as React.PointerEventHandler<HTMLButtonElement>)}
     >
-      {content}
+      {body}
     </button>
   );
 });

@@ -12,6 +12,8 @@ export type AccordionVariant = "default" | "bordered" | "flush";
  */
 export type AccordionMotion = "default" | "none";
 
+export type AccordionDensity = "default" | "compact" | "relaxed";
+
 export interface AccordionContextValue {
   type: AccordionType;
   collapsible: boolean;
@@ -20,6 +22,7 @@ export interface AccordionContextValue {
   baseId: string;
   variant: AccordionVariant;
   motion: AccordionMotion;
+  density: AccordionDensity;
 }
 
 export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -41,6 +44,11 @@ export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, "on
    * @default "default"
    */
   motion?: AccordionMotion;
+  /**
+   * Vertical padding presets for triggers and panel body (`--ds-accordion-*` tokens).
+   * @default "default"
+   */
+  density?: AccordionDensity;
 }
 
 export interface AccordionItemProps extends HTMLAttributes<HTMLDivElement> {

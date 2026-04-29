@@ -154,3 +154,70 @@ export const AreaChartStacked: StoryObj<typeof AreaChart> = {
     height: 300,
   },
 };
+
+/** Entrance animation (default `chartAnimation: true`); use `false` for static / tests. */
+export const ChartAnimationsAnimated: StoryObj = {
+  render: () => (
+    <div style={{ display: "grid", gap: 32, maxWidth: 900 }}>
+      <div>
+        <h3 style={{ fontSize: 14, marginBottom: 8 }}>Line + area (stroke draw / fill fade)</h3>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
+          <LineChart
+            data={lineData}
+            xAxisKey="name"
+            series={[
+              { dataKey: "uv", name: "UV" },
+              { dataKey: "pv", name: "PV" },
+            ]}
+            height={220}
+            chartAnimation={{ durationMs: 900, easing: "ease-out" }}
+          />
+          <AreaChart
+            data={lineData}
+            xAxisKey="name"
+            series={[{ dataKey: "uv", name: "UV" }]}
+            height={220}
+            chartAnimation={{ durationMs: 850, easing: "ease-out" }}
+          />
+        </div>
+      </div>
+      <div>
+        <h3 style={{ fontSize: 14, marginBottom: 8 }}>Bar (grow; stagger optional)</h3>
+        <BarChart
+          data={barData}
+          xAxisKey="name"
+          series={[
+            { dataKey: "uv", name: "UV" },
+            { dataKey: "pv", name: "PV" },
+          ]}
+          height={260}
+          chartAnimation={{ durationMs: 700, barStagger: true }}
+        />
+      </div>
+      <div>
+        <h3 style={{ fontSize: 14, marginBottom: 8 }}>Pie / donut (scale-in)</h3>
+        <PieChart
+          data={pieData}
+          innerRadius="55%"
+          outerRadius="80%"
+          showLabels
+          width={300}
+          height={300}
+          chartAnimation={{ durationMs: 750, easing: "ease-out" }}
+        />
+      </div>
+    </div>
+  ),
+};
+
+export const ChartAnimationsOff: StoryObj<typeof LineChart> = {
+  render: (args) => <LineChart {...args} />,
+  args: {
+    data: lineData,
+    xAxisKey: "name",
+    series: [{ dataKey: "uv", name: "UV" }],
+    chartAnimation: false,
+    height: 240,
+    showLegend: true,
+  },
+};

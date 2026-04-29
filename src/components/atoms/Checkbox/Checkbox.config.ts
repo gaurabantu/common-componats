@@ -1,9 +1,9 @@
-/** Design system: checkbox uses border-default; checked uses brand primary */
-export const defaultCheckboxColorClass =
-  "w-5 h-5 rounded-base border-[1.5px] border-[var(--color-border-default)] " +
-  "checked:bg-[var(--color-brand-primary)] checked:border-[var(--color-brand-primary)] " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-[var(--button-primary-focus-ring)] " +
-  "disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
+/** Design system tokens — visuals live in `ucs-choice-controls.css`. */
+export const defaultCheckboxColorClass = "";
+
 export const defaultLabelColorClass = "text-body text-text-primary cursor-pointer";
-export const defaultCheckboxInputLabelSpacing = "mr-2";
+
+/** Extra classes on the custom checkbox face — e.g. margin vs label (`mr-2`). Supports Tailwind `peer-*` modifiers when paired with the hidden `.peer` input. */
+export const defaultCheckboxInputLabelSpacing = "";
+
 export const defaultCheckboxItemSpacing = "flex items-start gap-2";

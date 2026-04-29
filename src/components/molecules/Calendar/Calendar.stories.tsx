@@ -20,7 +20,10 @@ const meta: Meta<typeof Calendar> = {
     bordered: { control: "boolean" },
     hoverable: { control: "boolean" },
     size: { control: "select", options: ["sm", "md", "lg"] },
-    captionLayout: { control: "radio", options: ["label", "dropdown"] },
+    captionLayout: {
+      control: "radio",
+      options: ["menus", "label", "dropdown"],
+    },
   },
 };
 
@@ -57,6 +60,18 @@ export const Default: Story = {
   render: (args) => <ControlledSingle {...args} />,
   args: {
     fullWidth: false,
+    captionLayout: "menus",
+    variant: "outlined",
+    elevation: "none",
+    bordered: true,
+  },
+};
+
+/** Month/year as a single centered title (shadcn-style). */
+export const CaptionLabel: Story = {
+  render: (args) => <ControlledSingle {...args} />,
+  args: {
+    fullWidth: false,
     captionLayout: "label",
     variant: "outlined",
     elevation: "none",
@@ -64,12 +79,12 @@ export const Default: Story = {
   },
 };
 
-/** Month/year as a single centered title (shadcn-style); use `captionLayout="dropdown"` for selects. */
-export const CaptionLabel: Story = {
+/** Native `<select>` month/year (classic bordered selects). Prefer `menus` by default for a softer UI. */
+export const CaptionNativeSelects: Story = {
   render: (args) => <ControlledSingle {...args} />,
   args: {
     fullWidth: false,
-    captionLayout: "label",
+    captionLayout: "dropdown",
     variant: "outlined",
     elevation: "none",
     bordered: true,

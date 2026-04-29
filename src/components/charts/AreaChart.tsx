@@ -3,7 +3,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import type { ChartDataPoint, ChartDataSeries, ChartLayoutProps } from "./Chart.types";
 import { CHART_THEME_COLORS } from "./Chart.types";
+import { AnimatedLineStroke } from "./chartPrimitives";
 import { ChartTooltip } from "./ChartTooltip";
+import { resolveChartAnimation, useChartAnimationProgress } from "./useChartAnimation";
 import { getValueExtent, scaleLinear, linePath, areaPath } from "./utils";
 
 const DEFAULT_COLORS = [
@@ -44,9 +46,22 @@ const AreaChartComponent: React.FC<AreaChartProps> = ({
   tooltipFollowPointer = true,
   tooltipAnimation = true,
   showCrosshair = true,
+  chartAnimation = true,
   className = "",
   style = {},
 }) => {
+  const animCfg = resolveChartAnimation(chartAnimation, "area");
+  const animKey = useMemo(
+    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${stacked}-${curve}`,
+    [data.length, series, xAxisKey, stacked, curve],
+  );
+  const animProgress = useChartAnimationProgress(
+    animCfg.enabled,
+    animCfg.durationMs,
+    animCfg.easing,
+    animKey
+  );
+
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor ?? themeColors.gridColor;
   const [tooltip, setTooltip] = useState<{
@@ -197,16 +212,14 @@ const AreaChartComponent: React.FC<AreaChartProps> = ({
             <path
               d={ap}
               fill={color}
-              fillOpacity={stacked ? 0.8 : 0.3}
+              fillOpacity={(stacked ? 0.8 : 0.3) * animProgress}
               stroke="none"
             />
-            <path
-              d={lp}
-              fill="none"
-              stroke={color}
+            <AnimatedLineStroke
+              pathD={lp}
+              progress={animProgress}
+              color={color}
               strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeLinejoin="round"
             />
           </g>
         ))}
@@ -235,7 +248,7 @@ const AreaChartComponent: React.FC<AreaChartProps> = ({
                       fill={color}
                       stroke={themeColors.tooltipBg}
                       strokeWidth={2}
-                      opacity={0.95}
+                      opacity={0.92 * animProgress}
                     />
                   );
                 })
@@ -254,7 +267,7 @@ const AreaChartComponent: React.FC<AreaChartProps> = ({
                       fill={color}
                       stroke={themeColors.tooltipBg}
                       strokeWidth={2}
-                      opacity={0.95}
+                      opacity={0.92 * animProgress}
                     />
                   );
                 })}

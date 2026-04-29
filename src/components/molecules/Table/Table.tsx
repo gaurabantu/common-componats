@@ -311,6 +311,8 @@ function TableInner<T extends Record<string, unknown>>({
         fullWidth
         showClearButton={searchProps?.showClearButton}
         showSearchButton={searchProps?.showSearchButton}
+        searchButtonDisplay={searchProps?.searchButtonDisplay}
+        searchActionButtonProps={searchProps?.searchActionButtonProps}
       />
     </div>
   );

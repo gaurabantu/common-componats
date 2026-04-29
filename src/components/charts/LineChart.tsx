@@ -3,7 +3,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import type { ChartDataPoint, ChartDataSeries, ChartLayoutProps } from "./Chart.types";
 import { CHART_THEME_COLORS } from "./Chart.types";
+import { AnimatedLineStroke } from "./chartPrimitives";
 import { ChartTooltip } from "./ChartTooltip";
+import { resolveChartAnimation, useChartAnimationProgress } from "./useChartAnimation";
 import { getValueExtent, scaleLinear, linePath } from "./utils";
 
 const DEFAULT_COLORS = [
@@ -46,9 +48,22 @@ const LineChartComponent: React.FC<LineChartProps> = ({
   tooltipFollowPointer = true,
   tooltipAnimation = true,
   showCrosshair = true,
+  chartAnimation = true,
   className = "",
   style = {},
 }) => {
+  const animCfg = resolveChartAnimation(chartAnimation, "line");
+  const animKey = useMemo(
+    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${curve}`,
+    [data.length, series, xAxisKey, curve],
+  );
+  const animProgress = useChartAnimationProgress(
+    animCfg.enabled,
+    animCfg.durationMs,
+    animCfg.easing,
+    animKey
+  );
+
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor ?? themeColors.gridColor;
   const [tooltip, setTooltip] = useState<{
@@ -169,15 +184,13 @@ const LineChartComponent: React.FC<LineChartProps> = ({
             })}
           </g>
         )}
-        {paths.map(({ path, points, color, name }) => (
+        {paths.map(({ path: pathD, points, color, name }) => (
           <g key={name}>
-            <path
-              d={path}
-              fill="none"
-              stroke={color}
+            <AnimatedLineStroke
+              pathD={pathD}
+              progress={animProgress}
+              color={color}
               strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeLinejoin="round"
             />
             {showDots &&
               points.map((p, i) => (
@@ -189,6 +202,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                   fill={color}
                   stroke={themeColors.tooltipBg}
                   strokeWidth={1}
+                  opacity={Math.min(1, animProgress * 2.5)}
                 />
               ))}
           </g>

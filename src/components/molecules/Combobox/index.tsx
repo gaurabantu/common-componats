@@ -256,6 +256,7 @@ export const Combobox = React.memo(function Combobox({
 
         <PopoverContent
           role="none"
+          showPointer={false}
           className="ds-combobox__popover"
           style={listMinWidth != null ? { minWidth: listMinWidth } : undefined}
         >

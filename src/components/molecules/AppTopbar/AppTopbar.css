@@ -107,7 +107,7 @@
 
 .app-topbar__center--expands {
   max-width: min(288px, 42vw);
-  transition: max-width 0.2s ease;
+  transition: max-width var(--duration-fast, 200ms) var(--easing-default);
 }
 
 .app-topbar__center--expands:focus-within {

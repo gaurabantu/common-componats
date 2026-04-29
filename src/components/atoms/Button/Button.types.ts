@@ -57,7 +57,9 @@ type ButtonBaseProps = {
   ariaLabel?: string;
   className?: string;
   enableWhen?: any;
-  preserveIconColor?: boolean
+  preserveIconColor?: boolean;
+  /** Press ripple on pointer down. Off when loading or disabled. @default true */
+  ripple?: boolean;
 
   /** 
    * 🔹 Rounded prop for UX4G-style border radius classes

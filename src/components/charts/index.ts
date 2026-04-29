@@ -14,6 +14,9 @@ export type {
   ChartLayoutProps,
   ChartTheme,
   ChartTooltipItem,
+  ChartAnimationConfig,
+  ChartAnimationOption,
+  ChartEasingPreset,
 } from "./Chart.types";
 export { CHART_COLORS, CHART_THEME_COLORS } from "./Chart.types";
 export { ChartTooltip } from "./ChartTooltip";

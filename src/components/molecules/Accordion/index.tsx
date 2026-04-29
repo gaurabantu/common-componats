@@ -12,6 +12,7 @@ import React, {
 import type {
   AccordionContentProps,
   AccordionContextValue,
+  AccordionDensity,
   AccordionItemProps,
   AccordionProps,
   AccordionTriggerProps,
@@ -70,6 +71,7 @@ export const Accordion = React.memo(function Accordion({
   onValueChange,
   variant = "default",
   motion = "default",
+  density = "default",
   className,
   ...rest
 }: AccordionProps) {
@@ -140,8 +142,9 @@ export const Accordion = React.memo(function Accordion({
         baseId,
         variant,
         motion,
+        density,
       }) satisfies AccordionContextValue,
-    [type, collapsible, isOpen, toggle, baseId, variant, motion]
+    [type, collapsible, isOpen, toggle, baseId, variant, motion, density]
   );
 
   return (
@@ -150,6 +153,7 @@ export const Accordion = React.memo(function Accordion({
         className={cls("ds-accordion", className)}
         data-variant={variant}
         data-motion={motion}
+        data-density={density}
         data-orientation="vertical"
         {...rest}
       >
@@ -297,4 +301,5 @@ export type {
   AccordionType,
   AccordionVariant,
   AccordionMotion,
+  AccordionDensity,
 } from "./Accordion.types";

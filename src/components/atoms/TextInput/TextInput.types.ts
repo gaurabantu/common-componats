@@ -87,6 +87,12 @@ export interface TextInputProps extends NativeInputProps {
   status?: InputStatus;
   /** Ant Design–style variant: outlined | filled | borderless | underlined */
   variant?: InputVariant;
+  /**
+   * `integrated` — single outline (Material-style): trailing zone flush to the right edge,
+   * no extra gap before the action; clear sits before suffix when both are shown.
+   * Most useful with `validation="headerSearch"`.
+   */
+  trailingRail?: "default" | "integrated";
 
   // Icon customization
   toggleIcon?: IconSource;

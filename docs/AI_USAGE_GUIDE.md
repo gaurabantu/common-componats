@@ -24,7 +24,7 @@ Use this file when you want an AI tool to build a real application with `ui-comm
 ## What AI should use each file for
 
 - [`UI_COMPONENTS_GUIDE.md`](./UI_COMPONENTS_GUIDE.md): choose the right component
-- [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md): apply layout, spacing, hierarchy, card, modal, and accessibility rules
+- [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md): apply layout, spacing, hierarchy, card, modal, and accessibility rules — plus **[§35a](./design-system/DESIGN_SYSTEM.md#35a-interaction-glossary-feedback-routing-flows-agents)** (B1 glossary, B2 feedback map, B3 flows) tied to **[§27](./design-system/DESIGN_SYSTEM.md#27-modal--dialog)** · **[§35](./design-system/DESIGN_SYSTEM.md#35-feedback--notifications)**
 - [`design-system/tokens.md`](./design-system/tokens.md): apply token-based styling and token import rules
 - [`internal/`](./internal/): shell implementation context, package rationale, portable rules — use with the public guides above
 
