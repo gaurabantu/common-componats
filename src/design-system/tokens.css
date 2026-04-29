@@ -157,12 +157,12 @@
   --z-toast: 500;
   --z-tooltip-top: 600;
 
-  /* §20 Button height tiers (semantic names — maps to .btn-size-*) */
-  --button-height-xxs: 28px;
-  --button-height-xs: 32px;
-  --button-height-sm: 36px;
-  --button-height-md: 40px;
-  --button-height-lg: 44px;
+  /* §20 Button height tiers (semantic names — maps to .btn-size-*) · vertical pad 2px on each tier */
+  --button-height-xxs: 24px;
+  --button-height-xs: 28px;
+  --button-height-sm: 32px;
+  --button-height-md: 36px;
+  --button-height-lg: 40px;
   /** Horizontal inset per tier — 8px grid (`12` | `16` | `16` | `20` | `24`) paired with `--button-height-*` */
   --button-padding-x-xxs: 12px;
   --button-padding-x-xs: 16px;
@@ -996,8 +996,8 @@ select {
 }
 :is(button, a).btn-size-xs {
   min-height: var(--button-height-xs);
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   padding-left: var(--button-padding-x-xs);
   padding-right: var(--button-padding-x-xs);
   font-size: 14px;
@@ -1005,8 +1005,8 @@ select {
 }
 :is(button, a).btn-size-sm {
   min-height: var(--button-height-sm);
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   padding-left: var(--button-padding-x-sm);
   padding-right: var(--button-padding-x-sm);
   font-size: 14px;
@@ -1014,8 +1014,8 @@ select {
 }
 :is(button, a).btn-size-md {
   min-height: var(--button-height-md);
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   padding-left: var(--button-padding-x-md);
   padding-right: var(--button-padding-x-md);
   font-size: 14px;
@@ -1023,8 +1023,8 @@ select {
 }
 :is(button, a).btn-size-lg {
   min-height: var(--button-height-lg);
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   padding-left: var(--button-padding-x-lg);
   padding-right: var(--button-padding-x-lg);
   font-size: 16px;

@@ -20,7 +20,7 @@ export type ButtonVariant =
   | "link"
   | "ghost";
 
-/** §20: xxs=inline 28px · xs=section 32 · sm=tertiary 36 · md=secondary/outlined 40 · lg=primary 44 */
+/** §20: xxs=inline 24 · xs=section 28 · sm=tertiary 32 · md=secondary/outlined 36 · lg=primary 40 (2px vertical padding) */
 export type ButtonSize = "xxs" | "xs" | "sm" | "md" | "lg";
 
 /** Variant → CSS class name (tokens.css). "default" = primary. */
