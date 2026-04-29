@@ -896,7 +896,7 @@ interface GradientTextProps {
 
 declare const GradientText: React__default.NamedExoticComponent<GradientTextProps>;
 
-type TooltipPlacement = "top" | "bottom" | "left" | "right";
+type TooltipPlacement = "auto" | "top" | "bottom" | "left" | "right";
 interface TooltipIconProps extends Omit<React__default.HTMLAttributes<HTMLSpanElement>, "content"> {
     tooltipText: string;
     content?: React__default.ReactNode;

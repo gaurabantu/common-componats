@@ -2994,11 +2994,11 @@ var GradientText = React12.memo(function GradientText2({
 var GradientText_default = GradientText;
 
 // src/components/atoms/ToolTip/index.tsx
-import React13, { useEffect as useEffect3, useId as useId8, useRef as useRef5, useState as useState8 } from "react";
+import React13, { useCallback as useCallback8, useEffect as useEffect3, useId as useId8, useLayoutEffect as useLayoutEffect3, useRef as useRef5, useState as useState8 } from "react";
 
 // src/components/atoms/ToolTip/TooltipIcon.config.ts
 var defaultTooltipOptions = {
-  placement: "top",
+  placement: "auto",
   delay: 60,
   size: 16,
   color: "currentColor"
@@ -3009,6 +3009,12 @@ var tooltip_icon_default = 'data:image/svg+xml,<svg width="16" height="16" viewB
 
 // src/components/atoms/ToolTip/index.tsx
 import { jsx as jsx16, jsxs as jsxs12 } from "react/jsx-runtime";
+var VIEWPORT_PADDING = 8;
+var TOOLTIP_GAP = 10;
+var ARROW_SIZE = 6;
+function clamp2(value, min, max) {
+  return Math.min(Math.max(value, min), Math.max(min, max));
+}
 var TooltipIcon = ({
   tooltipText,
   content,
@@ -3027,9 +3033,20 @@ var TooltipIcon = ({
 }) => {
   const tooltipId = useId8();
   const triggerRef = useRef5(null);
+  const tooltipRef = useRef5(null);
   const openTimerRef = useRef5(null);
   const closeTimerRef = useRef5(null);
   const [isOpen, setIsOpen] = useState8(false);
+  const [isPositioned, setIsPositioned] = useState8(false);
+  const [resolvedPlacement, setResolvedPlacement] = useState8("top");
+  const [floatingStyle, setFloatingStyle] = useState8({
+    top: 0,
+    left: 0
+  });
+  const [arrowStyle, setArrowStyle] = useState8({});
+  const tooltipBackground = variant === "light" ? "var(--color-bg-surface, #FFFFFF)" : "var(--color-text-primary, #0D0D0D)";
+  const tooltipForeground = variant === "light" ? "var(--color-text-primary, #0D0D0D)" : "var(--color-bg-surface, #FFFFFF)";
+  const tooltipBorder = variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
   const clearTimers = () => {
     if (openTimerRef.current)
       clearTimeout(openTimerRef.current);
@@ -3045,71 +3062,127 @@ var TooltipIcon = ({
   }, []);
   const showTooltip = () => {
     clearTimers();
-    openTimerRef.current = setTimeout(() => setIsOpen(true), delay);
+    openTimerRef.current = setTimeout(() => {
+      setIsPositioned(false);
+      setIsOpen(true);
+    }, delay);
   };
   const hideTooltip = () => {
     clearTimers();
     closeTimerRef.current = setTimeout(() => setIsOpen(false), closeDelay);
   };
-  const placementStyleMap = {
-    top: {
-      bottom: `calc(100% + 10px)`,
-      left: "50%",
-      transform: "translateX(-50%)"
-    },
-    bottom: {
-      top: `calc(100% + 10px)`,
-      left: "50%",
-      transform: "translateX(-50%)"
-    },
-    left: {
-      right: `calc(100% + 10px)`,
-      top: "50%",
-      transform: "translateY(-50%)"
-    },
-    right: {
-      left: `calc(100% + 10px)`,
-      top: "50%",
-      transform: "translateY(-50%)"
+  const getArrowStyle = useCallback8((nextPlacement, tooltipLeft, tooltipTop, tooltipWidth, tooltipHeight, triggerRect) => {
+    const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+    const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+    const arrowX = clamp2(triggerCenterX - tooltipLeft, ARROW_SIZE + 2, tooltipWidth - ARROW_SIZE - 2);
+    const arrowY = clamp2(triggerCenterY - tooltipTop, ARROW_SIZE + 2, tooltipHeight - ARROW_SIZE - 2);
+    const base = {
+      position: "absolute",
+      width: 0,
+      height: 0,
+      color: tooltipBackground
+    };
+    if (nextPlacement === "top") {
+      return {
+        ...base,
+        left: arrowX,
+        top: "100%",
+        transform: "translateX(-50%)",
+        borderLeft: `${ARROW_SIZE}px solid transparent`,
+        borderRight: `${ARROW_SIZE}px solid transparent`,
+        borderTop: `${ARROW_SIZE}px solid currentColor`
+      };
     }
-  };
-  const arrowStyleMap = {
-    top: {
-      left: "50%",
-      top: "100%",
-      transform: "translateX(-50%)",
-      borderLeft: "6px solid transparent",
-      borderRight: "6px solid transparent",
-      borderTop: "6px solid currentColor"
-    },
-    bottom: {
-      left: "50%",
-      bottom: "100%",
-      transform: "translateX(-50%)",
-      borderLeft: "6px solid transparent",
-      borderRight: "6px solid transparent",
-      borderBottom: "6px solid currentColor"
-    },
-    left: {
-      left: "100%",
-      top: "50%",
-      transform: "translateY(-50%)",
-      borderTop: "6px solid transparent",
-      borderBottom: "6px solid transparent",
-      borderLeft: "6px solid currentColor"
-    },
-    right: {
+    if (nextPlacement === "bottom") {
+      return {
+        ...base,
+        left: arrowX,
+        bottom: "100%",
+        transform: "translateX(-50%)",
+        borderLeft: `${ARROW_SIZE}px solid transparent`,
+        borderRight: `${ARROW_SIZE}px solid transparent`,
+        borderBottom: `${ARROW_SIZE}px solid currentColor`
+      };
+    }
+    if (nextPlacement === "left") {
+      return {
+        ...base,
+        left: "100%",
+        top: arrowY,
+        transform: "translateY(-50%)",
+        borderTop: `${ARROW_SIZE}px solid transparent`,
+        borderBottom: `${ARROW_SIZE}px solid transparent`,
+        borderLeft: `${ARROW_SIZE}px solid currentColor`
+      };
+    }
+    return {
+      ...base,
       right: "100%",
-      top: "50%",
+      top: arrowY,
       transform: "translateY(-50%)",
-      borderTop: "6px solid transparent",
-      borderBottom: "6px solid transparent",
-      borderRight: "6px solid currentColor"
+      borderTop: `${ARROW_SIZE}px solid transparent`,
+      borderBottom: `${ARROW_SIZE}px solid transparent`,
+      borderRight: `${ARROW_SIZE}px solid currentColor`
+    };
+  }, [tooltipBackground]);
+  const updatePosition = useCallback8(() => {
+    var _a;
+    const trigger = triggerRef.current;
+    const tooltip = tooltipRef.current;
+    if (!trigger || !tooltip || typeof window === "undefined")
+      return;
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const spaces = {
+      top: triggerRect.top,
+      bottom: viewportHeight - triggerRect.bottom,
+      left: triggerRect.left,
+      right: viewportWidth - triggerRect.right
+    };
+    const fits = {
+      top: spaces.top >= tooltipRect.height + TOOLTIP_GAP + VIEWPORT_PADDING,
+      bottom: spaces.bottom >= tooltipRect.height + TOOLTIP_GAP + VIEWPORT_PADDING,
+      left: spaces.left >= tooltipRect.width + TOOLTIP_GAP + VIEWPORT_PADDING,
+      right: spaces.right >= tooltipRect.width + TOOLTIP_GAP + VIEWPORT_PADDING
+    };
+    const order = ["top", "bottom", "right", "left"];
+    const nextPlacement = placement === "auto" ? (_a = order.find((side) => fits[side])) != null ? _a : order.reduce((best, side) => spaces[side] > spaces[best] ? side : best, "top") : placement;
+    let left = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
+    let top = triggerRect.top - tooltipRect.height - TOOLTIP_GAP;
+    if (nextPlacement === "bottom") {
+      top = triggerRect.bottom + TOOLTIP_GAP;
+    } else if (nextPlacement === "left") {
+      left = triggerRect.left - tooltipRect.width - TOOLTIP_GAP;
+      top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
+    } else if (nextPlacement === "right") {
+      left = triggerRect.right + TOOLTIP_GAP;
+      top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
     }
-  };
-  const tooltipBackground = variant === "light" ? "var(--color-bg-surface, #FFFFFF)" : "var(--color-text-primary, #0D0D0D)";
-  const tooltipForeground = variant === "light" ? "var(--color-text-primary, #0D0D0D)" : "var(--color-bg-surface, #FFFFFF)";
-  const tooltipBorder = variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
+    left = clamp2(left, VIEWPORT_PADDING, viewportWidth - tooltipRect.width - VIEWPORT_PADDING);
+    top = clamp2(top, VIEWPORT_PADDING, viewportHeight - tooltipRect.height - VIEWPORT_PADDING);
+    setResolvedPlacement(nextPlacement);
+    setFloatingStyle({ top, left });
+    setArrowStyle(getArrowStyle(nextPlacement, left, top, tooltipRect.width, tooltipRect.height, triggerRect));
+    setIsPositioned(true);
+  }, [getArrowStyle, placement]);
+  useLayoutEffect3(() => {
+    if (!isOpen)
+      return;
+    updatePosition();
+  }, [isOpen, updatePosition, content, tooltipText, maxWidth]);
+  useEffect3(() => {
+    if (!isOpen)
+      return void 0;
+    const onChange = () => updatePosition();
+    window.addEventListener("resize", onChange);
+    window.addEventListener("scroll", onChange, true);
+    return () => {
+      window.removeEventListener("resize", onChange);
+      window.removeEventListener("scroll", onChange, true);
+    };
+  }, [isOpen, updatePosition]);
   const renderTooltipMedia = () => {
     if (!tooltipContentIcon)
       return null;
@@ -3163,10 +3236,11 @@ var TooltipIcon = ({
         isOpen && /* @__PURE__ */ jsxs12(
           "span",
           {
+            ref: tooltipRef,
             id: `tooltip-${tooltipId}`,
             role: "tooltip",
             style: {
-              position: "absolute",
+              position: "fixed",
               zIndex: 50,
               maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
               minWidth: 120,
@@ -3178,18 +3252,16 @@ var TooltipIcon = ({
               boxShadow: "var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.10))",
               fontSize: "var(--text-small-size, 12px)",
               lineHeight: 1.5,
-              ...placementStyleMap[placement]
+              top: floatingStyle.top,
+              left: floatingStyle.left,
+              visibility: isPositioned ? "visible" : "hidden"
             },
             children: [
               /* @__PURE__ */ jsx16(
                 "span",
                 {
                   style: {
-                    position: "absolute",
-                    width: 0,
-                    height: 0,
-                    color: tooltipBackground,
-                    ...arrowStyleMap[placement]
+                    ...arrowStyle
                   }
                 }
               ),
@@ -3544,7 +3616,7 @@ var Card2 = Object.assign(CardRoot, {
 var Card_default = Card2;
 
 // src/components/atoms/DatePicker/index.tsx
-import { useCallback as useCallback8, useEffect as useEffect5, useId as useId9, useMemo as useMemo10, useRef as useRef7, useState as useState10 } from "react";
+import { useCallback as useCallback9, useEffect as useEffect5, useId as useId9, useMemo as useMemo10, useRef as useRef7, useState as useState10 } from "react";
 import { createPortal as createPortal2 } from "react-dom";
 
 // src/components/atoms/DatePicker/DatePicker.config.ts
@@ -4961,7 +5033,7 @@ var DatePicker = ({
   useEffect5(() => {
     setIsPortalReady(true);
   }, []);
-  const updatePopoverPosition = useCallback8(() => {
+  const updatePopoverPosition = useCallback9(() => {
     const anchorEl = wrapperRef.current;
     if (!anchorEl || typeof window === "undefined")
       return;
@@ -5976,7 +6048,7 @@ var Divider = ({
 var Divider_default = Divider;
 
 // src/components/molecules/Combobox/index.tsx
-import React18, { useCallback as useCallback9, useEffect as useEffect7, useId as useId11, useMemo as useMemo11, useState as useState12 } from "react";
+import React18, { useCallback as useCallback10, useEffect as useEffect7, useId as useId11, useMemo as useMemo11, useState as useState12 } from "react";
 import { jsx as jsx22, jsxs as jsxs18 } from "react/jsx-runtime";
 function cls12(...parts) {
   return parts.filter(Boolean).join(" ");
@@ -6053,7 +6125,7 @@ var Combobox = React18.memo(function Combobox2({
       )
     })).filter((g) => g.options.length > 0);
   }, [groups, search, searchable]);
-  const setValue = useCallback9(
+  const setValue = useCallback10(
     (next) => {
       if (!isControlled) {
         setInnerValue(next);
@@ -6271,7 +6343,7 @@ var Combobox = React18.memo(function Combobox2({
 Combobox.displayName = "Combobox";
 
 // src/components/molecules/Modal/index.tsx
-import { useCallback as useCallback10, useEffect as useEffect8, useRef as useRef9, useState as useState13 } from "react";
+import { useCallback as useCallback11, useEffect as useEffect8, useRef as useRef9, useState as useState13 } from "react";
 import { createPortal as createPortal3 } from "react-dom";
 
 // src/components/molecules/Modal/Modal.config.ts
@@ -6389,7 +6461,7 @@ function Modal({
     acquireBodyScrollLock();
     return () => releaseBodyScrollLock();
   }, [isOpen]);
-  const handleClose = useCallback10(() => {
+  const handleClose = useCallback11(() => {
     if (closeAfterTransition && animation !== "none") {
       setIsExiting(true);
       exitTimeoutRef.current = setTimeout(() => {

@@ -1,11 +1,21 @@
 "use client";
 
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import Icon from "../Icon";
 import { TooltipIconProps } from "./TooltipIcon.types";
 import { defaultTooltipOptions } from "./TooltipIcon.config";
 import icon from '../../../assets/tooltip-icon.svg'
+
+type ResolvedPlacement = "top" | "bottom" | "left" | "right";
+
+const VIEWPORT_PADDING = 8;
+const TOOLTIP_GAP = 10;
+const ARROW_SIZE = 6;
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), Math.max(min, max));
+}
 
 const TooltipIcon: React.FC<TooltipIconProps> = ({
   tooltipText,
@@ -25,9 +35,28 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 }) => {
   const tooltipId = useId();
   const triggerRef = useRef<HTMLSpanElement>(null);
+  const tooltipRef = useRef<HTMLSpanElement>(null);
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isPositioned, setIsPositioned] = useState(false);
+  const [resolvedPlacement, setResolvedPlacement] = useState<ResolvedPlacement>("top");
+  const [floatingStyle, setFloatingStyle] = useState<React.CSSProperties>({
+    top: 0,
+    left: 0,
+  });
+  const [arrowStyle, setArrowStyle] = useState<React.CSSProperties>({});
+
+  const tooltipBackground =
+    variant === "light"
+      ? "var(--color-bg-surface, #FFFFFF)"
+      : "var(--color-text-primary, #0D0D0D)";
+  const tooltipForeground =
+    variant === "light"
+      ? "var(--color-text-primary, #0D0D0D)"
+      : "var(--color-bg-surface, #FFFFFF)";
+  const tooltipBorder =
+    variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
 
   const clearTimers = () => {
     if (openTimerRef.current) clearTimeout(openTimerRef.current);
@@ -44,7 +73,10 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 
   const showTooltip = () => {
     clearTimers();
-    openTimerRef.current = setTimeout(() => setIsOpen(true), delay);
+    openTimerRef.current = setTimeout(() => {
+      setIsPositioned(false);
+      setIsOpen(true);
+    }, delay);
   };
 
   const hideTooltip = () => {
@@ -52,74 +84,138 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
     closeTimerRef.current = setTimeout(() => setIsOpen(false), closeDelay);
   };
 
-  const placementStyleMap: Record<string, React.CSSProperties> = {
-    top: {
-      bottom: `calc(100% + 10px)`,
-      left: "50%",
-      transform: "translateX(-50%)",
-    },
-    bottom: {
-      top: `calc(100% + 10px)`,
-      left: "50%",
-      transform: "translateX(-50%)",
-    },
-    left: {
-      right: `calc(100% + 10px)`,
-      top: "50%",
-      transform: "translateY(-50%)",
-    },
-    right: {
-      left: `calc(100% + 10px)`,
-      top: "50%",
-      transform: "translateY(-50%)",
-    },
-  };
+  const getArrowStyle = useCallback((
+    nextPlacement: ResolvedPlacement,
+    tooltipLeft: number,
+    tooltipTop: number,
+    tooltipWidth: number,
+    tooltipHeight: number,
+    triggerRect: DOMRect
+  ): React.CSSProperties => {
+    const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+    const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+    const arrowX = clamp(triggerCenterX - tooltipLeft, ARROW_SIZE + 2, tooltipWidth - ARROW_SIZE - 2);
+    const arrowY = clamp(triggerCenterY - tooltipTop, ARROW_SIZE + 2, tooltipHeight - ARROW_SIZE - 2);
 
-  const arrowStyleMap: Record<string, React.CSSProperties> = {
-    top: {
-      left: "50%",
-      top: "100%",
-      transform: "translateX(-50%)",
-      borderLeft: "6px solid transparent",
-      borderRight: "6px solid transparent",
-      borderTop: "6px solid currentColor",
-    },
-    bottom: {
-      left: "50%",
-      bottom: "100%",
-      transform: "translateX(-50%)",
-      borderLeft: "6px solid transparent",
-      borderRight: "6px solid transparent",
-      borderBottom: "6px solid currentColor",
-    },
-    left: {
-      left: "100%",
-      top: "50%",
-      transform: "translateY(-50%)",
-      borderTop: "6px solid transparent",
-      borderBottom: "6px solid transparent",
-      borderLeft: "6px solid currentColor",
-    },
-    right: {
+    const base: React.CSSProperties = {
+      position: "absolute",
+      width: 0,
+      height: 0,
+      color: tooltipBackground,
+    };
+
+    if (nextPlacement === "top") {
+      return {
+        ...base,
+        left: arrowX,
+        top: "100%",
+        transform: "translateX(-50%)",
+        borderLeft: `${ARROW_SIZE}px solid transparent`,
+        borderRight: `${ARROW_SIZE}px solid transparent`,
+        borderTop: `${ARROW_SIZE}px solid currentColor`,
+      };
+    }
+    if (nextPlacement === "bottom") {
+      return {
+        ...base,
+        left: arrowX,
+        bottom: "100%",
+        transform: "translateX(-50%)",
+        borderLeft: `${ARROW_SIZE}px solid transparent`,
+        borderRight: `${ARROW_SIZE}px solid transparent`,
+        borderBottom: `${ARROW_SIZE}px solid currentColor`,
+      };
+    }
+    if (nextPlacement === "left") {
+      return {
+        ...base,
+        left: "100%",
+        top: arrowY,
+        transform: "translateY(-50%)",
+        borderTop: `${ARROW_SIZE}px solid transparent`,
+        borderBottom: `${ARROW_SIZE}px solid transparent`,
+        borderLeft: `${ARROW_SIZE}px solid currentColor`,
+      };
+    }
+    return {
+      ...base,
       right: "100%",
-      top: "50%",
+      top: arrowY,
       transform: "translateY(-50%)",
-      borderTop: "6px solid transparent",
-      borderBottom: "6px solid transparent",
-      borderRight: "6px solid currentColor",
-    },
-  };
+      borderTop: `${ARROW_SIZE}px solid transparent`,
+      borderBottom: `${ARROW_SIZE}px solid transparent`,
+      borderRight: `${ARROW_SIZE}px solid currentColor`,
+    };
+  }, [tooltipBackground]);
 
-  const tooltipBackground =
-    variant === "light"
-      ? "var(--color-bg-surface, #FFFFFF)"
-      : "var(--color-text-primary, #0D0D0D)";
-  const tooltipForeground =
-    variant === "light"
-      ? "var(--color-text-primary, #0D0D0D)"
-      : "var(--color-bg-surface, #FFFFFF)";
-  const tooltipBorder =
-    variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
+  const updatePosition = useCallback(() => {
+    const trigger = triggerRef.current;
+    const tooltip = tooltipRef.current;
+    if (!trigger || !tooltip || typeof window === "undefined") return;
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const spaces: Record<ResolvedPlacement, number> = {
+      top: triggerRect.top,
+      bottom: viewportHeight - triggerRect.bottom,
+      left: triggerRect.left,
+      right: viewportWidth - triggerRect.right,
+    };
+
+    const fits: Record<ResolvedPlacement, boolean> = {
+      top: spaces.top >= tooltipRect.height + TOOLTIP_GAP + VIEWPORT_PADDING,
+      bottom: spaces.bottom >= tooltipRect.height + TOOLTIP_GAP + VIEWPORT_PADDING,
+      left: spaces.left >= tooltipRect.width + TOOLTIP_GAP + VIEWPORT_PADDING,
+      right: spaces.right >= tooltipRect.width + TOOLTIP_GAP + VIEWPORT_PADDING,
+    };
+
+    const order: ResolvedPlacement[] = ["top", "bottom", "right", "left"];
+    const nextPlacement =
+      placement === "auto"
+        ? order.find((side) => fits[side]) ??
+          order.reduce((best, side) => (spaces[side] > spaces[best] ? side : best), "top")
+        : placement;
+
+    let left = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
+    let top = triggerRect.top - tooltipRect.height - TOOLTIP_GAP;
+
+    if (nextPlacement === "bottom") {
+      top = triggerRect.bottom + TOOLTIP_GAP;
+    } else if (nextPlacement === "left") {
+      left = triggerRect.left - tooltipRect.width - TOOLTIP_GAP;
+      top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
+    } else if (nextPlacement === "right") {
+      left = triggerRect.right + TOOLTIP_GAP;
+      top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
+    }
+
+    left = clamp(left, VIEWPORT_PADDING, viewportWidth - tooltipRect.width - VIEWPORT_PADDING);
+    top = clamp(top, VIEWPORT_PADDING, viewportHeight - tooltipRect.height - VIEWPORT_PADDING);
+
+    setResolvedPlacement(nextPlacement);
+    setFloatingStyle({ top, left });
+    setArrowStyle(getArrowStyle(nextPlacement, left, top, tooltipRect.width, tooltipRect.height, triggerRect));
+    setIsPositioned(true);
+  }, [getArrowStyle, placement]);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    updatePosition();
+  }, [isOpen, updatePosition, content, tooltipText, maxWidth]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onChange = () => updatePosition();
+    window.addEventListener("resize", onChange);
+    window.addEventListener("scroll", onChange, true);
+    return () => {
+      window.removeEventListener("resize", onChange);
+      window.removeEventListener("scroll", onChange, true);
+    };
+  }, [isOpen, updatePosition]);
 
   const renderTooltipMedia = () => {
     if (!tooltipContentIcon) return null;
@@ -177,10 +273,11 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 
       {isOpen && (
         <span
+          ref={tooltipRef}
           id={`tooltip-${tooltipId}`}
           role="tooltip"
           style={{
-            position: "absolute",
+            position: "fixed",
             zIndex: 50,
             maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
             minWidth: 120,
@@ -192,16 +289,14 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
             boxShadow: "var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.10))",
             fontSize: "var(--text-small-size, 12px)",
             lineHeight: 1.5,
-            ...placementStyleMap[placement],
+            top: floatingStyle.top,
+            left: floatingStyle.left,
+            visibility: isPositioned ? "visible" : "hidden",
           }}
         >
           <span
             style={{
-              position: "absolute",
-              width: 0,
-              height: 0,
-              color: tooltipBackground,
-              ...arrowStyleMap[placement],
+              ...arrowStyle,
             }}
           />
           <span

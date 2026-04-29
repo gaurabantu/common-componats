@@ -7,7 +7,7 @@ const meta: Meta<typeof ToolTip> = {
   component: ToolTip,
   tags: ["autodocs"],
   argTypes: {
-    placement: { control: "select", options: ["top", "bottom", "left", "right"] },
+    placement: { control: "select", options: ["auto", "top", "bottom", "left", "right"] },
     size: { control: { type: "number", min: 12, max: 32 } },
   },
 };
@@ -19,7 +19,7 @@ type Story = StoryObj<typeof ToolTip>;
 export const Default: Story = {
   args: {
     tooltipText: "Helpful hint here",
-    placement: "top",
+    placement: "auto",
   },
 };
 

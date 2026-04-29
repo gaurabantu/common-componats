@@ -1,7 +1,7 @@
 import React from "react";
 import type { IconSource } from "../Icon";
 
-export type TooltipPlacement = "top" | "bottom" | "left" | "right";
+export type TooltipPlacement = "auto" | "top" | "bottom" | "left" | "right";
 
 export interface TooltipIconProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, "content"> {
