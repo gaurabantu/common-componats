@@ -130,6 +130,40 @@
   color: var(--color-text-secondary, #757575);
 }
 
+.ds-file-upload__icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 .ds-file-upload[data-dragging="true"] .ds-file-upload__icon {
   color: var(--color-theme-primary, var(--color-brand-primary, #0d0d0d));
+}
+
+@media (max-width: 640px) {
+  .ds-file-upload__zone {
+    min-height: 6rem;
+    padding: var(--space-2, 1rem);
+  }
+
+  .ds-file-upload[data-size="sm"] .ds-file-upload__zone {
+    min-height: 5.5rem;
+    padding: var(--space-1, 0.5rem);
+  }
+
+  .ds-file-upload[data-size="md"] .ds-file-upload__zone {
+    min-height: 7rem;
+  }
+
+  .ds-file-upload__label {
+    gap: 0.375rem;
+  }
+
+  .ds-file-upload__icon svg {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .ds-file-upload__description {
+    max-width: 100%;
+  }
 }

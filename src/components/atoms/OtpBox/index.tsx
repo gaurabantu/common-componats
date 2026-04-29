@@ -179,10 +179,6 @@ const OtpBox: React.FC<OtpBoxProps> = ({
 
   const displayValue = mask ? "•".repeat(otpValue.length) : otpValue;
 
-  const boxSize = size === "sm" ? 36 : size === "lg" ? 48 : 40;
-  const boxFont = size === "sm" ? 18 : size === "lg" ? 26 : 22;
-  const boxGap = size === "sm" ? 8 : size === "lg" ? 12 : 10;
-
   const rootClasses = [
     "otp-box-root",
     `otp-box--${variant}`,
@@ -206,12 +202,6 @@ const OtpBox: React.FC<OtpBoxProps> = ({
           )}
           <div
             className="otp-box-cells"
-            style={{
-              display: "flex",
-              gap: `${boxGap}px`,
-              flexWrap: "nowrap",
-              width: "fit-content",
-            }}
           >
             {Array.from({ length }).map((_, i) => (
               <input
@@ -235,17 +225,9 @@ const OtpBox: React.FC<OtpBoxProps> = ({
                 spellCheck={false}
                 className="otp-box-cell"
                 style={{
-                  width: boxSize,
-                  height: boxSize,
-                  minWidth: boxSize,
-                  minHeight: boxSize,
-                  maxWidth: boxSize,
-                  maxHeight: boxSize,
                   padding: 0,
                   margin: 0,
                   textAlign: "center",
-                  lineHeight: `${boxSize - 4}px`,
-                  fontSize: boxFont,
                   fontWeight: 700,
                   boxSizing: "border-box",
                   flexShrink: 0,

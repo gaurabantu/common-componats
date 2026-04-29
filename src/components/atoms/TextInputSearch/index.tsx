@@ -9,6 +9,8 @@ import { roundedToCssCorner } from "../TextInput/TextInput.utils";
 import { railButtonSize } from "./TextInputSearch.utils";
 import "./TextInputSearch.css";
 
+const pxToRem = (px: number) => `${px / 16}rem`;
+
 /** Right-side action (`showSearchButton`) — icon-filled vs text label. */
 export type SearchButtonDisplay = "icon" | "text";
 
@@ -23,8 +25,8 @@ export interface TextInputSearchProps {
   id?: string;
   /** Left icon (default: magnifier). Set to `null` to hide. */
   leftIcon?: IconSource | null;
-  leftIconHeight?: number;
-  leftIconWidth?: number;
+  leftIconHeight?: number | string;
+  leftIconWidth?: number | string;
   leftIconColor?: string;
   placeholder?: string;
   value?: string;
@@ -52,8 +54,8 @@ export interface TextInputSearchProps {
    */
   searchButtonDisplay?: SearchButtonDisplay;
   searchButtonIcon?: IconSource;
-  searchButtonIconWidth?: number;
-  searchButtonIconHeight?: number;
+  searchButtonIconWidth?: number | string;
+  searchButtonIconHeight?: number | string;
   searchButtonAriaLabel?: string;
   /** @default "Search" */
   searchButtonLabel?: string;
@@ -150,11 +152,11 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
   const iw =
     btnIconWidthProp
     ?? searchButtonIconWidth
-    ?? iconInset;
+    ?? pxToRem(iconInset);
   const ih = btnIconHeightProp ?? searchButtonIconHeight ?? iw;
 
   const prefixIconSize =
-    leftIconHeight != null ? leftIconHeight : Math.round(hdr.shellMinHeight * 0.42);
+    leftIconHeight != null ? leftIconHeight : pxToRem(Math.round(hdr.shellMinHeight * 0.42));
   const prefixIconWidth = leftIconWidth ?? prefixIconSize;
 
   const iconOnlyName =
@@ -171,7 +173,7 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
           : {}),
         alignSelf: "stretch",
         height: "100%",
-        minHeight: hdr.shellMinHeight,
+        minHeight: pxToRem(hdr.shellMinHeight),
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
         borderTopRightRadius: trailingCorner,
@@ -179,8 +181,8 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
         boxSizing: "border-box",
         ...(searchButtonDisplay === "icon"
           ? {
-              paddingLeft: hdr.integratedIconPadX,
-              paddingRight: hdr.integratedIconPadX,
+              paddingLeft: pxToRem(hdr.integratedIconPadX),
+              paddingRight: pxToRem(hdr.integratedIconPadX),
             }
           : {}),
       }
@@ -188,7 +190,7 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
         ...(userSearchActionStyles && typeof userSearchActionStyles === "object"
           ? userSearchActionStyles
           : {}),
-        height: hdr.searchActionInsetHeight,
+        height: pxToRem(hdr.searchActionInsetHeight),
         minHeight: 0,
         alignSelf: "center",
         boxSizing: "border-box",

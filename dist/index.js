@@ -184,18 +184,18 @@ var iconOnlySizeClasses = {
 };
 var radiusClass = "btn-rounded-md";
 var defaultIconWithLabelSizeBySize = {
-  xxs: { width: 10, height: 10 },
-  xs: { width: 12, height: 12 },
-  sm: { width: 13, height: 13 },
-  md: { width: 14, height: 14 },
-  lg: { width: 16, height: 16 }
+  xxs: { width: "0.625rem", height: "0.625rem" },
+  xs: { width: "0.75rem", height: "0.75rem" },
+  sm: { width: "0.8125rem", height: "0.8125rem" },
+  md: { width: "0.875rem", height: "0.875rem" },
+  lg: { width: "1rem", height: "1rem" }
 };
 var defaultIconOnlySizeBySize = {
-  xxs: { width: 12, height: 12 },
-  xs: { width: 14, height: 14 },
-  sm: { width: 18, height: 18 },
-  md: { width: 20, height: 20 },
-  lg: { width: 24, height: 24 }
+  xxs: { width: "0.75rem", height: "0.75rem" },
+  xs: { width: "0.875rem", height: "0.875rem" },
+  sm: { width: "1.125rem", height: "1.125rem" },
+  md: { width: "1.25rem", height: "1.25rem" },
+  lg: { width: "1.5rem", height: "1.5rem" }
 };
 var defaultIconConfig = {
   width: defaultIconWithLabelSizeBySize.lg.width,
@@ -262,18 +262,19 @@ var Icon = import_react2.default.memo(function Icon2({
     ...rest
   };
   if (import_react2.default.isValidElement(src)) {
-    const size = typeof width === "number" ? width : 16;
+    const size = width;
+    const sizeHeight = height != null ? height : width;
     const childProps = src.props;
     const childStyle = (childProps == null ? void 0 : childProps.style) || {};
     const mergedStyle = {
       width: size,
-      height: size,
+      height: sizeHeight,
       color: !preserveColors ? color : void 0,
       ...childStyle
     };
     const child = import_react2.default.cloneElement(src, {
       width: size,
-      height: size,
+      height: sizeHeight,
       style: mergedStyle
     });
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { ...wrapperProps, children: child });
@@ -850,6 +851,7 @@ var search_default = 'data:image/svg+xml,<svg width="18" height="18" viewBox="0 
 
 // src/components/atoms/TextInput/TextInput.tsx
 var import_jsx_runtime4 = require("react/jsx-runtime");
+var pxToRem = (px) => `${px / 16}rem`;
 var TextInput = (0, import_react5.forwardRef)(({
   id: idProp,
   label = "",
@@ -1315,21 +1317,21 @@ var TextInput = (0, import_react5.forwardRef)(({
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
-      minHeight: 32,
-      horizontalPadding: 10,
-      addonPadding: 8,
+      minHeight: "2rem",
+      horizontalPadding: "0.625rem",
+      addonPadding: "0.5rem",
       fontSize: "var(--text-small-size)"
     },
     md: {
-      minHeight: 40,
-      horizontalPadding: 12,
-      addonPadding: 10,
+      minHeight: "2.5rem",
+      horizontalPadding: "0.75rem",
+      addonPadding: "0.625rem",
       fontSize: "var(--text-body-size)"
     },
     lg: {
-      minHeight: 48,
-      horizontalPadding: 14,
-      addonPadding: 12,
+      minHeight: "3rem",
+      horizontalPadding: "0.875rem",
+      addonPadding: "0.75rem",
       fontSize: "var(--text-body-size)"
     }
   };
@@ -1337,17 +1339,17 @@ var TextInput = (0, import_react5.forwardRef)(({
   const isIntegratedRail = trailingRail === "integrated" && isHeaderSearchRail;
   const hdr = isHeaderSearchRail ? HEADER_SEARCH_LAYOUT[size] : void 0;
   const fieldMetrics = hdr ? {
-    minHeight: hdr.shellMinHeight,
-    horizontalPadding: hdr.horizontalPadding,
+    minHeight: pxToRem(hdr.shellMinHeight),
+    horizontalPadding: pxToRem(hdr.horizontalPadding),
     addonPadding: baseSizeTokens[size].addonPadding,
     fontSize: baseSizeTokens[size].fontSize,
     inputLineHeight: hdr.inputLineHeight,
-    suffixPadLeft: hdr.suffixPadLeft,
-    suffixPadRight: hdr.suffixPadRight,
-    prefixPadLR: hdr.prefixAddonPadding,
-    clearIconPx: hdr.clearIconSize,
-    clearPadX: hdr.clearHitPaddingX,
-    decorativeTrailingPx: hdr.decorativeTrailingSearchIcon
+    suffixPadLeft: pxToRem(hdr.suffixPadLeft),
+    suffixPadRight: pxToRem(hdr.suffixPadRight),
+    prefixPadLR: pxToRem(hdr.prefixAddonPadding),
+    clearIconPx: pxToRem(hdr.clearIconSize),
+    clearPadX: pxToRem(hdr.clearHitPaddingX),
+    decorativeTrailingPx: pxToRem(hdr.decorativeTrailingSearchIcon)
   } : {
     minHeight: baseSizeTokens[size].minHeight,
     horizontalPadding: baseSizeTokens[size].horizontalPadding,
@@ -1562,7 +1564,7 @@ var TextInput = (0, import_react5.forwardRef)(({
                       alignItems: "center",
                       justifyContent: "center",
                       height: "100%",
-                      minWidth: isHeaderSearchRail ? isIntegratedRail ? 28 : 26 : fieldMetrics.minHeight,
+                      minWidth: isHeaderSearchRail ? pxToRem(isIntegratedRail ? 28 : 26) : fieldMetrics.minHeight,
                       paddingLeft: fieldMetrics.clearPadX,
                       paddingRight: fieldMetrics.clearPadX,
                       boxSizing: "border-box",
@@ -2285,23 +2287,12 @@ function Form({
   ...rest
 }) {
   const resolvedShellStyle = {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "var(--space-4) var(--space-2)",
-    boxSizing: "border-box",
     ...shellStyle
   };
   const resolvedCardStyle = {
-    width: "100%",
     maxWidth,
-    borderRadius: "var(--radius-card)",
-    border: "1px solid var(--color-border-default)",
-    background: "var(--color-bg-surface, #FFFFFF)",
-    boxShadow: "var(--shadow-lg)",
-    padding: "var(--space-4)",
-    boxSizing: "border-box",
+    "--form-gap": typeof gap === "number" ? `${gap}px` : gap,
+    "--form-columns": Math.max(1, columns),
     ...cardStyle,
     ...style
   };
@@ -2331,33 +2322,13 @@ function Form({
     lineHeight: "var(--text-body-line-height)"
   };
   const resolvedContentStyle = {
-    marginTop: "var(--space-4)",
-    display: "flex",
-    flexDirection: "column",
-    gap,
     ...contentStyle
   };
-  const resolvedFieldsStyle = layout === "grid" ? {
-    display: "grid",
-    gridTemplateColumns: `repeat(${Math.max(1, columns)}, minmax(0, 1fr))`,
-    gap,
-    alignItems: "start",
-    ...fieldsStyle
-  } : {
-    display: "flex",
-    flexDirection: "column",
-    gap,
-    ...fieldsStyle
-  };
-  const resolvedActionsStyle = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "var(--space-2)"
-  };
-  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("section", { className: cx(shellClassName), style: resolvedShellStyle, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
+  const resolvedFieldsStyle = { ...fieldsStyle };
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("section", { className: cx("ds-form-shell", shellClassName), style: resolvedShellStyle, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
     "div",
     {
-      className: cx(cardClassName),
+      className: cx("ds-form-card", cardClassName),
       style: resolvedCardStyle,
       children: [
         (badge || title || description) && /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { children: [
@@ -2369,11 +2340,22 @@ function Form({
           "form",
           {
             ...rest,
-            className: cx(contentClassName, className),
+            className: cx("ds-form-content", contentClassName, className),
             style: resolvedContentStyle,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: cx(fieldsClassName), style: resolvedFieldsStyle, children }),
-              (actions || footer) && /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: resolvedActionsStyle, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+                "div",
+                {
+                  className: cx(
+                    "ds-form-fields",
+                    layout === "grid" && "ds-form-fields--grid",
+                    fieldsClassName
+                  ),
+                  style: resolvedFieldsStyle,
+                  children
+                }
+              ),
+              (actions || footer) && /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "ds-form-actions", children: [
                 actions,
                 footer
               ] })
@@ -7648,9 +7630,6 @@ var OtpBox = ({
     }
   };
   const displayValue = mask ? "\u2022".repeat(otpValue.length) : otpValue;
-  const boxSize = size === "sm" ? 36 : size === "lg" ? 48 : 40;
-  const boxFont = size === "sm" ? 18 : size === "lg" ? 26 : 22;
-  const boxGap = size === "sm" ? 8 : size === "lg" ? 12 : 10;
   const rootClasses = [
     "otp-box-root",
     `otp-box--${variant}`,
@@ -7667,12 +7646,6 @@ var OtpBox = ({
         "div",
         {
           className: "otp-box-cells",
-          style: {
-            display: "flex",
-            gap: `${boxGap}px`,
-            flexWrap: "nowrap",
-            width: "fit-content"
-          },
           children: Array.from({ length }).map((_, i) => {
             var _a;
             return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
@@ -7697,17 +7670,9 @@ var OtpBox = ({
                 spellCheck: false,
                 className: "otp-box-cell",
                 style: {
-                  width: boxSize,
-                  height: boxSize,
-                  minWidth: boxSize,
-                  minHeight: boxSize,
-                  maxWidth: boxSize,
-                  maxHeight: boxSize,
                   padding: 0,
                   margin: 0,
                   textAlign: "center",
-                  lineHeight: `${boxSize - 4}px`,
-                  fontSize: boxFont,
                   fontWeight: 700,
                   boxSizing: "border-box",
                   flexShrink: 0
@@ -8629,14 +8594,15 @@ function Modal({
         "aria-modal": "true",
         role: "dialog",
         style: {
+          boxSizing: "border-box",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           position: "fixed",
           top: 0,
           left: 0,
-          width: "100vw",
-          height: "100vh",
+          width: "100dvw",
+          height: "100dvh",
           zIndex: dialogZIndex,
           padding: "1rem",
           overflow: "hidden",
@@ -8648,10 +8614,12 @@ function Modal({
           {
             className: `modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`,
             style: {
+              boxSizing: "border-box",
               margin: 0,
-              maxHeight: "calc(100vh - 2rem)",
+              maxHeight: "calc(100dvh - 2rem)",
               width: "100%",
               maxWidth: (_b = modalSizeWidths[size]) != null ? _b : "480px",
+              minWidth: 0,
               display: "flex",
               flexDirection: "column",
               pointerEvents: "auto",
@@ -8743,6 +8711,7 @@ function Modal({
                         display: "flex",
                         gap: "0.75rem",
                         justifyContent: "flex-end",
+                        flexWrap: "wrap",
                         padding: "1rem 1.25rem",
                         borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))"
                       },
@@ -8975,16 +8944,10 @@ function AlertDialog({
       children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
         "div",
         {
+          className: "alert-dialog-content",
           role: "alertdialog",
           "aria-labelledby": "alert-dialog-title",
           "aria-describedby": "alert-dialog-desc",
-          style: {
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            padding: "0.5rem 0"
-          },
           children: [
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: { marginBottom: "1.25rem", display: "flex", justifyContent: "center" }, children: customIcon != null ? customIcon : /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(VariantIcon, { variant, animated: iconAnimated }) }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
@@ -9013,44 +8976,33 @@ function AlertDialog({
                 children: description
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
-              "div",
-              {
-                style: {
-                  display: "flex",
-                  gap: "0.75rem",
-                  justifyContent: "center",
-                  flexWrap: "wrap"
-                },
-                children: [
-                  showCancel && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
-                    Button_default,
-                    {
-                      variant: cancelButtonVariant,
-                      size: "md",
-                      onClick: handleCancel,
-                      textColor: cancelButtonColor,
-                      backgroundColor: cancelButtonBackground,
-                      borderColor: cancelButtonBorder,
-                      children: cancelText
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
-                    Button_default,
-                    {
-                      variant: confirmButtonVariant != null ? confirmButtonVariant : destructive ? "outlinePrimary" : "primary",
-                      size: destructive ? "md" : "lg",
-                      onClick: handleConfirm,
-                      disabled: confirmDisabled,
-                      textColor: confirmButtonColor,
-                      backgroundColor: confirmButtonBackground,
-                      borderColor: confirmButtonBorder,
-                      children: confirmText
-                    }
-                  )
-                ]
-              }
-            )
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "alert-dialog-actions", children: [
+              showCancel && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+                Button_default,
+                {
+                  variant: cancelButtonVariant,
+                  size: "md",
+                  onClick: handleCancel,
+                  textColor: cancelButtonColor,
+                  backgroundColor: cancelButtonBackground,
+                  borderColor: cancelButtonBorder,
+                  children: cancelText
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+                Button_default,
+                {
+                  variant: confirmButtonVariant != null ? confirmButtonVariant : destructive ? "outlinePrimary" : "primary",
+                  size: destructive ? "md" : "lg",
+                  onClick: handleConfirm,
+                  disabled: confirmDisabled,
+                  textColor: confirmButtonColor,
+                  backgroundColor: confirmButtonBackground,
+                  borderColor: confirmButtonBorder,
+                  children: confirmText
+                }
+              )
+            ] })
           ]
         }
       )
@@ -9075,6 +9027,7 @@ function railButtonSize(inputSize) {
 
 // src/components/atoms/TextInputSearch/index.tsx
 var import_jsx_runtime33 = require("react/jsx-runtime");
+var pxToRem2 = (px) => `${px / 16}rem`;
 function railKey(inputSize) {
   if (inputSize === "lg")
     return "lg";
@@ -9145,9 +9098,9 @@ var TextInputSearch = ({
   const useIntegratedRail = trailingRailResolved === "integrated";
   const displayIconSrc = searchButtonDisplay === "icon" ? (_a = btnIconPass != null ? btnIconPass : searchButtonIcon) != null ? _a : search_default : btnIconPass;
   const iconInset = Math.round(hdr.searchActionInsetHeight * 0.48);
-  const iw = (_b = btnIconWidthProp != null ? btnIconWidthProp : searchButtonIconWidth) != null ? _b : iconInset;
+  const iw = (_b = btnIconWidthProp != null ? btnIconWidthProp : searchButtonIconWidth) != null ? _b : pxToRem2(iconInset);
   const ih = (_c = btnIconHeightProp != null ? btnIconHeightProp : searchButtonIconHeight) != null ? _c : iw;
-  const prefixIconSize = leftIconHeight != null ? leftIconHeight : Math.round(hdr.shellMinHeight * 0.42);
+  const prefixIconSize = leftIconHeight != null ? leftIconHeight : pxToRem2(Math.round(hdr.shellMinHeight * 0.42));
   const prefixIconWidth = leftIconWidth != null ? leftIconWidth : prefixIconSize;
   const iconOnlyName = searchButtonDisplay === "icon" ? (_d = btnAriaPass != null ? btnAriaPass : searchButtonAriaLabel) != null ? _d : searchButtonLabel : void 0;
   const trailingCorner = roundedToCssCorner(SEARCH_SHELL_ROUNDED);
@@ -9155,19 +9108,19 @@ var TextInputSearch = ({
     ...userSearchActionStyles && typeof userSearchActionStyles === "object" ? userSearchActionStyles : {},
     alignSelf: "stretch",
     height: "100%",
-    minHeight: hdr.shellMinHeight,
+    minHeight: pxToRem2(hdr.shellMinHeight),
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
     borderTopRightRadius: trailingCorner,
     borderBottomRightRadius: trailingCorner,
     boxSizing: "border-box",
     ...searchButtonDisplay === "icon" ? {
-      paddingLeft: hdr.integratedIconPadX,
-      paddingRight: hdr.integratedIconPadX
+      paddingLeft: pxToRem2(hdr.integratedIconPadX),
+      paddingRight: pxToRem2(hdr.integratedIconPadX)
     } : {}
   } : {
     ...userSearchActionStyles && typeof userSearchActionStyles === "object" ? userSearchActionStyles : {},
-    height: hdr.searchActionInsetHeight,
+    height: pxToRem2(hdr.searchActionInsetHeight),
     minHeight: 0,
     alignSelf: "center",
     boxSizing: "border-box"

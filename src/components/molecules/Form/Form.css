@@ -1,0 +1,74 @@
+.ds-form-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4, 2rem) var(--space-2, 1rem);
+  box-sizing: border-box;
+}
+
+.ds-form-card {
+  width: 100%;
+  border-radius: var(--radius-card, 0.625rem);
+  border: 1px solid var(--color-border-default, #999999);
+  background: var(--color-bg-surface, #ffffff);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-4, 2rem);
+  box-sizing: border-box;
+}
+
+.ds-form-content {
+  margin-top: var(--space-4, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-gap, 1.125rem);
+}
+
+.ds-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-gap, 1.125rem);
+}
+
+.ds-form-fields--grid {
+  display: grid;
+  grid-template-columns: repeat(var(--form-columns, 2), minmax(0, 1fr));
+  gap: var(--form-gap, 1.125rem);
+  align-items: start;
+}
+
+.ds-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 1rem);
+}
+
+@media (min-width: 641px) {
+  .ds-form-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .ds-form-shell {
+    align-items: flex-start;
+    padding: var(--space-2, 1rem);
+  }
+
+  .ds-form-card {
+    padding: var(--space-2, 1rem);
+    border-radius: var(--radius-lg, 0.5rem);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ds-form-fields--grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ds-form-actions :is(button, a) {
+    width: 100%;
+  }
+}

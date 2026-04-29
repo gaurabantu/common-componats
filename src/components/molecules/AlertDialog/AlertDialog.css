@@ -1,0 +1,30 @@
+.alert-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+.alert-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .alert-dialog-content {
+    padding: 0.25rem 0;
+  }
+
+  .alert-dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .alert-dialog-actions :is(button, a) {
+    width: 100%;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import "./Form.css";
 
 export interface FormProps
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "title"> {
@@ -52,24 +53,13 @@ export default function Form({
   ...rest
 }: FormProps) {
   const resolvedShellStyle: React.CSSProperties = {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "var(--space-4) var(--space-2)",
-    boxSizing: "border-box",
     ...shellStyle,
   };
 
-  const resolvedCardStyle: React.CSSProperties = {
-    width: "100%",
+  const resolvedCardStyle: React.CSSProperties & Record<string, string | number> = {
     maxWidth,
-    borderRadius: "var(--radius-card)",
-    border: "1px solid var(--color-border-default)",
-    background: "var(--color-bg-surface, #FFFFFF)",
-    boxShadow: "var(--shadow-lg)",
-    padding: "var(--space-4)",
-    boxSizing: "border-box",
+    "--form-gap": typeof gap === "number" ? `${gap}px` : gap,
+    "--form-columns": Math.max(1, columns),
     ...cardStyle,
     ...style,
   };
@@ -103,39 +93,15 @@ export default function Form({
   };
 
   const resolvedContentStyle: React.CSSProperties = {
-    marginTop: "var(--space-4)",
-    display: "flex",
-    flexDirection: "column",
-    gap,
     ...contentStyle,
   };
 
-  const resolvedFieldsStyle: React.CSSProperties =
-    layout === "grid"
-      ? {
-          display: "grid",
-          gridTemplateColumns: `repeat(${Math.max(1, columns)}, minmax(0, 1fr))`,
-          gap,
-          alignItems: "start",
-          ...fieldsStyle,
-        }
-      : {
-          display: "flex",
-          flexDirection: "column",
-          gap,
-          ...fieldsStyle,
-        };
-
-  const resolvedActionsStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "var(--space-2)",
-  };
+  const resolvedFieldsStyle: React.CSSProperties = { ...fieldsStyle };
 
   return (
-    <section className={cx(shellClassName)} style={resolvedShellStyle}>
+    <section className={cx("ds-form-shell", shellClassName)} style={resolvedShellStyle}>
       <div
-        className={cx(cardClassName)}
+        className={cx("ds-form-card", cardClassName)}
         style={resolvedCardStyle}
       >
         {(badge || title || description) && (
@@ -148,14 +114,21 @@ export default function Form({
 
         <form
           {...rest}
-          className={cx(contentClassName, className)}
+          className={cx("ds-form-content", contentClassName, className)}
           style={resolvedContentStyle}
         >
-          <div className={cx(fieldsClassName)} style={resolvedFieldsStyle}>
+          <div
+            className={cx(
+              "ds-form-fields",
+              layout === "grid" && "ds-form-fields--grid",
+              fieldsClassName
+            )}
+            style={resolvedFieldsStyle}
+          >
             {children}
           </div>
           {(actions || footer) && (
-            <div style={resolvedActionsStyle}>
+            <div className="ds-form-actions">
               {actions}
               {footer}
             </div>

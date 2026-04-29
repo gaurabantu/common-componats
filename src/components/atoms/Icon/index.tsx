@@ -83,18 +83,19 @@ const Icon = React.memo<IconProps>(function Icon({
 
   // Inline SVG or React element — render inside sized wrapper
   if (React.isValidElement(src)) {
-    const size = typeof width === "number" ? width : 16;
+    const size = width;
+    const sizeHeight = height ?? width;
     const childProps = (src as React.ReactElement).props as Record<string, unknown>;
     const childStyle = (childProps?.style as React.CSSProperties) || {};
     const mergedStyle: React.CSSProperties = {
       width: size,
-      height: size,
+      height: sizeHeight,
       color: !preserveColors ? color : undefined,
       ...childStyle,
     };
-    const child = React.cloneElement(src as React.ReactElement<{ width?: number; height?: number; style?: React.CSSProperties }>, {
+    const child = React.cloneElement(src as React.ReactElement<{ width?: number | string; height?: number | string; style?: React.CSSProperties }>, {
       width: size,
-      height: size,
+      height: sizeHeight,
       style: mergedStyle,
     });
     return <span {...wrapperProps}>{child}</span>;

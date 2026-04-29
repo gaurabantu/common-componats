@@ -20,7 +20,7 @@ export type ButtonVariant =
   | "link"
   | "ghost";
 
-/** §20: xxs=inline 24 · xs=section 28 · sm=tertiary 32 · md=secondary/outlined 36 · lg=primary 40 (2px vertical padding) */
+/** §20: xxs=inline 1.5rem · xs=section 1.75rem · sm=tertiary 2rem · md=secondary 2.25rem · lg=primary 2.5rem */
 export type ButtonSize = "xxs" | "xs" | "sm" | "md" | "lg";
 
 /** Variant → CSS class name (tokens.css). "default" = primary. */
@@ -63,25 +63,25 @@ export const radiusClass = "btn-rounded-md";
  */
 export const defaultIconWithLabelSizeBySize: Record<
   ButtonSize,
-  { width: number; height: number }
+  { width: number | string; height: number | string }
 > = {
-  xxs: { width: 10, height: 10 },
-  xs: { width: 12, height: 12 },
-  sm: { width: 13, height: 13 },
-  md: { width: 14, height: 14 },
-  lg: { width: 16, height: 16 },
+  xxs: { width: "0.625rem", height: "0.625rem" },
+  xs: { width: "0.75rem", height: "0.75rem" },
+  sm: { width: "0.8125rem", height: "0.8125rem" },
+  md: { width: "0.875rem", height: "0.875rem" },
+  lg: { width: "1rem", height: "1rem" },
 };
 
 /** Icon-only: slightly larger glyphs inside square hit targets (better balance vs text+icon). */
 export const defaultIconOnlySizeBySize: Record<
   ButtonSize,
-  { width: number; height: number }
+  { width: number | string; height: number | string }
 > = {
-  xxs: { width: 12, height: 12 },
-  xs: { width: 14, height: 14 },
-  sm: { width: 18, height: 18 },
-  md: { width: 20, height: 20 },
-  lg: { width: 24, height: 24 },
+  xxs: { width: "0.75rem", height: "0.75rem" },
+  xs: { width: "0.875rem", height: "0.875rem" },
+  sm: { width: "1.125rem", height: "1.125rem" },
+  md: { width: "1.25rem", height: "1.25rem" },
+  lg: { width: "1.5rem", height: "1.5rem" },
 };
 
 /** @deprecated Use `defaultIconWithLabelSizeBySize` — same map. */

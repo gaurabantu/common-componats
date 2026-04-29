@@ -26,7 +26,7 @@ type ButtonBaseProps = {
     | "ghost";
 
   variantClass?: string; // full variant class override
-  /** §20: default `lg` (44px) — primary screen CTAs; `md` = 40px outlined secondaries */
+  /** §20: default `lg` (2.5rem) — primary screen CTAs; `md` = 2.25rem outlined secondaries */
   size?: "xxs" | "xs" | "sm" | "md" | "lg";
   width?: string | number;
   height?: string | number;
@@ -43,8 +43,8 @@ type ButtonBaseProps = {
   textSize?: "sm" | "md" | "lg";
   icon?: IconSource;  // URL, import, inline SVG, or React element
   iconPosition?: "left" | "right"; // Default: left
-  iconWidth?: number; // Default: 15
-  iconHeight?: number; // Default: 15
+  iconWidth?: number | string; // Default is size-tier based
+  iconHeight?: number | string; // Default is size-tier based
   iconColor?: string;
   iconGap?: number; // Used for SVG icons (gap between icon & text)
   fullWidth?: boolean;

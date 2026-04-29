@@ -182,14 +182,15 @@ export default function Modal({
         aria-modal="true"
         role="dialog"
         style={{
+          boxSizing: "border-box",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           position: "fixed",
           top: 0,
           left: 0,
-          width: "100vw",
-          height: "100vh",
+          width: "100dvw",
+          height: "100dvh",
           zIndex: dialogZIndex,
           padding: "1rem",
           overflow: "hidden",
@@ -200,10 +201,12 @@ export default function Modal({
         <div
           className={`modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`}
           style={{
+            boxSizing: "border-box",
             margin: 0,
-            maxHeight: "calc(100vh - 2rem)",
+            maxHeight: "calc(100dvh - 2rem)",
             width: "100%",
             maxWidth: modalSizeWidths[size] ?? "480px",
+            minWidth: 0,
             display: "flex",
             flexDirection: "column",
             pointerEvents: "auto",
@@ -285,6 +288,7 @@ export default function Modal({
                   display: "flex",
                   gap: "0.75rem",
                   justifyContent: "flex-end",
+                  flexWrap: "wrap",
                   padding: "1rem 1.25rem",
                   borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))",
                 }}

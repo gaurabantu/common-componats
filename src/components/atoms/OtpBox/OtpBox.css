@@ -2,7 +2,12 @@
 
 .otp-box-root {
   font-family: var(--font-family, "Inter"), system-ui, sans-serif;
-  width: fit-content;
+  width: min-content;
+  max-width: 100%;
+  --otp-cell-size: 2.5rem;
+  --otp-cell-font-size: 1.375rem;
+  --otp-cell-gap: 0.625rem;
+  --otp-single-width: 17.5rem;
 }
 
 .otp-box-wrapper {
@@ -29,16 +34,16 @@
 
 .otp-box-input {
   display: block;
-  width: 280px;
-  height: 52px;
+  width: min(var(--otp-single-width), 100%);
+  height: 3.25rem;
   box-sizing: border-box;
-  padding: 0 16px;
+  padding: 0 1rem;
   margin: 0;
   font-family: "ui-monospace", "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: 700;
   letter-spacing: 0.35em;
-  line-height: 48px;
+  line-height: 3rem;
   color: var(--color-text-primary, #0d0d0d);
   text-align: center;
   outline: none;
@@ -137,7 +142,7 @@
 /* ========== BOXES VARIANT (individual cells) ========== */
 .otp-box-cells {
   display: flex;
-  gap: 10px;
+  gap: var(--otp-cell-gap);
   justify-content: flex-start;
   align-items: center;
   flex-wrap: nowrap;
@@ -145,11 +150,20 @@
 
 .otp-box-cell {
   display: block;
+  width: var(--otp-cell-size);
+  height: var(--otp-cell-size);
+  min-width: var(--otp-cell-size);
+  min-height: var(--otp-cell-size);
+  max-width: var(--otp-cell-size);
+  max-height: var(--otp-cell-size);
   padding: 0;
   margin: 0;
   text-align: center;
   vertical-align: middle;
   font-family: "ui-monospace", "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
+  font-size: var(--otp-cell-font-size);
+  font-weight: 700;
+  line-height: calc(var(--otp-cell-size) - 0.25rem);
   color: var(--color-text-primary, #0d0d0d);
   background: var(--color-bg-surface, #ffffff);
   border: 2px solid var(--color-border-default, #d1d5db);
@@ -188,28 +202,32 @@
 
 /* Small */
 .otp-box--sm .otp-box-input {
-  width: 240px;
-  height: 44px;
-  font-size: 18px;
+  --otp-single-width: 15rem;
+  height: 2.75rem;
+  font-size: 1.125rem;
   letter-spacing: 0.3em;
-  line-height: 40px;
+  line-height: 2.5rem;
 }
 
-.otp-box--sm .otp-box-cells {
-  gap: 8px;
+.otp-box--sm {
+  --otp-cell-size: 2.25rem;
+  --otp-cell-font-size: 1.125rem;
+  --otp-cell-gap: 0.5rem;
 }
 
 /* Large */
 .otp-box--lg .otp-box-input {
-  width: 340px;
-  height: 60px;
-  font-size: 28px;
+  --otp-single-width: 21.25rem;
+  height: 3.75rem;
+  font-size: 1.75rem;
   letter-spacing: 0.4em;
-  line-height: 56px;
+  line-height: 3.5rem;
 }
 
-.otp-box--lg .otp-box-cells {
-  gap: 12px;
+.otp-box--lg {
+  --otp-cell-size: 3rem;
+  --otp-cell-font-size: 1.625rem;
+  --otp-cell-gap: 0.75rem;
 }
 
 /* ========== ERROR MESSAGE ========== */
@@ -229,5 +247,27 @@
   .otp-box-input,
   .otp-box-cell {
     transition: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .otp-box-root {
+    width: 100%;
+    --otp-cell-size: clamp(2rem, 12vw, 2.5rem);
+    --otp-cell-font-size: clamp(1rem, 6vw, 1.375rem);
+    --otp-cell-gap: clamp(0.25rem, 2vw, 0.5rem);
+  }
+
+  .otp-box-cells {
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.125rem;
+  }
+
+  .otp-box-input {
+    width: 100%;
+    max-width: 100%;
   }
 }

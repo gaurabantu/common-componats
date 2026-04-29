@@ -57,18 +57,19 @@ var Icon = React.memo(function Icon2({
     ...rest
   };
   if (React.isValidElement(src)) {
-    const size = typeof width === "number" ? width : 16;
+    const size = width;
+    const sizeHeight = height != null ? height : width;
     const childProps = src.props;
     const childStyle = (childProps == null ? void 0 : childProps.style) || {};
     const mergedStyle = {
       width: size,
-      height: size,
+      height: sizeHeight,
       color: !preserveColors ? color : void 0,
       ...childStyle
     };
     const child = React.cloneElement(src, {
       width: size,
-      height: size,
+      height: sizeHeight,
       style: mergedStyle
     });
     return /* @__PURE__ */ jsx("span", { ...wrapperProps, children: child });
@@ -179,18 +180,18 @@ var iconOnlySizeClasses = {
 };
 var radiusClass = "btn-rounded-md";
 var defaultIconWithLabelSizeBySize = {
-  xxs: { width: 10, height: 10 },
-  xs: { width: 12, height: 12 },
-  sm: { width: 13, height: 13 },
-  md: { width: 14, height: 14 },
-  lg: { width: 16, height: 16 }
+  xxs: { width: "0.625rem", height: "0.625rem" },
+  xs: { width: "0.75rem", height: "0.75rem" },
+  sm: { width: "0.8125rem", height: "0.8125rem" },
+  md: { width: "0.875rem", height: "0.875rem" },
+  lg: { width: "1rem", height: "1rem" }
 };
 var defaultIconOnlySizeBySize = {
-  xxs: { width: 12, height: 12 },
-  xs: { width: 14, height: 14 },
-  sm: { width: 18, height: 18 },
-  md: { width: 20, height: 20 },
-  lg: { width: 24, height: 24 }
+  xxs: { width: "0.75rem", height: "0.75rem" },
+  xs: { width: "0.875rem", height: "0.875rem" },
+  sm: { width: "1.125rem", height: "1.125rem" },
+  md: { width: "1.25rem", height: "1.25rem" },
+  lg: { width: "1.5rem", height: "1.5rem" }
 };
 var defaultIconConfig = {
   width: defaultIconWithLabelSizeBySize.lg.width,
@@ -576,6 +577,7 @@ var search_default = 'data:image/svg+xml,<svg width="18" height="18" viewBox="0 
 
 // src/components/atoms/TextInput/TextInput.tsx
 import { Fragment as Fragment2, jsx as jsx4, jsxs as jsxs2 } from "react/jsx-runtime";
+var pxToRem = (px) => `${px / 16}rem`;
 var TextInput = forwardRef(({
   id: idProp,
   label = "",
@@ -1041,21 +1043,21 @@ var TextInput = forwardRef(({
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
-      minHeight: 32,
-      horizontalPadding: 10,
-      addonPadding: 8,
+      minHeight: "2rem",
+      horizontalPadding: "0.625rem",
+      addonPadding: "0.5rem",
       fontSize: "var(--text-small-size)"
     },
     md: {
-      minHeight: 40,
-      horizontalPadding: 12,
-      addonPadding: 10,
+      minHeight: "2.5rem",
+      horizontalPadding: "0.75rem",
+      addonPadding: "0.625rem",
       fontSize: "var(--text-body-size)"
     },
     lg: {
-      minHeight: 48,
-      horizontalPadding: 14,
-      addonPadding: 12,
+      minHeight: "3rem",
+      horizontalPadding: "0.875rem",
+      addonPadding: "0.75rem",
       fontSize: "var(--text-body-size)"
     }
   };
@@ -1063,17 +1065,17 @@ var TextInput = forwardRef(({
   const isIntegratedRail = trailingRail === "integrated" && isHeaderSearchRail;
   const hdr = isHeaderSearchRail ? HEADER_SEARCH_LAYOUT[size] : void 0;
   const fieldMetrics = hdr ? {
-    minHeight: hdr.shellMinHeight,
-    horizontalPadding: hdr.horizontalPadding,
+    minHeight: pxToRem(hdr.shellMinHeight),
+    horizontalPadding: pxToRem(hdr.horizontalPadding),
     addonPadding: baseSizeTokens[size].addonPadding,
     fontSize: baseSizeTokens[size].fontSize,
     inputLineHeight: hdr.inputLineHeight,
-    suffixPadLeft: hdr.suffixPadLeft,
-    suffixPadRight: hdr.suffixPadRight,
-    prefixPadLR: hdr.prefixAddonPadding,
-    clearIconPx: hdr.clearIconSize,
-    clearPadX: hdr.clearHitPaddingX,
-    decorativeTrailingPx: hdr.decorativeTrailingSearchIcon
+    suffixPadLeft: pxToRem(hdr.suffixPadLeft),
+    suffixPadRight: pxToRem(hdr.suffixPadRight),
+    prefixPadLR: pxToRem(hdr.prefixAddonPadding),
+    clearIconPx: pxToRem(hdr.clearIconSize),
+    clearPadX: pxToRem(hdr.clearHitPaddingX),
+    decorativeTrailingPx: pxToRem(hdr.decorativeTrailingSearchIcon)
   } : {
     minHeight: baseSizeTokens[size].minHeight,
     horizontalPadding: baseSizeTokens[size].horizontalPadding,
@@ -1288,7 +1290,7 @@ var TextInput = forwardRef(({
                       alignItems: "center",
                       justifyContent: "center",
                       height: "100%",
-                      minWidth: isHeaderSearchRail ? isIntegratedRail ? 28 : 26 : fieldMetrics.minHeight,
+                      minWidth: isHeaderSearchRail ? pxToRem(isIntegratedRail ? 28 : 26) : fieldMetrics.minHeight,
                       paddingLeft: fieldMetrics.clearPadX,
                       paddingRight: fieldMetrics.clearPadX,
                       boxSizing: "border-box",
@@ -1445,6 +1447,7 @@ function railButtonSize(inputSize) {
 
 // src/components/atoms/TextInputSearch/index.tsx
 import { jsx as jsx5, jsxs as jsxs3 } from "react/jsx-runtime";
+var pxToRem2 = (px) => `${px / 16}rem`;
 function railKey(inputSize) {
   if (inputSize === "lg")
     return "lg";
@@ -1515,9 +1518,9 @@ var TextInputSearch = ({
   const useIntegratedRail = trailingRailResolved === "integrated";
   const displayIconSrc = searchButtonDisplay === "icon" ? (_a = btnIconPass != null ? btnIconPass : searchButtonIcon) != null ? _a : search_default : btnIconPass;
   const iconInset = Math.round(hdr.searchActionInsetHeight * 0.48);
-  const iw = (_b = btnIconWidthProp != null ? btnIconWidthProp : searchButtonIconWidth) != null ? _b : iconInset;
+  const iw = (_b = btnIconWidthProp != null ? btnIconWidthProp : searchButtonIconWidth) != null ? _b : pxToRem2(iconInset);
   const ih = (_c = btnIconHeightProp != null ? btnIconHeightProp : searchButtonIconHeight) != null ? _c : iw;
-  const prefixIconSize = leftIconHeight != null ? leftIconHeight : Math.round(hdr.shellMinHeight * 0.42);
+  const prefixIconSize = leftIconHeight != null ? leftIconHeight : pxToRem2(Math.round(hdr.shellMinHeight * 0.42));
   const prefixIconWidth = leftIconWidth != null ? leftIconWidth : prefixIconSize;
   const iconOnlyName = searchButtonDisplay === "icon" ? (_d = btnAriaPass != null ? btnAriaPass : searchButtonAriaLabel) != null ? _d : searchButtonLabel : void 0;
   const trailingCorner = roundedToCssCorner(SEARCH_SHELL_ROUNDED);
@@ -1525,19 +1528,19 @@ var TextInputSearch = ({
     ...userSearchActionStyles && typeof userSearchActionStyles === "object" ? userSearchActionStyles : {},
     alignSelf: "stretch",
     height: "100%",
-    minHeight: hdr.shellMinHeight,
+    minHeight: pxToRem2(hdr.shellMinHeight),
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
     borderTopRightRadius: trailingCorner,
     borderBottomRightRadius: trailingCorner,
     boxSizing: "border-box",
     ...searchButtonDisplay === "icon" ? {
-      paddingLeft: hdr.integratedIconPadX,
-      paddingRight: hdr.integratedIconPadX
+      paddingLeft: pxToRem2(hdr.integratedIconPadX),
+      paddingRight: pxToRem2(hdr.integratedIconPadX)
     } : {}
   } : {
     ...userSearchActionStyles && typeof userSearchActionStyles === "object" ? userSearchActionStyles : {},
-    height: hdr.searchActionInsetHeight,
+    height: pxToRem2(hdr.searchActionInsetHeight),
     minHeight: 0,
     alignSelf: "center",
     boxSizing: "border-box"
@@ -1637,4 +1640,4 @@ export {
   TextInput_default,
   TextInputSearch_default
 };
-//# sourceMappingURL=chunk-CEPJ43CH.mjs.map
+//# sourceMappingURL=chunk-YUZCTP3G.mjs.map

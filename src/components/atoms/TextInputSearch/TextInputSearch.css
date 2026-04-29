@@ -32,3 +32,22 @@
   border-top-right-radius: var(--ucs-textfield-outer-radius, var(--radius-base, 4px));
   border-bottom-right-radius: var(--ucs-textfield-outer-radius, var(--radius-base, 4px));
 }
+
+@media (max-width: 420px) {
+  .text-input-search-wrapper
+    .ucs-text-input-field--integrated-rail
+    button.ucs-search-input__inline-action:is(button, a).btn-base {
+    padding-left: 0.625rem !important;
+    padding-right: 0.625rem !important;
+    white-space: nowrap;
+  }
+
+  .text-input-search-wrapper
+    .ucs-text-input-field--integrated-rail
+    button.ucs-search-input__inline-action:is(button, a).btn-size-sm,
+  .text-input-search-wrapper
+    .ucs-text-input-field--integrated-rail
+    button.ucs-search-input__inline-action:is(button, a).btn-size-md {
+    font-size: var(--text-small-size, 0.75rem);
+  }
+}

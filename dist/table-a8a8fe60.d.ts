@@ -15,7 +15,7 @@ interface ClassOverrides {
 type ButtonBaseProps = {
     variant?: "default" | "primary" | "secondary" | "outlinePrimary" | "outlineSecondary" | "success" | "danger" | "warning" | "link" | "ghost";
     variantClass?: string;
-    /** §20: default `lg` (44px) — primary screen CTAs; `md` = 40px outlined secondaries */
+    /** §20: default `lg` (2.5rem) — primary screen CTAs; `md` = 2.25rem outlined secondaries */
     size?: "xxs" | "xs" | "sm" | "md" | "lg";
     width?: string | number;
     height?: string | number;
@@ -32,8 +32,8 @@ type ButtonBaseProps = {
     textSize?: "sm" | "md" | "lg";
     icon?: IconSource;
     iconPosition?: "left" | "right";
-    iconWidth?: number;
-    iconHeight?: number;
+    iconWidth?: number | string;
+    iconHeight?: number | string;
     iconColor?: string;
     iconGap?: number;
     fullWidth?: boolean;
@@ -89,8 +89,8 @@ interface TextInputSearchProps {
     id?: string;
     /** Left icon (default: magnifier). Set to `null` to hide. */
     leftIcon?: IconSource | null;
-    leftIconHeight?: number;
-    leftIconWidth?: number;
+    leftIconHeight?: number | string;
+    leftIconWidth?: number | string;
     leftIconColor?: string;
     placeholder?: string;
     value?: string;
@@ -118,8 +118,8 @@ interface TextInputSearchProps {
      */
     searchButtonDisplay?: SearchButtonDisplay;
     searchButtonIcon?: IconSource;
-    searchButtonIconWidth?: number;
-    searchButtonIconHeight?: number;
+    searchButtonIconWidth?: number | string;
+    searchButtonIconHeight?: number | string;
     searchButtonAriaLabel?: string;
     /** @default "Search" */
     searchButtonLabel?: string;

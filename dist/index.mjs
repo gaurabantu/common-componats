@@ -15,7 +15,7 @@ import {
   mergeTopbarTokensStyle,
   readAppSidebarPersist,
   writeAppSidebarPersist
-} from "./chunk-3OKXGX4N.mjs";
+} from "./chunk-XI4UW3B6.mjs";
 import {
   Checkbox_default,
   Select_default,
@@ -29,7 +29,7 @@ import {
   TableRow,
   Table_default,
   TextView_default
-} from "./chunk-K7TQGSHI.mjs";
+} from "./chunk-XL2SCAHZ.mjs";
 import {
   Button_default,
   Icon_default,
@@ -39,7 +39,7 @@ import {
   error_default,
   getSanitizeText,
   useRipple
-} from "./chunk-CEPJ43CH.mjs";
+} from "./chunk-YUZCTP3G.mjs";
 
 // src/components/atoms/Switch/index.tsx
 import React, { useCallback, useId, useMemo, useState } from "react";
@@ -503,23 +503,12 @@ function Form({
   ...rest
 }) {
   const resolvedShellStyle = {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "var(--space-4) var(--space-2)",
-    boxSizing: "border-box",
     ...shellStyle
   };
   const resolvedCardStyle = {
-    width: "100%",
     maxWidth,
-    borderRadius: "var(--radius-card)",
-    border: "1px solid var(--color-border-default)",
-    background: "var(--color-bg-surface, #FFFFFF)",
-    boxShadow: "var(--shadow-lg)",
-    padding: "var(--space-4)",
-    boxSizing: "border-box",
+    "--form-gap": typeof gap === "number" ? `${gap}px` : gap,
+    "--form-columns": Math.max(1, columns),
     ...cardStyle,
     ...style
   };
@@ -549,33 +538,13 @@ function Form({
     lineHeight: "var(--text-body-line-height)"
   };
   const resolvedContentStyle = {
-    marginTop: "var(--space-4)",
-    display: "flex",
-    flexDirection: "column",
-    gap,
     ...contentStyle
   };
-  const resolvedFieldsStyle = layout === "grid" ? {
-    display: "grid",
-    gridTemplateColumns: `repeat(${Math.max(1, columns)}, minmax(0, 1fr))`,
-    gap,
-    alignItems: "start",
-    ...fieldsStyle
-  } : {
-    display: "flex",
-    flexDirection: "column",
-    gap,
-    ...fieldsStyle
-  };
-  const resolvedActionsStyle = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "var(--space-2)"
-  };
-  return /* @__PURE__ */ jsx4("section", { className: cx(shellClassName), style: resolvedShellStyle, children: /* @__PURE__ */ jsxs4(
+  const resolvedFieldsStyle = { ...fieldsStyle };
+  return /* @__PURE__ */ jsx4("section", { className: cx("ds-form-shell", shellClassName), style: resolvedShellStyle, children: /* @__PURE__ */ jsxs4(
     "div",
     {
-      className: cx(cardClassName),
+      className: cx("ds-form-card", cardClassName),
       style: resolvedCardStyle,
       children: [
         (badge || title || description) && /* @__PURE__ */ jsxs4("header", { children: [
@@ -587,11 +556,22 @@ function Form({
           "form",
           {
             ...rest,
-            className: cx(contentClassName, className),
+            className: cx("ds-form-content", contentClassName, className),
             style: resolvedContentStyle,
             children: [
-              /* @__PURE__ */ jsx4("div", { className: cx(fieldsClassName), style: resolvedFieldsStyle, children }),
-              (actions || footer) && /* @__PURE__ */ jsxs4("div", { style: resolvedActionsStyle, children: [
+              /* @__PURE__ */ jsx4(
+                "div",
+                {
+                  className: cx(
+                    "ds-form-fields",
+                    layout === "grid" && "ds-form-fields--grid",
+                    fieldsClassName
+                  ),
+                  style: resolvedFieldsStyle,
+                  children
+                }
+              ),
+              (actions || footer) && /* @__PURE__ */ jsxs4("div", { className: "ds-form-actions", children: [
                 actions,
                 footer
               ] })
@@ -5750,9 +5730,6 @@ var OtpBox = ({
     }
   };
   const displayValue = mask ? "\u2022".repeat(otpValue.length) : otpValue;
-  const boxSize = size === "sm" ? 36 : size === "lg" ? 48 : 40;
-  const boxFont = size === "sm" ? 18 : size === "lg" ? 26 : 22;
-  const boxGap = size === "sm" ? 8 : size === "lg" ? 12 : 10;
   const rootClasses = [
     "otp-box-root",
     `otp-box--${variant}`,
@@ -5769,12 +5746,6 @@ var OtpBox = ({
         "div",
         {
           className: "otp-box-cells",
-          style: {
-            display: "flex",
-            gap: `${boxGap}px`,
-            flexWrap: "nowrap",
-            width: "fit-content"
-          },
           children: Array.from({ length }).map((_, i) => {
             var _a;
             return /* @__PURE__ */ jsx20(
@@ -5799,17 +5770,9 @@ var OtpBox = ({
                 spellCheck: false,
                 className: "otp-box-cell",
                 style: {
-                  width: boxSize,
-                  height: boxSize,
-                  minWidth: boxSize,
-                  minHeight: boxSize,
-                  maxWidth: boxSize,
-                  maxHeight: boxSize,
                   padding: 0,
                   margin: 0,
                   textAlign: "center",
-                  lineHeight: `${boxSize - 4}px`,
-                  fontSize: boxFont,
                   fontWeight: 700,
                   boxSizing: "border-box",
                   flexShrink: 0
@@ -6529,14 +6492,15 @@ function Modal({
         "aria-modal": "true",
         role: "dialog",
         style: {
+          boxSizing: "border-box",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           position: "fixed",
           top: 0,
           left: 0,
-          width: "100vw",
-          height: "100vh",
+          width: "100dvw",
+          height: "100dvh",
           zIndex: dialogZIndex,
           padding: "1rem",
           overflow: "hidden",
@@ -6548,10 +6512,12 @@ function Modal({
           {
             className: `modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`,
             style: {
+              boxSizing: "border-box",
               margin: 0,
-              maxHeight: "calc(100vh - 2rem)",
+              maxHeight: "calc(100dvh - 2rem)",
               width: "100%",
               maxWidth: (_b = modalSizeWidths[size]) != null ? _b : "480px",
+              minWidth: 0,
               display: "flex",
               flexDirection: "column",
               pointerEvents: "auto",
@@ -6643,6 +6609,7 @@ function Modal({
                         display: "flex",
                         gap: "0.75rem",
                         justifyContent: "flex-end",
+                        flexWrap: "wrap",
                         padding: "1rem 1.25rem",
                         borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))"
                       },
@@ -6875,16 +6842,10 @@ function AlertDialog({
       children: /* @__PURE__ */ jsxs21(
         "div",
         {
+          className: "alert-dialog-content",
           role: "alertdialog",
           "aria-labelledby": "alert-dialog-title",
           "aria-describedby": "alert-dialog-desc",
-          style: {
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            padding: "0.5rem 0"
-          },
           children: [
             /* @__PURE__ */ jsx25("div", { style: { marginBottom: "1.25rem", display: "flex", justifyContent: "center" }, children: customIcon != null ? customIcon : /* @__PURE__ */ jsx25(VariantIcon, { variant, animated: iconAnimated }) }),
             /* @__PURE__ */ jsx25(
@@ -6913,44 +6874,33 @@ function AlertDialog({
                 children: description
               }
             ),
-            /* @__PURE__ */ jsxs21(
-              "div",
-              {
-                style: {
-                  display: "flex",
-                  gap: "0.75rem",
-                  justifyContent: "center",
-                  flexWrap: "wrap"
-                },
-                children: [
-                  showCancel && /* @__PURE__ */ jsx25(
-                    Button_default,
-                    {
-                      variant: cancelButtonVariant,
-                      size: "md",
-                      onClick: handleCancel,
-                      textColor: cancelButtonColor,
-                      backgroundColor: cancelButtonBackground,
-                      borderColor: cancelButtonBorder,
-                      children: cancelText
-                    }
-                  ),
-                  /* @__PURE__ */ jsx25(
-                    Button_default,
-                    {
-                      variant: confirmButtonVariant != null ? confirmButtonVariant : destructive ? "outlinePrimary" : "primary",
-                      size: destructive ? "md" : "lg",
-                      onClick: handleConfirm,
-                      disabled: confirmDisabled,
-                      textColor: confirmButtonColor,
-                      backgroundColor: confirmButtonBackground,
-                      borderColor: confirmButtonBorder,
-                      children: confirmText
-                    }
-                  )
-                ]
-              }
-            )
+            /* @__PURE__ */ jsxs21("div", { className: "alert-dialog-actions", children: [
+              showCancel && /* @__PURE__ */ jsx25(
+                Button_default,
+                {
+                  variant: cancelButtonVariant,
+                  size: "md",
+                  onClick: handleCancel,
+                  textColor: cancelButtonColor,
+                  backgroundColor: cancelButtonBackground,
+                  borderColor: cancelButtonBorder,
+                  children: cancelText
+                }
+              ),
+              /* @__PURE__ */ jsx25(
+                Button_default,
+                {
+                  variant: confirmButtonVariant != null ? confirmButtonVariant : destructive ? "outlinePrimary" : "primary",
+                  size: destructive ? "md" : "lg",
+                  onClick: handleConfirm,
+                  disabled: confirmDisabled,
+                  textColor: confirmButtonColor,
+                  backgroundColor: confirmButtonBackground,
+                  borderColor: confirmButtonBorder,
+                  children: confirmText
+                }
+              )
+            ] })
           ]
         }
       )

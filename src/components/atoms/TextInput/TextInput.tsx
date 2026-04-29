@@ -37,6 +37,8 @@ import VerifiedIcon from "../../../assets/success.svg";
 import CloseIcon from "../../../assets/close.svg";
 import SearchIcon from "../../../assets/search.svg";
 
+const pxToRem = (px: number) => `${px / 16}rem`;
+
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   id: idProp,
   label = "",
@@ -541,21 +543,21 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   const resolvedStatus = statusProp ?? (error ? "error" : verified ? "success" : undefined);
   const baseSizeTokens = {
     sm: {
-      minHeight: 32,
-      horizontalPadding: 10,
-      addonPadding: 8,
+      minHeight: "2rem",
+      horizontalPadding: "0.625rem",
+      addonPadding: "0.5rem",
       fontSize: "var(--text-small-size)",
     },
     md: {
-      minHeight: 40,
-      horizontalPadding: 12,
-      addonPadding: 10,
+      minHeight: "2.5rem",
+      horizontalPadding: "0.75rem",
+      addonPadding: "0.625rem",
       fontSize: "var(--text-body-size)",
     },
     lg: {
-      minHeight: 48,
-      horizontalPadding: 14,
-      addonPadding: 12,
+      minHeight: "3rem",
+      horizontalPadding: "0.875rem",
+      addonPadding: "0.75rem",
       fontSize: "var(--text-body-size)",
     },
   } as const;
@@ -565,31 +567,31 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
     trailingRail === "integrated" && isHeaderSearchRail;
   const hdr = isHeaderSearchRail ? HEADER_SEARCH_LAYOUT[size] : undefined;
   type FieldRailMetrics = {
-    minHeight: number;
-    horizontalPadding: number;
-    addonPadding: number;
+    minHeight: number | string;
+    horizontalPadding: number | string;
+    addonPadding: number | string;
     fontSize: string;
     inputLineHeight: number;
-    suffixPadLeft: number;
-    suffixPadRight: number;
-    prefixPadLR: number;
-    clearIconPx: number;
-    clearPadX: number;
-    decorativeTrailingPx: number;
+    suffixPadLeft: number | string;
+    suffixPadRight: number | string;
+    prefixPadLR: number | string;
+    clearIconPx: number | string;
+    clearPadX: number | string;
+    decorativeTrailingPx: number | string;
   };
   const fieldMetrics: FieldRailMetrics = hdr
     ? {
-        minHeight: hdr.shellMinHeight,
-        horizontalPadding: hdr.horizontalPadding,
+        minHeight: pxToRem(hdr.shellMinHeight),
+        horizontalPadding: pxToRem(hdr.horizontalPadding),
         addonPadding: baseSizeTokens[size].addonPadding,
         fontSize: baseSizeTokens[size].fontSize,
         inputLineHeight: hdr.inputLineHeight,
-        suffixPadLeft: hdr.suffixPadLeft,
-        suffixPadRight: hdr.suffixPadRight,
-        prefixPadLR: hdr.prefixAddonPadding,
-        clearIconPx: hdr.clearIconSize,
-        clearPadX: hdr.clearHitPaddingX,
-        decorativeTrailingPx: hdr.decorativeTrailingSearchIcon,
+        suffixPadLeft: pxToRem(hdr.suffixPadLeft),
+        suffixPadRight: pxToRem(hdr.suffixPadRight),
+        prefixPadLR: pxToRem(hdr.prefixAddonPadding),
+        clearIconPx: pxToRem(hdr.clearIconSize),
+        clearPadX: pxToRem(hdr.clearHitPaddingX),
+        decorativeTrailingPx: pxToRem(hdr.decorativeTrailingSearchIcon),
       }
     : {
         minHeight: baseSizeTokens[size].minHeight,
@@ -843,7 +845,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
                   alignItems: "center",
                   justifyContent: "center",
                   height: "100%",
-                  minWidth: isHeaderSearchRail ? (isIntegratedRail ? 28 : 26) : fieldMetrics.minHeight,
+                  minWidth: isHeaderSearchRail ? pxToRem(isIntegratedRail ? 28 : 26) : fieldMetrics.minHeight,
                   paddingLeft: fieldMetrics.clearPadX,
                   paddingRight: fieldMetrics.clearPadX,
                   boxSizing: "border-box",

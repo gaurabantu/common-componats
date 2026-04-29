@@ -5,6 +5,7 @@ import { AlertDialogProps, AlertDialogVariant } from "./AlertDialog.types";
 import { alertDialogVariantConfig } from "./AlertDialog.config";
 import { SuccessIconSvg, ErrorIconSvg, WarningIconSvg } from "./AlertDialogIcons";
 import "../Modal/Modal.css";
+import "./AlertDialog.css";
 
 export type { AlertDialogProps, AlertDialogVariant } from "./AlertDialog.types";
 
@@ -103,16 +104,10 @@ export default function AlertDialog({
       animation="scale"
     >
       <div
+        className="alert-dialog-content"
         role="alertdialog"
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-desc"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          padding: "0.5rem 0",
-        }}
       >
         <div style={{ marginBottom: "1.25rem", display: "flex", justifyContent: "center" }}>
           {customIcon ?? <VariantIcon variant={variant} animated={iconAnimated} />}
@@ -141,14 +136,7 @@ export default function AlertDialog({
             {description}
           </p>
         )}
-        <div
-          style={{
-            display: "flex",
-            gap: "0.75rem",
-            justifyContent: "center",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="alert-dialog-actions">
           {showCancel && (
             <Button
               variant={cancelButtonVariant}

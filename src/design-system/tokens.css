@@ -58,22 +58,22 @@
   /* TYPOGRAPHY — default UI font: Inter (see Google Fonts @import). Host app: `:root { --font-family: … }` */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-sans: var(--font-family);
-  --text-h1-size: 32px;
+  --text-h1-size: 2rem;
   --text-h1-weight: 800;
   --text-h1-line-height: 1.5;
-  --text-h2-size: 25px;
+  --text-h2-size: 1.5625rem;
   --text-h2-weight: 800;
   --text-h2-line-height: 1.5;
-  --text-h3-size: 18px;
+  --text-h3-size: 1.125rem;
   --text-h3-weight: 500;
-  --text-h4-size: 16px;
+  --text-h4-size: 1rem;
   --text-h4-weight: 500;
-  --text-body-size: 16px;
+  --text-body-size: 1rem;
   --text-body-weight: 400;
   --text-body-line-height: 1.5;
-  --text-secondary-size: 14px;
-  --text-small-size: 12px;
-  --text-micro-size: 10px;
+  --text-secondary-size: 0.875rem;
+  --text-small-size: 0.75rem;
+  --text-micro-size: 0.625rem;
   --text-micro-weight: 600;
 
   /* SHADOWS */
@@ -157,28 +157,28 @@
   --z-toast: 500;
   --z-tooltip-top: 600;
 
-  /* §20 Button height tiers (semantic names — maps to .btn-size-*) · vertical pad 2px on each tier */
-  --button-height-xxs: 24px;
-  --button-height-xs: 28px;
-  --button-height-sm: 32px;
-  --button-height-md: 36px;
-  --button-height-lg: 40px;
-  /** Horizontal inset per tier — 8px grid (`12` | `16` | `16` | `20` | `24`) paired with `--button-height-*` */
-  --button-padding-x-xxs: 12px;
-  --button-padding-x-xs: 16px;
-  --button-padding-x-sm: 16px;
-  --button-padding-x-md: 20px;
-  --button-padding-x-lg: 24px;
+  /* §20 Button height tiers (semantic names — maps to .btn-size-*) · rem based, 2px vertical pad */
+  --button-height-xxs: 1.5rem;
+  --button-height-xs: 1.75rem;
+  --button-height-sm: 2rem;
+  --button-height-md: 2.25rem;
+  --button-height-lg: 2.5rem;
+  /** Horizontal inset per tier — rem based so host font scaling and mobile overrides keep variants compact */
+  --button-padding-x-xxs: 0.75rem;
+  --button-padding-x-xs: 1rem;
+  --button-padding-x-sm: 1rem;
+  --button-padding-x-md: 1.25rem;
+  --button-padding-x-lg: 1.5rem;
 
   /** Default icon sizing per tier (`lg` aligns with `--size-icon-ui` 20px) */
-  --button-icon-xxs: 12px;
-  --button-icon-xs: 14px;
-  --button-icon-sm: 16px;
-  --button-icon-md: 18px;
-  --button-icon-lg: 20px;
+  --button-icon-xxs: 0.75rem;
+  --button-icon-xs: 0.875rem;
+  --button-icon-sm: 1rem;
+  --button-icon-md: 1.125rem;
+  --button-icon-lg: 1.25rem;
 
   /** Icon-only primary tier — slightly larger hit area than `--layout-touch-target-min` */
-  --button-icon-only-lg-hit: 48px;
+  --button-icon-only-lg-hit: 3rem;
 
   /* --- v2.0.0 — caption alias (same as small; see tokens.md) --- */
   --text-caption-size: var(--text-small-size);
@@ -987,48 +987,57 @@ select {
 /* Size: with text — §20 (xxs … lg map to height tiers) */
 :is(button, a).btn-size-xxs {
   min-height: var(--button-height-xxs);
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   padding-left: var(--button-padding-x-xxs);
   padding-right: var(--button-padding-x-xxs);
-  font-size: 12px;
+  font-size: var(--text-small-size, 0.75rem);
   line-height: 1.3;
 }
 :is(button, a).btn-size-xs {
   min-height: var(--button-height-xs);
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   padding-left: var(--button-padding-x-xs);
   padding-right: var(--button-padding-x-xs);
-  font-size: 14px;
+  font-size: var(--text-secondary-size, 0.875rem);
   line-height: 1.35;
 }
 :is(button, a).btn-size-sm {
   min-height: var(--button-height-sm);
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   padding-left: var(--button-padding-x-sm);
   padding-right: var(--button-padding-x-sm);
-  font-size: 14px;
+  font-size: var(--text-secondary-size, 0.875rem);
   line-height: 1.35;
 }
 :is(button, a).btn-size-md {
   min-height: var(--button-height-md);
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   padding-left: var(--button-padding-x-md);
   padding-right: var(--button-padding-x-md);
-  font-size: 14px;
+  font-size: var(--text-secondary-size, 0.875rem);
   line-height: 1.35;
 }
 :is(button, a).btn-size-lg {
   min-height: var(--button-height-lg);
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   padding-left: var(--button-padding-x-lg);
   padding-right: var(--button-padding-x-lg);
-  font-size: 16px;
+  font-size: var(--text-body-size, 1rem);
   line-height: 1.35;
+}
+
+/* Narrow screens: keep semantic button sizes but reduce horizontal inset so labels fit like common UI libraries. */
+@media (max-width: 640px) {
+  :root {
+    --button-padding-x-sm: 0.875rem;
+    --button-padding-x-md: 1rem;
+    --button-padding-x-lg: 1rem;
+  }
 }
 
 /* Size: icon only — fixed square footprint + WCAG touch minimum; glyphs sized in Button (`defaultIconOnlySizeBySize`). */
