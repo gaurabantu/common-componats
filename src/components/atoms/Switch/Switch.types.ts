@@ -34,6 +34,6 @@ export interface SwitchProps {
   className?: string;
   /** Extra class on the switch button (track + thumb). */
   switchClassName?: string;
-  /** `md` meets ~44×44px touch target; `sm` is denser. */
+  /** `md` uses a compact 40×22px visual track with ~44×44px touch target; `sm` is denser. */
   size?: SwitchSize;
 }

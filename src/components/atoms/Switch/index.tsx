@@ -19,11 +19,11 @@ const COLORS = {
 
 const SIZE_STYLES = {
   sm: {
-    track: { width: 40, height: 22, padding: 2, thumb: 18 },
-    hitPadding: 8,
+    track: { width: 34, height: 20, padding: 2, thumb: 16 },
+    hitPadding: 6,
   },
   md: {
-    track: { width: 48, height: 28, padding: 3, thumb: 22 },
+    track: { width: 40, height: 22, padding: 2, thumb: 18 },
     hitPadding: 8,
   },
 } as const;
