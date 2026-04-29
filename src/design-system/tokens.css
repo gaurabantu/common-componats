@@ -6,6 +6,11 @@
  * · Token import / hooks: [docs/design-system/tokens.md](../../docs/design-system/tokens.md)
  * · Public alias: [docs/design-system/UX-Governance-Design-System.md](../../docs/design-system/UX-Governance-Design-System.md)
  *
+ * Default **UI font** is **Inter** (Google Fonts import below + `--font-family`). Host apps may
+ * replace the stack by setting **`:root { --font-family: … }`** after importing this file, or by
+ * assigning `font-family` on `body` / layout roots; components use `var(--font-family)` /
+ * `font-sans` so the override applies project-wide.
+ *
  * Theming: `data-theme` on `<html>` (or `class` themes). **Interaction theme (§42):** only the
  * six `--color-theme-*` slots are intended to swap for brand; structural borders/text/surfaces stay
  * in `tokens.css` unless a named theme block below overrides.
@@ -28,6 +33,7 @@
 /**
  * Foundations used by every theme (and by the Tailwind preset: gap-*, p-*, rounded-*, text-h2, …).
  * Theme blocks below only override semantic colours / button mappings.
+ * Inter loads above; override `--font-family` in the host app to use a different UI font.
  */
 :root {
   /* SPACING (8pt Grid) — micro gap only inside components (§7) */
@@ -49,8 +55,9 @@
   --radius-lg: 8px;
   --radius-card: 10px;
 
-  /* TYPOGRAPHY */
+  /* TYPOGRAPHY — default UI font: Inter (see Google Fonts @import). Host app: `:root { --font-family: … }` */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: var(--font-family);
   --text-h1-size: 32px;
   --text-h1-weight: 800;
   --text-h1-line-height: 1.5;
@@ -253,6 +260,19 @@
   --size-bottom-nav-height: 56px;
   --size-app-bar-height: 56px;
   --grid-breakpoint: 1440px;
+}
+
+/* Default document font (inherited by the app shell). Override `--font-family` on `:root` in the host project. */
+html {
+  font-family: var(--font-family);
+}
+
+/* Form controls use UA fonts unless told otherwise — keep the same stack as components. */
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
 
 /*
