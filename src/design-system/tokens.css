@@ -18,10 +18,9 @@
  * **Focus:** Default keyboard/mouse **outline** uses `--color-border-focus` and `--color-focus-ring`
  * (**#0066CC** on light UIs — contrasts with gray structural borders). **#FF4D00** is
  * `--color-brand-secondary` (accents, emphasis), not the default focus border token. Themed
- * overrides: **`green` (light mint)** uses **#0D0D0D** (structural, high contrast on mint);
- * **`green-dark`** uses **#E2E8F0** (light ring on dark teal surfaces).
+ * overrides: **`green` (light mint)** uses **#0D0D0D** (structural, high contrast on mint).
  *
- * Default: **classic blue (light)**. Optional: `green`, `dark`, `green-dark`, `blue`, `mist`, `custom`,
+ * Default: **classic blue (light)**. Optional: `green`, `dark`, `blue`, `mist`, `custom`,
  * `blue-mist`, `green-mist` (see theme blocks and docs).
  *
  * Primary **filled** buttons: **Noir** stack (DESIGN_SYSTEM.md §10), not theme blue, unless a theme
@@ -133,7 +132,7 @@
 
   /*
    * Semantic surfaces — Ion Mist (§5). Default = light card contexts.
-   * Dark / green-dark themes override `--color-surface-mist` and `--color-interactive-row-hover` below.
+   * Dark theme overrides `--color-surface-mist` and `--color-interactive-row-hover` below.
    * Do not alias `--color-surface-mist` to `--color-bg-page` (hover would disappear on white cards).
    */
   --color-surface-mist: var(--color-mist-60);
@@ -427,6 +426,21 @@ select {
   --button-warning-active-bg: #d39e00;
   --button-warning-disabled-bg: #ffe69c;
   --button-warning-disabled-text: #757575;
+
+  /*
+   * App shell chrome (DashboardShell / AppTopbar / AppSidebar): consumed in component CSS via
+   * var(--app-shell-*) so hosts only set data-theme on <html> — no sidebar.tokens / topbar.tokens.
+   */
+  --app-shell-topbar-bg: var(--color-bg-surface);
+  --app-shell-topbar-bg-elevated: var(--color-mist-40);
+  --app-shell-topbar-search-shell: var(--color-mist-40);
+  --app-shell-topbar-text: var(--color-text-primary);
+  --app-shell-topbar-text-muted: var(--color-text-secondary);
+  --app-shell-topbar-border: rgba(0, 0, 0, 0.08);
+  --app-shell-topbar-hover: rgba(0, 0, 0, 0.04);
+  --app-shell-topbar-active-bg: rgba(0, 0, 0, 0.07);
+  --app-shell-topbar-focus-ring: var(--color-focus-ring);
+  --app-shell-topbar-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
 }
 
 /* ========== DARK MODE ========== */
@@ -494,102 +508,37 @@ select {
 
   --color-surface-mist: #374151;
   --color-interactive-row-hover: color-mix(in srgb, var(--color-bg-surface) 90%, #ffffff);
-}
 
-/* ========== GREEN THEME (dark surfaces + emerald primaries) ========== */
-[data-theme="green-dark"],
-.theme-green-dark {
-  --color-brand-primary: #ecfdf5;
-  --color-brand-secondary: #34d399;
-  --color-brand-link: #6ee7b7;
+  /* Align shell chrome with dark surfaces (sidebar rail + topbar inherit from document). */
+  --color-bg-sidebar: #111827;
 
-  --color-text-primary: #ecfdf5;
-  --color-text-secondary: #99f6e4;
-  --color-text-on-accent: #042f2e;
+  --app-shell-topbar-bg: var(--color-bg-surface);
+  --app-shell-topbar-bg-elevated: var(--color-surface-mist);
+  --app-shell-topbar-search-shell: var(--color-surface-mist);
+  --app-shell-topbar-text: var(--color-text-primary);
+  --app-shell-topbar-text-muted: var(--color-text-secondary);
+  --app-shell-topbar-border: rgba(255, 255, 255, 0.08);
+  --app-shell-topbar-hover: rgba(255, 255, 255, 0.06);
+  --app-shell-topbar-active-bg: rgba(255, 255, 255, 0.1);
+  --app-shell-topbar-focus-ring: var(--color-focus-ring);
+  --app-shell-topbar-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
 
-  --color-bg-page: #022c22;
-  --color-bg-surface: #064e3b;
-
-  --color-border-default: #0f766e;
-
-  --color-state-success: #34d399;
-  --color-state-warning: #fbbf24;
-  --color-state-error: #f87171;
-
-  --color-accent-lavender-10: #064e3b;
-  --color-accent-lavender-40: #2dd4bf;
-  --color-accent-sky-10: #042f2e;
-  --color-accent-mint-10: #022c22;
-  --color-accent-amber-10: #78350f;
-  --color-accent-rose-10: #881337;
-
-  /* Dark UI + green brand — lighter fills so CTAs read on teal surfaces */
-  --color-theme-primary: #34d399;
-  --color-theme-hover: #6ee7b7;
-  --color-theme-active: #a7f3d0;
-  --color-theme-disabled: #047857;
-  --color-theme-text: #022c22;
-  /* Light ring on dark teal — visible around fills and on surfaces, distinct from brand mint */
-  --color-border-focus: #e2e8f0;
-  --color-focus-ring: #e2e8f0;
-
-  --button-primary-default-bg: var(--color-theme-primary);
-  --button-primary-default-text: var(--color-theme-text);
-  --button-primary-hover-bg: var(--color-theme-hover);
-  --button-primary-active-bg: var(--color-theme-active);
-  --button-primary-disabled-bg: var(--color-theme-disabled);
-  --button-primary-disabled-text: #99f6e4;
-  --button-primary-focus-ring: var(--color-border-focus);
-
-  --button-secondary-border: var(--color-theme-primary);
-  --button-secondary-text: var(--color-theme-primary);
-  --button-outline-primary-border: #6ee7b7;
-  --button-outline-primary-text: #a7f3d0;
-  --button-outline-secondary-border: #94a3b8;
-  --button-outline-secondary-text: #cbd5e1;
-
-  --button-secondary-bg: #475569;
-  --button-secondary-text: #ffffff;
-  --button-secondary-hover-bg: #64748b;
-  --button-secondary-active-bg: #334155;
-  --button-secondary-disabled-bg: #64748b;
-  --button-secondary-disabled-text: #94a3b8;
-
-  --button-link-color: #6ee7b7;
-  --button-link-hover-color: #a7f3d0;
-
-  --button-outline-primary-hover-bg: rgba(16, 185, 129, 0.12);
-  --button-outline-primary-active-bg: rgba(16, 185, 129, 0.2);
-  --button-outline-secondary-hover-bg: rgba(148, 163, 184, 0.12);
-  --button-outline-secondary-active-bg: rgba(148, 163, 184, 0.2);
-
-  --button-success-bg: #059669;
-  --button-success-text: #ffffff;
-  --button-success-hover-bg: #047857;
-  --button-success-active-bg: #065f46;
-  --button-success-disabled-bg: #065f46;
-  --button-success-disabled-text: #99f6e4;
-
-  --button-danger-bg: #dc2626;
-  --button-danger-text: #ffffff;
-  --button-danger-hover-bg: #b91c1c;
-  --button-danger-active-bg: #991b1b;
-  --button-danger-disabled-bg: #7f1d1d;
-  --button-danger-disabled-text: #fca5a5;
-
-  --button-warning-bg: #d97706;
-  --button-warning-text: #422006;
-  --button-warning-hover-bg: #b45309;
-  --button-warning-active-bg: #92400e;
-  --button-warning-disabled-bg: #78350f;
-  --button-warning-disabled-text: #fde68a;
-
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55);
-
-  --color-surface-mist: #0f766e;
-  --color-interactive-row-hover: color-mix(in srgb, var(--color-bg-surface) 88%, #ffffff);
+  --app-sidebar-tone-0: var(--color-bg-sidebar);
+  --app-sidebar-tone-1: var(--color-bg-surface);
+  --app-sidebar-tone-2: var(--color-surface-mist);
+  --app-sidebar-tone-3: #4b5563;
+  --app-sidebar-fg: var(--color-text-primary);
+  --app-sidebar-fg-muted: var(--color-text-secondary);
+  --app-sidebar-hover: rgba(255, 255, 255, 0.08);
+  --app-sidebar-active-bg: rgba(255, 255, 255, 0.1);
+  --app-sidebar-active-tint: rgba(255, 255, 255, 0.04);
+  --app-sidebar-border: rgba(255, 255, 255, 0.08);
+  --app-sidebar-border-strong: rgba(255, 255, 255, 0.12);
+  --app-sidebar-focus: var(--color-focus-ring);
+  --app-sidebar-nav-icon: var(--color-text-secondary);
+  --app-sidebar-nav-icon-active: var(--color-text-primary);
+  --app-sidebar-utility-icon: var(--color-text-secondary);
+  --app-sidebar-create-dash: rgba(255, 255, 255, 0.18);
 }
 
 /* ========== ION MIST (background / surfaces only) ========== */
@@ -629,6 +578,28 @@ select {
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
   --color-focus-ring: #7c3aed;
+  /* Align focus outline with thematic ring — classic :root wins otherwise */
+  --color-border-focus: #7c3aed;
+
+  /*
+   * Primary / outline / link must override classic `:root` Noir primary fill (§10).
+   * Interaction stack mirrors `data-theme="green"` wiring so btn-primary reads §42 blues.
+   */
+  --button-primary-default-bg: var(--color-theme-primary);
+  --button-primary-default-text: var(--color-theme-text);
+  --button-primary-hover-bg: var(--color-theme-hover);
+  --button-primary-active-bg: var(--color-theme-active);
+  --button-primary-disabled-bg: var(--color-theme-disabled);
+  --button-primary-disabled-text: #1e3a8a;
+  --button-primary-focus-ring: var(--color-focus-ring);
+
+  --button-outline-primary-border: var(--color-theme-primary);
+  --button-outline-primary-text: var(--color-theme-primary);
+  --button-outline-primary-hover-bg: var(--color-theme-surface-hover);
+  --button-outline-primary-active-bg: #dbeafe;
+
+  --button-link-color: var(--color-theme-primary);
+  --button-link-hover-color: var(--color-theme-hover);
 }
 
 /* ========== GREEN + ION MIST (combined) ========== */
@@ -645,6 +616,64 @@ select {
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
   --color-focus-ring: #06b6d4;
+  --color-border-focus: #0d0d0d;
+
+  /* Same §42 mapping as `data-theme="green"` so CTAs are not stuck on `:root` Noir */
+  --button-primary-default-bg: var(--color-theme-primary);
+  --button-primary-default-text: var(--color-theme-text);
+  --button-primary-hover-bg: var(--color-theme-hover);
+  --button-primary-active-bg: var(--color-theme-active);
+  --button-primary-disabled-bg: var(--color-theme-disabled);
+  --button-primary-disabled-text: #14532d;
+  --button-primary-focus-ring: var(--color-focus-ring);
+
+  --button-outline-primary-border: var(--color-theme-primary);
+  --button-outline-primary-text: var(--color-theme-primary);
+  --button-outline-primary-hover-bg: var(--color-theme-surface-hover);
+  --button-outline-primary-active-bg: #d1fae5;
+
+  --button-secondary-border: var(--color-theme-primary);
+  --button-secondary-text: var(--color-theme-primary);
+
+  --button-link-color: var(--color-theme-primary);
+  --button-link-hover-color: var(--color-theme-hover);
+}
+
+/**
+ * Ion mist family — light AppSidebar rail (DESIGN_SYSTEM.md § Ion Mist).
+ * Noir defaults in AppSidebar.css keep the dark governance rail elsewhere; these tokens only apply
+ * under mist / blue-mist / green-mist where --color-bg-sidebar is a light Ion surface.
+ */
+[data-theme="mist"],
+[data-theme="blue-mist"],
+[data-theme="green-mist"] {
+  --app-sidebar-tone-0: var(--color-bg-sidebar);
+  --app-sidebar-tone-1: var(--color-bg-surface);
+  --app-sidebar-tone-2: var(--color-mist-80);
+  --app-sidebar-tone-3: var(--color-mist-100);
+  --app-sidebar-fg: var(--color-text-primary);
+  --app-sidebar-fg-muted: var(--color-text-secondary);
+  --app-sidebar-hover: rgba(0, 0, 0, 0.06);
+  --app-sidebar-active-bg: rgba(0, 0, 0, 0.08);
+  --app-sidebar-active-tint: rgba(0, 0, 0, 0.05);
+  --app-sidebar-border: rgba(0, 0, 0, 0.09);
+  --app-sidebar-border-strong: rgba(0, 0, 0, 0.12);
+  --app-sidebar-focus: var(--color-border-focus);
+  --app-sidebar-nav-icon: var(--color-text-secondary);
+  --app-sidebar-nav-icon-active: var(--color-text-primary);
+  --app-sidebar-utility-icon: var(--color-text-secondary);
+  --app-sidebar-create-dash: rgba(0, 0, 0, 0.22);
+
+  --app-shell-topbar-bg: var(--color-bg-surface);
+  --app-shell-topbar-bg-elevated: var(--color-bg-sidebar);
+  --app-shell-topbar-search-shell: var(--color-mist-40);
+  --app-shell-topbar-text: var(--color-text-primary);
+  --app-shell-topbar-text-muted: var(--color-text-secondary);
+  --app-shell-topbar-border: rgba(0, 0, 0, 0.09);
+  --app-shell-topbar-hover: rgba(0, 0, 0, 0.05);
+  --app-shell-topbar-active-bg: rgba(0, 0, 0, 0.08);
+  --app-shell-topbar-focus-ring: var(--color-focus-ring);
+  --app-shell-topbar-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
 /* To enable dark mode: add data-theme="dark" to <html> or a parent wrapper. */

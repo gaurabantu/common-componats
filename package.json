@@ -1,6 +1,6 @@
 {
   "name": "ui-common-components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Reusable React components — UX Governance Design System (Tailwind + CSS tokens, WCAG 2.2 AA)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

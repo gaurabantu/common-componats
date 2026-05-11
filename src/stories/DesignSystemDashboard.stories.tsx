@@ -106,7 +106,6 @@ function DashboardCanvas() {
       }}
       topbar={
         <AppTopbar
-          theme="light"
           title="Dashboard"
           titleAs="h1"
           zIndex={200}
@@ -115,6 +114,7 @@ function DashboardCanvas() {
             onChange: setQ,
             placeholder: "Search workspace…",
             ariaLabel: "Search workspace",
+            size: "md",
           }}
           onMobileMenuClick={() => setSidebarCollapsed(false)}
           mobileMenuLabel="Open navigation"
@@ -136,7 +136,7 @@ function DashboardCanvas() {
       <div style={{ maxWidth: "var(--size-viewport-desktop, 1440px)", margin: "0 auto", width: "100%" }}>
         {/* Page intro — title lives in `AppTopbar` (single H1). */}
         <div style={{ marginBottom: "var(--space-3)" }}>
-          <TextView as="p" variant="body" color="secondary" style={{ margin: 0 }}>
+          <TextView as="p" variant="body" color="primary" style={{ margin: 0 }}>
             Monitor activity and open actions. Layout follows docs/design-system/DESIGN_SYSTEM.md §43 (headers → filters → actions →
             content). Use the sidebar chevron to collapse the rail; on narrow widths, use the menu control in the top
             bar to open navigation.
@@ -149,7 +149,7 @@ function DashboardCanvas() {
             display: "flex",
             flexWrap: "wrap",
             gap: "var(--space-2)",
-            alignItems: "flex-end",
+            alignItems: "center",
           }}
         >
           <div style={{ flex: "1 1 240px", minWidth: 0 }}>
@@ -164,7 +164,7 @@ function DashboardCanvas() {
           </div>
           <div style={{ flex: "0 1 200px", minWidth: 180 }}>
             <Select
-              label="Status"
+              aria-label="Status filter"
               placeholder="All statuses"
               value={status}
               options={[
@@ -187,7 +187,7 @@ function DashboardCanvas() {
           style={{
             display: "flex",
             flexWrap: "wrap",
-            gap: "var(--space-1)",
+            gap: "var(--space-2)",
             alignItems: "center",
             justifyContent: "space-between",
           }}
@@ -195,7 +195,7 @@ function DashboardCanvas() {
           <Button type="button" variant="primary" size="lg">
             Create report
           </Button>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-1)", marginLeft: "auto" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginLeft: "auto" }}>
             <Button type="button" variant="outlinePrimary" size="md">
               Export
             </Button>

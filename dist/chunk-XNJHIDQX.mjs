@@ -2,7 +2,7 @@ import {
   Button_default,
   Icon_default,
   TextInputSearch_default
-} from "./chunk-YUZCTP3G.mjs";
+} from "./chunk-CUT5ODMN.mjs";
 
 // src/components/atoms/Avatar/index.tsx
 import React from "react";
@@ -1196,7 +1196,7 @@ var AppTopbar = ({
   className,
   classNames
 }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
   const rootId = useId3();
   const baseId = rootId.replace(/[^a-zA-Z0-9_-]/g, "");
   const searchInputId = (_a = search == null ? void 0 : search.inputId) != null ? _a : `app-topbar-search-${baseId}`;
@@ -1290,13 +1290,13 @@ var AppTopbar = ({
       placeholder: (_c = search.placeholder) != null ? _c : "Search...",
       ariaLabel: (_d = search.ariaLabel) != null ? _d : "Search",
       disabled: search.disabled,
-      size: "sm",
+      size: (_e = search.size) != null ? _e : "sm",
       fullWidth: true,
       leftIcon: TOPBAR_SEARCH_ICON,
       leftIconHeight: 18,
       leftIconWidth: 18,
       leftIconColor: "var(--app-topbar-text-muted)",
-      showClearButton: (_e = search.showClearButton) != null ? _e : hideCenterColumn,
+      showClearButton: (_f = search.showClearButton) != null ? _f : hideCenterColumn,
       containerClassName: "text-input-search-wrapper app-topbar__search"
     }
   ) : null;
@@ -1410,16 +1410,16 @@ var AppTopbar = ({
                 {
                   type: "button",
                   className: "app-topbar__profile",
-                  "aria-label": (_f = profile.menuLabel) != null ? _f : profile.name ? `Account menu for ${profile.name}` : "Account menu",
+                  "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
                   onClick: profile.onClick,
-                  children: (_h = profile.avatar) != null ? _h : /* @__PURE__ */ jsx6(Avatar_default, { size: 32, shape: "circle", name: (_g = profile.name) != null ? _g : "User", ...profile.avatarProps })
+                  children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ jsx6(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
                 }
               ) : /* @__PURE__ */ jsx6(
                 "span",
                 {
                   className: "app-topbar__profile app-topbar__profile--static",
-                  "aria-label": (_j = (_i = profile.menuLabel) != null ? _i : profile.name) != null ? _j : "Profile",
-                  children: (_l = profile.avatar) != null ? _l : /* @__PURE__ */ jsx6(Avatar_default, { size: 32, shape: "circle", name: (_k = profile.name) != null ? _k : "User", ...profile.avatarProps })
+                  "aria-label": (_k = (_j = profile.menuLabel) != null ? _j : profile.name) != null ? _k : "Profile",
+                  children: (_m = profile.avatar) != null ? _m : /* @__PURE__ */ jsx6(Avatar_default, { size: 32, shape: "circle", name: (_l = profile.name) != null ? _l : "User", ...profile.avatarProps })
                 }
               ) : null,
               rightSlot
@@ -1540,4 +1540,4 @@ export {
   DashboardShell_default,
   AppShell
 };
-//# sourceMappingURL=chunk-XI4UW3B6.mjs.map
+//# sourceMappingURL=chunk-XNJHIDQX.mjs.map

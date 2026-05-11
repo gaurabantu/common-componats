@@ -1,9 +1,12 @@
 /**
  * Shared Tailwind + design tokens for the Next demo app and Storybook preview.
  * Storybook imports this from `.storybook/preview.tsx`.
+ *
+ * Tokens first so `--*` variables exist for Tailwind; `@tailwind utilities` stays last inside this file
+ * so component utilities normally win over bare token `:root` rules.
  */
+@import "../src/design-system/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import "../src/design-system/tokens.css";

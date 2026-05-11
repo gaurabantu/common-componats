@@ -1,21 +1,21 @@
 /* src/components/molecules/AppSidebar/AppSidebar.css */
 .app-sidebar {
-  --noir-0: #0d0d0d;
-  --noir-1: #111111;
-  --noir-2: #151515;
-  --noir-3: #1a1a1a;
-  --sidebar-text: #f5f5f5;
-  --sidebar-text-muted: #a3a3a3;
-  --sidebar-hover: rgba(255, 255, 255, 0.08);
-  --sidebar-active-bg: rgba(255, 255, 255, 0.1);
-  --sidebar-active-tint: rgba(255, 255, 255, 0.04);
-  --sidebar-focus: var(--color-focus-ring, #0066cc);
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-border-strong: rgba(255, 255, 255, 0.08);
-  --sidebar-nav-icon: var(--sidebar-text-muted);
-  --sidebar-nav-icon-active: var(--sidebar-text);
-  --sidebar-utility-icon: var(--sidebar-text-muted);
-  --sidebar-create-dash: rgba(255, 255, 255, 0.12);
+  --noir-0: var(--app-sidebar-tone-0, #0d0d0d);
+  --noir-1: var(--app-sidebar-tone-1, #111111);
+  --noir-2: var(--app-sidebar-tone-2, #151515);
+  --noir-3: var(--app-sidebar-tone-3, #1a1a1a);
+  --sidebar-text: var(--app-sidebar-fg, #f5f5f5);
+  --sidebar-text-muted: var(--app-sidebar-fg-muted, #a3a3a3);
+  --sidebar-hover: var(--app-sidebar-hover, rgba(255, 255, 255, 0.08));
+  --sidebar-active-bg: var(--app-sidebar-active-bg, rgba(255, 255, 255, 0.1));
+  --sidebar-active-tint: var(--app-sidebar-active-tint, rgba(255, 255, 255, 0.04));
+  --sidebar-focus: var(--app-sidebar-focus, var(--color-focus-ring, #0066cc));
+  --sidebar-border: var(--app-sidebar-border, rgba(255, 255, 255, 0.06));
+  --sidebar-border-strong: var(--app-sidebar-border-strong, rgba(255, 255, 255, 0.08));
+  --sidebar-nav-icon: var(--app-sidebar-nav-icon, var(--sidebar-text-muted));
+  --sidebar-nav-icon-active: var(--app-sidebar-nav-icon-active, var(--sidebar-text));
+  --sidebar-utility-icon: var(--app-sidebar-utility-icon, var(--sidebar-text-muted));
+  --sidebar-create-dash: var(--app-sidebar-create-dash, rgba(255, 255, 255, 0.12));
   --sidebar-item-gap: 8px;
   --sidebar-section-gap: 24px;
   --sidebar-pad-x: 16px;
@@ -627,19 +627,19 @@
 
 /* src/components/molecules/AppTopbar/AppTopbar.css */
 .app-topbar {
-  --app-topbar-bg: var(--color-bg-surface, #ffffff);
-  --app-topbar-bg-elevated: #f7f7f7;
-  --app-topbar-text: var(--color-text-primary, #0d0d0d);
-  --app-topbar-text-muted: var(--color-text-secondary, #737373);
-  --app-topbar-border: rgba(0, 0, 0, 0.08);
-  --app-topbar-hover: rgba(0, 0, 0, 0.04);
-  --app-topbar-active-bg: rgba(0, 0, 0, 0.07);
-  --app-topbar-focus-ring: var(--color-focus-ring, #0066cc);
-  --app-topbar-shadow: 0 1px 0 var(--app-topbar-border);
+  --app-topbar-bg: var(--app-shell-topbar-bg, var(--color-bg-surface, #ffffff));
+  --app-topbar-bg-elevated: var(--app-shell-topbar-bg-elevated, var(--color-mist-40, #f5f5f5));
+  --app-topbar-text: var(--app-shell-topbar-text, var(--color-text-primary, #0d0d0d));
+  --app-topbar-text-muted: var(--app-shell-topbar-text-muted, var(--color-text-secondary, #737373));
+  --app-topbar-border: var(--app-shell-topbar-border, rgba(0, 0, 0, 0.08));
+  --app-topbar-hover: var(--app-shell-topbar-hover, rgba(0, 0, 0, 0.04));
+  --app-topbar-active-bg: var(--app-shell-topbar-active-bg, rgba(0, 0, 0, 0.07));
+  --app-topbar-focus-ring: var(--app-shell-topbar-focus-ring, var(--color-focus-ring, #0066cc));
+  --app-topbar-shadow: var(--app-shell-topbar-shadow, 0 1px 0 rgba(0, 0, 0, 0.08));
   --app-topbar-z: 50;
   --app-topbar-pad-x: var(--space-2, 16px);
   --app-topbar-gap-actions: 10px;
-  --app-topbar-search-shell: var(--app-topbar-bg-elevated);
+  --app-topbar-search-shell: var(--app-shell-topbar-search-shell, var(--app-topbar-bg-elevated));
   box-sizing: border-box;
   width: 100%;
   min-height: 64px;
@@ -664,6 +664,7 @@
   --app-topbar-active-bg: rgba(255, 255, 255, 0.1);
   --app-topbar-shadow: 0 1px 0 var(--app-topbar-border);
   --app-topbar-search-shell: #151515;
+  --app-topbar-focus-ring: var(--color-focus-ring, #0066cc);
 }
 .app-topbar__inner {
   box-sizing: border-box;
@@ -690,6 +691,7 @@
   align-items: center;
   gap: var(--space-2, 16px);
   min-width: 0;
+  color: var(--app-topbar-text);
 }
 .app-topbar__menu {
   flex-shrink: 0;
@@ -702,7 +704,7 @@
   font-size: var(--text-h3-size, 1.125rem);
   line-height: var(--text-h3-line, 1.35);
   font-weight: 600;
-  color: var(--app-topbar-text);
+  color: var(--app-shell-topbar-text, var(--app-topbar-text, var(--color-text-primary)));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -853,15 +855,18 @@
   }
 }
 .app-topbar-menu {
+  --app-topbar-hover: var(--app-shell-topbar-hover, rgba(0, 0, 0, 0.04));
+  --app-topbar-focus-ring: var(--app-shell-topbar-focus-ring, var(--color-focus-ring, #0066cc));
+  --app-topbar-text-muted: var(--app-shell-topbar-text-muted, var(--color-text-secondary, #737373));
   min-width: 220px;
   max-width: min(320px, calc(100vw - 32px));
   overflow-y: auto;
   padding: var(--space-1, 8px);
   box-sizing: border-box;
   border-radius: var(--radius-md, 8px);
-  background: var(--app-topbar-bg-elevated);
-  color: var(--app-topbar-text);
-  border: 1px solid var(--app-topbar-border);
+  background: var(--app-shell-topbar-bg-elevated, var(--color-mist-40, #f5f5f5));
+  color: var(--app-shell-topbar-text, var(--color-text-primary, #0d0d0d));
+  border: 1px solid var(--app-shell-topbar-border, rgba(0, 0, 0, 0.08));
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.12));
 }
 .app-topbar-menu--dark {

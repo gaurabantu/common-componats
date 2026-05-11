@@ -10,6 +10,8 @@ export interface AppTopbarSearchConfig {
   onSearch?: (value: string) => void;
   placeholder?: string;
   ariaLabel?: string;
+  /** Matches `TextInputSearch` / `Select` tiers (default `sm` keeps top bar dense). */
+  size?: "sm" | "md" | "lg";
   inputId?: string;
   disabled?: boolean;
   /** Passes through to `InputSearch` (useful when the field is expanded on mobile). */
@@ -71,6 +73,12 @@ export interface AppTopbarClassNames {
 }
 
 export interface AppTopbarProps {
+  /**
+   * Explicit bar chroming. Default `"light"` does **not** add forced Noir — topbar/read surfaces use
+   * `--app-shell-topbar-*` from `tokens.css` on `<html>` (set via `data-theme`), so omit this prop
+   * in most apps. Use `"dark"` only for a legacy Noir bar independent of document theme (overrides
+   * semantic shell tokens locally on the header).
+   */
   theme?: AppTopbarTheme;
   title: string;
   titleAs?: "h1" | "h2";
@@ -97,6 +105,7 @@ export interface AppTopbarProps {
   collapseCenterBelowWidth?: number;
   /** Enables `useBelowWidth` listeners; set false for SSR-only snapshots. */
   responsive?: boolean;
+  /** Inline CSS vars on the header — optional; prefer `tokens.css` `--app-shell-topbar-*` from `data-theme`. */
   tokens?: AppTopbarTokens;
   className?: string;
   classNames?: AppTopbarClassNames;

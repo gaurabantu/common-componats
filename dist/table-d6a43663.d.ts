@@ -131,6 +131,13 @@ interface TextInputSearchProps {
      * search button is shown (single Material-style bar).
      */
     trailingRail?: "default" | "integrated";
+    /**
+     * Optional whitelist for search input: **`TextInput` `pattern`**, regex tested **per string unit**
+     * (`Array.from`); non-matching units are stripped. Omit to allow any characters (spaces included).
+     */
+    pattern?: RegExp | string;
+    /** Enables spell-check + WebKit autocorrect hints on the inner field. Default `false`. */
+    autoCorrection?: boolean;
 }
 declare const TextInputSearch: React__default.FC<TextInputSearchProps>;
 

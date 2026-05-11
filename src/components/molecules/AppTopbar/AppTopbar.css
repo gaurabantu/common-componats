@@ -4,19 +4,23 @@
  */
 
 .app-topbar {
-  --app-topbar-bg: var(--color-bg-surface, #ffffff);
-  --app-topbar-bg-elevated: #f7f7f7;
-  --app-topbar-text: var(--color-text-primary, #0d0d0d);
-  --app-topbar-text-muted: var(--color-text-secondary, #737373);
-  --app-topbar-border: rgba(0, 0, 0, 0.08);
-  --app-topbar-hover: rgba(0, 0, 0, 0.04);
-  --app-topbar-active-bg: rgba(0, 0, 0, 0.07);
-  --app-topbar-focus-ring: var(--color-focus-ring, #0066cc);
-  --app-topbar-shadow: 0 1px 0 var(--app-topbar-border);
+  /*
+   * Document-level tokens.css sets --app-shell-topbar-* on <html> per data-theme so hosts need not
+   * pass tokens prop. Fallbacks preserve classic light chrome when tokens are omitted.
+   */
+  --app-topbar-bg: var(--app-shell-topbar-bg, var(--color-bg-surface, #ffffff));
+  --app-topbar-bg-elevated: var(--app-shell-topbar-bg-elevated, var(--color-mist-40, #f5f5f5));
+  --app-topbar-text: var(--app-shell-topbar-text, var(--color-text-primary, #0d0d0d));
+  --app-topbar-text-muted: var(--app-shell-topbar-text-muted, var(--color-text-secondary, #737373));
+  --app-topbar-border: var(--app-shell-topbar-border, rgba(0, 0, 0, 0.08));
+  --app-topbar-hover: var(--app-shell-topbar-hover, rgba(0, 0, 0, 0.04));
+  --app-topbar-active-bg: var(--app-shell-topbar-active-bg, rgba(0, 0, 0, 0.07));
+  --app-topbar-focus-ring: var(--app-shell-topbar-focus-ring, var(--color-focus-ring, #0066cc));
+  --app-topbar-shadow: var(--app-shell-topbar-shadow, 0 1px 0 rgba(0, 0, 0, 0.08));
   --app-topbar-z: 50;
   --app-topbar-pad-x: var(--space-2, 16px);
   --app-topbar-gap-actions: 10px;
-  --app-topbar-search-shell: var(--app-topbar-bg-elevated);
+  --app-topbar-search-shell: var(--app-shell-topbar-search-shell, var(--app-topbar-bg-elevated));
 
   box-sizing: border-box;
   width: 100%;
@@ -34,6 +38,11 @@
   z-index: var(--app-topbar-z);
 }
 
+/*
+ * Explicit theme="dark" on AppTopbar: legacy Noir chrome when the bar must stay dark without
+ * changing document data-theme. Prefer setting data-theme on <html> and omitting theme prop —
+ * tokens.css drives --app-shell-* for cohesive shell styling.
+ */
 .app-topbar--dark {
   --app-topbar-bg: #0d0d0d;
   --app-topbar-bg-elevated: #111111;
@@ -44,6 +53,7 @@
   --app-topbar-active-bg: rgba(255, 255, 255, 0.1);
   --app-topbar-shadow: 0 1px 0 var(--app-topbar-border);
   --app-topbar-search-shell: #151515;
+  --app-topbar-focus-ring: var(--color-focus-ring, #0066cc);
 }
 
 .app-topbar__inner {
@@ -74,6 +84,8 @@
   align-items: center;
   gap: var(--space-2, 16px);
   min-width: 0;
+  /* Inherited by title cluster so page heading stays on shell chrome tokens (fixes dark Docs/canvas clashes). */
+  color: var(--app-topbar-text);
 }
 
 .app-topbar__menu {
@@ -89,7 +101,7 @@
   font-size: var(--text-h3-size, 1.125rem);
   line-height: var(--text-h3-line, 1.35);
   font-weight: 600;
-  color: var(--app-topbar-text);
+  color: var(--app-shell-topbar-text, var(--app-topbar-text, var(--color-text-primary)));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -270,15 +282,19 @@
 
 /* Hamburger dropdown (narrow layout) */
 .app-topbar-menu {
+  /* Portaled to document.body — read --app-shell-* from <html>, not inherited from .app-topbar */
+  --app-topbar-hover: var(--app-shell-topbar-hover, rgba(0, 0, 0, 0.04));
+  --app-topbar-focus-ring: var(--app-shell-topbar-focus-ring, var(--color-focus-ring, #0066cc));
+  --app-topbar-text-muted: var(--app-shell-topbar-text-muted, var(--color-text-secondary, #737373));
   min-width: 220px;
   max-width: min(320px, calc(100vw - 32px));
   overflow-y: auto;
   padding: var(--space-1, 8px);
   box-sizing: border-box;
   border-radius: var(--radius-md, 8px);
-  background: var(--app-topbar-bg-elevated);
-  color: var(--app-topbar-text);
-  border: 1px solid var(--app-topbar-border);
+  background: var(--app-shell-topbar-bg-elevated, var(--color-mist-40, #f5f5f5));
+  color: var(--app-shell-topbar-text, var(--color-text-primary, #0d0d0d));
+  border: 1px solid var(--app-shell-topbar-border, rgba(0, 0, 0, 0.08));
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.12));
 }
 

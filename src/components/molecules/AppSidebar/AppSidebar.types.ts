@@ -175,7 +175,11 @@ export interface AppSidebarProps extends Omit<React.HTMLAttributes<HTMLElement>,
   footerLayout?: AppSidebarFooterLayout;
   /** Replace built-in footer (profile + utilities). You receive full control; keep tokens via `tokens`. */
   footerSlot?: React.ReactNode;
-  /** CSS variable overrides for surfaces, text, hovers, active row, borders, and icon tints. */
+  /**
+   * Optional CSS-variable overrides on the sidebar root — use only when a host cannot express
+   * chrome via `tokens.css` + `data-theme` on `<html>`. Themes like `dark`, `mist`, `*-mist` define
+   * `--app-sidebar-*` there so dashboard shells track the document theme automatically.
+   */
   tokens?: AppSidebarTokens;
   classNames?: AppSidebarClassNames;
   /**

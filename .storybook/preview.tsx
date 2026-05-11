@@ -7,16 +7,16 @@ import type { Preview } from "@storybook/react";
 import "../app/globals.css";
 import "./preview.css";
 
-/** Applies `data-theme="dark"` on `<html>` for token-based dark mode (see `tokens.css`). */
+/** Classic default: omit `data-theme` on `<html>`. Named values match blocks in `src/design-system/tokens.css`. */
 function withTheme(Story: React.ComponentType, context: { globals: { theme?: string } }) {
   const theme = context.globals.theme ?? "light";
   const Bridge = () => {
     useEffect(() => {
       const root = document.documentElement;
-      if (theme === "dark") {
-        root.setAttribute("data-theme", "dark");
-      } else {
+      if (theme === "light") {
         root.removeAttribute("data-theme");
+      } else {
+        root.setAttribute("data-theme", theme);
       }
     }, [theme]);
     return <Story />;
@@ -38,14 +38,21 @@ const preview: Preview = {
   },
   globalTypes: {
     theme: {
-      description: "Sets `data-theme` on the document root (`tokens.css` light vs dark)",
+      description:
+        'Sets data-theme on <html> — classic (none), blue, dark, green, mist, custom, blue-mist, green-mist (tokens.css)',
       defaultValue: "light",
       toolbar: {
         title: "Theme",
         icon: "mirror",
         items: [
-          { value: "light", title: "Light", icon: "sun" },
+          { value: "light", title: "Classic (default)", icon: "sun" },
+          { value: "blue", title: "Blue (explicit)", icon: "circle" },
           { value: "dark", title: "Dark", icon: "moon" },
+          { value: "green", title: "Green accents", icon: "graphline" },
+          { value: "mist", title: "Ion mist", icon: "grid" },
+          { value: "custom", title: "Custom (rose)", icon: "heart" },
+          { value: "blue-mist", title: "Blue + mist", icon: "bookmark" },
+          { value: "green-mist", title: "Green + mist", icon: "component" },
         ],
         dynamicTitle: true,
       },
@@ -113,7 +120,7 @@ const preview: Preview = {
         method: "alphabetical",
         order: [
           "Design System",
-          ["Introduction", ["Dashboard", "*"], ["Atoms", "*"], ["Molecules", "*"]],
+          ["Introduction", "Theme showcase", ["Dashboard", "*"], ["Atoms", "*"], ["Molecules", "*"]],
         ],
         locales: "en-US",
       },

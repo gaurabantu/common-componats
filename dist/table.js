@@ -615,43 +615,47 @@ var Masker = class {
 
 // src/components/atoms/TextInput/TextInput.config.ts
 var HEADER_SEARCH_LAYOUT = {
+  /**
+   * Tier heights mirror `Select` sm/md/lg `minHeight` (36 / 44 / 48) so filter rows align in Storybook
+   * and apps without ad-hoc pixel tweaks.
+   */
   sm: {
-    shellMinHeight: 32,
-    horizontalPadding: 8,
-    prefixAddonPadding: 6,
-    suffixPadLeft: 6,
-    suffixPadRight: 2,
+    shellMinHeight: 36,
+    horizontalPadding: 9,
+    prefixAddonPadding: 7,
+    suffixPadLeft: 7,
+    suffixPadRight: 3,
     inputLineHeight: 1.35,
     decorativeTrailingSearchIcon: 14,
     clearIconSize: 11,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 26,
-    integratedIconPadX: 8
+    searchActionInsetHeight: 28,
+    integratedIconPadX: 9
   },
   md: {
-    shellMinHeight: 36,
-    horizontalPadding: 10,
-    prefixAddonPadding: 8,
-    suffixPadLeft: 8,
+    shellMinHeight: 44,
+    horizontalPadding: 12,
+    prefixAddonPadding: 9,
+    suffixPadLeft: 10,
     suffixPadRight: 4,
     inputLineHeight: 1.35,
-    decorativeTrailingSearchIcon: 15,
+    decorativeTrailingSearchIcon: 16,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 30,
-    integratedIconPadX: 10
+    searchActionInsetHeight: 36,
+    integratedIconPadX: 11
   },
   lg: {
-    shellMinHeight: 42,
+    shellMinHeight: 48,
     horizontalPadding: 12,
-    prefixAddonPadding: 8,
-    suffixPadLeft: 8,
+    prefixAddonPadding: 9,
+    suffixPadLeft: 10,
     suffixPadRight: 4,
     inputLineHeight: 1.38,
     decorativeTrailingSearchIcon: 17,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 34,
+    searchActionInsetHeight: 40,
     integratedIconPadX: 12
   }
 };
@@ -738,6 +742,10 @@ var TextInput = (0, import_react4.forwardRef)(({
   variant = "outlined",
   trailingRail = "default",
   size = "md",
+  autoCorrection = false,
+  spellCheck: spellCheckProp,
+  autoCorrect: autoCorrectProp,
+  autoCapitalize: autoCapitalizeProp,
   ...rest
 }, ref) => {
   var _a, _b;
@@ -870,6 +878,9 @@ var TextInput = (0, import_react4.forwardRef)(({
   };
   const formatDisplayValue = (val) => {
     if (validation === "custom") {
+      return val;
+    }
+    if (validation === "headerSearch") {
       return val;
     }
     const cleaned = removeAllSpaces(val);
@@ -1066,10 +1077,18 @@ var TextInput = (0, import_react4.forwardRef)(({
         cleanedInput = normalizeSpaces(cleanedInput);
       } else if (validation === "alphanumeric" || validation === "none") {
         cleanedInput = normalizeSpaces(cleanedInput);
+      } else if (validation === "headerSearch") {
+        cleanedInput = inputValue;
       } else if (validation === "custom") {
         cleanedInput = inputValue;
       } else {
         cleanedInput = removeAllSpaces(cleanedInput);
+      }
+      if (validation === "headerSearch" && pattern) {
+        const charRe = resolvePattern(pattern);
+        if (charRe && cleanedInput) {
+          cleanedInput = Array.from(cleanedInput).filter((ch) => charRe.test(ch)).join("");
+        }
       }
       if ((validation === "businessAID" || validation === "pincode" || validation === "numeric" || validation === "stdCode" || validation === "landline") && cleanedInput && !/^\d+$/.test(cleanedInput)) {
         return;
@@ -1364,7 +1383,10 @@ var TextInput = (0, import_react4.forwardRef)(({
                 getInputType() === "search" ? "ucs-text-input--search" : ""
               ].filter(Boolean).join(" "),
               style: inputElementStyle,
-              ...rest
+              ...rest,
+              spellCheck: spellCheckProp != null ? spellCheckProp : autoCorrection ? true : false,
+              autoCorrect: autoCorrectProp != null ? autoCorrectProp : autoCorrection ? "on" : "off",
+              autoCapitalize: autoCapitalizeProp != null ? autoCapitalizeProp : autoCorrection ? void 0 : "none"
             }
           ),
           hasRightAddons && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
@@ -1871,7 +1893,9 @@ var TextInputSearch = ({
   searchButtonLabel = "Search",
   searchActionButtonProps,
   suffix,
-  trailingRail: trailingRailProp
+  trailingRail: trailingRailProp,
+  pattern,
+  autoCorrection = false
 }) => {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
@@ -1980,6 +2004,8 @@ var TextInputSearch = ({
             type: "search",
             placeholder,
             validation: "headerSearch",
+            pattern,
+            autoCorrection,
             value,
             onChange,
             errorMessage,

@@ -59,7 +59,15 @@ export interface TextInputProps extends NativeInputProps {
   borderColorClass?: string;
   className?: string;
   ariaLabel?: string;
+  /**
+   * - `validation="custom"`: full-value check in `validateInput`.
+   * - `validation="headerSearch"` ( **`TextInputSearch`** ): optional **`pattern`** is a regex tested
+   *   against each JavaScript **string unit** (`Array.from`); non-matching characters are removed.
+   *   Omit both to leave the typed value untouched (spaces and symbols allowed).
+   */
   pattern?: RegExp | string;
+  /** When `true`, enables spell-check and mobile autocorrect hints (`spellCheck`, WebKit `autoCorrect`). Default `false`. */
+  autoCorrection?: boolean;
   rounded?: "0" | "1" | "2" | "3" | "4" | "5" | "pill" | "circle";
   showVerifiedStatus?: boolean;
   isVerified?: boolean;

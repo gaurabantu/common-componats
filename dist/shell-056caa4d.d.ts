@@ -189,7 +189,11 @@ interface AppSidebarProps extends Omit<React__default.HTMLAttributes<HTMLElement
     footerLayout?: AppSidebarFooterLayout;
     /** Replace built-in footer (profile + utilities). You receive full control; keep tokens via `tokens`. */
     footerSlot?: React__default.ReactNode;
-    /** CSS variable overrides for surfaces, text, hovers, active row, borders, and icon tints. */
+    /**
+     * Optional CSS-variable overrides on the sidebar root — use only when a host cannot express
+     * chrome via `tokens.css` + `data-theme` on `<html>`. Themes like `dark`, `mist`, `*-mist` define
+     * `--app-sidebar-*` there so dashboard shells track the document theme automatically.
+     */
     tokens?: AppSidebarTokens;
     classNames?: AppSidebarClassNames;
     /**
@@ -254,6 +258,8 @@ interface AppTopbarSearchConfig {
     onSearch?: (value: string) => void;
     placeholder?: string;
     ariaLabel?: string;
+    /** Matches `TextInputSearch` / `Select` tiers (default `sm` keeps top bar dense). */
+    size?: "sm" | "md" | "lg";
     inputId?: string;
     disabled?: boolean;
     /** Passes through to `InputSearch` (useful when the field is expanded on mobile). */
@@ -309,6 +315,12 @@ interface AppTopbarClassNames {
     title?: string;
 }
 interface AppTopbarProps {
+    /**
+     * Explicit bar chroming. Default `"light"` does **not** add forced Noir — topbar/read surfaces use
+     * `--app-shell-topbar-*` from `tokens.css` on `<html>` (set via `data-theme`), so omit this prop
+     * in most apps. Use `"dark"` only for a legacy Noir bar independent of document theme (overrides
+     * semantic shell tokens locally on the header).
+     */
     theme?: AppTopbarTheme;
     title: string;
     titleAs?: "h1" | "h2";
@@ -335,6 +347,7 @@ interface AppTopbarProps {
     collapseCenterBelowWidth?: number;
     /** Enables `useBelowWidth` listeners; set false for SSR-only snapshots. */
     responsive?: boolean;
+    /** Inline CSS vars on the header — optional; prefer `tokens.css` `--app-shell-topbar-*` from `data-theme`. */
     tokens?: AppTopbarTokens;
     className?: string;
     classNames?: AppTopbarClassNames;

@@ -82,6 +82,10 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   variant = "outlined",
   trailingRail = "default",
   size = "md",
+  autoCorrection = false,
+  spellCheck: spellCheckProp,
+  autoCorrect: autoCorrectProp,
+  autoCapitalize: autoCapitalizeProp,
   ...rest
 }, ref) => {
   const [error, setError] = useState<string | null>(null);
@@ -210,6 +214,9 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
 
   const formatDisplayValue = (val: string): string => {
     if (validation === "custom") {
+      return val;
+    }
+    if (validation === "headerSearch") {
       return val;
     }
 
@@ -431,10 +438,19 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
         cleanedInput = normalizeSpaces(cleanedInput);
       } else if (validation === "alphanumeric" || validation === "none") {
         cleanedInput = normalizeSpaces(cleanedInput);
+      } else if (validation === "headerSearch") {
+        cleanedInput = inputValue;
       } else if (validation === "custom") {
         cleanedInput = inputValue;
       } else {
         cleanedInput = removeAllSpaces(cleanedInput);
+      }
+
+      if (validation === "headerSearch" && pattern) {
+        const charRe = resolvePattern(pattern);
+        if (charRe && cleanedInput) {
+          cleanedInput = Array.from(cleanedInput).filter((ch) => charRe.test(ch)).join("");
+        }
       }
 
       // ✅ Add stdCode and landline to numeric-only validations
@@ -801,6 +817,12 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
             .join(" ")}
           style={inputElementStyle}
           {...rest}
+          spellCheck={spellCheckProp ?? (autoCorrection ? true : false)}
+          autoCorrect={(autoCorrectProp ?? (autoCorrection ? "on" : "off")) as React.HTMLAttributes<HTMLInputElement>["autoCorrect"]}
+          autoCapitalize={
+            autoCapitalizeProp ??
+            (autoCorrection ? undefined : ("none" as React.HTMLAttributes<HTMLInputElement>["autoCapitalize"]))
+          }
         />
   
         {/* SUFFIX / CLEAR / TOGGLE — order: integrated rail puts clear immediately before trailing suffix (Material-style search bar). */}

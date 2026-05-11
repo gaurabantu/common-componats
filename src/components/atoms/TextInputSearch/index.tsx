@@ -67,6 +67,13 @@ export interface TextInputSearchProps {
    * search button is shown (single Material-style bar).
    */
   trailingRail?: "default" | "integrated";
+  /**
+   * Optional whitelist for search input: **`TextInput` `pattern`**, regex tested **per string unit**
+   * (`Array.from`); non-matching units are stripped. Omit to allow any characters (spaces included).
+   */
+  pattern?: RegExp | string;
+  /** Enables spell-check + WebKit autocorrect hints on the inner field. Default `false`. */
+  autoCorrection?: boolean;
 }
 
 function railKey(inputSize: string): keyof typeof HEADER_SEARCH_LAYOUT {
@@ -107,6 +114,8 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
   searchActionButtonProps,
   suffix,
   trailingRail: trailingRailProp,
+  pattern,
+  autoCorrection = false,
 }) => {
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
@@ -257,6 +266,8 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
         type="search"
         placeholder={placeholder}
         validation="headerSearch"
+        pattern={pattern}
+        autoCorrection={autoCorrection}
         value={value}
         onChange={onChange}
         errorMessage={errorMessage}

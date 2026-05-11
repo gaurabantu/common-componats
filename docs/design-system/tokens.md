@@ -21,7 +21,7 @@ Smaller JS graphs are available via subpath imports (`ui-common-components/chart
 ## What to use in code
 
 - **Spacing:** `--space-0` … `--space-8` (8pt grid; see design system for allowed micro-gap rules).
-- **Borders (colour):** `--color-border-default` (structural); `--color-border-subtle` (decorative / hairline); **roles:** `--color-border-interactive`, `--color-border-strong`, `--color-border-selected`, `--color-border-error`; **default focus outline:** `--color-border-focus` (default **`#0066CC`** on classic light / dark — contrasts with gray borders). **Orange** `#FF4D00` is **`--color-brand-secondary`**, not the default focus border. **`green` (light)** uses **`#0D0D0D`** for focus (structural contrast on mint). **`green-dark`** uses **`#E2E8F0`** (light focus ring on dark teal).
+- **Borders (colour):** `--color-border-default` (structural); `--color-border-subtle` (decorative / hairline); **roles:** `--color-border-interactive`, `--color-border-strong`, `--color-border-selected`, `--color-border-error`; **default focus outline:** `--color-border-focus` (default **`#0066CC`** on classic light / dark — contrasts with gray borders). **Orange** `#FF4D00` is **`--color-brand-secondary`**, not the default focus border. **`green` (light)** uses **`#0D0D0D`** for focus (structural contrast on mint).
 - **Border (width only):** `--border-width-thin` … `--border-width-thick` — pair with `solid` and a border colour, e.g. `border: var(--border-width-thin) solid var(--color-border-default)`.
 - **Shorthand stroke (library):** `--border-thin` / `--border-default` are `*px solid` for `border: var(--border-thin) var(--color-border-default)`.
 - **Focus:** **`--color-border-focus`** and **`--color-focus-ring`** default to **`#0066CC`** (classic light / `blue` / `dark`). **`--color-focus-ring`** is overridden in some themes (`green`, `green-mist` pairings, `blue-mist`, etc.). **Primary filled** buttons use `--button-primary-focus-ring` (usually `var(--color-border-focus)`).
@@ -41,11 +41,12 @@ Smaller JS graphs are available via subpath imports (`ui-common-components/chart
 | (default) / `blue` / `.theme-blue` | Classic light: blue **interaction**; Noir **filled** CTA. |
 | `green` / `.theme-green` | Green **interaction**; remapped button/link tokens. |
 | `dark` / `.dark` | Dark neutral surfaces. |
-| `green-dark` / `.theme-green-dark` | Teal / emerald dark brand. |
 | `mist` / `.theme-mist` | Ion Mist page/sidebar/surfaces. |
 | `custom` / `.theme-custom` | Rose example (§42 slots). |
 | `blue-mist` / `.theme-blue-mist` | Blue interaction + Mist backgrounds; theme **focus** (`--color-focus-ring`). |
 | `green-mist` / `.theme-green-mist` | Green interaction + Mist backgrounds; theme **focus** (`--color-focus-ring`). |
+
+**Dashboard shell (`AppTopbar`, `AppSidebar`):** Named themes set **`--app-shell-topbar-*`** and **`--app-sidebar-*`** on the document root so the left rail and header track **`data-theme`** automatically. Prefer importing **`tokens.css`** once on `<html>` and omitting `tokens` / `mergeTopbarTokensStyle` overrides unless you must support a bespoke host palette.
 
 Do **not** set conflicting `data-theme` on the same root. The header of **`src/design-system/tokens.css`** also documents `data-theme` values.
 

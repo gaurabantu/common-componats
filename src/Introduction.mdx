@@ -6,7 +6,7 @@ import { Meta } from "@storybook/blocks";
 
 **Desktop-first · WCAG 2.2 AA · Token-driven (`tokens.css`)**
 
-This Storybook documents the shared library shipped as `ui-common-components`. Styles use CSS variables so apps can override tokens in global CSS. Use the **toolbar** to switch **theme** (light / dark) and **viewport** (mobile, tablet, desktop 1440).
+This Storybook documents the shared library shipped as `ui-common-components`. Styles use CSS variables so apps can override tokens in global CSS. Use the **toolbar** to switch **theme** — Classic (no `data-theme`), Blue explicit, Dark, Green accents, Ion mist, Custom (rose), Blue+mist, Green+mist — and **viewport** (mobile, tablet, desktop 1440). Start at **Design System → Theme showcase** for a curated preview.
 
 ---
 
@@ -64,9 +64,9 @@ Subpaths reduce JS: `ui-common-components/charts`, `/shell`, `/table` (see root 
 
 ---
 
-## Dark mode
+## Themes
 
-Tokens respond to **`data-theme="dark"`** on `<html>`. Use the Storybook **Theme** toolbar control to preview without changing code.
+Tokens respond to **`data-theme`** on `<html>` (`tokens.css`). Use the Storybook **Theme** toolbar — same values as consuming apps — plus **Design System → Theme showcase** for buttons, accents, and surfaces.
 
 ---
 

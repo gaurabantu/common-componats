@@ -155,7 +155,7 @@ const AppTopbar: React.FC<AppTopbarProps> = ({
       placeholder={search.placeholder ?? "Search..."}
       ariaLabel={search.ariaLabel ?? "Search"}
       disabled={search.disabled}
-      size="sm"
+      size={search.size ?? "sm"}
       fullWidth
       leftIcon={TOPBAR_SEARCH_ICON}
       leftIconHeight={18}

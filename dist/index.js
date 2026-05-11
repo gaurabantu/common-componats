@@ -772,43 +772,47 @@ var Masker = class {
 
 // src/components/atoms/TextInput/TextInput.config.ts
 var HEADER_SEARCH_LAYOUT = {
+  /**
+   * Tier heights mirror `Select` sm/md/lg `minHeight` (36 / 44 / 48) so filter rows align in Storybook
+   * and apps without ad-hoc pixel tweaks.
+   */
   sm: {
-    shellMinHeight: 32,
-    horizontalPadding: 8,
-    prefixAddonPadding: 6,
-    suffixPadLeft: 6,
-    suffixPadRight: 2,
+    shellMinHeight: 36,
+    horizontalPadding: 9,
+    prefixAddonPadding: 7,
+    suffixPadLeft: 7,
+    suffixPadRight: 3,
     inputLineHeight: 1.35,
     decorativeTrailingSearchIcon: 14,
     clearIconSize: 11,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 26,
-    integratedIconPadX: 8
+    searchActionInsetHeight: 28,
+    integratedIconPadX: 9
   },
   md: {
-    shellMinHeight: 36,
-    horizontalPadding: 10,
-    prefixAddonPadding: 8,
-    suffixPadLeft: 8,
+    shellMinHeight: 44,
+    horizontalPadding: 12,
+    prefixAddonPadding: 9,
+    suffixPadLeft: 10,
     suffixPadRight: 4,
     inputLineHeight: 1.35,
-    decorativeTrailingSearchIcon: 15,
+    decorativeTrailingSearchIcon: 16,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 30,
-    integratedIconPadX: 10
+    searchActionInsetHeight: 36,
+    integratedIconPadX: 11
   },
   lg: {
-    shellMinHeight: 42,
+    shellMinHeight: 48,
     horizontalPadding: 12,
-    prefixAddonPadding: 8,
-    suffixPadLeft: 8,
+    prefixAddonPadding: 9,
+    suffixPadLeft: 10,
     suffixPadRight: 4,
     inputLineHeight: 1.38,
     decorativeTrailingSearchIcon: 17,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 34,
+    searchActionInsetHeight: 40,
     integratedIconPadX: 12
   }
 };
@@ -895,6 +899,10 @@ var TextInput = (0, import_react5.forwardRef)(({
   variant = "outlined",
   trailingRail = "default",
   size = "md",
+  autoCorrection = false,
+  spellCheck: spellCheckProp,
+  autoCorrect: autoCorrectProp,
+  autoCapitalize: autoCapitalizeProp,
   ...rest
 }, ref) => {
   var _a, _b;
@@ -1027,6 +1035,9 @@ var TextInput = (0, import_react5.forwardRef)(({
   };
   const formatDisplayValue = (val) => {
     if (validation === "custom") {
+      return val;
+    }
+    if (validation === "headerSearch") {
       return val;
     }
     const cleaned = removeAllSpaces(val);
@@ -1223,10 +1234,18 @@ var TextInput = (0, import_react5.forwardRef)(({
         cleanedInput = normalizeSpaces(cleanedInput);
       } else if (validation === "alphanumeric" || validation === "none") {
         cleanedInput = normalizeSpaces(cleanedInput);
+      } else if (validation === "headerSearch") {
+        cleanedInput = inputValue;
       } else if (validation === "custom") {
         cleanedInput = inputValue;
       } else {
         cleanedInput = removeAllSpaces(cleanedInput);
+      }
+      if (validation === "headerSearch" && pattern) {
+        const charRe = resolvePattern(pattern);
+        if (charRe && cleanedInput) {
+          cleanedInput = Array.from(cleanedInput).filter((ch) => charRe.test(ch)).join("");
+        }
       }
       if ((validation === "businessAID" || validation === "pincode" || validation === "numeric" || validation === "stdCode" || validation === "landline") && cleanedInput && !/^\d+$/.test(cleanedInput)) {
         return;
@@ -1521,7 +1540,10 @@ var TextInput = (0, import_react5.forwardRef)(({
                 getInputType() === "search" ? "ucs-text-input--search" : ""
               ].filter(Boolean).join(" "),
               style: inputElementStyle,
-              ...rest
+              ...rest,
+              spellCheck: spellCheckProp != null ? spellCheckProp : autoCorrection ? true : false,
+              autoCorrect: autoCorrectProp != null ? autoCorrectProp : autoCorrection ? "on" : "off",
+              autoCapitalize: autoCapitalizeProp != null ? autoCapitalizeProp : autoCorrection ? void 0 : "none"
             }
           ),
           hasRightAddons && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -9137,7 +9159,9 @@ var TextInputSearch = ({
   searchButtonLabel = "Search",
   searchActionButtonProps,
   suffix,
-  trailingRail: trailingRailProp
+  trailingRail: trailingRailProp,
+  pattern,
+  autoCorrection = false
 }) => {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
@@ -9246,6 +9270,8 @@ var TextInputSearch = ({
             type: "search",
             placeholder,
             validation: "headerSearch",
+            pattern,
+            autoCorrection,
             value,
             onChange,
             errorMessage,
@@ -10947,7 +10973,7 @@ var AppTopbar = ({
   className,
   classNames
 }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
   const rootId = (0, import_react36.useId)();
   const baseId = rootId.replace(/[^a-zA-Z0-9_-]/g, "");
   const searchInputId = (_a = search == null ? void 0 : search.inputId) != null ? _a : `app-topbar-search-${baseId}`;
@@ -11041,13 +11067,13 @@ var AppTopbar = ({
       placeholder: (_c = search.placeholder) != null ? _c : "Search...",
       ariaLabel: (_d = search.ariaLabel) != null ? _d : "Search",
       disabled: search.disabled,
-      size: "sm",
+      size: (_e = search.size) != null ? _e : "sm",
       fullWidth: true,
       leftIcon: TOPBAR_SEARCH_ICON,
       leftIconHeight: 18,
       leftIconWidth: 18,
       leftIconColor: "var(--app-topbar-text-muted)",
-      showClearButton: (_e = search.showClearButton) != null ? _e : hideCenterColumn,
+      showClearButton: (_f = search.showClearButton) != null ? _f : hideCenterColumn,
       containerClassName: "text-input-search-wrapper app-topbar__search"
     }
   ) : null;
@@ -11161,16 +11187,16 @@ var AppTopbar = ({
                 {
                   type: "button",
                   className: "app-topbar__profile",
-                  "aria-label": (_f = profile.menuLabel) != null ? _f : profile.name ? `Account menu for ${profile.name}` : "Account menu",
+                  "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
                   onClick: profile.onClick,
-                  children: (_h = profile.avatar) != null ? _h : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_g = profile.name) != null ? _g : "User", ...profile.avatarProps })
+                  children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
                 }
               ) : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
                 "span",
                 {
                   className: "app-topbar__profile app-topbar__profile--static",
-                  "aria-label": (_j = (_i = profile.menuLabel) != null ? _i : profile.name) != null ? _j : "Profile",
-                  children: (_l = profile.avatar) != null ? _l : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_k = profile.name) != null ? _k : "User", ...profile.avatarProps })
+                  "aria-label": (_k = (_j = profile.menuLabel) != null ? _j : profile.name) != null ? _k : "Profile",
+                  children: (_m = profile.avatar) != null ? _m : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_l = profile.name) != null ? _l : "User", ...profile.avatarProps })
                 }
               ) : null,
               rightSlot

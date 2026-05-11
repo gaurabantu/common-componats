@@ -1,12 +1,12 @@
 import * as React$1 from 'react';
 import React__default, { HTMLAttributes, ReactNode, LiHTMLAttributes, AnchorHTMLAttributes, ButtonHTMLAttributes, TextareaHTMLAttributes, ChangeEvent } from 'react';
-import { B as ButtonProps } from './table-a8a8fe60.js';
-export { i as InputSearch, j as InputSearchProps, k as SearchActionButtonProps, S as SearchButtonDisplay, T as Table, d as TableBody, u as TableBodyProps, b as TableCaption, s as TableCaptionProps, h as TableCell, y as TableCellProps, l as TableColumn, e as TableFooter, v as TableFooterProps, g as TableHead, x as TableHeadProps, c as TableHeader, t as TableHeaderProps, o as TableLayout, m as TableProps, a as TableRoot, r as TableRootProps, f as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-a8a8fe60.js';
+import { B as ButtonProps } from './table-d6a43663.js';
+export { i as InputSearch, j as InputSearchProps, k as SearchActionButtonProps, S as SearchButtonDisplay, T as Table, d as TableBody, u as TableBodyProps, b as TableCaption, s as TableCaptionProps, h as TableCell, y as TableCellProps, l as TableColumn, e as TableFooter, v as TableFooterProps, g as TableHead, x as TableHeadProps, c as TableHeader, t as TableHeaderProps, o as TableLayout, m as TableProps, a as TableRoot, r as TableRootProps, f as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-d6a43663.js';
 import { I as IconSource } from './index-8a491a10.js';
 export { a as Icon, b as IconProps } from './index-8a491a10.js';
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import { A as AvatarProps } from './shell-9139e3fb.js';
-export { b as AppShell, e as AppShellProps, a as AppSidebar, p as AppSidebarClassNames, m as AppSidebarFooterAction, q as AppSidebarFooterLayout, k as AppSidebarHeader, g as AppSidebarNavItem, E as AppSidebarPersistPayload, f as AppSidebarProps, h as AppSidebarSection, j as AppSidebarSectionGrouping, i as AppSidebarTier, o as AppSidebarTokens, n as AppSidebarTrailingPreset, l as AppSidebarUser, c as AppTopbar, u as AppTopbarAction, x as AppTopbarClassNames, y as AppTopbarMenuItem, v as AppTopbarProfile, r as AppTopbarProps, t as AppTopbarSearchConfig, s as AppTopbarTheme, w as AppTopbarTokens, D as DashboardShell, d as DashboardShellProps, z as mergeSidebarTokensStyle, F as mergeTopbarTokensStyle, B as readAppSidebarPersist, C as writeAppSidebarPersist } from './shell-9139e3fb.js';
+import { A as AvatarProps } from './shell-056caa4d.js';
+export { b as AppShell, e as AppShellProps, a as AppSidebar, p as AppSidebarClassNames, m as AppSidebarFooterAction, q as AppSidebarFooterLayout, k as AppSidebarHeader, g as AppSidebarNavItem, E as AppSidebarPersistPayload, f as AppSidebarProps, h as AppSidebarSection, j as AppSidebarSectionGrouping, i as AppSidebarTier, o as AppSidebarTokens, n as AppSidebarTrailingPreset, l as AppSidebarUser, c as AppTopbar, u as AppTopbarAction, x as AppTopbarClassNames, y as AppTopbarMenuItem, v as AppTopbarProfile, r as AppTopbarProps, t as AppTopbarSearchConfig, s as AppTopbarTheme, w as AppTopbarTokens, D as DashboardShell, d as DashboardShellProps, z as mergeSidebarTokensStyle, F as mergeTopbarTokensStyle, B as readAppSidebarPersist, C as writeAppSidebarPersist } from './shell-056caa4d.js';
 export { AreaChart, AreaChartProps, BarChart, BarChartProps, ChartDataPoint, ChartDataSeries, ChartLayoutProps, ChartTheme, ChartTooltip, ChartTooltipItem, ChartTooltipProps, LineChart, LineChartProps, PieChart, PieChartDataPoint, PieChartProps } from './charts.js';
 
 declare const Button: React__default.NamedExoticComponent<ButtonProps>;
@@ -84,7 +84,15 @@ interface TextInputProps extends NativeInputProps {
     borderColorClass?: string;
     className?: string;
     ariaLabel?: string;
+    /**
+     * - `validation="custom"`: full-value check in `validateInput`.
+     * - `validation="headerSearch"` ( **`TextInputSearch`** ): optional **`pattern`** is a regex tested
+     *   against each JavaScript **string unit** (`Array.from`); non-matching characters are removed.
+     *   Omit both to leave the typed value untouched (spaces and symbols allowed).
+     */
     pattern?: RegExp | string;
+    /** When `true`, enables spell-check and mobile autocorrect hints (`spellCheck`, WebKit `autoCorrect`). Default `false`. */
+    autoCorrection?: boolean;
     rounded?: "0" | "1" | "2" | "3" | "4" | "5" | "pill" | "circle";
     showVerifiedStatus?: boolean;
     isVerified?: boolean;

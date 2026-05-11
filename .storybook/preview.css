@@ -13,6 +13,38 @@ body,
 }
 
 /**
+ * Semantic text utilities (`TextView` → `text-text-primary`, …) can lose to Storybook typography
+ * (e.g. `.sbdocs-* p`) because those rules use multi-class selectors. Re-assert token-driven colors
+ * under `#storybook-root` after `globals.css` so Docs + Canvas follow `data-theme` on `<html>`.
+ */
+#storybook-root .text-text-primary {
+  color: var(--color-text-primary);
+}
+
+#storybook-root .text-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+#storybook-root .text-state-success {
+  color: var(--color-state-success);
+}
+
+#storybook-root .text-state-warning {
+  color: var(--color-state-warning);
+}
+
+#storybook-root .text-state-error {
+  color: var(--color-state-error);
+}
+
+/**
+ * DashboardShell uses arbitrary `text-[var(--color-text-primary)]` — same Storybook specificity issue.
+ */
+#storybook-root .text-\[var\(--color-text-primary\)\] {
+  color: var(--color-text-primary);
+}
+
+/**
  * Demo layout utilities (`sb-*`) for `*.stories.tsx` — token-based, Storybook iframe only.
  * Import via `preview.tsx` with `globals.css` so tokens exist. Use these for consistent
  * Docs/Canvas blocks: page title → subtitle → card → header → grid or inline examples.
