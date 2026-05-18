@@ -10,6 +10,8 @@ export interface TableColumn<T = Record<string, unknown>> {
   minWidth?: string | number;
   align?: "left" | "center" | "right";
   sortable?: boolean;
+  /** Sort mode for built-in sorting: auto (default), alphabetic, or numeric. */
+  sortType?: "auto" | "string" | "number";
   /** Custom sort function. If not provided, uses default string/number compare. */
   sorter?: (a: T, b: T, key: string) => number;
   render?: (value: unknown, row: T, index: number) => React.ReactNode;
@@ -101,6 +103,8 @@ export interface TableProps<T = Record<string, unknown>> {
   striped?: boolean;
   /** Bordered cells */
   bordered?: boolean;
+  /** Show vertical separators between table columns */
+  verticalDivider?: boolean;
   /** Row hover effect */
   hover?: boolean;
   /** Compact padding */

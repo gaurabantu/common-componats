@@ -1,18 +1,22 @@
 # UI Common Components
 
-Reusable React components built around the UX Governance design system: token-driven styling, accessible defaults, dark-mode support, and a component surface aimed at SaaS, dashboard, and enterprise applications.
+Reusable React components and hooks built around the UX Governance design system: token-driven styling, accessible defaults, dark-mode support, and a component surface aimed at SaaS, dashboard, and enterprise applications.
+
+> **AI context:** Read [`AGENTS.md`](./AGENTS.md) first, then the full `docs/` tree in the order defined in [`docs/README.md`](./docs/README.md). All files are required — do not skip internal docs.
 
 ## What this package includes
 
 - **form controls:** `Input`, `InputSearch`, `TextArea`, `Select` (native), `Combobox` (search / icons / multi), `CheckBox`, `Switch`, `RadioGroup`, `OtpBox`, `DatePicker`
 - **display:** `Badge`, `Chip`, `Tag`, `TextView`, `GradientText`, `Divider`, `ProgressBar`, `ToolTip`, `Hyperlink`, `Icon`, `Avtar`
-- **Card:** default export plus **`CardHeader`**, **`CardTitle`**, **`CardDescription`**, **`CardAction`**, **`CardContent`**, **`CardFooter`** (compound layout), or legacy props (`title`, `subtitle`, `cover`, `actions`, …); **`size`** `"default"` | `"sm"`
+- **Card:** default export plus **`CardHeader`**, **`CardTitle`**, **`CardDescription`**, **`CardAction`**, **`CardContent`**, **`CardFooter`** (compound layout), or legacy props; **`size`** `"default"` | `"sm"`
 - **layout:** `Form`, `Grid`, `GridItem`
-- **patterns / molecules:** `Tabs` (+ `TabsList`, `TabsTrigger`, `TabsContent`), `Accordion` (+ item/trigger/content), `ButtonGroup` (+ separator, text), `Stepper` (+ `StepperStep`), `Breadcrumb` (+ `BreadcrumbItem`), `Popover` (+ `PopoverTrigger`, `PopoverContent`), `DropdownMenu` (+ trigger/content/item), `FileUpload` (+ `Dropzone` and security helpers), `Calendar`, `Modal`, `AlertDialog`
+- **patterns / molecules:** `Tabs`, `Accordion`, `ButtonGroup`, `Stepper`, `Breadcrumb`, `Popover`, `DropdownMenu`, `FileUpload`, `Calendar`, `Modal`, `AlertDialog`
+- **feedback states:** `EmptyState`, `ErrorState`, `OfflineBanner`, `FeedbackState` (variant-driven union); animated SVG illustrations: `NoDataAnimation`, `NoSearchResultsAnimation`, `ErrorAnimation`, `OfflineAnimation`, `SuccessAnimation`, `InfoAnimation`
 - **navigation and shell:** `DashboardShell` (`AppShell` alias), `AppSidebar`, `AppTopbar`
 - **data:** `Table` (column-driven grid) and semantic primitives (`TableRoot`, `TableCaption`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`)
-- **charts (native SVG):** `LineChart`, `BarChart`, `PieChart`, `AreaChart`, `ChartTooltip` (used internally; exported for advanced use)
+- **charts (native SVG):** `LineChart`, `BarChart`, `PieChart`, `AreaChart`, `ChartTooltip`
 - **theming helpers:** `mergeSidebarTokensStyle`, `mergeTopbarTokensStyle`
+- **companion hooks package (`ui-common-hooks`):** 25 typed hooks — gestures, async, overlay, table, selection, pagination, responsive, online status, phase machine, debounce, toggle, storage, and more
 
 ## Core principles
 
@@ -259,6 +263,29 @@ In short:
 - `Calendar`
 - `FileUpload`, `Dropzone` (and file-validation helpers — see types)
 
+### Feedback states
+
+| Export | Description |
+|--------|-------------|
+| `EmptyState` | Zone 4 empty list/grid panel — `image`, `icon`, `action`, `extra`, `size`, `align`, `tone` |
+| `ErrorState` | Zone 4 error panel — `image`, `icon`, `hideIcon`, `details`, `onRetry`, `extra`, `tone`, `aria-live` |
+| `OfflineBanner` | Slim sticky strip (Zone 2) or full panel (Zone 4 with `image`) — `headline`, `message`, `tone`, `onDismiss` |
+| `FeedbackState` | Variant router: `variant="empty" \| "success" \| "info" \| "error" \| "offline"` |
+| `NoDataAnimation` | CSS-animated floating inbox SVG |
+| `NoSearchResultsAnimation` | CSS-animated rocking magnifier with ✕ |
+| `ErrorAnimation` | CSS-animated pulsing error shield |
+| `OfflineAnimation` | CSS-animated wifi-off with slash |
+| `SuccessAnimation` | CSS-animated checkmark circle draw |
+| `InfoAnimation` | CSS-animated info pulse |
+
+Tone scale: `"neutral" \| "info" \| "success" \| "warning" \| "danger"` (not all tones apply to all components — see [`docs/FEEDBACK_STATES_GUIDE.md`](docs/FEEDBACK_STATES_GUIDE.md)).
+
+Use with `useAsyncContentPhase` from `ui-common-hooks` to drive which state renders:
+```tsx
+const { phase } = useAsyncContentPhase({ items, loading, error, requireNetwork: true });
+// phase: "loading" | "offline" | "error" | "empty" | "ready"
+```
+
 ### Navigation and layout shell
 
 - `DashboardShell` (recommended: sidebar + main offset for collapse/expand; `AppShell` alias)
@@ -352,12 +379,21 @@ Example override:
 
 ## Documentation map
 
+> **AI agents:** read [`AGENTS.md`](./AGENTS.md) at the repo root first — it is the single entry point that tells you what to read and in what order. All docs under `docs/` are required.
+
 Canonical docs live under **`docs/`** (start with [`docs/README.md`](docs/README.md)):
 
-- [`docs/UI_COMPONENTS_GUIDE.md`](docs/UI_COMPONENTS_GUIDE.md): component selection and usage patterns
-- [`docs/design-system/DESIGN_SYSTEM.md`](docs/design-system/DESIGN_SYSTEM.md): visual tokens, spacing, typography, accessibility
-- [`docs/design-system/tokens.md`](docs/design-system/tokens.md): importing `tokens.css` and token hooks
-- [`docs/internal/PACKAGES.md`](docs/internal/PACKAGES.md): dependency rationale
+| File | Purpose |
+|------|---------|
+| [`docs/AGENTS.md`](docs/AGENTS.md) | AI memory + export names + rules |
+| [`docs/AI_USAGE_GUIDE.md`](docs/AI_USAGE_GUIDE.md) | Required rules and AI workflow |
+| [`docs/UI_COMPONENTS_GUIDE.md`](docs/UI_COMPONENTS_GUIDE.md) | Component selection and usage |
+| [`docs/FEEDBACK_STATES_GUIDE.md`](docs/FEEDBACK_STATES_GUIDE.md) | FeedbackStates, animations, zone mapping |
+| [`docs/HOOKS_GUIDE.md`](docs/HOOKS_GUIDE.md) | `ui-common-hooks` — all 25 hooks |
+| [`docs/design-system/DESIGN_SYSTEM.md`](docs/design-system/DESIGN_SYSTEM.md) | Visual tokens, spacing, typography, accessibility |
+| [`docs/design-system/tokens.md`](docs/design-system/tokens.md) | Importing `tokens.css` and token reference |
+| [`docs/internal/PACKAGES.md`](docs/internal/PACKAGES.md) | Dependency rationale |
+| [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) | UX composition rules — zones, CTA hierarchy, density |
 
 ## Storybook
 

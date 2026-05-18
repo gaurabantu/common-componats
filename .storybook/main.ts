@@ -1,3 +1,5 @@
+import path from "path";
+
 import type { StorybookConfig } from "@storybook/react-webpack5";
 
 const config: StorybookConfig = {
@@ -24,6 +26,10 @@ const config: StorybookConfig = {
    * Avoid running `npm run dev` (tsup `--watch`) alongside Storybook — both compete for CPU/IO.
    * Accessibility: `preview.tsx` sets `parameters.a11y.manual` so axe-core does not run after every story
    * (large DOM + axe can freeze the tab). Run checks from Storybook’s Accessibility panel when needed.
+   *
+   * **Workspace `ui-common-hooks`:** stories import the package by name. Webpack aliases it to
+   * `packages/ui-common-hooks/src` so Storybook tracks hook source edits without running
+   * `npm run build -w ui-common-hooks` first.
    */
   typescript: {
     reactDocgen: "react-docgen",
@@ -37,6 +43,10 @@ const config: StorybookConfig = {
      */
     cfg.resolve = cfg.resolve ?? {};
     cfg.resolve.extensions = [...(cfg.resolve.extensions ?? []), ".ts", ".tsx"];
+    cfg.resolve.alias = {
+      ...((cfg.resolve.alias as Record<string, string | string[] | false> | undefined) ?? {}),
+      "ui-common-hooks": path.resolve(process.cwd(), "packages/ui-common-hooks/src/index.ts"),
+    };
 
     cfg.module = cfg.module ?? { rules: [] };
     cfg.module.rules = cfg.module.rules ?? [];

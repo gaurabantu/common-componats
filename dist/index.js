@@ -68,6 +68,11 @@ __export(src_exports, {
   DropdownMenuItem: () => DropdownMenuItem,
   DropdownMenuTrigger: () => DropdownMenuTrigger,
   Dropzone: () => Dropzone,
+  EmptyState: () => EmptyState,
+  ErrorAnimation: () => ErrorAnimation,
+  ErrorState: () => ErrorState,
+  FEEDBACK_ANIMATIONS: () => FEEDBACK_ANIMATIONS,
+  FeedbackState: () => FeedbackState,
   FileUpload: () => FileUpload_default,
   Form: () => Form,
   GradientText: () => GradientText_default,
@@ -75,10 +80,15 @@ __export(src_exports, {
   GridItem: () => GridItem,
   Hyperlink: () => Hyperlink_default,
   Icon: () => Icon_default,
+  InfoAnimation: () => InfoAnimation,
   Input: () => TextInput_default,
   InputSearch: () => TextInputSearch_default,
   LineChart: () => LineChart_default,
   Modal: () => Modal,
+  NoDataAnimation: () => NoDataAnimation,
+  NoSearchResultsAnimation: () => NoSearchResultsAnimation,
+  OfflineAnimation: () => OfflineAnimation,
+  OfflineBanner: () => OfflineBanner,
   OtpBox: () => OtpBox_default,
   PieChart: () => PieChart_default,
   Popover: () => Popover,
@@ -89,6 +99,7 @@ __export(src_exports, {
   Select: () => Select_default,
   Stepper: () => Stepper,
   StepperStep: () => StepperStep,
+  SuccessAnimation: () => SuccessAnimation,
   Switch: () => Switch_default,
   Table: () => Table_default,
   TableBody: () => TableBody,
@@ -7969,8 +7980,679 @@ var Divider = ({
 };
 var Divider_default = Divider;
 
-// src/components/atoms/Select/index.tsx
+// src/components/molecules/FeedbackStates/EmptyState.tsx
 var import_react25 = require("react");
+
+// src/components/molecules/FeedbackStates/feedbackState.classes.ts
+function feedbackCls(...chunks) {
+  return chunks.filter(Boolean).join(" ");
+}
+
+// src/components/molecules/FeedbackStates/EmptyState.tsx
+var import_jsx_runtime28 = require("react/jsx-runtime");
+function EmptyState({
+  title,
+  description,
+  icon,
+  iconLabel,
+  image,
+  action,
+  extra,
+  className,
+  role = "status",
+  compact = false,
+  size = "md",
+  align = "center",
+  tone = "neutral",
+  "aria-live": ariaLive = "polite",
+  "data-testid": testId
+}) {
+  const titleId = (0, import_react25.useId)();
+  const descId = (0, import_react25.useId)();
+  return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+    "section",
+    {
+      className: feedbackCls(
+        "ds-feedback-shell",
+        `ds-feedback-shell--${size}`,
+        compact && "ds-feedback-shell--compact",
+        align === "start" && "ds-feedback-shell--align-start",
+        tone !== "neutral" && `ds-feedback-shell--tone-${tone}`,
+        className
+      ),
+      role,
+      "aria-live": ariaLive,
+      "aria-labelledby": titleId,
+      "aria-describedby": description ? descId : void 0,
+      "data-testid": testId != null ? testId : "feedback-empty-state",
+      children: [
+        image ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "ds-feedback-image", children: image }) : null,
+        icon ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+          "span",
+          {
+            className: "ds-feedback-icon",
+            "aria-hidden": iconLabel ? void 0 : "true",
+            "aria-label": iconLabel,
+            role: iconLabel ? "img" : void 0,
+            children: icon
+          }
+        ) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(TextView_default, { as: "h3", variant: "h4", id: titleId, children: title }),
+        description ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(TextView_default, { as: "p", variant: "body", color: "secondary", id: descId, children: description }) : null,
+        action ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "ds-feedback-actions", children: action }) : null,
+        extra ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "ds-feedback-extra", children: extra }) : null
+      ]
+    }
+  );
+}
+
+// src/components/molecules/FeedbackStates/ErrorState.tsx
+var import_react26 = require("react");
+var import_jsx_runtime29 = require("react/jsx-runtime");
+function DefaultErrorIcon({ tone }) {
+  if (tone === "warning") {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("svg", { "aria-hidden": "true", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", className: "ds-feedback-status-icon", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("path", { d: "M12 2L2 20h20L12 2z", stroke: "currentColor", strokeWidth: "1.75", strokeLinejoin: "round" }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("path", { d: "M12 9v5M12 16.5v.5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
+    ] });
+  }
+  if (tone === "info") {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("svg", { "aria-hidden": "true", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", className: "ds-feedback-status-icon", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("path", { d: "M12 8v.5M12 11v5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
+    ] });
+  }
+  if (tone === "success") {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("svg", { "aria-hidden": "true", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", className: "ds-feedback-status-icon", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("path", { d: "M8 12l3 3 5-5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })
+    ] });
+  }
+  return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("svg", { "aria-hidden": "true", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", className: "ds-feedback-status-icon", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
+    /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("path", { d: "M12 8v5M12 15.5v.5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
+  ] });
+}
+function toneClass(tone) {
+  if (tone === "neutral")
+    return "ds-feedback-shell--tone-neutral";
+  if (tone === "info")
+    return "ds-feedback-shell--tone-info";
+  if (tone === "success")
+    return "ds-feedback-shell--tone-success";
+  if (tone === "warning")
+    return "ds-feedback-shell--tone-warning";
+  if (tone === "danger")
+    return "ds-feedback-shell--danger";
+  return false;
+}
+function ErrorState({
+  title = "Something went wrong",
+  description = "Please try again later. If the problem continues, contact support.",
+  image,
+  icon,
+  hideIcon = false,
+  details,
+  retryLabel = "Try again",
+  onRetry,
+  extra,
+  className,
+  tone = "danger",
+  compact = false,
+  size = "md",
+  align = "center",
+  "aria-live": ariaLive,
+  role,
+  "data-testid": testId
+}) {
+  const resolvedRole = role != null ? role : details || onRetry ? "alert" : "status";
+  const resolvedAriaLive = ariaLive != null ? ariaLive : resolvedRole === "alert" ? "assertive" : "polite";
+  const titleId = (0, import_react26.useId)();
+  const descId = (0, import_react26.useId)();
+  const detailBody = details == null ? null : typeof details === "string" || typeof details === "number" || typeof details === "boolean" ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("pre", { className: "ds-feedback-detail", children: String(details) }) : details instanceof Error ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("pre", { className: "ds-feedback-detail", children: details.message }) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "ds-feedback-detail", children: details });
+  const resolvedIcon = !hideIcon ? icon != null ? icon : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(DefaultErrorIcon, { tone }) : null;
+  return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+    "section",
+    {
+      className: feedbackCls(
+        "ds-feedback-shell",
+        `ds-feedback-shell--${size}`,
+        compact && "ds-feedback-shell--compact",
+        align === "start" && "ds-feedback-shell--align-start",
+        toneClass(tone),
+        className
+      ),
+      role: resolvedRole,
+      "aria-live": resolvedAriaLive,
+      "aria-labelledby": titleId,
+      "aria-describedby": description ? descId : void 0,
+      "data-testid": testId != null ? testId : "feedback-error-state",
+      children: [
+        image ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "ds-feedback-image", children: image }) : null,
+        resolvedIcon ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "ds-feedback-icon ds-feedback-icon--status", children: resolvedIcon }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(TextView_default, { as: "h3", variant: "h4", id: titleId, children: title }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(TextView_default, { as: "p", variant: "body", color: "secondary", id: descId, children: description }),
+        detailBody,
+        onRetry ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "ds-feedback-actions", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button_default, { variant: "outlinePrimary", type: "button", onClick: () => onRetry(), size: compact ? "sm" : "md", children: retryLabel }) }) : null,
+        extra ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "ds-feedback-extra", children: extra }) : null
+      ]
+    }
+  );
+}
+
+// src/components/molecules/FeedbackStates/OfflineBanner.tsx
+var import_jsx_runtime30 = require("react/jsx-runtime");
+var DefaultOfflineIcon = () => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+  "svg",
+  {
+    "aria-hidden": "true",
+    width: "20",
+    height: "20",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    className: "ds-offline-banner__icon",
+    children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      "path",
+      {
+        d: "M1 1l22 22M9.9 4.24A10 10 0 0119.07 8.77M5 5a10 10 0 00-.29 14.71M10.73 10.73A5 5 0 0114.35 13M7.05 7.05A5 5 0 005 11.37M12 20h.01",
+        stroke: "currentColor",
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }
+    )
+  }
+);
+function bannerToneClass(tone) {
+  return tone === "neutral" ? "ds-offline-banner--neutral" : "ds-offline-banner--warning";
+}
+function OfflineBanner({
+  headline = "No internet connection.",
+  message = "Check your connection and try again.",
+  leadingIcon,
+  image,
+  actionLabel = "Retry",
+  onRetry,
+  onDismiss,
+  dismissLabel = "Dismiss",
+  className,
+  sticky,
+  tone = "warning",
+  compact = false,
+  role = "status"
+}) {
+  const showLeadingIcon = leadingIcon !== void 0 ? leadingIcon : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(DefaultOfflineIcon, {});
+  if (image) {
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+      "section",
+      {
+        className: feedbackCls(
+          "ds-feedback-shell",
+          "ds-feedback-shell--md",
+          compact && "ds-feedback-shell--compact",
+          tone === "warning" ? "ds-feedback-shell--tone-warning" : "ds-feedback-shell--tone-neutral",
+          className
+        ),
+        role,
+        "aria-live": "polite",
+        "aria-atomic": "true",
+        "data-testid": "feedback-offline-banner",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "ds-feedback-image", children: image }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(TextView_default, { as: "p", variant: "body", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("strong", { children: headline }) }),
+          message ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(TextView_default, { as: "p", variant: "small", color: "secondary", children: message }) : null,
+          onRetry || onDismiss ? /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ds-feedback-actions", children: [
+            onRetry ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button_default, { variant: "outlinePrimary", type: "button", size: "md", onClick: () => onRetry == null ? void 0 : onRetry(), children: actionLabel }) : null,
+            onDismiss ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button_default, { variant: "ghost", type: "button", size: "md", onClick: () => onDismiss == null ? void 0 : onDismiss(), children: dismissLabel }) : null
+          ] }) : null
+        ]
+      }
+    );
+  }
+  return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+    "aside",
+    {
+      className: feedbackCls(
+        "ds-offline-banner",
+        bannerToneClass(tone),
+        compact && "ds-offline-banner--compact",
+        sticky && "ds-offline-banner--sticky",
+        className
+      ),
+      role,
+      "aria-live": "polite",
+      "aria-atomic": "true",
+      "data-testid": "feedback-offline-banner",
+      children: [
+        showLeadingIcon ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "ds-offline-banner__icon-wrap", children: showLeadingIcon }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ds-offline-banner__body", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(TextView_default, { as: "p", variant: "body", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("strong", { children: headline }) }),
+          message ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(TextView_default, { as: "p", variant: "small", color: "secondary", children: message }) : null
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "ds-offline-banner__actions", children: [
+          onRetry ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button_default, { variant: "outlineSecondary", type: "button", size: "sm", onClick: () => onRetry == null ? void 0 : onRetry(), children: actionLabel }) : null,
+          onDismiss ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+            "button",
+            {
+              type: "button",
+              onClick: () => onDismiss == null ? void 0 : onDismiss(),
+              "aria-label": dismissLabel,
+              style: {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 28,
+                height: 28,
+                borderRadius: "var(--radius-control, 6px)",
+                border: "none",
+                background: "transparent",
+                cursor: "pointer",
+                color: "var(--color-text-secondary, #475569)",
+                fontSize: 14
+              },
+              children: "\u2715"
+            }
+          ) : null
+        ] })
+      ]
+    }
+  );
+}
+
+// src/components/molecules/FeedbackStates/FeedbackState.tsx
+var import_jsx_runtime31 = require("react/jsx-runtime");
+function FeedbackState(props) {
+  if (props.variant === "empty") {
+    const { variant: _omit, ...rest } = props;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(EmptyState, { ...rest });
+  }
+  if (props.variant === "success") {
+    const { variant: _omit, ...rest } = props;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      EmptyState,
+      {
+        tone: "success",
+        icon: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { "aria-hidden": "true", width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", style: { color: "var(--color-success-strong, #15803d)" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("path", { d: "M8 12l3 3 5-5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })
+        ] }),
+        ...rest
+      }
+    );
+  }
+  if (props.variant === "info") {
+    const { variant: _omit, ...rest } = props;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      EmptyState,
+      {
+        tone: "info",
+        icon: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { "aria-hidden": "true", width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", style: { color: "var(--color-info-strong, #1d4ed8)" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("path", { d: "M12 8v.5M12 11v5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
+        ] }),
+        ...rest
+      }
+    );
+  }
+  if (props.variant === "error") {
+    const { variant: _omit, ...rest } = props;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(ErrorState, { ...rest });
+  }
+  if (props.variant === "offline") {
+    const { variant: _omit, ...rest } = props;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(OfflineBanner, { ...rest });
+  }
+  const _exhaustive = props;
+  return _exhaustive;
+}
+
+// src/components/molecules/FeedbackStates/FeedbackStates.animations.tsx
+var import_jsx_runtime32 = require("react/jsx-runtime");
+function NoDataAnimation({ size = 120, className, "aria-hidden": ariaHidden = "true" }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 120 120",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      className,
+      "aria-hidden": ariaHidden,
+      style: { overflow: "visible" },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("style", { children: `
+        @keyframes fb-float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes fb-fade-in-line {
+          from { stroke-dashoffset: 30; opacity: 0; }
+          to   { stroke-dashoffset: 0;  opacity: 1; }
+        }
+        @keyframes fb-blink-dot {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.2; }
+        }
+        .fb-tray-group { animation: fb-float 3s ease-in-out infinite; transform-origin: center; }
+        .fb-line-1 { stroke-dasharray: 30; animation: fb-fade-in-line 0.6s 0.3s both ease-out; }
+        .fb-line-2 { stroke-dasharray: 22; animation: fb-fade-in-line 0.6s 0.5s both ease-out; }
+        .fb-line-3 { stroke-dasharray: 16; animation: fb-fade-in-line 0.6s 0.7s both ease-out; }
+        .fb-dot-1 { animation: fb-blink-dot 1.8s 0s infinite; }
+        .fb-dot-2 { animation: fb-blink-dot 1.8s 0.3s infinite; }
+        .fb-dot-3 { animation: fb-blink-dot 1.8s 0.6s infinite; }
+      ` }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("ellipse", { cx: "60", cy: "108", rx: "28", ry: "5", fill: "currentColor", opacity: "0.08" }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-tray-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("rect", { x: "18", y: "50", width: "84", height: "48", rx: "10", fill: "var(--color-fill-muted,#f1f5f9)", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M18 72 Q18 50 60 50 Q102 50 102 72", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", fill: "none" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M60 34 L60 56M53 49 L60 56 L67 49", stroke: "var(--color-text-secondary,#94a3b8)", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "78", x2: "62", y2: "78", className: "fb-line-1", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "86", x2: "54", y2: "86", className: "fb-line-2", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "94", x2: "48", y2: "94", className: "fb-line-3", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "82", cy: "78", r: "3", fill: "var(--color-border-subtle,#cbd5e1)", className: "fb-dot-1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "91", cy: "78", r: "3", fill: "var(--color-border-subtle,#cbd5e1)", className: "fb-dot-2" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "100", cy: "78", r: "3", fill: "var(--color-border-subtle,#cbd5e1)", className: "fb-dot-3" })
+        ] })
+      ]
+    }
+  );
+}
+function NoSearchResultsAnimation({ size = 120, className, "aria-hidden": ariaHidden = "true" }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 120 120",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      className,
+      "aria-hidden": ariaHidden,
+      style: { overflow: "visible" },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("style", { children: `
+        @keyframes fb-search-rock {
+          0%, 100% { transform: rotate(-6deg); }
+          50% { transform: rotate(6deg); }
+        }
+        @keyframes fb-x-pop {
+          0% { transform: scale(0); opacity: 0; }
+          60% { transform: scale(1.25); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .fb-lens { animation: fb-search-rock 2.4s ease-in-out infinite; transform-origin: 52px 52px; }
+        .fb-x-mark { animation: fb-x-pop 0.45s 0.2s both cubic-bezier(.34,1.56,.64,1); transform-origin: 52px 52px; }
+      ` }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("ellipse", { cx: "60", cy: "110", rx: "24", ry: "4", fill: "currentColor", opacity: "0.07" }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-lens", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "52", cy: "52", r: "26", fill: "var(--color-fill-muted,#f1f5f9)", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "3" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "70", y1: "70", x2: "94", y2: "94", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-x-mark", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "43", y1: "43", x2: "61", y2: "61", stroke: "var(--color-danger-strong,#dc2626)", strokeWidth: "3", strokeLinecap: "round" }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "61", y1: "43", x2: "43", y2: "61", stroke: "var(--color-danger-strong,#dc2626)", strokeWidth: "3", strokeLinecap: "round" })
+          ] })
+        ] })
+      ]
+    }
+  );
+}
+function ErrorAnimation({ size = 120, className, "aria-hidden": ariaHidden = "true" }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 120 120",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      className,
+      "aria-hidden": ariaHidden,
+      style: { overflow: "visible" },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("style", { children: `
+        @keyframes fb-shield-pulse {
+          0%, 100% { transform: scale(1); }
+          45% { transform: scale(1.06); }
+          55% { transform: scale(1.06); }
+        }
+        @keyframes fb-ring-expand {
+          0%   { r: 38; opacity: 0.4; }
+          100% { r: 54; opacity: 0; }
+        }
+        .fb-shield-g { animation: fb-shield-pulse 2.2s ease-in-out infinite; transform-origin: 60px 58px; }
+        .fb-ring-anim { animation: fb-ring-expand 2.2s ease-out infinite; }
+      ` }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          "circle",
+          {
+            cx: "60",
+            cy: "58",
+            r: "38",
+            className: "fb-ring-anim",
+            fill: "none",
+            stroke: "var(--color-danger-strong,#ef4444)",
+            strokeWidth: "2"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-shield-g", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            "path",
+            {
+              d: "M60 18 L92 32 L92 62 Q92 84 60 100 Q28 84 28 62 L28 32 Z",
+              fill: "var(--color-danger-fill,#fee2e2)",
+              stroke: "var(--color-danger-strong,#ef4444)",
+              strokeWidth: "2.5",
+              strokeLinejoin: "round"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "60", y1: "44", x2: "60", y2: "65", stroke: "var(--color-danger-strong,#dc2626)", strokeWidth: "4", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "75", r: "3", fill: "var(--color-danger-strong,#dc2626)" })
+        ] })
+      ]
+    }
+  );
+}
+function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHidden = "true" }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 120 120",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      className,
+      "aria-hidden": ariaHidden,
+      style: { overflow: "visible" },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("style", { children: `
+        @keyframes fb-arc-fade {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.1; }
+        }
+        @keyframes fb-slash-draw {
+          from { stroke-dashoffset: 90; }
+          to   { stroke-dashoffset: 0; }
+        }
+        @keyframes fb-dot-bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        .fb-arc-3 { animation: fb-arc-fade 2s 0.0s ease-in-out infinite; }
+        .fb-arc-2 { animation: fb-arc-fade 2s 0.25s ease-in-out infinite; }
+        .fb-arc-1 { animation: fb-arc-fade 2s 0.5s ease-in-out infinite; }
+        .fb-slash { stroke-dasharray: 90; animation: fb-slash-draw 0.5s 0.1s both ease-out; }
+        .fb-wifi-dot { animation: fb-dot-bounce 1.6s ease-in-out infinite; transform-origin: 60px 92px; }
+      ` }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          "path",
+          {
+            className: "fb-arc-3",
+            d: "M22 58 Q22 26 60 26 Q98 26 98 58",
+            stroke: "var(--color-border-subtle,#cbd5e1)",
+            strokeWidth: "5",
+            strokeLinecap: "round",
+            fill: "none"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          "path",
+          {
+            className: "fb-arc-2",
+            d: "M35 70 Q35 46 60 46 Q85 46 85 70",
+            stroke: "var(--color-border-subtle,#cbd5e1)",
+            strokeWidth: "5",
+            strokeLinecap: "round",
+            fill: "none"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          "path",
+          {
+            className: "fb-arc-1",
+            d: "M48 82 Q48 66 60 66 Q72 66 72 82",
+            stroke: "var(--color-border-subtle,#cbd5e1)",
+            strokeWidth: "5",
+            strokeLinecap: "round",
+            fill: "none"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { className: "fb-wifi-dot", cx: "60", cy: "92", r: "4.5", fill: "var(--color-border-subtle,#cbd5e1)" }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          "line",
+          {
+            className: "fb-slash",
+            x1: "24",
+            y1: "96",
+            x2: "96",
+            y2: "24",
+            stroke: "var(--color-danger-strong,#ef4444)",
+            strokeWidth: "4",
+            strokeLinecap: "round"
+          }
+        )
+      ]
+    }
+  );
+}
+function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHidden = "true" }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 120 120",
+      fill: "none",
+      xmlns: "http.w3.org/2000/svg",
+      className,
+      "aria-hidden": ariaHidden,
+      style: { overflow: "visible" },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("style", { children: `
+        @keyframes fb-circle-draw {
+          from { stroke-dashoffset: 220; }
+          to   { stroke-dashoffset: 0; }
+        }
+        @keyframes fb-check-draw {
+          from { stroke-dashoffset: 60; }
+          to   { stroke-dashoffset: 0; }
+        }
+        @keyframes fb-success-pop {
+          0%   { transform: scale(0.85); }
+          60%  { transform: scale(1.06); }
+          100% { transform: scale(1); }
+        }
+        .fb-success-g { animation: fb-success-pop 0.5s 0.1s both cubic-bezier(.34,1.56,.64,1); transform-origin: 60px 60px; }
+        .fb-circle-draw { stroke-dasharray: 220; animation: fb-circle-draw 0.55s 0s both ease-out; }
+        .fb-check-draw  { stroke-dasharray: 60;  animation: fb-check-draw  0.4s 0.4s both ease-out; }
+      ` }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-success-g", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "60", r: "34", fill: "var(--color-success-fill,#dcfce7)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            "circle",
+            {
+              cx: "60",
+              cy: "60",
+              r: "34",
+              className: "fb-circle-draw",
+              stroke: "var(--color-success-strong,#16a34a)",
+              strokeWidth: "3",
+              fill: "none"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            "path",
+            {
+              d: "M42 60 l14 14 l22-22",
+              className: "fb-check-draw",
+              stroke: "var(--color-success-strong,#16a34a)",
+              strokeWidth: "4.5",
+              strokeLinecap: "round",
+              strokeLinejoin: "round"
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+function InfoAnimation({ size = 120, className, "aria-hidden": ariaHidden = "true" }) {
+  return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 120 120",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      className,
+      "aria-hidden": ariaHidden,
+      style: { overflow: "visible" },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("style", { children: `
+        @keyframes fb-info-pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.04); opacity: 0.85; }
+        }
+        @keyframes fb-i-dot {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
+        }
+        .fb-info-g { animation: fb-info-pulse 2.5s ease-in-out infinite; transform-origin: 60px 60px; }
+        .fb-i-dot   { animation: fb-i-dot 2.5s ease-in-out infinite; transform-origin: 60px 40px; }
+      ` }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-info-g", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "60", r: "34", fill: "var(--color-info-fill,#dbeafe)", stroke: "var(--color-info-strong,#1d4ed8)", strokeWidth: "2.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            "line",
+            {
+              x1: "60",
+              y1: "54",
+              x2: "60",
+              y2: "76",
+              stroke: "var(--color-info-strong,#1d4ed8)",
+              strokeWidth: "5",
+              strokeLinecap: "round"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "43", r: "3.5", fill: "var(--color-info-strong,#1d4ed8)", className: "fb-i-dot" })
+        ] })
+      ]
+    }
+  );
+}
+var FEEDBACK_ANIMATIONS = {
+  empty: NoDataAnimation,
+  "no-search": NoSearchResultsAnimation,
+  error: ErrorAnimation,
+  offline: OfflineAnimation,
+  success: SuccessAnimation,
+  info: InfoAnimation
+};
+
+// src/components/atoms/Select/index.tsx
+var import_react27 = require("react");
 
 // src/components/atoms/Select/Select.config.ts
 var defaultSelectOptions = {
@@ -7982,7 +8664,7 @@ var defaultSelectOptions = {
 };
 
 // src/components/atoms/Select/index.tsx
-var import_jsx_runtime28 = require("react/jsx-runtime");
+var import_jsx_runtime33 = require("react/jsx-runtime");
 var getOptionDataAttributes = (option) => {
   const dataAttrs = {};
   if (option.icon) {
@@ -7999,13 +8681,13 @@ var renderOptionContent = (option, showIcons = true) => {
   }
   const iconElement = typeof option.icon === "string" ? option.icon + " " : option.icon;
   if (option.iconPosition === "right") {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(import_jsx_runtime33.Fragment, { children: [
       option.label,
       " ",
       iconElement
     ] });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(import_jsx_runtime33.Fragment, { children: [
     iconElement,
     " ",
     option.label
@@ -8022,7 +8704,7 @@ function findOptionInSelect(value, options, groups) {
   }
   return options == null ? void 0 : options.find((opt) => opt.value === value);
 }
-var Select = (0, import_react25.forwardRef)((props, ref) => {
+var Select = (0, import_react27.forwardRef)((props, ref) => {
   const {
     label,
     options = [],
@@ -8045,7 +8727,7 @@ var Select = (0, import_react25.forwardRef)((props, ref) => {
     animatedChevron = true,
     ...rest
   } = props;
-  const generatedId = (0, import_react25.useId)();
+  const generatedId = (0, import_react27.useId)();
   const selectId = id || generatedId;
   const useGroups = Boolean(groups && groups.length > 0);
   const handleChange = (event) => {
@@ -8114,13 +8796,13 @@ var Select = (0, import_react25.forwardRef)((props, ref) => {
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: customClass, style: wrapperStyle, children: [
-    label && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("label", { htmlFor: selectId, style: labelStyle, children: label }),
-    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: customClass, style: wrapperStyle, children: [
+    label && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("label", { htmlFor: selectId, style: labelStyle, children: label }),
+    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
       "div",
       {
         className: `ucs-select-shell${animatedChevron !== false ? " ucs-select-shell--chevron-animated" : ""}`,
-        children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+        children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(
           "select",
           {
             ref,
@@ -8132,11 +8814,11 @@ var Select = (0, import_react25.forwardRef)((props, ref) => {
             onChange: handleChange,
             ...rest,
             children: [
-              placeholder && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("option", { value: "", disabled: !allowPlaceholderSelection, children: placeholder }),
-              useGroups ? groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("optgroup", { label: group.label, children: group.options.map((opt, index) => {
+              placeholder && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("option", { value: "", disabled: !allowPlaceholderSelection, children: placeholder }),
+              useGroups ? groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("optgroup", { label: group.label, children: group.options.map((opt, index) => {
                 var _a;
                 const dataAttributes = getOptionDataAttributes(opt);
-                return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
                   "option",
                   {
                     value: opt.value,
@@ -8149,7 +8831,7 @@ var Select = (0, import_react25.forwardRef)((props, ref) => {
               }) }, group.label)) : options.map((opt, index) => {
                 var _a;
                 const dataAttributes = getOptionDataAttributes(opt);
-                return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
                   "option",
                   {
                     value: opt.value,
@@ -8165,15 +8847,15 @@ var Select = (0, import_react25.forwardRef)((props, ref) => {
         )
       }
     ),
-    helperMessage && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: helperStyle, children: helperMessage })
+    helperMessage && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { style: helperStyle, children: helperMessage })
   ] });
 });
 Select.displayName = "Select";
 var Select_default = Select;
 
 // src/components/molecules/Combobox/index.tsx
-var import_react26 = __toESM(require("react"));
-var import_jsx_runtime29 = require("react/jsx-runtime");
+var import_react28 = __toESM(require("react"));
+var import_jsx_runtime34 = require("react/jsx-runtime");
 function cls14(...parts) {
   return parts.filter(Boolean).join(" ");
 }
@@ -8183,9 +8865,9 @@ function flattenOptions(options, groups) {
   return options != null ? options : [];
 }
 function ChevronDown() {
-  return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("svg", { className: "ds-combobox__chevron", viewBox: "0 0 20 20", fill: "none", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("path", { d: "M5 7.5L10 12.5L15 7.5", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("svg", { className: "ds-combobox__chevron", viewBox: "0 0 20 20", fill: "none", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("path", { d: "M5 7.5L10 12.5L15 7.5", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" }) });
 }
-var Combobox = import_react26.default.memo(function Combobox2({
+var Combobox = import_react28.default.memo(function Combobox2({
   label,
   options,
   groups,
@@ -8207,27 +8889,27 @@ var Combobox = import_react26.default.memo(function Combobox2({
   style,
   ...rest
 }) {
-  const reactId = (0, import_react26.useId)();
+  const reactId = (0, import_react28.useId)();
   const base = reactId.replace(/:/g, "");
   const listboxId = `ds-combobox-lb-${base}`;
   const searchId = `ds-combobox-search-${base}`;
   const labelId = `ds-combobox-lbl-${base}`;
   const isControlled = valueProp !== void 0;
-  const [open, setOpen] = (0, import_react26.useState)(false);
-  const [search, setSearch] = (0, import_react26.useState)("");
-  (0, import_react26.useEffect)(() => {
+  const [open, setOpen] = (0, import_react28.useState)(false);
+  const [search, setSearch] = (0, import_react28.useState)("");
+  (0, import_react28.useEffect)(() => {
     if (!open)
       setSearch("");
   }, [open]);
-  const [innerValue, setInnerValue] = (0, import_react26.useState)(() => {
+  const [innerValue, setInnerValue] = (0, import_react28.useState)(() => {
     if (defaultValue !== void 0)
       return defaultValue;
     return multiple ? [] : "";
   });
   const selected = isControlled ? valueProp : innerValue;
-  const allOptions = (0, import_react26.useMemo)(() => flattenOptions(options, groups), [options, groups]);
+  const allOptions = (0, import_react28.useMemo)(() => flattenOptions(options, groups), [options, groups]);
   const useGroups = Boolean(groups == null ? void 0 : groups.length);
-  const filteredFlat = (0, import_react26.useMemo)(() => {
+  const filteredFlat = (0, import_react28.useMemo)(() => {
     const base2 = options != null ? options : [];
     const q = search.trim().toLowerCase();
     if (!searchable || !q)
@@ -8236,7 +8918,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
       (o) => o.label.toLowerCase().includes(q) || o.value.toLowerCase().includes(q)
     );
   }, [options, search, searchable]);
-  const filteredGroups = (0, import_react26.useMemo)(() => {
+  const filteredGroups = (0, import_react28.useMemo)(() => {
     if (!(groups == null ? void 0 : groups.length))
       return null;
     const q = search.trim().toLowerCase();
@@ -8249,7 +8931,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
       )
     })).filter((g) => g.options.length > 0);
   }, [groups, search, searchable]);
-  const setValue = (0, import_react26.useCallback)(
+  const setValue = (0, import_react28.useCallback)(
     (next) => {
       if (!isControlled) {
         setInnerValue(next);
@@ -8290,7 +8972,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
       return selected === v;
     return false;
   };
-  const displayTrigger = (0, import_react26.useMemo)(() => {
+  const displayTrigger = (0, import_react28.useMemo)(() => {
     var _a, _b, _c;
     if (multiple && Array.isArray(selected)) {
       if (selected.length === 0)
@@ -8315,7 +8997,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
   const hasList = useGroups && filteredGroups ? filteredGroups.some((g) => g.options.length > 0) : filteredFlat.length > 0;
   const resolvedStatus = error ? "error" : void 0;
   const helperMessage = error != null ? error : helperText;
-  const sizeStyles = (0, import_react26.useMemo)(() => {
+  const sizeStyles = (0, import_react28.useMemo)(() => {
     const map = {
       sm: { minH: 36, font: "var(--text-small-size, 12px)" },
       md: { minH: 44, font: "var(--text-body-size, 16px)" },
@@ -8326,7 +9008,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
   const borderColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : "var(--color-border-default, #999999)";
   const renderOptionRow = (opt) => {
     const sel = isSelected(opt.value);
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
       "button",
       {
         type: "button",
@@ -8338,9 +9020,9 @@ var Combobox = import_react26.default.memo(function Combobox2({
         className: "ds-combobox__option",
         onClick: () => multiple ? toggleMulti(opt) : pickSingle(opt),
         children: [
-          opt.icon ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "ds-combobox__option-icon", children: opt.icon }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "ds-combobox__option-label", children: opt.label }),
-          multiple && sel ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("svg", { className: "ds-combobox__check", viewBox: "0 0 16 16", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+          opt.icon ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "ds-combobox__option-icon", children: opt.icon }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "ds-combobox__option-label", children: opt.label }),
+          multiple && sel ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("svg", { className: "ds-combobox__check", viewBox: "0 0 16 16", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
             "path",
             {
               d: "M13.5 4.5L6.5 11.5L3 8",
@@ -8356,7 +9038,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
       opt.value
     );
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
     "div",
     {
       ...rest,
@@ -8371,9 +9053,9 @@ var Combobox = import_react26.default.memo(function Combobox2({
       "data-disabled": disabled ? "true" : "false",
       "data-status": resolvedStatus,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Popover, { open, onOpenChange: setOpen, placement: "bottom-start", children: [
-          label ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { id: labelId, className: "ds-combobox__label", children: label }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Popover, { open, onOpenChange: setOpen, placement: "bottom-start", children: [
+          label ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { id: labelId, className: "ds-combobox__label", children: label }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
             PopoverTrigger,
             {
               type: "button",
@@ -8391,9 +9073,9 @@ var Combobox = import_react26.default.memo(function Combobox2({
                 "--combobox-border": borderColor
               },
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "ds-combobox__trigger-inner", children: [
-                  displayTrigger.icon ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "ds-combobox__trigger-icon", children: displayTrigger.icon }) : null,
-                  /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { className: "ds-combobox__trigger-inner", children: [
+                  displayTrigger.icon ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "ds-combobox__trigger-icon", children: displayTrigger.icon }) : null,
+                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
                     "span",
                     {
                       className: cls14(
@@ -8404,19 +9086,19 @@ var Combobox = import_react26.default.memo(function Combobox2({
                     }
                   )
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ChevronDown, {})
+                /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(ChevronDown, {})
               ]
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
             PopoverContent,
             {
               role: "none",
               showPointer: false,
               className: "ds-combobox__popover",
               style: listMinWidth != null ? { minWidth: listMinWidth } : void 0,
-              children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "ds-combobox__panel", children: [
-                searchable ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+              children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "ds-combobox__panel", children: [
+                searchable ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
                   "input",
                   {
                     id: searchId,
@@ -8431,7 +9113,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
                     autoComplete: "off"
                   }
                 ) : null,
-                !hasList ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "ds-combobox__empty", role: "status", children: "No results" }) : useGroups && filteredGroups ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+                !hasList ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "ds-combobox__empty", role: "status", children: "No results" }) : useGroups && filteredGroups ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
                   "div",
                   {
                     id: listboxId,
@@ -8439,12 +9121,12 @@ var Combobox = import_react26.default.memo(function Combobox2({
                     role: "listbox",
                     "aria-multiselectable": multiple,
                     "aria-label": label != null ? label : "Options",
-                    children: filteredGroups.map((g) => /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_react26.default.Fragment, { children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "ds-combobox__group-label", role: "presentation", children: g.label }),
+                    children: filteredGroups.map((g) => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(import_react28.default.Fragment, { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "ds-combobox__group-label", role: "presentation", children: g.label }),
                       g.options.map((opt) => renderOptionRow(opt))
                     ] }, g.label))
                   }
-                ) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+                ) : /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
                   "div",
                   {
                     id: listboxId,
@@ -8459,7 +9141,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
             }
           )
         ] }),
-        helperMessage ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "ds-combobox__helper", role: error ? "alert" : void 0, children: helperMessage }) : null
+        helperMessage ? /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("p", { className: "ds-combobox__helper", role: error ? "alert" : void 0, children: helperMessage }) : null
       ]
     }
   );
@@ -8467,7 +9149,7 @@ var Combobox = import_react26.default.memo(function Combobox2({
 Combobox.displayName = "Combobox";
 
 // src/components/molecules/Modal/index.tsx
-var import_react27 = require("react");
+var import_react29 = require("react");
 var import_react_dom3 = require("react-dom");
 
 // src/components/molecules/Modal/Modal.config.ts
@@ -8527,7 +9209,7 @@ function releaseBodyScrollLock() {
 }
 
 // src/components/molecules/Modal/index.tsx
-var import_jsx_runtime30 = require("react/jsx-runtime");
+var import_jsx_runtime35 = require("react/jsx-runtime");
 function Modal({
   isOpen,
   onClose,
@@ -8563,12 +9245,12 @@ function Modal({
   cancelButtonBorder
 }) {
   var _a, _b;
-  const [isExiting, setIsExiting] = (0, import_react27.useState)(false);
-  const exitTimeoutRef = (0, import_react27.useRef)(null);
-  const dialogRef = (0, import_react27.useRef)(null);
+  const [isExiting, setIsExiting] = (0, import_react29.useState)(false);
+  const exitTimeoutRef = (0, import_react29.useRef)(null);
+  const dialogRef = (0, import_react29.useRef)(null);
   const sizeClass = (_a = modalSizeMap[size]) != null ? _a : "";
   const animClass = animation !== "none" ? `modal-dialog--${animation}` : "";
-  (0, import_react27.useEffect)(() => {
+  (0, import_react29.useEffect)(() => {
     if (isOpen) {
       setIsExiting(false);
     } else {
@@ -8579,13 +9261,13 @@ function Modal({
       }
     }
   }, [isOpen]);
-  (0, import_react27.useEffect)(() => {
+  (0, import_react29.useEffect)(() => {
     if (!isOpen)
       return void 0;
     acquireBodyScrollLock();
     return () => releaseBodyScrollLock();
   }, [isOpen]);
-  const handleClose = (0, import_react27.useCallback)(() => {
+  const handleClose = (0, import_react29.useCallback)(() => {
     if (closeAfterTransition && animation !== "none") {
       setIsExiting(true);
       exitTimeoutRef.current = setTimeout(() => {
@@ -8596,13 +9278,13 @@ function Modal({
       onClose();
     }
   }, [closeAfterTransition, animation, animationDuration, onClose]);
-  (0, import_react27.useEffect)(() => {
+  (0, import_react29.useEffect)(() => {
     return () => {
       if (exitTimeoutRef.current)
         clearTimeout(exitTimeoutRef.current);
     };
   }, []);
-  (0, import_react27.useEffect)(() => {
+  (0, import_react29.useEffect)(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape" && isOpen && closeOnEscape) {
         handleClose();
@@ -8611,7 +9293,7 @@ function Modal({
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, handleClose, closeOnEscape]);
-  (0, import_react27.useEffect)(() => {
+  (0, import_react29.useEffect)(() => {
     if (!isOpen)
       return;
     const dialog = dialogRef.current;
@@ -8658,8 +9340,8 @@ function Modal({
   const backdropZIndex = isStackedBackground ? zIndex - 2 : zIndex;
   const dialogZIndex = isStackedBackground ? zIndex - 1 : zIndex + 1;
   const handleBackdropClick = closeOnBackdropClick ? handleClose : void 0;
-  const modalContent = /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "modal-root", children: [
-    !isStackedBackground && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+  const modalContent = /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "modal-root", children: [
+    !isStackedBackground && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
       "div",
       {
         className: `modal-backdrop ${isExiting ? "modal-backdrop--exiting" : "modal-backdrop--entering"}`,
@@ -8677,7 +9359,7 @@ function Modal({
         "aria-hidden": "true"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
       "div",
       {
         ref: dialogRef,
@@ -8703,7 +9385,7 @@ function Modal({
           pointerEvents: "auto"
         },
         onClick: !isStackedBackground ? handleBackdropClick : void 0,
-        children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        children: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
           "div",
           {
             className: `modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`,
@@ -8720,7 +9402,7 @@ function Modal({
               animationDuration: `${animationDuration}ms`
             },
             onClick: (e) => e.stopPropagation(),
-            children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+            children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
               "div",
               {
                 className: `modal-content ${className}`.trim(),
@@ -8734,7 +9416,7 @@ function Modal({
                   boxShadow: "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))"
                 },
                 children: [
-                  !hideHeader && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+                  !hideHeader && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
                     "div",
                     {
                       className: "modal-header",
@@ -8747,14 +9429,14 @@ function Modal({
                         borderBottom: "1px solid var(--color-border-subtle, var(--color-mist-60))"
                       },
                       children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+                        /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
                           "span",
                           {
                             id: `${id}Label`,
                             className: "modal-title fw-semibold",
                             style: { flex: 1, fontSize: "1.125rem", color: "var(--color-text-primary, #333)" },
                             children: [
-                              titleIcon && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                              titleIcon && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                                 Icon_default,
                                 {
                                   src: titleIcon,
@@ -8768,7 +9450,7 @@ function Modal({
                             ]
                           }
                         ),
-                        showCloseButton && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                        showCloseButton && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                           Button_default,
                           {
                             variant: "link",
@@ -8782,7 +9464,7 @@ function Modal({
                       ]
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                     "div",
                     {
                       className: "modal-body",
@@ -8796,7 +9478,7 @@ function Modal({
                       children
                     }
                   ),
-                  !hideFooter && onConfirm && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+                  !hideFooter && onConfirm && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
                     "div",
                     {
                       className: "modal-footer",
@@ -8810,7 +9492,7 @@ function Modal({
                         borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))"
                       },
                       children: [
-                        showCancel && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                        showCancel && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                           Button_default,
                           {
                             variant: cancelButtonVariant,
@@ -8822,7 +9504,7 @@ function Modal({
                             children: cancelText
                           }
                         ),
-                        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+                        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                           Button_default,
                           {
                             variant: confirmButtonVariant,
@@ -8874,10 +9556,10 @@ var alertDialogVariantConfig = {
 };
 
 // src/components/molecules/AlertDialog/AlertDialogIcons.tsx
-var import_jsx_runtime31 = require("react/jsx-runtime");
+var import_jsx_runtime36 = require("react/jsx-runtime");
 var iconSize = 56;
 function SuccessIconSvg({ animated, color = "#22c55e" }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
     "svg",
     {
       width: iconSize,
@@ -8886,8 +9568,8 @@ function SuccessIconSvg({ animated, color = "#22c55e" }) {
       fill: "none",
       className: animated ? "alert-dialog-svg--success" : "",
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: `${color}20` }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: `${color}20` }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
           "path",
           {
             className: animated ? "alert-dialog-checkmark" : "",
@@ -8904,7 +9586,7 @@ function SuccessIconSvg({ animated, color = "#22c55e" }) {
   );
 }
 function ErrorIconSvg({ animated, color = "#ef4444" }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
     "svg",
     {
       width: iconSize,
@@ -8913,15 +9595,15 @@ function ErrorIconSvg({ animated, color = "#ef4444" }) {
       fill: "none",
       className: animated ? "alert-dialog-svg--error" : "",
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: `${color}20` }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("path", { d: "M28 18v14", stroke: color, strokeWidth: "3", strokeLinecap: "round" }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "28", cy: "38", r: "2.5", fill: color })
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: `${color}20` }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("path", { d: "M28 18v14", stroke: color, strokeWidth: "3", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "38", r: "2.5", fill: color })
       ]
     }
   );
 }
 function WarningIconSvg({ animated, color = "#f59e0b" }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
     "svg",
     {
       width: iconSize,
@@ -8930,7 +9612,7 @@ function WarningIconSvg({ animated, color = "#f59e0b" }) {
       fill: "none",
       className: animated ? "alert-dialog-svg--warning" : "",
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
           "path",
           {
             d: "M28 12L44 42H12L28 12z",
@@ -8940,15 +9622,15 @@ function WarningIconSvg({ animated, color = "#f59e0b" }) {
             strokeLinejoin: "round"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("path", { d: "M28 22v10", stroke: color, strokeWidth: "2.5", strokeLinecap: "round" }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "28", cy: "38", r: "2", fill: color })
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("path", { d: "M28 22v10", stroke: color, strokeWidth: "2.5", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "38", r: "2", fill: color })
       ]
     }
   );
 }
 
 // src/components/molecules/AlertDialog/index.tsx
-var import_jsx_runtime32 = require("react/jsx-runtime");
+var import_jsx_runtime37 = require("react/jsx-runtime");
 function VariantIcon({
   variant,
   animated
@@ -8956,15 +9638,15 @@ function VariantIcon({
   const config = alertDialogVariantConfig[variant];
   const color = config.iconColor;
   if (variant === "success") {
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(SuccessIconSvg, { animated, color });
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(SuccessIconSvg, { animated, color });
   }
   if (variant === "error") {
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(ErrorIconSvg, { animated, color });
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(ErrorIconSvg, { animated, color });
   }
   if (variant === "warning") {
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(WarningIconSvg, { animated, color });
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(WarningIconSvg, { animated, color });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
     "span",
     {
       className: animated ? "alert-dialog-icon--animated" : "",
@@ -9021,7 +9703,7 @@ function AlertDialog({
     onCancel == null ? void 0 : onCancel();
     onClose();
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
     Modal,
     {
       isOpen,
@@ -9035,7 +9717,7 @@ function AlertDialog({
       closeOnEscape,
       zIndex,
       animation: "scale",
-      children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+      children: /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(
         "div",
         {
           className: "alert-dialog-content",
@@ -9043,8 +9725,8 @@ function AlertDialog({
           "aria-labelledby": "alert-dialog-title",
           "aria-describedby": "alert-dialog-desc",
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: { marginBottom: "1.25rem", display: "flex", justifyContent: "center" }, children: customIcon != null ? customIcon : /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(VariantIcon, { variant, animated: iconAnimated }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: { marginBottom: "1.25rem", display: "flex", justifyContent: "center" }, children: customIcon != null ? customIcon : /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(VariantIcon, { variant, animated: iconAnimated }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               "h2",
               {
                 id: "alert-dialog-title",
@@ -9057,7 +9739,7 @@ function AlertDialog({
                 children: title
               }
             ),
-            description && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            description && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               "p",
               {
                 id: "alert-dialog-desc",
@@ -9070,8 +9752,8 @@ function AlertDialog({
                 children: description
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "alert-dialog-actions", children: [
-              showCancel && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "alert-dialog-actions", children: [
+              showCancel && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
                 Button_default,
                 {
                   variant: cancelButtonVariant,
@@ -9083,7 +9765,7 @@ function AlertDialog({
                   children: cancelText
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
                 Button_default,
                 {
                   variant: confirmButtonVariant != null ? confirmButtonVariant : destructive ? "outlinePrimary" : "primary",
@@ -9105,7 +9787,7 @@ function AlertDialog({
 }
 
 // src/components/molecules/Table/Table.tsx
-var import_react29 = require("react");
+var import_react31 = require("react");
 
 // src/components/atoms/TextInputSearch/TextInputSearch.utils.ts
 function railButtonSize(inputSize) {
@@ -9120,7 +9802,7 @@ function railButtonSize(inputSize) {
 }
 
 // src/components/atoms/TextInputSearch/index.tsx
-var import_jsx_runtime33 = require("react/jsx-runtime");
+var import_jsx_runtime38 = require("react/jsx-runtime");
 var pxToRem2 = (px) => `${px / 16}rem`;
 function railKey(inputSize) {
   if (inputSize === "lg")
@@ -9224,11 +9906,11 @@ var TextInputSearch = ({
   if (searchButtonDisplay === "icon") {
     mergedActionStyle.minWidth = 0;
   }
-  const suffixForInput = suffix !== void 0 ? suffix : showSearchButton ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+  const suffixForInput = suffix !== void 0 ? suffix : showSearchButton ? /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
     "span",
     {
       className: useIntegratedRail ? "ucs-search-input__integrated-action-slot inline-flex h-full min-h-0 shrink-0 items-stretch self-stretch" : "ucs-search-input__integrated-action-slot inline-flex shrink-0 items-center",
-      children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
         Button_default,
         {
           ...restSearchActionBtn,
@@ -9251,7 +9933,7 @@ var TextInputSearch = ({
       )
     }
   ) : null;
-  return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)(
     "div",
     {
       className: containerClassName.trim(),
@@ -9262,8 +9944,8 @@ var TextInputSearch = ({
       role: "search",
       "aria-labelledby": labelId,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("label", { id: labelId, htmlFor: id, className: "visually-hidden", children: ariaLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("label", { id: labelId, htmlFor: id, className: "visually-hidden", children: ariaLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
           TextInput_default,
           {
             id,
@@ -9281,7 +9963,7 @@ var TextInputSearch = ({
             variant: "outlined",
             rounded: SEARCH_SHELL_ROUNDED,
             allowClear: allowClearResolved,
-            prefix: leftIcon ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+            prefix: leftIcon ? /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
               Icon_default,
               {
                 src: leftIcon,
@@ -9300,7 +9982,7 @@ var TextInputSearch = ({
             trailingRail: trailingRailResolved
           }
         ),
-        errorMessage && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { id: errorId, role: "alert", className: "visually-hidden", children: errorMessage })
+        errorMessage && /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("span", { id: errorId, role: "alert", className: "visually-hidden", children: errorMessage })
       ]
     }
   );
@@ -9338,7 +10020,7 @@ var cls15 = (...classes) => {
 };
 
 // src/components/molecules/Table/parts/TableHeader.tsx
-var import_jsx_runtime34 = require("react/jsx-runtime");
+var import_jsx_runtime39 = require("react/jsx-runtime");
 function TableHeader({
   expandable,
   selectionMode,
@@ -9349,9 +10031,9 @@ function TableHeader({
   onSelectAll,
   className
 }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("thead", { className, children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("tr", { children: [
-    expandable && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("th", { scope: "col", style: { width: 40 }, "aria-label": "Expand" }),
-    selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select all", children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("thead", { className, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("tr", { children: [
+    expandable && /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("th", { scope: "col", style: { width: 40 }, "aria-label": "Expand" }),
+    selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select all", children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
       Checkbox_default,
       {
         name: "table-select-all",
@@ -9362,8 +10044,8 @@ function TableHeader({
         onChange: (e) => onSelectAll(e.target.checked)
       }
     ) }),
-    selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select" }),
-    visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
+    selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select" }),
+    visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(
       "th",
       {
         scope: "col",
@@ -9389,7 +10071,7 @@ function TableHeader({
         "aria-sort": col.sortable && sortState.key === col.key ? sortState.dir === "asc" ? "ascending" : sortState.dir === "desc" ? "descending" : "none" : void 0,
         children: [
           col.headerRender ? col.headerRender(col) : col.header,
-          col.sortable && sortState.key === col.key && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "table-sort-icon", "aria-hidden": true, children: sortState.dir === "asc" ? " \u25B2" : sortState.dir === "desc" ? " \u25BC" : "" })
+          col.sortable && /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "table-sort-icon", "aria-hidden": true, children: sortState.key !== col.key || !sortState.dir ? " \u2195" : sortState.dir === "asc" ? " \u25B2" : " \u25BC" })
         ]
       },
       col.key
@@ -9398,12 +10080,12 @@ function TableHeader({
 }
 
 // src/components/molecules/Table/parts/TableRow.tsx
-var import_react28 = __toESM(require("react"));
+var import_react30 = __toESM(require("react"));
 
 // src/components/molecules/Table/parts/TableCell.tsx
-var import_jsx_runtime35 = require("react/jsx-runtime");
+var import_jsx_runtime40 = require("react/jsx-runtime");
 function TableCell({ align = "left", children }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
     "td",
     {
       className: cls15(
@@ -9416,7 +10098,7 @@ function TableCell({ align = "left", children }) {
 }
 
 // src/components/molecules/Table/parts/TableRow.tsx
-var import_jsx_runtime36 = require("react/jsx-runtime");
+var import_jsx_runtime41 = require("react/jsx-runtime");
 function TableRow({
   row,
   rowIndex,
@@ -9433,8 +10115,8 @@ function TableRow({
   renderCell
 }) {
   var _a, _b, _c, _d;
-  return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(import_react28.default.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(import_react30.default.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(
       "tr",
       {
         className: cls15(selected && "table-row-selected"),
@@ -9445,7 +10127,7 @@ function TableRow({
         },
         style: { cursor: hover || onRowClick ? "pointer" : void 0 },
         children: [
-          expandable && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("td", { style: { width: 40 }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          expandable && /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("td", { style: { width: 40 }, children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
             "button",
             {
               type: "button",
@@ -9456,10 +10138,10 @@ function TableRow({
                 e.stopPropagation();
                 onToggleExpand(rowKeyValue);
               },
-              children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "table-expand-btn-icon", "aria-hidden": true, children: "\u25B6" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "table-expand-btn-icon", "aria-hidden": true, children: "\u25B6" })
             }
           ) }),
-          selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("td", { onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("td", { onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
             Checkbox_default,
             {
               name: "table-row",
@@ -9470,7 +10152,7 @@ function TableRow({
               onChange: () => onToggleSelect(rowKeyValue, row)
             }
           ) }),
-          selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("td", { className: "text-center", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("td", { className: "text-center", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
             "input",
             {
               type: "radio",
@@ -9481,11 +10163,11 @@ function TableRow({
               "aria-label": `Select row ${String((_d = row[(_c = visibleColumns[0]) == null ? void 0 : _c.key]) != null ? _d : rowKeyValue)}`
             }
           ) }),
-          visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(TableCell, { align: col.align, children: renderCell(col, row, rowIndex) }, col.key))
+          visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(TableCell, { align: col.align, children: renderCell(col, row, rowIndex) }, col.key))
         ]
       }
     ),
-    expandable && isExpanded && /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("tr", { className: "table-expanded-row", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+    expandable && isExpanded && /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("tr", { className: "table-expanded-row", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
       "td",
       {
         colSpan: visibleColumns.length + (selectionMode !== "none" ? 1 : 0) + (expandable ? 1 : 0),
@@ -9496,7 +10178,7 @@ function TableRow({
 }
 
 // src/components/molecules/Table/Table.tsx
-var import_jsx_runtime37 = require("react/jsx-runtime");
+var import_jsx_runtime42 = require("react/jsx-runtime");
 function getRowKey(row, index, rowKey) {
   var _a, _b;
   if (typeof rowKey === "function")
@@ -9508,15 +10190,30 @@ function getRowKey(row, index, rowKey) {
   const r = row;
   return String((_b = (_a = r == null ? void 0 : r.id) != null ? _a : r == null ? void 0 : r.key) != null ? _b : index);
 }
-function defaultSorter(a, b) {
+function isNumericLike(value) {
+  if (typeof value === "number")
+    return Number.isFinite(value);
+  if (typeof value !== "string")
+    return false;
+  const trimmed = value.trim();
+  if (!trimmed)
+    return false;
+  return Number.isFinite(Number(trimmed));
+}
+function toNumber(value) {
+  return typeof value === "number" ? value : Number(String(value).trim());
+}
+function defaultSorter(a, b, sortType = "auto") {
   if (a == null && b == null)
     return 0;
   if (a == null)
     return 1;
   if (b == null)
     return -1;
-  if (typeof a === "number" && typeof b === "number")
-    return a - b;
+  const shouldUseNumericSort = sortType === "number" || sortType === "auto" && isNumericLike(a) && isNumericLike(b);
+  if (shouldUseNumericSort) {
+    return toNumber(a) - toNumber(b);
+  }
   return String(a).localeCompare(String(b));
 }
 function TableInner({
@@ -9545,6 +10242,7 @@ function TableInner({
   emptyComponent,
   striped = true,
   bordered = false,
+  verticalDivider = false,
   hover = true,
   compact = false,
   headerColor = "light",
@@ -9561,26 +10259,26 @@ function TableInner({
 }) {
   var _a, _b, _c, _d;
   const config = tableConfig.default;
-  const [searchValue, setSearchValue] = (0, import_react29.useState)("");
-  const [sortState, setSortState] = (0, import_react29.useState)({ key: "", dir: null });
-  const [currentPage, setCurrentPage] = (0, import_react29.useState)(1);
+  const [searchValue, setSearchValue] = (0, import_react31.useState)("");
+  const [sortState, setSortState] = (0, import_react31.useState)({ key: "", dir: null });
+  const [currentPage, setCurrentPage] = (0, import_react31.useState)(1);
   const paginationConfig = typeof pagination === "object" ? pagination : {};
   const pageSizeOptions = (_a = paginationConfig.pageSizeOptions) != null ? _a : [5, 10, 15, 25, 50];
-  const [itemsPerPage, setItemsPerPage] = (0, import_react29.useState)((_b = paginationConfig.pageSize) != null ? _b : 10);
-  const selectedSet = (0, import_react29.useMemo)(() => {
+  const [itemsPerPage, setItemsPerPage] = (0, import_react31.useState)((_b = paginationConfig.pageSize) != null ? _b : 10);
+  const selectedSet = (0, import_react31.useMemo)(() => {
     const keys = selectedRowKeys != null ? selectedRowKeys : selectedRow;
     if (!keys)
       return /* @__PURE__ */ new Set();
     const arr = Array.isArray(keys) ? keys : [keys];
     return new Set(arr);
   }, [selectedRowKeys, selectedRow]);
-  const expandedSet = (0, import_react29.useMemo)(() => {
+  const expandedSet = (0, import_react31.useMemo)(() => {
     if (!(expandable == null ? void 0 : expandable.expandedRowKeys))
       return /* @__PURE__ */ new Set();
     return new Set(expandable.expandedRowKeys);
   }, [expandable == null ? void 0 : expandable.expandedRowKeys]);
-  const visibleColumns = (0, import_react29.useMemo)(() => columns.filter((c) => !c.hidden), [columns]);
-  const filteredData = (0, import_react29.useMemo)(() => {
+  const visibleColumns = (0, import_react31.useMemo)(() => columns.filter((c) => !c.hidden), [columns]);
+  const filteredData = (0, import_react31.useMemo)(() => {
     if (!searchValue.trim())
       return data;
     const lower = searchValue.toLowerCase();
@@ -9592,14 +10290,21 @@ function TableInner({
       })
     );
   }, [data, searchValue, searchColumns, visibleColumns]);
-  const sortedData = (0, import_react29.useMemo)(() => {
+  const sortedData = (0, import_react31.useMemo)(() => {
     var _a2;
     if (!sortState.key || !sortState.dir)
       return filteredData;
     const col = visibleColumns.find((c) => c.key === sortState.key);
     if (!(col == null ? void 0 : col.sortable))
       return filteredData;
-    const sorter = (_a2 = col.sorter) != null ? _a2 : (a, b) => defaultSorter(a[col.key], b[col.key]);
+    const sorter = (_a2 = col.sorter) != null ? _a2 : (a, b) => {
+      var _a3;
+      return defaultSorter(
+        a[col.key],
+        b[col.key],
+        (_a3 = col.sortType) != null ? _a3 : "auto"
+      );
+    };
     const sorted = [...filteredData].sort((a, b) => {
       const v = sorter(a, b, col.key);
       return sortState.dir === "asc" ? v : -v;
@@ -9610,10 +10315,10 @@ function TableInner({
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = pagination ? sortedData.slice(startIndex, startIndex + itemsPerPage) : sortedData;
-  (0, import_react29.useEffect)(() => {
+  (0, import_react31.useEffect)(() => {
     setCurrentPage((p) => p > totalPages ? totalPages : p < 1 ? 1 : p);
   }, [totalPages]);
-  const handleSort = (0, import_react29.useCallback)(
+  const handleSort = (0, import_react31.useCallback)(
     (key) => {
       const col = visibleColumns.find((c) => c.key === key);
       if (!(col == null ? void 0 : col.sortable))
@@ -9625,7 +10330,7 @@ function TableInner({
     },
     [visibleColumns]
   );
-  const handleSelectRow = (0, import_react29.useCallback)(
+  const handleSelectRow = (0, import_react31.useCallback)(
     (key, row) => {
       if (selectionMode === "single") {
         const keys = [key];
@@ -9644,7 +10349,7 @@ function TableInner({
     },
     [selectionMode, selectedSet, data, rowKey, onSelectionChange, onRowSelect]
   );
-  const handleSelectAll = (0, import_react29.useCallback)(
+  const handleSelectAll = (0, import_react31.useCallback)(
     (checked) => {
       if (selectionMode !== "multiple")
         return;
@@ -9655,7 +10360,7 @@ function TableInner({
     [selectionMode, paginatedData, startIndex, rowKey, onSelectionChange]
   );
   const allSelected = selectionMode === "multiple" && paginatedData.length > 0 && paginatedData.every((r, i) => selectedSet.has(getRowKey(r, startIndex + i, rowKey)));
-  const handleExpand = (0, import_react29.useCallback)(
+  const handleExpand = (0, import_react31.useCallback)(
     (key) => {
       if (!(expandable == null ? void 0 : expandable.onExpandedRowsChange))
         return;
@@ -9675,7 +10380,7 @@ function TableInner({
       return column.render(val2, row, rowIndex);
     }
     const val = row[column.key];
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(TextView_default, { as: "span", children: val != null ? String(val) : "" });
+    return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TextView_default, { as: "span", children: val != null ? String(val) : "" });
   };
   const renderPageNumbers = () => {
     const pages = [];
@@ -9707,7 +10412,7 @@ function TableInner({
   const showLoadingOverlay = loading && loadingVariant !== "skeleton";
   const extraColumnsCount = (expandable ? 1 : 0) + (selectionMode !== "none" ? 1 : 0);
   const tableInlineStyle = (scroll == null ? void 0 : scroll.x) ? { minWidth: typeof scroll.x === "number" ? `${scroll.x}px` : scroll.x } : void 0;
-  const tableContent = /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(
+  const tableContent = /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(
     "table",
     {
       className: cls15(
@@ -9715,6 +10420,7 @@ function TableInner({
         tableLayout === "fixed" && "table-layout-fixed",
         variant === "minimal" && "table-variant-minimal",
         (bordered || variant === "bordered") && "table-bordered",
+        verticalDivider && "table-vertical-divider",
         stickyHeader && "table-sticky-header",
         striped && config.striped,
         hover && config.hover,
@@ -9725,7 +10431,7 @@ function TableInner({
       ),
       style: tableInlineStyle,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
           TableHeader,
           {
             expandable: Boolean(expandable),
@@ -9738,9 +10444,9 @@ function TableInner({
             className: getHeaderClass()
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("tbody", { className: "table-tbody", children: shouldUseSkeleton ? Array.from({ length: Math.max(1, loadingRows) }).map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("tr", { className: "table-skeleton-row", "aria-hidden": "true", children: Array.from({ length: visibleColumns.length + extraColumnsCount }).map((__, cellIdx) => /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "table-skeleton-line" }) }, `table-skeleton-cell-${idx}-${cellIdx}`)) }, `table-skeleton-row-${idx}`)) : paginatedData.map((row, idx) => {
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("tbody", { className: "table-tbody", children: shouldUseSkeleton ? Array.from({ length: Math.max(1, loadingRows) }).map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("tr", { className: "table-skeleton-row", "aria-hidden": "true", children: Array.from({ length: visibleColumns.length + extraColumnsCount }).map((__, cellIdx) => /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "table-skeleton-line" }) }, `table-skeleton-cell-${idx}-${cellIdx}`)) }, `table-skeleton-row-${idx}`)) : paginatedData.map((row, idx) => {
           const rk = getRowKey(row, startIndex + idx, rowKey);
-          return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
             TableRow,
             {
               row,
@@ -9760,7 +10466,7 @@ function TableInner({
             rk
           );
         }) }),
-        footer && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("tfoot", { children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("tr", { children: footer }) })
+        footer && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("tfoot", { children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("tr", { children: footer }) })
       ]
     }
   );
@@ -9768,7 +10474,7 @@ function TableInner({
   const showPagination = Boolean(pagination) && totalItems > 0;
   const searchMaxWidth = (_c = searchProps == null ? void 0 : searchProps.maxWidth) != null ? _c : 280;
   const searchSize = (_d = searchProps == null ? void 0 : searchProps.size) != null ? _d : "sm";
-  const searchBar = showSearchBar && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: { marginBottom: 0, maxWidth: typeof searchMaxWidth === "number" ? `${searchMaxWidth}px` : searchMaxWidth, flex: toolbarRight ? "0 1 auto" : "1 1 auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+  const searchBar = showSearchBar && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { style: { marginBottom: 0, maxWidth: typeof searchMaxWidth === "number" ? `${searchMaxWidth}px` : searchMaxWidth, flex: toolbarRight ? "0 1 auto" : "1 1 auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
     TextInputSearch_default,
     {
       leftIcon: search_default,
@@ -9787,9 +10493,9 @@ function TableInner({
   ) });
   const leftContent = toolbarLeft != null ? toolbarLeft : showSearchBar ? searchBar : null;
   const hasToolbar = toolbar || leftContent || toolbarRight;
-  const toolbarContent = toolbar != null ? toolbar : hasToolbar ? /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "table-toolbar", children: [
-    leftContent && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "table-toolbar-left", children: leftContent }),
-    toolbarRight && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "table-toolbar-right", children: toolbarRight })
+  const toolbarContent = toolbar != null ? toolbar : hasToolbar ? /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "table-toolbar", children: [
+    leftContent && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "table-toolbar-left", children: leftContent }),
+    toolbarRight && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "table-toolbar-right", children: toolbarRight })
   ] }) : null;
   const wrapperClass = cls15("table-wrapper", theme === "dark" && "table-theme-dark");
   const scrollWrapperStyle = (scroll == null ? void 0 : scroll.y) ? {
@@ -9797,31 +10503,31 @@ function TableInner({
     overflowY: "auto",
     overflowX: "auto"
   } : { overflowX: "auto" };
-  return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: wrapperClass, style: { position: "relative" }, "aria-busy": loading, children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: wrapperClass, style: { position: "relative" }, "aria-busy": loading, children: [
     toolbarContent,
-    showLoadingOverlay && /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+    showLoadingOverlay && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
       "div",
       {
         className: "table-loading-overlay",
         role: "status",
         "aria-live": "polite",
         "aria-busy": "true",
-        children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(TextView_default, { children: "Loading..." })
+        children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TextView_default, { children: "Loading..." })
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
       "div",
       {
         className: cls15(stickyHeader && "table-scroll-body", "table-scroll-wrapper"),
         style: scrollWrapperStyle,
         role: "region",
         "aria-label": "Data table",
-        children: sortedData.length === 0 && !loading ? emptyComponent != null ? emptyComponent : /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { className: "table-empty", children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(TextView_default, { as: "p", children: emptyText }) }) : tableContent
+        children: sortedData.length === 0 && !loading ? emptyComponent != null ? emptyComponent : /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { className: "table-empty", children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TextView_default, { as: "p", children: emptyText }) }) : tableContent
       }
     ),
-    showPagination && totalPages > 1 && /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "table-pagination", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { className: "table-pagination-nav", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+    showPagination && totalPages > 1 && /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "table-pagination", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { className: "table-pagination-nav", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
           "button",
           {
             type: "button",
@@ -9833,7 +10539,7 @@ function TableInner({
           }
         ),
         renderPageNumbers().map(
-          (page, i) => page === "..." ? /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("span", { className: "table-pagination-ellipsis", children: "\u2026" }, `ellipsis-${i}`) : /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+          (page, i) => page === "..." ? /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "table-pagination-ellipsis", children: "\u2026" }, `ellipsis-${i}`) : /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
             "button",
             {
               type: "button",
@@ -9847,7 +10553,7 @@ function TableInner({
             page
           )
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
           "button",
           {
             type: "button",
@@ -9859,20 +10565,21 @@ function TableInner({
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: "Show" }),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: { minWidth: 70 }, children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: "Show" }),
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { style: { minWidth: 70 }, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
           Select_default,
           {
             options: pageSizeOptions.map((n) => ({ label: String(n), value: String(n) })),
             value: String(itemsPerPage),
+            size: "sm",
             onValueChange: (v) => {
               setItemsPerPage(Number(v));
               setCurrentPage(1);
             }
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: [
           "of ",
           totalItems,
           " ",
@@ -9883,48 +10590,48 @@ function TableInner({
   ] });
 }
 function Table(props) {
-  return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(TableInner, { ...props });
+  return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TableInner, { ...props });
 }
 
 // src/components/molecules/Table/TablePrimitives.tsx
-var import_react30 = require("react");
-var import_jsx_runtime38 = require("react/jsx-runtime");
-var TableRoot = (0, import_react30.forwardRef)(function TableRoot2({ className, containerClassName, children, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { className: cls15("table-ui-wrap", containerClassName), children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("table", { ref, className: cls15("table-ui", className), ...rest, children }) });
+var import_react32 = require("react");
+var import_jsx_runtime43 = require("react/jsx-runtime");
+var TableRoot = (0, import_react32.forwardRef)(function TableRoot2({ className, containerClassName, children, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: cls15("table-ui-wrap", containerClassName), children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("table", { ref, className: cls15("table-ui", className), ...rest, children }) });
 });
 TableRoot.displayName = "TableRoot";
-var TableCaption = (0, import_react30.forwardRef)(
+var TableCaption = (0, import_react32.forwardRef)(
   function TableCaption2({ className, ...rest }, ref) {
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("caption", { ref, className: cls15("table-ui-caption", className), ...rest });
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("caption", { ref, className: cls15("table-ui-caption", className), ...rest });
   }
 );
 TableCaption.displayName = "TableCaption";
-var TableHeader2 = (0, import_react30.forwardRef)(
+var TableHeader2 = (0, import_react32.forwardRef)(
   function TableHeader3({ className, ...rest }, ref) {
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("thead", { ref, className: cls15("table-ui-thead", className), ...rest });
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("thead", { ref, className: cls15("table-ui-thead", className), ...rest });
   }
 );
 TableHeader2.displayName = "TableHeader";
-var TableBody = (0, import_react30.forwardRef)(function TableBody2({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("tbody", { ref, className: cls15("table-ui-tbody", className), ...rest });
+var TableBody = (0, import_react32.forwardRef)(function TableBody2({ className, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("tbody", { ref, className: cls15("table-ui-tbody", className), ...rest });
 });
 TableBody.displayName = "TableBody";
-var TableFooter = (0, import_react30.forwardRef)(
+var TableFooter = (0, import_react32.forwardRef)(
   function TableFooter2({ className, ...rest }, ref) {
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("tfoot", { ref, className: cls15("table-ui-tfoot", className), ...rest });
+    return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("tfoot", { ref, className: cls15("table-ui-tfoot", className), ...rest });
   }
 );
 TableFooter.displayName = "TableFooter";
-var TableRow2 = (0, import_react30.forwardRef)(function TableRow3({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("tr", { ref, className: cls15("table-ui-tr", className), ...rest });
+var TableRow2 = (0, import_react32.forwardRef)(function TableRow3({ className, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("tr", { ref, className: cls15("table-ui-tr", className), ...rest });
 });
 TableRow2.displayName = "TableRow";
-var TableHead = (0, import_react30.forwardRef)(function TableHead2({ className, scope = "col", ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("th", { ref, className: cls15("table-ui-th", className), scope, ...rest });
+var TableHead = (0, import_react32.forwardRef)(function TableHead2({ className, scope = "col", ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("th", { ref, className: cls15("table-ui-th", className), scope, ...rest });
 });
 TableHead.displayName = "TableHead";
-var TableCell2 = (0, import_react30.forwardRef)(function TableCell3({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("td", { ref, className: cls15("table-ui-td", className), ...rest });
+var TableCell2 = (0, import_react32.forwardRef)(function TableCell3({ className, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("td", { ref, className: cls15("table-ui-td", className), ...rest });
 });
 TableCell2.displayName = "TableCell";
 
@@ -9942,7 +10649,7 @@ var Table2 = Object.assign(Table, {
 var Table_default = Table2;
 
 // src/components/molecules/AppSidebar/index.tsx
-var import_react34 = __toESM(require("react"));
+var import_react36 = __toESM(require("react"));
 var import_react_dom5 = require("react-dom");
 
 // src/components/molecules/AppSidebar/AppSidebar.chrome.ts
@@ -9980,29 +10687,29 @@ function mergeSidebarTokensStyle(tokens, base) {
 }
 
 // src/components/molecules/AppSidebar/AppSidebar.utils.tsx
-var import_react31 = __toESM(require("react"));
-var import_jsx_runtime39 = require("react/jsx-runtime");
+var import_react33 = __toESM(require("react"));
+var import_jsx_runtime44 = require("react/jsx-runtime");
 function cls16(...parts) {
   return parts.filter(Boolean).join(" ");
 }
-var lockSvg = /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: [
-  /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("rect", { x: "5", y: "11", width: "14", height: "10", rx: "2", ry: "2" }),
-  /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("path", { d: "M8 11V7a4 4 0 0 1 8 0v4" })
+var lockSvg = /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: [
+  /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("rect", { x: "5", y: "11", width: "14", height: "10", rx: "2", ry: "2" }),
+  /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("path", { d: "M8 11V7a4 4 0 0 1 8 0v4" })
 ] });
-var checkSvg = /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("path", { d: "M20 6L9 17l-5-5" }) });
+var checkSvg = /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("path", { d: "M20 6L9 17l-5-5" }) });
 function renderTrailingIcon(trailing, size) {
   if (trailing == null || trailing === "none")
     return null;
   if (trailing === "lock") {
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Icon_default, { src: lockSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
+    return /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Icon_default, { src: lockSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
   }
   if (trailing === "check") {
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Icon_default, { src: checkSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
+    return /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Icon_default, { src: checkSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
   }
-  if (import_react31.default.isValidElement(trailing)) {
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "app-sidebar__trailing-custom", children: trailing });
+  if (import_react33.default.isValidElement(trailing)) {
+    return /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("span", { className: "app-sidebar__trailing-custom", children: trailing });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Icon_default, { src: trailing, decorative: true, width: size, height: size, className: "app-sidebar__trailing-icon" });
+  return /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(Icon_default, { src: trailing, decorative: true, width: size, height: size, className: "app-sidebar__trailing-icon" });
 }
 
 // src/components/molecules/AppSidebar/AppSidebar.tree.ts
@@ -10059,15 +10766,15 @@ function getInitialExpandedSet(sections) {
 }
 
 // src/components/molecules/AppSidebar/AppSidebarTooltipHost.tsx
-var import_react32 = __toESM(require("react"));
+var import_react34 = __toESM(require("react"));
 var import_react_dom4 = require("react-dom");
-var import_jsx_runtime40 = require("react/jsx-runtime");
+var import_jsx_runtime45 = require("react/jsx-runtime");
 function AppSidebarTooltipHost({ collapsed, label, children }) {
-  const tipId = (0, import_react32.useId)();
-  const [visible, setVisible] = (0, import_react32.useState)(false);
-  const [coords, setCoords] = (0, import_react32.useState)({ top: 0, left: 0 });
-  const hostRef = (0, import_react32.useRef)(null);
-  const position = (0, import_react32.useCallback)(() => {
+  const tipId = (0, import_react34.useId)();
+  const [visible, setVisible] = (0, import_react34.useState)(false);
+  const [coords, setCoords] = (0, import_react34.useState)({ top: 0, left: 0 });
+  const hostRef = (0, import_react34.useRef)(null);
+  const position = (0, import_react34.useCallback)(() => {
     const el = hostRef.current;
     if (!el)
       return;
@@ -10080,7 +10787,7 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
       return { top, left };
     });
   }, []);
-  (0, import_react32.useLayoutEffect)(() => {
+  (0, import_react34.useLayoutEffect)(() => {
     if (!visible || !collapsed)
       return;
     position();
@@ -10095,11 +10802,11 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
   if (!collapsed) {
     return children;
   }
-  const child = import_react32.default.cloneElement(children, {
+  const child = import_react34.default.cloneElement(children, {
     "aria-describedby": visible ? tipId : void 0
   });
   const tooltip = visible && typeof document !== "undefined" ? (0, import_react_dom4.createPortal)(
-    /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
       "span",
       {
         id: tipId,
@@ -10117,7 +10824,7 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
     ),
     document.body
   ) : null;
-  return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)(
     "span",
     {
       ref: hostRef,
@@ -10152,10 +10859,10 @@ function writeAppSidebarPersist(key, collapsed, expanded) {
 }
 
 // src/components/molecules/AppSidebar/AppSidebar.responsive.ts
-var import_react33 = require("react");
+var import_react35 = require("react");
 function useBelowWidth(collapseBelowWidth, enabled) {
   const q = `(max-width: ${Math.max(0, collapseBelowWidth - 1)}px)`;
-  return (0, import_react33.useSyncExternalStore)(
+  return (0, import_react35.useSyncExternalStore)(
     (onStoreChange) => {
       if (typeof window === "undefined" || !enabled) {
         return () => {
@@ -10175,20 +10882,20 @@ function useBelowWidth(collapseBelowWidth, enabled) {
 }
 
 // src/components/molecules/AppSidebar/index.tsx
-var import_jsx_runtime41 = require("react/jsx-runtime");
+var import_jsx_runtime46 = require("react/jsx-runtime");
 var NAV_ICON = 24;
 var TRAIL_ICON = 24;
 var FOOTER_ACTION_ICON = 18;
-var chevronRailLeft = /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("path", { d: "M15 6l-6 6 6 6" }) });
-var chevronRailRight = /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("path", { d: "M9 6l6 6-6 6" }) });
-var chevronNested = /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("path", { d: "M9 6l6 6-6 6" }) });
+var chevronRailLeft = /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("path", { d: "M15 6l-6 6 6 6" }) });
+var chevronRailRight = /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("path", { d: "M9 6l6 6-6 6" }) });
+var chevronNested = /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("path", { d: "M9 6l6 6-6 6" }) });
 function renderItemIcon(icon) {
   if (icon == null)
     return null;
-  if (import_react34.default.isValidElement(icon)) {
-    return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-sidebar__item-icon", children: icon });
+  if (import_react36.default.isValidElement(icon)) {
+    return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "app-sidebar__item-icon", children: icon });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-sidebar__item-icon", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(Icon_default, { src: icon, decorative: true, width: NAV_ICON, height: NAV_ICON, color: "currentColor" }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "app-sidebar__item-icon", children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Icon_default, { src: icon, decorative: true, width: NAV_ICON, height: NAV_ICON, color: "currentColor" }) });
 }
 function AppSidebar({
   sections: sectionsProp,
@@ -10229,25 +10936,25 @@ function AppSidebar({
   ...rest
 }) {
   var _a, _b, _c;
-  const baseId = (0, import_react34.useId)().replace(/:/g, "");
+  const baseId = (0, import_react36.useId)().replace(/:/g, "");
   const panelId = `app-sidebar-panel-${baseId}`;
-  const navRef = (0, import_react34.useRef)(null);
-  const drawerFocusSentinel = (0, import_react34.useRef)(false);
-  const prevNarrowRef = (0, import_react34.useRef)(null);
+  const navRef = (0, import_react36.useRef)(null);
+  const drawerFocusSentinel = (0, import_react36.useRef)(false);
+  const prevNarrowRef = (0, import_react36.useRef)(null);
   const isNarrow = useBelowWidth(collapseBelowWidth, responsive);
   const isMobileDrawerViewport = useBelowWidth(drawerOverlayBelowWidth, responsive);
-  const sections = (0, import_react34.useMemo)(
+  const sections = (0, import_react36.useMemo)(
     () => normalizeSections(sectionsProp, itemsProp),
     [sectionsProp, itemsProp]
   );
-  const visibleFooterActions = (0, import_react34.useMemo)(() => {
+  const visibleFooterActions = (0, import_react36.useMemo)(() => {
     if (!(footerActions == null ? void 0 : footerActions.length))
       return [];
     if (maxFooterActions == null)
       return footerActions;
     return footerActions.slice(0, Math.max(0, maxFooterActions));
   }, [footerActions, maxFooterActions]);
-  const [uncontrolledCollapsed, setUncontrolledCollapsed] = (0, import_react34.useState)(() => {
+  const [uncontrolledCollapsed, setUncontrolledCollapsed] = (0, import_react36.useState)(() => {
     const pr = readAppSidebarPersist(persistenceKey);
     if ((pr == null ? void 0 : pr.collapsed) !== void 0)
       return pr.collapsed;
@@ -10259,7 +10966,7 @@ function AppSidebar({
   );
   const useViewportFixedChrome = Boolean(fixed);
   const sidebarWidthPx = collapsed ? widthCollapsed : widthExpanded;
-  (0, import_react34.useLayoutEffect)(() => {
+  (0, import_react36.useLayoutEffect)(() => {
     if (typeof document === "undefined")
       return;
     const root = document.documentElement;
@@ -10290,7 +10997,7 @@ function AppSidebar({
     sidebarWidthPx,
     widthCollapsed
   ]);
-  (0, import_react34.useLayoutEffect)(() => {
+  (0, import_react36.useLayoutEffect)(() => {
     if (!responsive || collapsedProp !== void 0)
       return;
     if (prevNarrowRef.current === null) {
@@ -10307,21 +11014,21 @@ function AppSidebar({
     }
     prevNarrowRef.current = isNarrow;
   }, [isNarrow, responsive, collapsedProp, persistenceKey]);
-  const [uncontrolledActive, setUncontrolledActive] = (0, import_react34.useState)(defaultActiveItemId);
+  const [uncontrolledActive, setUncontrolledActive] = (0, import_react36.useState)(defaultActiveItemId);
   const activeItemId = activeItemIdProp !== void 0 ? activeItemIdProp : uncontrolledActive;
-  const [internalExpanded, setInternalExpanded] = (0, import_react34.useState)(() => {
+  const [internalExpanded, setInternalExpanded] = (0, import_react36.useState)(() => {
     var _a2, _b2;
     const s = new Set(getInitialExpandedSet(sections));
     defaultExpandedIds == null ? void 0 : defaultExpandedIds.forEach((id) => s.add(id));
     (_b2 = (_a2 = readAppSidebarPersist(persistenceKey)) == null ? void 0 : _a2.expanded) == null ? void 0 : _b2.forEach((id) => s.add(id));
     return s;
   });
-  const expandedSet = (0, import_react34.useMemo)(() => {
+  const expandedSet = (0, import_react36.useMemo)(() => {
     if (expandedIdsProp != null)
       return new Set(expandedIdsProp);
     return internalExpanded;
   }, [expandedIdsProp, internalExpanded]);
-  (0, import_react34.useEffect)(() => {
+  (0, import_react36.useEffect)(() => {
     if (!activeItemId)
       return;
     const parents = findParentIdsForActiveItem(sections, activeItemId);
@@ -10352,7 +11059,7 @@ function AppSidebar({
       return changed ? n : prev;
     });
   }, [activeItemId, sections, expandedIdsProp, onExpandedChange]);
-  (0, import_react34.useEffect)(() => {
+  (0, import_react36.useEffect)(() => {
     if (!persistenceKey)
       return;
     if (typeof window === "undefined")
@@ -10367,7 +11074,7 @@ function AppSidebar({
     expandedIdsProp,
     internalExpanded
   ]);
-  const setCollapsed = (0, import_react34.useCallback)(
+  const setCollapsed = (0, import_react36.useCallback)(
     (next) => {
       if (collapsedProp === void 0)
         setUncontrolledCollapsed(next);
@@ -10375,7 +11082,7 @@ function AppSidebar({
     },
     [collapsedProp, onCollapsedChange]
   );
-  (0, import_react34.useEffect)(() => {
+  (0, import_react36.useEffect)(() => {
     if (!showDrawerOverlay || !lockBodyScrollWhenDrawer || typeof document === "undefined")
       return;
     const prev = document.body.style.overflow;
@@ -10384,7 +11091,7 @@ function AppSidebar({
       document.body.style.overflow = prev;
     };
   }, [showDrawerOverlay, lockBodyScrollWhenDrawer]);
-  (0, import_react34.useEffect)(() => {
+  (0, import_react36.useEffect)(() => {
     if (!showDrawerOverlay || typeof document === "undefined")
       return;
     const onKey = (e) => {
@@ -10396,7 +11103,7 @@ function AppSidebar({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [showDrawerOverlay, setCollapsed]);
-  (0, import_react34.useLayoutEffect)(() => {
+  (0, import_react36.useLayoutEffect)(() => {
     if (!showDrawerOverlay) {
       drawerFocusSentinel.current = false;
       return;
@@ -10416,7 +11123,7 @@ function AppSidebar({
     });
     return () => cancelAnimationFrame(id);
   }, [showDrawerOverlay]);
-  const toggleExpand = (0, import_react34.useCallback)(
+  const toggleExpand = (0, import_react36.useCallback)(
     (id) => {
       if (expandedIdsProp != null) {
         const n = new Set(expandedIdsProp);
@@ -10438,7 +11145,7 @@ function AppSidebar({
     },
     [expandedIdsProp, onExpandedChange]
   );
-  const handleSelect = (0, import_react34.useCallback)(
+  const handleSelect = (0, import_react36.useCallback)(
     (item) => {
       var _a2;
       if (item.disabled)
@@ -10462,10 +11169,10 @@ function AppSidebar({
       opts.nested && "app-sidebar__link--nested",
       isActive && "app-sidebar__link--active"
     );
-    const inner = /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(import_jsx_runtime41.Fragment, { children: [
+    const inner = /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(import_jsx_runtime46.Fragment, { children: [
       renderItemIcon(item.icon),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-sidebar__item-label", children: item.label }),
-      trailing ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "app-sidebar__item-label", children: item.label }),
+      trailing ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
         "span",
         {
           className: "app-sidebar__trailing-wrap",
@@ -10474,7 +11181,7 @@ function AppSidebar({
         }
       ) : null
     ] });
-    const control = item.href && !item.disabled ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    const control = item.href && !item.disabled ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
       "a",
       {
         href: item.href,
@@ -10489,7 +11196,7 @@ function AppSidebar({
         },
         children: inner
       }
-    ) : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    ) : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
       "button",
       {
         type: "button",
@@ -10500,7 +11207,7 @@ function AppSidebar({
         children: inner
       }
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(AppSidebarTooltipHost, { collapsed, label: item.label, children: control });
+    return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(AppSidebarTooltipHost, { collapsed, label: item.label, children: control });
   };
   const renderBranch = (item, level) => {
     const hasChildren = !!(item.children && item.children.length > 0);
@@ -10511,10 +11218,10 @@ function AppSidebar({
       return renderLeaf(item, level, { nested: level > 0 });
     }
     const trailing = renderTrailingIcon(item.trailing, TRAIL_ICON);
-    const parentInner = /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(import_jsx_runtime41.Fragment, { children: [
+    const parentInner = /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(import_jsx_runtime46.Fragment, { children: [
       renderItemIcon(item.icon),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-sidebar__item-label", children: item.label }),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "app-sidebar__item-label", children: item.label }),
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
         "span",
         {
           className: cls16("app-sidebar__chevron", isOpen && "app-sidebar__chevron--open"),
@@ -10522,7 +11229,7 @@ function AppSidebar({
           children: chevronNested
         }
       ),
-      trailing ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+      trailing ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
         "span",
         {
           className: "app-sidebar__trailing-wrap",
@@ -10531,7 +11238,7 @@ function AppSidebar({
         }
       ) : null
     ] });
-    const parentBtn = /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    const parentBtn = /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
       "button",
       {
         type: "button",
@@ -10551,21 +11258,21 @@ function AppSidebar({
         children: parentInner
       }
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(import_jsx_runtime41.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(AppSidebarTooltipHost, { collapsed, label: item.label, children: parentBtn }),
-      isOpen && !collapsed ? /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("ul", { id: submenuId, className: "app-sidebar__list app-sidebar__list--nested", role: "list", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(import_jsx_runtime46.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(AppSidebarTooltipHost, { collapsed, label: item.label, children: parentBtn }),
+      isOpen && !collapsed ? /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("ul", { id: submenuId, className: "app-sidebar__list app-sidebar__list--nested", role: "list", children: [
         item.children.map((child) => {
           var _a2;
-          return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("li", { className: "app-sidebar__item", children: !((_a2 = child.children) == null ? void 0 : _a2.length) ? renderLeaf(child, level + 1, { nested: true }) : renderBranch(child, level + 1) }, child.id);
+          return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("li", { className: "app-sidebar__item", children: !((_a2 = child.children) == null ? void 0 : _a2.length) ? renderLeaf(child, level + 1, { nested: true }) : renderBranch(child, level + 1) }, child.id);
         }),
-        item.createAction ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("li", { className: "app-sidebar__item", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(
+        item.createAction ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("li", { className: "app-sidebar__item", children: /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
           "button",
           {
             type: "button",
             className: "app-sidebar__create",
             onClick: item.createAction.onClick,
             children: [
-              item.createAction.icon ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-sidebar__item-icon", children: import_react34.default.isValidElement(item.createAction.icon) ? item.createAction.icon : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+              item.createAction.icon ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "app-sidebar__item-icon", children: import_react36.default.isValidElement(item.createAction.icon) ? item.createAction.icon : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
                 Icon_default,
                 {
                   src: item.createAction.icon,
@@ -10574,35 +11281,35 @@ function AppSidebar({
                   height: 20,
                   color: "currentColor"
                 }
-              ) }) : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { "aria-hidden": true, className: "app-sidebar__item-label", style: { flex: "none", width: 24 }, children: "+" }),
-              /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { children: item.createAction.label })
+              ) }) : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { "aria-hidden": true, className: "app-sidebar__item-label", style: { flex: "none", width: 24 }, children: "+" }),
+              /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { children: item.createAction.label })
             ]
           }
         ) }) : null
       ] }) : null
     ] });
   };
-  const renderSection = (section, idx) => /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-sidebar__section", "data-tier": section.tier, "data-grouping": section.grouping, children: [
-    idx > 0 && section.grouping === "divider" ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { role: "separator", className: "app-sidebar__section-divider" }) : null,
-    section.grouping === "label" && section.label ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "app-sidebar__section-label", children: section.label }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("ul", { className: "app-sidebar__list", role: "list", children: section.items.map((item) => {
+  const renderSection = (section, idx) => /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "app-sidebar__section", "data-tier": section.tier, "data-grouping": section.grouping, children: [
+    idx > 0 && section.grouping === "divider" ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { role: "separator", className: "app-sidebar__section-divider" }) : null,
+    section.grouping === "label" && section.label ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "app-sidebar__section-label", children: section.label }) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("ul", { className: "app-sidebar__list", role: "list", children: section.items.map((item) => {
       var _a2;
-      return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("li", { className: "app-sidebar__item", children: !((_a2 = item.children) == null ? void 0 : _a2.length) ? renderLeaf(item, 0, {}) : renderBranch(item, 0) }, item.id);
+      return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("li", { className: "app-sidebar__item", children: !((_a2 = item.children) == null ? void 0 : _a2.length) ? renderLeaf(item, 0, {}) : renderBranch(item, 0) }, item.id);
     }) })
   ] }, section.id);
   const roleLine = (_a = user == null ? void 0 : user.role) != null ? _a : user == null ? void 0 : user.description;
   const profileTip = user && collapsed ? [user.name, roleLine].filter(Boolean).join(" \xB7 ") : "";
   let profileWrapped = null;
   if (user) {
-    const body = /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(import_jsx_runtime41.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "app-sidebar__profile-avatar", children: user.avatar ? user.avatar : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(Avatar_default, { size: 34, shape: "circle", name: user.name, ...user.avatarProps }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-sidebar__profile-text", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("p", { className: "app-sidebar__profile-name", children: user.name }),
-        roleLine ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("p", { className: "app-sidebar__profile-role", children: roleLine }) : null
+    const body = /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(import_jsx_runtime46.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "app-sidebar__profile-avatar", children: user.avatar ? user.avatar : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Avatar_default, { size: 34, shape: "circle", name: user.name, ...user.avatarProps }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "app-sidebar__profile-text", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("p", { className: "app-sidebar__profile-name", children: user.name }),
+        roleLine ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("p", { className: "app-sidebar__profile-role", children: roleLine }) : null
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-sidebar__profile-arrow", "aria-hidden": true, children: chevronNested })
+      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "app-sidebar__profile-arrow", "aria-hidden": true, children: chevronNested })
     ] });
-    const control = user.onClick ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    const control = user.onClick ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
       "button",
       {
         type: "button",
@@ -10611,7 +11318,7 @@ function AppSidebar({
         "aria-label": (_b = user.profileRowLabel) != null ? _b : `${user.name}, open account menu`,
         children: body
       }
-    ) : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    ) : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
       "div",
       {
         className: "app-sidebar__profile app-sidebar__profile--static",
@@ -10620,7 +11327,7 @@ function AppSidebar({
         children: body
       }
     );
-    profileWrapped = collapsed && profileTip ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(AppSidebarTooltipHost, { collapsed: true, label: profileTip, children: control }) : control;
+    profileWrapped = collapsed && profileTip ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(AppSidebarTooltipHost, { collapsed: true, label: profileTip, children: control }) : control;
   }
   const rootStyle = mergeSidebarTokensStyle(tokens, {
     width,
@@ -10629,7 +11336,7 @@ function AppSidebar({
     ...style
   });
   const backdrop = showDrawerOverlay && typeof document !== "undefined" ? (0, import_react_dom5.createPortal)(
-    /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
       "button",
       {
         type: "button",
@@ -10640,9 +11347,9 @@ function AppSidebar({
     ),
     document.body
   ) : null;
-  return /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(import_jsx_runtime41.Fragment, { children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(import_jsx_runtime46.Fragment, { children: [
     backdrop,
-    /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(
+    /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
       "aside",
       {
         ...rest,
@@ -10658,8 +11365,8 @@ function AppSidebar({
         ),
         style: rootStyle,
         children: [
-          header ? /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: cls16("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: [
-            showCollapseToggle ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+          header ? /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: cls16("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: [
+            showCollapseToggle ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
               "button",
               {
                 type: "button",
@@ -10668,20 +11375,20 @@ function AppSidebar({
                 "aria-expanded": !collapsed,
                 "aria-controls": isNarrow ? panelId : void 0,
                 onClick: () => setCollapsed(!collapsed),
-                children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
+                children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
               }
             ) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-sidebar__header-body", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-sidebar__header-main", children: [
-                header.icon ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "app-sidebar__header-icon", children: header.icon }) : null,
-                /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-sidebar__header-text", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("p", { className: "app-sidebar__title", children: header.title }),
-                  header.subtitle ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("p", { className: "app-sidebar__subtitle", children: header.subtitle }) : null
+            /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "app-sidebar__header-body", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "app-sidebar__header-main", children: [
+                header.icon ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "app-sidebar__header-icon", children: header.icon }) : null,
+                /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "app-sidebar__header-text", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("p", { className: "app-sidebar__title", children: header.title }),
+                  header.subtitle ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("p", { className: "app-sidebar__subtitle", children: header.subtitle }) : null
                 ] })
               ] }),
-              header.trailing ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: cls16("app-sidebar__header-trailing", classNames == null ? void 0 : classNames.headerTrailing), children: header.trailing }) : null
+              header.trailing ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: cls16("app-sidebar__header-trailing", classNames == null ? void 0 : classNames.headerTrailing), children: header.trailing }) : null
             ] })
-          ] }) : showCollapseToggle ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: cls16("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+          ] }) : showCollapseToggle ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: cls16("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
             "button",
             {
               type: "button",
@@ -10690,10 +11397,10 @@ function AppSidebar({
               "aria-expanded": !collapsed,
               "aria-controls": isNarrow ? panelId : void 0,
               onClick: () => setCollapsed(!collapsed),
-              children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
+              children: /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
             }
           ) }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
             "nav",
             {
               ref: navRef,
@@ -10702,7 +11409,7 @@ function AppSidebar({
               children: sections.map((s, i) => renderSection(s, i))
             }
           ),
-          footerSlot ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: cls16("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: footerSlot }) : user || visibleFooterActions.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: cls16("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)(
+          footerSlot ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: cls16("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: footerSlot }) : user || visibleFooterActions.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: cls16("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
             "div",
             {
               className: cls16(
@@ -10711,15 +11418,15 @@ function AppSidebar({
                 classNames == null ? void 0 : classNames.footerRow
               ),
               children: [
-                profileWrapped ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: cls16("app-sidebar__footer-profile", classNames == null ? void 0 : classNames.footerProfile), children: profileWrapped }) : null,
-                visibleFooterActions.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+                profileWrapped ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: cls16("app-sidebar__footer-profile", classNames == null ? void 0 : classNames.footerProfile), children: profileWrapped }) : null,
+                visibleFooterActions.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
                   "div",
                   {
                     className: cls16("app-sidebar__footer-utilities", classNames == null ? void 0 : classNames.footerUtilities),
                     role: "group",
                     "aria-label": "Utility actions",
                     children: visibleFooterActions.map((action) => {
-                      const iconNode = import_react34.default.isValidElement(action.icon) ? action.icon : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+                      const iconNode = import_react36.default.isValidElement(action.icon) ? action.icon : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
                         Icon_default,
                         {
                           src: action.icon,
@@ -10729,7 +11436,7 @@ function AppSidebar({
                           color: "currentColor"
                         }
                       );
-                      const node = action.href ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+                      const node = action.href ? /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
                         "a",
                         {
                           href: action.href,
@@ -10738,7 +11445,7 @@ function AppSidebar({
                           onClick: action.onClick,
                           children: iconNode
                         }
-                      ) : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+                      ) : /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
                         "button",
                         {
                           type: "button",
@@ -10748,7 +11455,7 @@ function AppSidebar({
                           children: iconNode
                         }
                       );
-                      return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(AppSidebarTooltipHost, { collapsed, label: action.label, children: node }, action.id);
+                      return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(AppSidebarTooltipHost, { collapsed, label: action.label, children: node }, action.id);
                     })
                   }
                 ) : null
@@ -10762,10 +11469,10 @@ function AppSidebar({
 }
 
 // src/components/molecules/DashboardShell/DashboardShell.tsx
-var import_react37 = __toESM(require("react"));
+var import_react39 = __toESM(require("react"));
 
 // src/components/molecules/AppTopbar/index.tsx
-var import_react36 = require("react");
+var import_react38 = require("react");
 
 // src/components/molecules/AppTopbar/AppTopbar.chrome.ts
 var TOKENS_CSS_VARS2 = {
@@ -10795,14 +11502,14 @@ function mergeTopbarTokensStyle(tokens, base) {
 }
 
 // src/components/molecules/AppTopbar/AppTopbarMenu.tsx
-var import_react35 = __toESM(require("react"));
+var import_react37 = __toESM(require("react"));
 var import_react_dom6 = require("react-dom");
-var import_jsx_runtime42 = require("react/jsx-runtime");
+var import_jsx_runtime47 = require("react/jsx-runtime");
 function cls17(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
-  const menuRef = (0, import_react35.useRef)(null);
+  const menuRef = (0, import_react37.useRef)(null);
   const positionMenu = () => {
     const el = triggerRef.current;
     const menu = menuRef.current;
@@ -10824,12 +11531,12 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
     menu.style.zIndex = "70";
     menu.style.maxHeight = `${Math.max(120, maxH)}px`;
   };
-  (0, import_react35.useLayoutEffect)(() => {
+  (0, import_react37.useLayoutEffect)(() => {
     if (!open)
       return;
     positionMenu();
   }, [open]);
-  (0, import_react35.useEffect)(() => {
+  (0, import_react37.useEffect)(() => {
     if (!open)
       return;
     const onScrollResize = () => positionMenu();
@@ -10840,7 +11547,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
       window.removeEventListener("resize", onScrollResize);
     };
   }, [open]);
-  (0, import_react35.useEffect)(() => {
+  (0, import_react37.useEffect)(() => {
     if (!open)
       return;
     const onDoc = (e) => {
@@ -10863,7 +11570,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
       document.removeEventListener("keydown", onKey);
     };
   }, [open, onClose, triggerRef]);
-  (0, import_react35.useEffect)(() => {
+  (0, import_react37.useEffect)(() => {
     if (!open || !menuRef.current)
       return;
     const first = menuRef.current.querySelector(
@@ -10874,7 +11581,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
   if (!open || typeof document === "undefined")
     return null;
   return (0, import_react_dom6.createPortal)(
-    /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
       "div",
       {
         ref: menuRef,
@@ -10883,9 +11590,9 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
         "aria-orientation": "vertical",
         className: cls17("app-topbar-menu", theme === "dark" && "app-topbar-menu--dark"),
         children: items.map((item) => {
-          const content = /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(import_jsx_runtime42.Fragment, { children: [
-            item.icon ? /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "app-topbar-menu__icon", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Icon_default, { src: item.icon, width: 18, height: 18, color: "currentColor", decorative: true }) }) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("span", { className: "app-topbar-menu__label", children: item.label })
+          const content = /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(import_jsx_runtime47.Fragment, { children: [
+            item.icon ? /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "app-topbar-menu__icon", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(Icon_default, { src: item.icon, width: 18, height: 18, color: "currentColor", decorative: true }) }) : null,
+            /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "app-topbar-menu__label", children: item.label })
           ] });
           const className = cls17(
             "app-topbar-menu__item",
@@ -10897,7 +11604,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
             className,
             tabIndex: item.disabled ? -1 : void 0
           };
-          const node = item.href && !item.disabled ? /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+          const node = item.href && !item.disabled ? /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
             "a",
             {
               ...common,
@@ -10907,7 +11614,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
               },
               children: content
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
+          ) : /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
             "button",
             {
               ...common,
@@ -10923,7 +11630,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
               children: content
             }
           );
-          return /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(import_react35.default.Fragment, { children: node }, item.id);
+          return /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(import_react37.default.Fragment, { children: node }, item.id);
         })
       }
     ),
@@ -10932,12 +11639,12 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
 }
 
 // src/components/molecules/AppTopbar/index.tsx
-var import_jsx_runtime43 = require("react/jsx-runtime");
-var TOPBAR_SEARCH_ICON = /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", "aria-hidden": true, children: [
-  /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("circle", { cx: "11", cy: "11", r: "7", stroke: "currentColor", strokeWidth: "2" }),
-  /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("path", { d: "M20 20l-4.3-4.3", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
+var import_jsx_runtime48 = require("react/jsx-runtime");
+var TOPBAR_SEARCH_ICON = /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", "aria-hidden": true, children: [
+  /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("circle", { cx: "11", cy: "11", r: "7", stroke: "currentColor", strokeWidth: "2" }),
+  /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("path", { d: "M20 20l-4.3-4.3", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
 ] });
-var MENU_ICON = /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("svg", { viewBox: "0 0 20 20", width: 20, height: 20, fill: "none", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("path", { d: "M3 5h14M3 10h14M3 15h14", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" }) });
+var MENU_ICON = /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("svg", { viewBox: "0 0 20 20", width: 20, height: 20, fill: "none", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("path", { d: "M3 5h14M3 10h14M3 15h14", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" }) });
 function cls18(...parts) {
   return parts.filter(Boolean).join(" ");
 }
@@ -10974,26 +11681,26 @@ var AppTopbar = ({
   classNames
 }) => {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
-  const rootId = (0, import_react36.useId)();
+  const rootId = (0, import_react38.useId)();
   const baseId = rootId.replace(/[^a-zA-Z0-9_-]/g, "");
   const searchInputId = (_a = search == null ? void 0 : search.inputId) != null ? _a : `app-topbar-search-${baseId}`;
-  const menuDomId = (0, import_react36.useMemo)(() => `app-topbar-menu-root-${baseId}`, [baseId]);
+  const menuDomId = (0, import_react38.useMemo)(() => `app-topbar-menu-root-${baseId}`, [baseId]);
   const isNarrow = useBelowWidth(collapseCenterBelowWidth, responsive);
   const hasMenuItems = Boolean(mobileMenuItems && mobileMenuItems.length > 0);
   const showHamburger = isNarrow && (hasMenuItems || Boolean(onMobileMenuClick));
   const hasCenterContent = centerSlot != null || search != null;
   const hideCenterColumn = isNarrow && search != null && centerSlot == null;
   const showCenterCell = hasCenterContent && !hideCenterColumn;
-  const [mobileSearchOpen, setMobileSearchOpen] = (0, import_react36.useState)(false);
-  const [menuOpen, setMenuOpen] = (0, import_react36.useState)(false);
-  const menuTriggerWrapRef = (0, import_react36.useRef)(null);
-  (0, import_react36.useEffect)(() => {
+  const [mobileSearchOpen, setMobileSearchOpen] = (0, import_react38.useState)(false);
+  const [menuOpen, setMenuOpen] = (0, import_react38.useState)(false);
+  const menuTriggerWrapRef = (0, import_react38.useRef)(null);
+  (0, import_react38.useEffect)(() => {
     if (!isNarrow) {
       setMobileSearchOpen(false);
       setMenuOpen(false);
     }
   }, [isNarrow]);
-  (0, import_react36.useEffect)(() => {
+  (0, import_react38.useEffect)(() => {
     if (!mobileSearchOpen)
       return;
     const onKey = (e) => {
@@ -11003,7 +11710,7 @@ var AppTopbar = ({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileSearchOpen]);
-  (0, import_react36.useEffect)(() => {
+  (0, import_react38.useEffect)(() => {
     if (!mobileSearchOpen || !hideCenterColumn)
       return;
     const id = requestAnimationFrame(() => {
@@ -11012,7 +11719,7 @@ var AppTopbar = ({
     });
     return () => cancelAnimationFrame(id);
   }, [mobileSearchOpen, hideCenterColumn, searchInputId]);
-  (0, import_react36.useEffect)(() => {
+  (0, import_react38.useEffect)(() => {
     if (!search)
       return;
     const onKey = (e) => {
@@ -11057,7 +11764,7 @@ var AppTopbar = ({
   const rootStyle = mergeTopbarTokensStyle(tokens, {
     ...sticky ? { zIndex } : {}
   });
-  const searchField = search ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+  const searchField = search ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
     TextInputSearch_default,
     {
       id: searchInputId,
@@ -11085,8 +11792,8 @@ var AppTopbar = ({
     }
     onMobileMenuClick == null ? void 0 : onMobileMenuClick();
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(import_jsx_runtime43.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(import_jsx_runtime48.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
       "header",
       {
         className: cls18(
@@ -11101,9 +11808,9 @@ var AppTopbar = ({
         ),
         style: rootStyle,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: cls18("app-topbar__inner", classNames == null ? void 0 : classNames.inner), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: cls18("app-topbar__left", classNames == null ? void 0 : classNames.left), children: [
-              showHamburger ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { ref: menuTriggerWrapRef, className: "app-topbar__menu", children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: cls18("app-topbar__inner", classNames == null ? void 0 : classNames.inner), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: cls18("app-topbar__left", classNames == null ? void 0 : classNames.left), children: [
+              showHamburger ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { ref: menuTriggerWrapRef, className: "app-topbar__menu", children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                 Button_default,
                 {
                   type: "button",
@@ -11120,9 +11827,9 @@ var AppTopbar = ({
                 }
               ) }) : null,
               leftSlot,
-              /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { className: "app-topbar__context", children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(TitleTag, { className: cls18("app-topbar__title", classNames == null ? void 0 : classNames.title), children: title }) })
+              /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { className: "app-topbar__context", children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(TitleTag, { className: cls18("app-topbar__title", classNames == null ? void 0 : classNames.title), children: title }) })
             ] }),
-            showCenterCell ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            showCenterCell ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
               "div",
               {
                 className: cls18(
@@ -11133,8 +11840,8 @@ var AppTopbar = ({
                 children: centerSlot != null ? centerSlot : searchField
               }
             ) : null,
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { className: cls18("app-topbar__right", classNames == null ? void 0 : classNames.right), children: [
-              hideCenterColumn && search ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { className: cls18("app-topbar__right", classNames == null ? void 0 : classNames.right), children: [
+              hideCenterColumn && search ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                 Button_default,
                 {
                   type: "button",
@@ -11156,8 +11863,8 @@ var AppTopbar = ({
                 const count = action.badgeCount;
                 const hasBadge = showDot || count != null && count > 0;
                 const showCountChip = hasBadge && !showDot && count != null && count > 0;
-                return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("span", { className: "app-topbar__action-wrap", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("span", { className: "app-topbar__action-wrap", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                     Button_default,
                     {
                       type: "button",
@@ -11172,7 +11879,7 @@ var AppTopbar = ({
                       onClick: action.onClick
                     }
                   ),
-                  hasBadge ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+                  hasBadge ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                     "span",
                     {
                       className: cls18("app-topbar__badge", showCountChip && "app-topbar__badge--count"),
@@ -11182,31 +11889,31 @@ var AppTopbar = ({
                   ) : null
                 ] }, action.id);
               }),
-              profile ? profile.onClick ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+              profile ? profile.onClick ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                 "button",
                 {
                   type: "button",
                   className: "app-topbar__profile",
                   "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
                   onClick: profile.onClick,
-                  children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
+                  children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
                 }
-              ) : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+              ) : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                 "span",
                 {
                   className: "app-topbar__profile app-topbar__profile--static",
                   "aria-label": (_k = (_j = profile.menuLabel) != null ? _j : profile.name) != null ? _k : "Profile",
-                  children: (_m = profile.avatar) != null ? _m : /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_l = profile.name) != null ? _l : "User", ...profile.avatarProps })
+                  children: (_m = profile.avatar) != null ? _m : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_l = profile.name) != null ? _l : "User", ...profile.avatarProps })
                 }
               ) : null,
               rightSlot
             ] })
           ] }),
-          hideCenterColumn && mobileSearchOpen && search ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { id: `${searchInputId}-panel`, className: "app-topbar__mobile-search", children: searchField }) : null
+          hideCenterColumn && mobileSearchOpen && search ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("div", { id: `${searchInputId}-panel`, className: "app-topbar__mobile-search", children: searchField }) : null
         ]
       }
     ),
-    hasMenuItems ? /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+    hasMenuItems ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
       AppTopbarMenu,
       {
         id: menuDomId,
@@ -11223,7 +11930,7 @@ AppTopbar.displayName = "AppTopbar";
 var AppTopbar_default = AppTopbar;
 
 // src/components/molecules/DashboardShell/DashboardShell.tsx
-var import_jsx_runtime44 = require("react/jsx-runtime");
+var import_jsx_runtime49 = require("react/jsx-runtime");
 function cls19(...parts) {
   return parts.filter(Boolean).join(" ");
 }
@@ -11232,10 +11939,10 @@ function isAppTopbarElement(node) {
   return t === AppTopbar_default || (t == null ? void 0 : t.displayName) === "AppTopbar" || (t == null ? void 0 : t.name) === "AppTopbar";
 }
 function prepareTopbar(topbar, pinTopbar) {
-  if (!pinTopbar || !import_react37.default.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
+  if (!pinTopbar || !import_react39.default.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
     return topbar;
   }
-  return import_react37.default.cloneElement(topbar, { sticky: false });
+  return import_react39.default.cloneElement(topbar, { sticky: false });
 }
 var DEFAULT_ROOT_CLASSNAME = "flex flex-nowrap h-[100dvh] max-h-[100dvh] min-h-0 w-full min-w-0 max-w-[100vw] items-stretch overflow-hidden bg-[var(--color-bg-page)] text-[var(--color-text-primary)]";
 var DEFAULT_INSET_CLASSNAME = "isolate flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden";
@@ -11257,13 +11964,13 @@ function DashboardShell({
   const { fixed: fixedProp, className: sidebarClassName, classNames: sidebarClassNames, ...restSidebar } = sidebar;
   const fixed = fixedProp !== false;
   const topbarNode = prepareTopbar(topbar, pinTopbar);
-  const renderInset = (style) => /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: cls19(DEFAULT_INSET_CLASSNAME, insetClassName), style, children: [
-    topbar ? /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: cls19(DEFAULT_TOPBAR_WRAPPER_CLASSNAME, topbarClassName), style: topbarStyle, children: topbarNode }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: cls19(DEFAULT_CONTENT_CLASSNAME, contentClassName), style: contentStyle, children })
+  const renderInset = (style) => /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: cls19(DEFAULT_INSET_CLASSNAME, insetClassName), style, children: [
+    topbar ? /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: cls19(DEFAULT_TOPBAR_WRAPPER_CLASSNAME, topbarClassName), style: topbarStyle, children: topbarNode }) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("div", { className: cls19(DEFAULT_CONTENT_CLASSNAME, contentClassName), style: contentStyle, children })
   ] });
   if (!fixed) {
-    return /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: cls19(DEFAULT_ROOT_CLASSNAME, className), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: cls19(DEFAULT_ROOT_CLASSNAME, className), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
         AppSidebar,
         {
           ...restSidebar,
@@ -11281,8 +11988,8 @@ function DashboardShell({
       })
     ] });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: cls19(DEFAULT_ROOT_CLASSNAME, className), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { className: cls19(DEFAULT_ROOT_CLASSNAME, className), children: [
+    /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
       AppSidebar,
       {
         ...restSidebar,
@@ -11313,7 +12020,7 @@ var hyperlinkBaseClass = "font-sans text-body text-[var(--color-brand-link)] no-
 var cls20 = (...classes) => classes.filter(Boolean).join(" ");
 
 // src/components/atoms/Hyperlink/index.tsx
-var import_jsx_runtime45 = require("react/jsx-runtime");
+var import_jsx_runtime50 = require("react/jsx-runtime");
 var Hyperlink = ({
   children,
   href = "#",
@@ -11321,7 +12028,7 @@ var Hyperlink = ({
   className = "",
   openInNewTab = false
 }) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
     "a",
     {
       href: disabled ? void 0 : href,
@@ -11341,7 +12048,7 @@ var Hyperlink = ({
 var Hyperlink_default = Hyperlink;
 
 // src/components/charts/LineChart.tsx
-var import_react41 = __toESM(require("react"));
+var import_react43 = __toESM(require("react"));
 
 // src/components/charts/Chart.types.ts
 var CHART_THEME_COLORS = {
@@ -11364,17 +12071,17 @@ var CHART_THEME_COLORS = {
 };
 
 // src/components/charts/chartPrimitives.tsx
-var import_react38 = require("react");
-var import_jsx_runtime46 = require("react/jsx-runtime");
+var import_react40 = require("react");
+var import_jsx_runtime51 = require("react/jsx-runtime");
 function AnimatedLineStroke({
   pathD,
   progress,
   color,
   strokeWidth
 }) {
-  const ref = (0, import_react38.useRef)(null);
-  const [length, setLength] = (0, import_react38.useState)(0);
-  (0, import_react38.useLayoutEffect)(() => {
+  const ref = (0, import_react40.useRef)(null);
+  const [length, setLength] = (0, import_react40.useState)(0);
+  (0, import_react40.useLayoutEffect)(() => {
     const el = ref.current;
     if (!el || !pathD) {
       setLength(0);
@@ -11388,7 +12095,7 @@ function AnimatedLineStroke({
   }, [pathD]);
   const len = length || 1;
   const offset = len * (1 - progress);
-  return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
     "path",
     {
       ref,
@@ -11405,12 +12112,12 @@ function AnimatedLineStroke({
 }
 
 // src/components/charts/ChartTooltip.tsx
-var import_react39 = __toESM(require("react"));
-var import_jsx_runtime47 = require("react/jsx-runtime");
+var import_react41 = __toESM(require("react"));
+var import_jsx_runtime52 = require("react/jsx-runtime");
 function cls21(...parts) {
   return parts.filter(Boolean).join(" ");
 }
-var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
+var ChartTooltip = import_react41.default.memo(function ChartTooltip2({
   theme,
   open,
   pointerX,
@@ -11423,10 +12130,10 @@ var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
   followPointer = true
 }) {
   const themeColors = CHART_THEME_COLORS[theme];
-  const ref = (0, import_react39.useRef)(null);
-  const [pos, setPos] = (0, import_react39.useState)({ left: 0, top: 0 });
-  const [enter, setEnter] = (0, import_react39.useState)(false);
-  (0, import_react39.useLayoutEffect)(() => {
+  const ref = (0, import_react41.useRef)(null);
+  const [pos, setPos] = (0, import_react41.useState)({ left: 0, top: 0 });
+  const [enter, setEnter] = (0, import_react41.useState)(false);
+  (0, import_react41.useLayoutEffect)(() => {
     if (!open || !ref.current)
       return;
     const el = ref.current;
@@ -11461,7 +12168,7 @@ var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
     label,
     items.length
   ]);
-  import_react39.default.useEffect(() => {
+  import_react41.default.useEffect(() => {
     if (!open) {
       setEnter(false);
       return;
@@ -11472,7 +12179,7 @@ var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
   }, [open]);
   if (!open)
     return null;
-  return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)(
     "div",
     {
       ref,
@@ -11491,7 +12198,7 @@ var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
         color: themeColors.tooltipText
       },
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(
           "div",
           {
             className: "ds-chart-tooltip__label",
@@ -11503,10 +12210,10 @@ var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
             children: label
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "ds-chart-tooltip__rows", children: items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "ds-chart-tooltip__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "ds-chart-tooltip__dot", style: { background: item.color }, "aria-hidden": true }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "ds-chart-tooltip__name", style: { color: themeColors.legendText }, children: item.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "ds-chart-tooltip__value", children: item.value })
+        /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("div", { className: "ds-chart-tooltip__rows", children: items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime52.jsxs)("div", { className: "ds-chart-tooltip__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "ds-chart-tooltip__dot", style: { background: item.color }, "aria-hidden": true }),
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "ds-chart-tooltip__name", style: { color: themeColors.legendText }, children: item.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime52.jsx)("span", { className: "ds-chart-tooltip__value", children: item.value })
         ] }, item.name)) })
       ]
     }
@@ -11514,7 +12221,7 @@ var ChartTooltip = import_react39.default.memo(function ChartTooltip2({
 });
 
 // src/components/charts/useChartAnimation.ts
-var import_react40 = require("react");
+var import_react42 = require("react");
 var DEFAULT_MS_LINE = 800;
 var DEFAULT_MS_BAR = 650;
 var DEFAULT_MS_PIE = 750;
@@ -11552,8 +12259,8 @@ function chartEase(t, preset) {
   }
 }
 function usePrefersReducedMotion() {
-  const [reduced, setReduced] = (0, import_react40.useState)(false);
-  (0, import_react40.useEffect)(() => {
+  const [reduced, setReduced] = (0, import_react42.useState)(false);
+  (0, import_react42.useEffect)(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduced(mq.matches);
     const fn = () => setReduced(mq.matches);
@@ -11564,8 +12271,8 @@ function usePrefersReducedMotion() {
 }
 function useChartAnimationProgress(enabled, durationMs, easing, resetKey) {
   const reduced = usePrefersReducedMotion();
-  const [progress, setProgress] = (0, import_react40.useState)(() => !enabled || reduced ? 1 : 0);
-  (0, import_react40.useEffect)(() => {
+  const [progress, setProgress] = (0, import_react42.useState)(() => !enabled || reduced ? 1 : 0);
+  (0, import_react42.useEffect)(() => {
     if (!enabled || reduced) {
       setProgress(1);
       return;
@@ -11711,7 +12418,7 @@ function arcPath(cx2, cy, r, startAngleDeg, endAngleDeg, innerRadius = 0) {
 }
 
 // src/components/charts/LineChart.tsx
-var import_jsx_runtime48 = require("react/jsx-runtime");
+var import_jsx_runtime53 = require("react/jsx-runtime");
 var DEFAULT_COLORS = [
   "var(--button-primary-default-bg, #2563EB)",
   "var(--color-state-success, #28A745)",
@@ -11746,7 +12453,7 @@ var LineChartComponent = ({
 }) => {
   var _a, _b, _c, _d;
   const animCfg = resolveChartAnimation(chartAnimation, "line");
-  const animKey = (0, import_react41.useMemo)(
+  const animKey = (0, import_react43.useMemo)(
     () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${curve}`,
     [data.length, series, xAxisKey, curve]
   );
@@ -11758,7 +12465,7 @@ var LineChartComponent = ({
   );
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
-  const [tooltip, setTooltip] = (0, import_react41.useState)(null);
+  const [tooltip, setTooltip] = (0, import_react43.useState)(null);
   const w = typeof width === "number" ? width : 400;
   const h = typeof height === "number" ? height : 300;
   const m = {
@@ -11769,20 +12476,20 @@ var LineChartComponent = ({
   };
   const innerW = w - m.left - m.right;
   const innerH = h - m.top - m.bottom;
-  const xLabels = (0, import_react41.useMemo)(() => data.map((d) => {
+  const xLabels = (0, import_react43.useMemo)(() => data.map((d) => {
     var _a2;
     return String((_a2 = d[xAxisKey]) != null ? _a2 : "");
   }), [data, xAxisKey]);
-  const [yMin, yMax] = (0, import_react41.useMemo)(() => getValueExtent(data, series), [data, series]);
-  const xScale = (0, import_react41.useMemo)(
+  const [yMin, yMax] = (0, import_react43.useMemo)(() => getValueExtent(data, series), [data, series]);
+  const xScale = (0, import_react43.useMemo)(
     () => scaleLinear([0, Math.max(1, data.length - 1)], [0, innerW]),
     [data.length, innerW]
   );
-  const yScale = (0, import_react41.useMemo)(
+  const yScale = (0, import_react43.useMemo)(
     () => scaleLinear([yMin, yMax], [innerH, 0]),
     [yMin, yMax, innerH]
   );
-  const paths = (0, import_react41.useMemo)(() => {
+  const paths = (0, import_react43.useMemo)(() => {
     return series.map((s, si) => {
       var _a2, _b2;
       const points = data.map((d, i) => {
@@ -11793,7 +12500,7 @@ var LineChartComponent = ({
       return { path: linePath(points, curve), points, color: (_a2 = s.color) != null ? _a2 : colors[si % colors.length], name: (_b2 = s.name) != null ? _b2 : s.dataKey };
     });
   }, [data, series, colors, curve, xScale, yScale, m]);
-  const handleMouseMove = (0, import_react41.useCallback)(
+  const handleMouseMove = (0, import_react43.useCallback)(
     (e) => {
       var _a2;
       if (!showTooltip)
@@ -11824,8 +12531,8 @@ var LineChartComponent = ({
     },
     [showTooltip, data, series, xAxisKey, colors, innerW, m.left]
   );
-  const handleMouseLeave = (0, import_react41.useCallback)(() => setTooltip(null), []);
-  return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
+  const handleMouseLeave = (0, import_react43.useCallback)(() => setTooltip(null), []);
+  return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(
     "div",
     {
       className,
@@ -11836,7 +12543,7 @@ var LineChartComponent = ({
         ...style
       },
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(
           "svg",
           {
             width: "100%",
@@ -11846,8 +12553,8 @@ var LineChartComponent = ({
             onMouseMove: handleMouseMove,
             onMouseLeave: handleMouseLeave,
             children: [
-              showGrid && /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [
-                [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              showGrid && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [
+                [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                   "line",
                   {
                     x1: m.left,
@@ -11859,7 +12566,7 @@ var LineChartComponent = ({
                 )),
                 xLabels.slice(0, 6).map((_, i) => {
                   const idx = Math.floor(i / 5 * (data.length - 1));
-                  return /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+                  return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                     "line",
                     {
                       x1: m.left + xScale(idx),
@@ -11871,8 +12578,8 @@ var LineChartComponent = ({
                   );
                 })
               ] }),
-              paths.map(({ path: pathD, points, color, name }) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("g", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              paths.map(({ path: pathD, points, color, name }) => /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("g", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                   AnimatedLineStroke,
                   {
                     pathD,
@@ -11881,7 +12588,7 @@ var LineChartComponent = ({
                     strokeWidth
                   }
                 ),
-                showDots && points.map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+                showDots && points.map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                   "circle",
                   {
                     cx: p.x,
@@ -11895,8 +12602,8 @@ var LineChartComponent = ({
                   i
                 ))
               ] }, name)),
-              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                   "line",
                   {
                     x1: m.left + xScale(tooltip.activeIndex),
@@ -11916,7 +12623,7 @@ var LineChartComponent = ({
                   const cx2 = m.left + xScale(tooltip.activeIndex);
                   const cy = m.top + yScale(num);
                   const color = (_b2 = s.color) != null ? _b2 : colors[si % colors.length];
-                  return /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+                  return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                     "circle",
                     {
                       cx: cx2,
@@ -11931,7 +12638,7 @@ var LineChartComponent = ({
                   );
                 })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: xLabels.map((label, i) => /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: xLabels.map((label, i) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                 "text",
                 {
                   x: m.left + xScale(i),
@@ -11943,7 +12650,7 @@ var LineChartComponent = ({
             ]
           }
         ),
-        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
           ChartTooltip,
           {
             theme,
@@ -11958,7 +12665,7 @@ var LineChartComponent = ({
             followPointer: tooltipFollowPointer
           }
         ),
-        showLegend && /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
           "div",
           {
             style: {
@@ -11972,8 +12679,8 @@ var LineChartComponent = ({
             },
             children: series.map((s, i) => {
               var _a2, _b2;
-              return /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
                   "span",
                   {
                     style: {
@@ -11984,7 +12691,7 @@ var LineChartComponent = ({
                     }
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
+                /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
               ] }, s.dataKey);
             })
           }
@@ -11993,11 +12700,11 @@ var LineChartComponent = ({
     }
   );
 };
-var LineChart_default = import_react41.default.memo(LineChartComponent);
+var LineChart_default = import_react43.default.memo(LineChartComponent);
 
 // src/components/charts/BarChart.tsx
-var import_react42 = __toESM(require("react"));
-var import_jsx_runtime49 = require("react/jsx-runtime");
+var import_react44 = __toESM(require("react"));
+var import_jsx_runtime54 = require("react/jsx-runtime");
 var DEFAULT_COLORS2 = [
   "var(--button-primary-default-bg, #2563EB)",
   "var(--color-state-success, #28A745)",
@@ -12032,7 +12739,7 @@ var BarChartComponent = ({
 }) => {
   var _a, _b, _c, _d;
   const animCfg = resolveChartAnimation(chartAnimation, "bar");
-  const animKey = (0, import_react42.useMemo)(
+  const animKey = (0, import_react44.useMemo)(
     () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${layout}`,
     [data.length, series, xAxisKey, layout]
   );
@@ -12044,8 +12751,8 @@ var BarChartComponent = ({
   );
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
-  const containerRef = (0, import_react42.useRef)(null);
-  const [tooltip, setTooltip] = (0, import_react42.useState)(null);
+  const containerRef = (0, import_react44.useRef)(null);
+  const [tooltip, setTooltip] = (0, import_react44.useState)(null);
   const w = typeof width === "number" ? width : 400;
   const h = typeof height === "number" ? height : 300;
   const m = {
@@ -12065,12 +12772,12 @@ var BarChartComponent = ({
     Math.max(2, (groupWidth - (barCount - 1) * barGap) / barCount)
   );
   const groupOffset = Math.max(0, (groupWidth - totalBarWidth) / 2);
-  const [yMin, yMax] = (0, import_react42.useMemo)(() => getValueExtent(data, series), [data, series]);
-  const yScale = (0, import_react42.useMemo)(
+  const [yMin, yMax] = (0, import_react44.useMemo)(() => getValueExtent(data, series), [data, series]);
+  const yScale = (0, import_react44.useMemo)(
     () => scaleLinear([yMin, yMax], [innerH, 0]),
     [yMin, yMax, innerH]
   );
-  const handleMouseMove = (0, import_react42.useCallback)(
+  const handleMouseMove = (0, import_react44.useCallback)(
     (e, idx) => {
       var _a2;
       if (!showTooltip || !containerRef.current)
@@ -12097,9 +12804,9 @@ var BarChartComponent = ({
     },
     [showTooltip, data, series, xAxisKey, colors]
   );
-  const handleMouseLeave = (0, import_react42.useCallback)(() => setTooltip(null), []);
+  const handleMouseLeave = (0, import_react44.useCallback)(() => setTooltip(null), []);
   const r = Array.isArray(radius) ? radius[0] : radius;
-  return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(
     "div",
     {
       ref: containerRef,
@@ -12111,7 +12818,7 @@ var BarChartComponent = ({
         ...style
       },
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)(
           "svg",
           {
             width: "100%",
@@ -12120,7 +12827,7 @@ var BarChartComponent = ({
             preserveAspectRatio: "xMidYMid meet",
             onMouseLeave: handleMouseLeave,
             children: [
-              showGrid && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+              showGrid && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                 "line",
                 {
                   x1: m.left,
@@ -12140,7 +12847,7 @@ var BarChartComponent = ({
                   const shownH = Math.max(0, barH * barGrowth);
                   const x = groupX + si * (barWidth + barGap);
                   const y = m.top + innerH - shownH;
-                  return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("g", { children: /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+                  return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("g", { children: /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                     "rect",
                     {
                       x,
@@ -12165,7 +12872,7 @@ var BarChartComponent = ({
                   const shownLen = len * barGrowth;
                   const x = m.left;
                   const y = groupY - barCount * barWidth / 2 + si * (barWidth + barGap);
-                  return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+                  return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                     "rect",
                     {
                       x,
@@ -12181,9 +12888,9 @@ var BarChartComponent = ({
                   );
                 });
               }),
-              /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: data.map((row, i) => {
+              /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: data.map((row, i) => {
                 var _a2;
-                return /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                   "text",
                   {
                     x: m.left + (i + 0.5) / Math.max(1, data.length) * innerW,
@@ -12196,7 +12903,7 @@ var BarChartComponent = ({
             ]
           }
         ),
-        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
           ChartTooltip,
           {
             theme,
@@ -12211,7 +12918,7 @@ var BarChartComponent = ({
             followPointer: tooltipFollowPointer
           }
         ),
-        showLegend && /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
           "div",
           {
             style: {
@@ -12225,8 +12932,8 @@ var BarChartComponent = ({
             },
             children: series.map((s, i) => {
               var _a2, _b2;
-              return /* @__PURE__ */ (0, import_jsx_runtime49.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime49.jsx)(
+              return /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
                   "span",
                   {
                     style: {
@@ -12237,7 +12944,7 @@ var BarChartComponent = ({
                     }
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime49.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
+                /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
               ] }, s.dataKey);
             })
           }
@@ -12246,11 +12953,11 @@ var BarChartComponent = ({
     }
   );
 };
-var BarChart_default = import_react42.default.memo(BarChartComponent);
+var BarChart_default = import_react44.default.memo(BarChartComponent);
 
 // src/components/charts/PieChart.tsx
-var import_react43 = __toESM(require("react"));
-var import_jsx_runtime50 = require("react/jsx-runtime");
+var import_react45 = __toESM(require("react"));
+var import_jsx_runtime55 = require("react/jsx-runtime");
 var DEFAULT_COLORS3 = [
   "var(--button-primary-default-bg, #2563EB)",
   "var(--color-state-success, #28A745)",
@@ -12284,7 +12991,7 @@ var PieChartComponent = ({
 }) => {
   var _a, _b, _c, _d;
   const animCfg = resolveChartAnimation(chartAnimation, "pie");
-  const animKey = (0, import_react43.useMemo)(() => `${data.map((d) => d.value).join(",")}-${data.length}`, [data]);
+  const animKey = (0, import_react45.useMemo)(() => `${data.map((d) => d.value).join(",")}-${data.length}`, [data]);
   const animProgress = useChartAnimationProgress(
     animCfg.enabled,
     animCfg.durationMs,
@@ -12293,9 +13000,9 @@ var PieChartComponent = ({
   );
   const scaleFactor = 0.08 + animProgress * 0.92;
   const themeColors = CHART_THEME_COLORS[theme];
-  const containerRef = (0, import_react43.useRef)(null);
-  const [hovered, setHovered] = (0, import_react43.useState)(null);
-  const [tooltip, setTooltip] = (0, import_react43.useState)(null);
+  const containerRef = (0, import_react45.useRef)(null);
+  const [hovered, setHovered] = (0, import_react45.useState)(null);
+  const [tooltip, setTooltip] = (0, import_react45.useState)(null);
   const w = typeof width === "number" ? width : 400;
   const h = typeof height === "number" ? height : 300;
   const chartW = Math.max(200, typeof width === "number" ? width : 400);
@@ -12329,7 +13036,7 @@ var PieChartComponent = ({
       color: colors[i % colors.length]
     };
   });
-  const handleSlicePointer = (0, import_react43.useCallback)(
+  const handleSlicePointer = (0, import_react45.useCallback)(
     (e, i) => {
       setHovered(i);
       if (!showTooltip || !containerRef.current)
@@ -12354,11 +13061,11 @@ var PieChartComponent = ({
     },
     [showTooltip, data, colors, total]
   );
-  const handleMouseLeave = (0, import_react43.useCallback)(() => {
+  const handleMouseLeave = (0, import_react45.useCallback)(() => {
     setHovered(null);
     setTooltip(null);
   }, []);
-  return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)(
     "div",
     {
       ref: containerRef,
@@ -12375,7 +13082,7 @@ var PieChartComponent = ({
         ...style
       },
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { style: { display: "flex", alignItems: "center", flex: 1, minHeight: 260 }, children: /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime55.jsx)("div", { style: { display: "flex", alignItems: "center", flex: 1, minHeight: 260 }, children: /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
           "svg",
           {
             width: "100%",
@@ -12383,8 +13090,8 @@ var PieChartComponent = ({
             viewBox: `0 0 ${chartW} ${chartH}`,
             preserveAspectRatio: "xMidYMid meet",
             onMouseLeave: handleMouseLeave,
-            children: /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("g", { transform: `translate(${cx2} ${cy}) scale(${scaleFactor}) translate(${-cx2} ${-cy})`, children: [
-              slices.map((slice, i) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+            children: /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("g", { transform: `translate(${cx2} ${cy}) scale(${scaleFactor}) translate(${-cx2} ${-cy})`, children: [
+              slices.map((slice, i) => /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
                 "path",
                 {
                   d: arcPath(cx2, cy, or, slice.startDeg, slice.endDeg, ir),
@@ -12395,7 +13102,7 @@ var PieChartComponent = ({
                   onMouseEnter: (e) => handleSlicePointer(e, i),
                   onMouseMove: (e) => handleSlicePointer(e, i),
                   style: { cursor: "pointer" },
-                  children: !showTooltip && /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("title", { children: [
+                  children: !showTooltip && /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("title", { children: [
                     slice.name,
                     ": ",
                     slice.value,
@@ -12410,7 +13117,7 @@ var PieChartComponent = ({
                 const midDeg = (slice.startDeg + slice.endDeg) / 2;
                 const labelR = ir + (or - ir) * 0.5;
                 const { x: lx, y: ly } = polarToCartesian(cx2, cy, labelR, midDeg);
-                return /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)(
+                return /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)(
                   "text",
                   {
                     x: lx,
@@ -12432,7 +13139,7 @@ var PieChartComponent = ({
             ] })
           }
         ) }),
-        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
           ChartTooltip,
           {
             theme,
@@ -12447,7 +13154,7 @@ var PieChartComponent = ({
             followPointer: tooltipFollowPointer
           }
         ),
-        showLegend && /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
           "div",
           {
             style: {
@@ -12458,8 +13165,8 @@ var PieChartComponent = ({
               marginTop: 8,
               fontSize: 12
             },
-            children: data.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+            children: data.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime55.jsx)(
                 "span",
                 {
                   style: {
@@ -12470,7 +13177,7 @@ var PieChartComponent = ({
                   }
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime50.jsxs)("span", { style: { color: themeColors.legendText }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime55.jsxs)("span", { style: { color: themeColors.legendText }, children: [
                 d.name,
                 ": ",
                 d.value
@@ -12482,11 +13189,11 @@ var PieChartComponent = ({
     }
   );
 };
-var PieChart_default = import_react43.default.memo(PieChartComponent);
+var PieChart_default = import_react45.default.memo(PieChartComponent);
 
 // src/components/charts/AreaChart.tsx
-var import_react44 = __toESM(require("react"));
-var import_jsx_runtime51 = require("react/jsx-runtime");
+var import_react46 = __toESM(require("react"));
+var import_jsx_runtime56 = require("react/jsx-runtime");
 var DEFAULT_COLORS4 = [
   "var(--button-primary-default-bg, #2563EB)",
   "var(--color-state-success, #28A745)",
@@ -12520,7 +13227,7 @@ var AreaChartComponent = ({
 }) => {
   var _a, _b, _c, _d;
   const animCfg = resolveChartAnimation(chartAnimation, "area");
-  const animKey = (0, import_react44.useMemo)(
+  const animKey = (0, import_react46.useMemo)(
     () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${stacked}-${curve}`,
     [data.length, series, xAxisKey, stacked, curve]
   );
@@ -12532,7 +13239,7 @@ var AreaChartComponent = ({
   );
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
-  const [tooltip, setTooltip] = (0, import_react44.useState)(null);
+  const [tooltip, setTooltip] = (0, import_react46.useState)(null);
   const w = typeof width === "number" ? width : 400;
   const h = typeof height === "number" ? height : 300;
   const m = {
@@ -12543,19 +13250,19 @@ var AreaChartComponent = ({
   };
   const innerW = w - m.left - m.right;
   const innerH = h - m.top - m.bottom;
-  const [yMin, yMax] = (0, import_react44.useMemo)(
+  const [yMin, yMax] = (0, import_react46.useMemo)(
     () => getValueExtent(data, series, stacked),
     [data, series, stacked]
   );
-  const xScale = (0, import_react44.useMemo)(
+  const xScale = (0, import_react46.useMemo)(
     () => scaleLinear([0, Math.max(1, data.length - 1)], [0, innerW]),
     [data.length, innerW]
   );
-  const yScale = (0, import_react44.useMemo)(
+  const yScale = (0, import_react46.useMemo)(
     () => scaleLinear([yMin, yMax], [innerH, 0]),
     [yMin, yMax, innerH]
   );
-  const finalPaths = (0, import_react44.useMemo)(() => {
+  const finalPaths = (0, import_react46.useMemo)(() => {
     if (stacked) {
       const cum = new Array(data.length).fill(0);
       return series.map((s, si) => {
@@ -12597,7 +13304,7 @@ var AreaChartComponent = ({
       };
     });
   }, [data, series, colors, stacked, curve, xScale, yScale, m, innerH]);
-  const handleMouseMove = (0, import_react44.useCallback)(
+  const handleMouseMove = (0, import_react46.useCallback)(
     (e) => {
       var _a2;
       if (!showTooltip)
@@ -12628,8 +13335,8 @@ var AreaChartComponent = ({
     },
     [showTooltip, data, series, xAxisKey, colors, innerW, m.left]
   );
-  const handleMouseLeave = (0, import_react44.useCallback)(() => setTooltip(null), []);
-  return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(
+  const handleMouseLeave = (0, import_react46.useCallback)(() => setTooltip(null), []);
+  return /* @__PURE__ */ (0, import_jsx_runtime56.jsxs)(
     "div",
     {
       className,
@@ -12640,7 +13347,7 @@ var AreaChartComponent = ({
         ...style
       },
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime56.jsxs)(
           "svg",
           {
             width: "100%",
@@ -12650,7 +13357,7 @@ var AreaChartComponent = ({
             onMouseMove: handleMouseMove,
             onMouseLeave: handleMouseLeave,
             children: [
-              showGrid && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+              showGrid && /* @__PURE__ */ (0, import_jsx_runtime56.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                 "line",
                 {
                   x1: m.left,
@@ -12660,8 +13367,8 @@ var AreaChartComponent = ({
                 },
                 t
               )) }),
-              finalPaths.map(({ areaPath: ap, linePath: lp, color, name }) => /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("g", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+              finalPaths.map(({ areaPath: ap, linePath: lp, color, name }) => /* @__PURE__ */ (0, import_jsx_runtime56.jsxs)("g", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                   "path",
                   {
                     d: ap,
@@ -12670,7 +13377,7 @@ var AreaChartComponent = ({
                     stroke: "none"
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                   AnimatedLineStroke,
                   {
                     pathD: lp,
@@ -12680,8 +13387,8 @@ var AreaChartComponent = ({
                   }
                 )
               ] }, name)),
-              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime56.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                   "line",
                   {
                     x1: m.left + xScale(tooltip.activeIndex),
@@ -12698,7 +13405,7 @@ var AreaChartComponent = ({
                   const p = points[tooltip.activeIndex];
                   if (!p)
                     return null;
-                  return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+                  return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                     "circle",
                     {
                       cx: p.x,
@@ -12718,7 +13425,7 @@ var AreaChartComponent = ({
                   const cx2 = m.left + xScale(tooltip.activeIndex);
                   const cy = m.top + yScale(num);
                   const color = (_b2 = s.color) != null ? _b2 : colors[si % colors.length];
-                  return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+                  return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                     "circle",
                     {
                       cx: cx2,
@@ -12733,14 +13440,14 @@ var AreaChartComponent = ({
                   );
                 })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: data.map((row, i) => {
+              /* @__PURE__ */ (0, import_jsx_runtime56.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: data.map((row, i) => {
                 var _a2;
-                return /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("text", { x: m.left + xScale(i), y: m.top + innerH + 16, children: String((_a2 = row[xAxisKey]) != null ? _a2 : "") }, i);
+                return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)("text", { x: m.left + xScale(i), y: m.top + innerH + 16, children: String((_a2 = row[xAxisKey]) != null ? _a2 : "") }, i);
               }) })
             ]
           }
         ),
-        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
           ChartTooltip,
           {
             theme,
@@ -12755,7 +13462,7 @@ var AreaChartComponent = ({
             followPointer: tooltipFollowPointer
           }
         ),
-        showLegend && /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
           "div",
           {
             style: {
@@ -12769,8 +13476,8 @@ var AreaChartComponent = ({
             },
             children: series.map((s, i) => {
               var _a2, _b2;
-              return /* @__PURE__ */ (0, import_jsx_runtime51.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)(
+              return /* @__PURE__ */ (0, import_jsx_runtime56.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(
                   "span",
                   {
                     style: {
@@ -12781,7 +13488,7 @@ var AreaChartComponent = ({
                     }
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime51.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
+                /* @__PURE__ */ (0, import_jsx_runtime56.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
               ] }, s.dataKey);
             })
           }
@@ -12790,7 +13497,7 @@ var AreaChartComponent = ({
     }
   );
 };
-var AreaChart_default = import_react44.default.memo(AreaChartComponent);
+var AreaChart_default = import_react46.default.memo(AreaChartComponent);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Accordion,
@@ -12831,6 +13538,11 @@ var AreaChart_default = import_react44.default.memo(AreaChartComponent);
   DropdownMenuItem,
   DropdownMenuTrigger,
   Dropzone,
+  EmptyState,
+  ErrorAnimation,
+  ErrorState,
+  FEEDBACK_ANIMATIONS,
+  FeedbackState,
   FileUpload,
   Form,
   GradientText,
@@ -12838,10 +13550,15 @@ var AreaChart_default = import_react44.default.memo(AreaChartComponent);
   GridItem,
   Hyperlink,
   Icon,
+  InfoAnimation,
   Input,
   InputSearch,
   LineChart,
   Modal,
+  NoDataAnimation,
+  NoSearchResultsAnimation,
+  OfflineAnimation,
+  OfflineBanner,
   OtpBox,
   PieChart,
   Popover,
@@ -12852,6 +13569,7 @@ var AreaChart_default = import_react44.default.memo(AreaChartComponent);
   Select,
   Stepper,
   StepperStep,
+  SuccessAnimation,
   Switch,
   Table,
   TableBody,

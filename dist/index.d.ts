@@ -1,7 +1,7 @@
 import * as React$1 from 'react';
 import React__default, { HTMLAttributes, ReactNode, LiHTMLAttributes, AnchorHTMLAttributes, ButtonHTMLAttributes, TextareaHTMLAttributes, ChangeEvent } from 'react';
-import { B as ButtonProps } from './table-d6a43663.js';
-export { i as InputSearch, j as InputSearchProps, k as SearchActionButtonProps, S as SearchButtonDisplay, T as Table, d as TableBody, u as TableBodyProps, b as TableCaption, s as TableCaptionProps, h as TableCell, y as TableCellProps, l as TableColumn, e as TableFooter, v as TableFooterProps, g as TableHead, x as TableHeadProps, c as TableHeader, t as TableHeaderProps, o as TableLayout, m as TableProps, a as TableRoot, r as TableRootProps, f as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-d6a43663.js';
+import { B as ButtonProps } from './table-c7bb157a.js';
+export { i as InputSearch, j as InputSearchProps, k as SearchActionButtonProps, S as SearchButtonDisplay, T as Table, d as TableBody, u as TableBodyProps, b as TableCaption, s as TableCaptionProps, h as TableCell, y as TableCellProps, l as TableColumn, e as TableFooter, v as TableFooterProps, g as TableHead, x as TableHeadProps, c as TableHeader, t as TableHeaderProps, o as TableLayout, m as TableProps, a as TableRoot, r as TableRootProps, f as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-c7bb157a.js';
 import { I as IconSource } from './index-8a491a10.js';
 export { a as Icon, b as IconProps } from './index-8a491a10.js';
 import * as react_jsx_runtime from 'react/jsx-runtime';
@@ -1197,6 +1197,179 @@ interface DividerProps {
 
 declare const Divider: React__default.FC<DividerProps>;
 
+type FeedbackVisualTone = "neutral" | "info" | "success" | "warning" | "danger";
+/** Shared size scale across all feedback shells. */
+type FeedbackSize = "sm" | "md" | "lg";
+interface EmptyStateProps {
+    /** Primary heading ("No results", "Nothing here yet") */
+    title: ReactNode;
+    /** Supporting copy beneath the heading */
+    description?: ReactNode;
+    /**
+     * Decorative glyph, `<Icon />`, or small illustration.
+     * Supply `aria-hidden="true"` on decorative nodes or use `iconLabel` for labelled icons.
+     */
+    icon?: ReactNode;
+    /** Accessible label for the icon when it is not purely decorative */
+    iconLabel?: string;
+    /** Large illustration or image rendered above the heading */
+    image?: ReactNode;
+    /** Primary CTA */
+    action?: ReactNode;
+    /**
+     * Secondary CTAs or links rendered below the primary action.
+     * Accepts any ReactNode — buttons, hyperlinks, etc.
+     */
+    extra?: ReactNode;
+    className?: string;
+    /** @default "status" */
+    role?: "status" | "region";
+    /** @default "polite" */
+    "aria-live"?: "off" | "polite";
+    /** Visually subdued treatment for dense layouts */
+    compact?: boolean;
+    /** @default "md" */
+    size?: FeedbackSize;
+    /** Text/content alignment — default centered, `"start"` for list panels & drawers */
+    align?: "center" | "start";
+    tone?: Extract<FeedbackVisualTone, "neutral" | "info" | "success" | "warning">;
+    "data-testid"?: string;
+}
+interface ErrorStateProps {
+    /** Default: "Something went wrong" */
+    title?: ReactNode;
+    /** Default: apology + guidance */
+    description?: ReactNode;
+    /** Large illustration / animated SVG rendered above the heading */
+    image?: ReactNode;
+    /** Optional icon override — component supplies a default danger icon when `tone="danger"` */
+    icon?: ReactNode;
+    /** Hide the default status icon even when the component would show one */
+    hideIcon?: boolean;
+    /** Optional visible diagnostics for support desks */
+    details?: ReactNode;
+    /** Label for the primary retry button. Default: "Try again" */
+    retryLabel?: string;
+    /** When provided, renders a primary retry button */
+    onRetry?: () => void;
+    /**
+     * Additional actions or links rendered below the retry button.
+     * Useful for "Go home", "Contact support", etc.
+     */
+    extra?: ReactNode;
+    className?: string;
+    tone?: FeedbackVisualTone;
+    compact?: boolean;
+    /** @default "md" */
+    size?: FeedbackSize;
+    align?: "center" | "start";
+    /**
+     * Live politeness — defaults to `"assertive"` when `role="alert"`, `"polite"` when `role="status"`.
+     * Override to `"polite"` for non-blocking inline errors.
+     */
+    "aria-live"?: "off" | "polite" | "assertive";
+    /** @default "alert" when `details` or `onRetry` is present, otherwise "status" */
+    role?: "alert" | "status";
+    "data-testid"?: string;
+}
+interface OfflineBannerProps {
+    /**
+     * Primary headline of the banner.
+     * Default: "No internet connection."
+     */
+    headline?: ReactNode;
+    /** Secondary guidance line below the headline */
+    message?: ReactNode;
+    /** Icon/glyph rendered before the text block. Supply `aria-hidden` on decorative nodes. */
+    leadingIcon?: ReactNode;
+    /**
+     * Optional large illustration rendered above the headline (Zone 4 usage).
+     * Use `<OfflineAnimation />` for the built-in animated SVG.
+     */
+    image?: ReactNode;
+    /** Label for the retry button. Default: "Retry" */
+    actionLabel?: string;
+    onRetry?: () => void;
+    /** When provided, renders a dismiss (close) button and calls this on click */
+    onDismiss?: () => void;
+    /** Accessible label for the dismiss button. Default: "Dismiss" */
+    dismissLabel?: string;
+    className?: string;
+    sticky?: boolean;
+    tone?: Extract<FeedbackVisualTone, "neutral" | "warning">;
+    compact?: boolean;
+    /** @default "status" */
+    role?: "status";
+}
+type FeedbackStateVariant = "empty" | "error" | "offline" | "success" | "info";
+type FeedbackStateProps = ({
+    variant: "empty";
+} & EmptyStateProps) | ({
+    variant: "error";
+} & ErrorStateProps) | ({
+    variant: "offline";
+} & OfflineBannerProps) | ({
+    variant: "success";
+} & EmptyStateProps) | ({
+    variant: "info";
+} & EmptyStateProps);
+
+/**
+ * Variant-driven molecule — mirrors the `Card` / `Button` pattern in this kit.
+ *
+ * | variant   | delegates to  | default tone        |
+ * |-----------|---------------|---------------------|
+ * | "empty"   | `EmptyState`  | neutral             |
+ * | "success" | `EmptyState`  | success (auto-icon) |
+ * | "info"    | `EmptyState`  | info    (auto-icon) |
+ * | "error"   | `ErrorState`  | danger  (auto-icon) |
+ * | "offline" | `OfflineBanner` | warning            |
+ *
+ * Prefer dedicated imports (`EmptyState`, `ErrorState`, …) for explicit JSX; prefer
+ * `FeedbackState variant="…"` for phase-machine switches from `useAsyncContentPhase`.
+ */
+declare function FeedbackState(props: FeedbackStateProps): react_jsx_runtime.JSX.Element;
+
+declare function ErrorState({ title, description, image, icon, hideIcon, details, retryLabel, onRetry, extra, className, tone, compact, size, align, "aria-live": ariaLive, role, "data-testid": testId, }: ErrorStateProps): react_jsx_runtime.JSX.Element;
+
+declare function OfflineBanner({ headline, message, leadingIcon, image, actionLabel, onRetry, onDismiss, dismissLabel, className, sticky, tone, compact, role, }: OfflineBannerProps): react_jsx_runtime.JSX.Element;
+
+declare function EmptyState({ title, description, icon, iconLabel, image, action, extra, className, role, compact, size, align, tone, "aria-live": ariaLive, "data-testid": testId, }: EmptyStateProps): react_jsx_runtime.JSX.Element;
+
+interface IllustrationProps {
+    /** Width & height in px. Default: 120 */
+    size?: number;
+    className?: string;
+    "aria-hidden"?: boolean | "true" | "false";
+}
+/**
+ * Animated empty inbox / tray — floats gently and shows dotted empty lines.
+ * Used as the default illustration for `EmptyState`.
+ */
+declare function NoDataAnimation({ size, className, "aria-hidden": ariaHidden }: IllustrationProps): react_jsx_runtime.JSX.Element;
+/** Animated magnifier with a ✕ — for "no results found" empty states. */
+declare function NoSearchResultsAnimation({ size, className, "aria-hidden": ariaHidden }: IllustrationProps): react_jsx_runtime.JSX.Element;
+/** Animated error shield — pulses to draw attention. */
+declare function ErrorAnimation({ size, className, "aria-hidden": ariaHidden }: IllustrationProps): react_jsx_runtime.JSX.Element;
+/**
+ * Animated no-wifi / disconnected illustration.
+ * Wifi arcs fade out one-by-one to suggest lost connection.
+ */
+declare function OfflineAnimation({ size, className, "aria-hidden": ariaHidden }: IllustrationProps): react_jsx_runtime.JSX.Element;
+/** Animated checkmark in a circle — for success / confirmed states. */
+declare function SuccessAnimation({ size, className, "aria-hidden": ariaHidden }: IllustrationProps): react_jsx_runtime.JSX.Element;
+/** Animated info circle — subtle pulse for informational notices. */
+declare function InfoAnimation({ size, className, "aria-hidden": ariaHidden }: IllustrationProps): react_jsx_runtime.JSX.Element;
+declare const FEEDBACK_ANIMATIONS: {
+    readonly empty: typeof NoDataAnimation;
+    readonly "no-search": typeof NoSearchResultsAnimation;
+    readonly error: typeof ErrorAnimation;
+    readonly offline: typeof OfflineAnimation;
+    readonly success: typeof SuccessAnimation;
+    readonly info: typeof InfoAnimation;
+};
+type FeedbackAnimationName = keyof typeof FEEDBACK_ANIMATIONS;
+
 interface SelectOption {
     label: string;
     value: string;
@@ -1426,4 +1599,4 @@ interface HyperlinkProps {
 
 declare const Hyperlink: React__default.FC<HyperlinkProps>;
 
-export { Accordion, AccordionContent, AccordionContentProps, AccordionContextValue, AccordionDensity, AccordionItem, AccordionItemProps, AccordionMotion, AccordionProps, AccordionTrigger, AccordionTriggerProps, AccordionType, AccordionVariant, AlertDialog, AlertDialogProps, AlertDialogVariant, AvatarProps, Avatar as Avtar, Badge, BadgeProps, BadgeShape, BadgeSize, BadgeTone, BadgeVariant, Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupContextValue, ButtonGroupOrientation, ButtonGroupProps, ButtonGroupSeparator, ButtonGroupSeparatorProps, ButtonGroupText, ButtonGroupTextProps, ButtonProps, Calendar, CalendarAnimation, CalendarCaptionLayout, CalendarElevation, CalendarProps, CalendarSize, CalendarTheme, CalendarVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps, CardSize, CardTitle, CardTitleProps, CardVariantName, Checkbox as CheckBox, CheckboxProps, Chip, ChipProps, Combobox, ComboboxGroup, ComboboxOption, ComboboxProps, DatePicker, DatePickerProps, DetectedKind, Divider, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuItemProps, DropdownMenuTrigger, Dropzone, DropzoneProps, FileUpload, FileUploadProps, FileUploadSecurityOptions, FileUploadSize, Form, FormProps, GradientText, GradientTextProps, Grid, GridItem, GridItemProps, GridProps, Hyperlink, HyperlinkProps, IconSource, TextInput as Input, TextInputProps as InputProps, Modal, ModalProps, OtpBox, OtpBoxProps, OtpBoxSize, OtpBoxVariant, Popover, PopoverContent, PopoverContentProps, PopoverPlacement, PopoverProps, PopoverTrigger, PopoverTriggerProps, ProgressBar, ProgressBarProps, RadioButtonProps, RadioGroup, Select, SelectOptionGroup, SelectProps, Stepper, StepperAppearance, StepperContextValue, StepperProps, StepperSize, StepperStep, StepperStepProps, StepperTrackMode, Switch, SwitchProps, SwitchSize, Tabs, TabsActivationMode, TabsContent, TabsContentAnimation, TabsContentProps, TabsContextValue, TabsList, TabsListLayout, TabsListProps, TabsOrientation, TabsProps, TabsSize, TabsTrigger, TabsTriggerAlign, TabsTriggerLayout, TabsTriggerProps, TabsVariant, Tag, TagProps, TextArea, TextAreaProps, TextView, TextViewProps, TooltipIcon as ToolTip, TooltipIconProps, detectFileKindFromBuffer, parseAcceptString, validateFileSecurity, validateFilename, validateFilesSecurity };
+export { Accordion, AccordionContent, AccordionContentProps, AccordionContextValue, AccordionDensity, AccordionItem, AccordionItemProps, AccordionMotion, AccordionProps, AccordionTrigger, AccordionTriggerProps, AccordionType, AccordionVariant, AlertDialog, AlertDialogProps, AlertDialogVariant, AvatarProps, Avatar as Avtar, Badge, BadgeProps, BadgeShape, BadgeSize, BadgeTone, BadgeVariant, Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupContextValue, ButtonGroupOrientation, ButtonGroupProps, ButtonGroupSeparator, ButtonGroupSeparatorProps, ButtonGroupText, ButtonGroupTextProps, ButtonProps, Calendar, CalendarAnimation, CalendarCaptionLayout, CalendarElevation, CalendarProps, CalendarSize, CalendarTheme, CalendarVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps, CardSize, CardTitle, CardTitleProps, CardVariantName, Checkbox as CheckBox, CheckboxProps, Chip, ChipProps, Combobox, ComboboxGroup, ComboboxOption, ComboboxProps, DatePicker, DatePickerProps, DetectedKind, Divider, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuItemProps, DropdownMenuTrigger, Dropzone, DropzoneProps, EmptyState, EmptyStateProps, ErrorAnimation, ErrorState, ErrorStateProps, FEEDBACK_ANIMATIONS, FeedbackAnimationName, FeedbackSize, FeedbackState, FeedbackStateProps, FeedbackStateVariant, FeedbackVisualTone, FileUpload, FileUploadProps, FileUploadSecurityOptions, FileUploadSize, Form, FormProps, GradientText, GradientTextProps, Grid, GridItem, GridItemProps, GridProps, Hyperlink, HyperlinkProps, IconSource, InfoAnimation, TextInput as Input, TextInputProps as InputProps, Modal, ModalProps, NoDataAnimation, NoSearchResultsAnimation, OfflineAnimation, OfflineBanner, OfflineBannerProps, OtpBox, OtpBoxProps, OtpBoxSize, OtpBoxVariant, Popover, PopoverContent, PopoverContentProps, PopoverPlacement, PopoverProps, PopoverTrigger, PopoverTriggerProps, ProgressBar, ProgressBarProps, RadioButtonProps, RadioGroup, Select, SelectOptionGroup, SelectProps, Stepper, StepperAppearance, StepperContextValue, StepperProps, StepperSize, StepperStep, StepperStepProps, StepperTrackMode, SuccessAnimation, Switch, SwitchProps, SwitchSize, Tabs, TabsActivationMode, TabsContent, TabsContentAnimation, TabsContentProps, TabsContextValue, TabsList, TabsListLayout, TabsListProps, TabsOrientation, TabsProps, TabsSize, TabsTrigger, TabsTriggerAlign, TabsTriggerLayout, TabsTriggerProps, TabsVariant, Tag, TagProps, TextArea, TextAreaProps, TextView, TextViewProps, TooltipIcon as ToolTip, TooltipIconProps, detectFileKindFromBuffer, parseAcceptString, validateFileSecurity, validateFilename, validateFilesSecurity };

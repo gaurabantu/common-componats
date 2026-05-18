@@ -75,9 +75,13 @@ export default function TableHeader<T extends Record<string, unknown>>({
             }
           >
             {col.headerRender ? col.headerRender(col) : col.header}
-            {col.sortable && sortState.key === col.key && (
+            {col.sortable && (
               <span className="table-sort-icon" aria-hidden>
-                {sortState.dir === "asc" ? " ▲" : sortState.dir === "desc" ? " ▼" : ""}
+                {sortState.key !== col.key || !sortState.dir
+                  ? " ↕"
+                  : sortState.dir === "asc"
+                    ? " ▲"
+                    : " ▼"}
               </span>
             )}
           </th>

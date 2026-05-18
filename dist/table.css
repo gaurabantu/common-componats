@@ -221,6 +221,8 @@
 .table-wrapper {
   --table-surface: var(--color-bg-surface, #fff);
   --table-border-token: var(--color-border-default, #e0e0e0);
+  --table-divider-color: var(--color-border-subtle, var(--color-mist-60, #d9d9d9));
+  --table-cell-divider-color: var(--color-border-subtle, var(--color-mist-60, #d9d9d9));
   font-family:
     var(--font-family, "Inter"),
     system-ui,
@@ -319,7 +321,7 @@
   padding: var(--space-2, 16px) var(--space-2, 16px) var(--space-1, 8px);
   margin-bottom: 0;
   min-height: var(--space-5, 40px);
-  border-bottom: 1px solid var(--color-border-default, #e0e0e0);
+  border-bottom: 1px solid var(--table-divider-color);
 }
 .table-toolbar-left {
   flex: 1 1 auto;
@@ -373,7 +375,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-text-secondary, #757575);
-  border-bottom: 2px solid var(--color-border-default, #e0e0e0);
+  border-bottom: 2px solid var(--table-cell-divider-color);
   white-space: nowrap;
 }
 .table-thead th.text-center {
@@ -403,7 +405,7 @@
 }
 .table-tbody td {
   padding: 12px var(--space-2, 16px);
-  border-bottom: 1px solid var(--color-border-default, #e0e0e0);
+  border-bottom: 1px solid var(--table-cell-divider-color);
   color: var(--color-text-primary, #0d0d0d);
   vertical-align: middle;
 }
@@ -427,10 +429,10 @@
 }
 .table-bordered .table-thead th,
 .table-bordered .table-tbody td {
-  border: 1px solid var(--color-border-default, #e0e0e0);
+  border: 1px solid var(--table-cell-divider-color);
 }
 .table-bordered .table-thead th {
-  border-bottom: 2px solid var(--color-border-default, #e0e0e0);
+  border-bottom: 2px solid var(--table-cell-divider-color);
 }
 .table-size-sm .table-thead th,
 .table-size-sm .table-tbody td {
@@ -558,15 +560,19 @@
 }
 .table-expanded-row td {
   padding: 0 !important;
-  border-bottom: 1px solid var(--color-border-default, #e0e0e0);
+  border-bottom: 1px solid var(--table-cell-divider-color);
   background: var(--color-bg-secondary, #f9fafb) !important;
   vertical-align: top;
 }
 .table-base tfoot td {
   padding: 12px var(--space-2, 16px);
-  border-top: 2px solid var(--color-border-default, #e0e0e0);
+  border-top: 2px solid var(--table-cell-divider-color);
   background: var(--color-bg-secondary, #f5f5f5);
   font-weight: 500;
+}
+.table-vertical-divider .table-thead th:not(:last-child),
+.table-vertical-divider .table-tbody td:not(:last-child) {
+  border-right: 1px solid var(--table-cell-divider-color);
 }
 .table-empty {
   padding: var(--space-6, 48px) var(--space-3, 24px);
@@ -583,7 +589,7 @@
   flex-wrap: wrap;
   gap: var(--space-2, 16px);
   padding: var(--space-2, 16px);
-  border-top: 1px solid var(--color-border-default, #e0e0e0);
+  border-top: 1px solid var(--table-divider-color);
   background: var(--color-bg-surface, #fff);
 }
 .table-pagination-nav {
@@ -592,14 +598,14 @@
   gap: var(--space-1, 8px);
 }
 .table-pagination-btn {
-  min-width: 40px;
-  min-height: 40px;
+  min-width: var(--button-height-sm, 2rem);
+  min-height: var(--button-height-sm, 2rem);
   padding: 0 var(--space-1, 8px);
   border: 1px solid var(--color-border-default, #e0e0e0);
   background: var(--color-bg-surface, #fff);
   border-radius: var(--radius-base, 4px);
   cursor: pointer;
-  font-size: var(--text-body-size, 14px);
+  font-size: var(--text-secondary-size, 14px);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -620,14 +626,14 @@
   cursor: not-allowed;
 }
 .table-pagination-page {
-  min-width: 40px;
-  min-height: 40px;
+  min-width: var(--button-height-sm, 2rem);
+  min-height: var(--button-height-sm, 2rem);
   padding: 0 var(--space-1, 8px);
   border: none;
   background: transparent;
   border-radius: var(--radius-base, 4px);
   cursor: pointer;
-  font-size: var(--text-body-size, 14px);
+  font-size: var(--text-secondary-size, 14px);
   display: inline-flex;
   align-items: center;
   justify-content: center;

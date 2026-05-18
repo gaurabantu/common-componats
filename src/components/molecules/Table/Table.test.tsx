@@ -44,6 +44,11 @@ describe("Table", () => {
     expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
   });
 
+  it("shows default sort indicator on sortable headers", () => {
+    render(<Table columns={columns} data={data} searchable={false} pagination={false} />);
+    expect(screen.getByText("↕")).toBeInTheDocument();
+  });
+
   it("has scope=col on header cells", () => {
     const { container } = render(<Table columns={columns} data={data} searchable={false} pagination={false} />);
     const headers = container.querySelectorAll("th[scope='col']");
@@ -59,6 +64,13 @@ describe("Table", () => {
     expect(container.querySelector("table.table-size-lg")).toBeTruthy();
   });
 
+  it("applies vertical divider class when enabled", () => {
+    const { container } = render(
+      <Table columns={columns} data={data} searchable={false} pagination={false} verticalDivider />
+    );
+    expect(container.querySelector("table.table-vertical-divider")).toBeTruthy();
+  });
+
   it("clamps current page when data shrinks so the prior page is empty", async () => {
     const user = userEvent.setup();
     const { rerender } = render(
@@ -70,6 +82,40 @@ describe("Table", () => {
     rerender(<Table columns={columns} data={[data[0]!]} searchable={false} pagination={{ pageSize: 1 }} />);
     expect(screen.getByText("Alice")).toBeInTheDocument();
     expect(screen.queryByText("Bob")).not.toBeInTheDocument();
+  });
+
+  it("uses small page-size selector in pagination controls by default", () => {
+    render(<Table columns={columns} data={data} searchable={false} pagination={{ pageSize: 1 }} />);
+    expect(screen.getByRole("combobox")).toHaveStyle({ minHeight: "36px" });
+  });
+
+  it("sorts numeric string values numerically in asc and desc order", async () => {
+    const user = userEvent.setup();
+    const numericColumns: TableColumn[] = [
+      { key: "name", header: "Name" },
+      { key: "score", header: "Score", sortable: true, sortType: "number" },
+    ];
+    const numericData = [
+      { id: "1", name: "One", score: "2" },
+      { id: "2", name: "Two", score: "10" },
+      { id: "3", name: "Three", score: "1" },
+    ];
+
+    const { container } = render(
+      <Table columns={numericColumns} data={numericData} searchable={false} pagination={false} />
+    );
+    await user.click(screen.getByText("Score"));
+
+    let scoreCells = Array.from(container.querySelectorAll("tbody tr td:nth-child(2)")).map((cell) =>
+      cell.textContent?.trim()
+    );
+    expect(scoreCells).toEqual(["1", "2", "10"]);
+
+    await user.click(screen.getByText("Score"));
+    scoreCells = Array.from(container.querySelectorAll("tbody tr td:nth-child(2)")).map((cell) =>
+      cell.textContent?.trim()
+    );
+    expect(scoreCells).toEqual(["10", "2", "1"]);
   });
 
   it("renders skeleton rows when loadingVariant is skeleton", () => {

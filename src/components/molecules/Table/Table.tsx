@@ -24,11 +24,31 @@ function getRowKey<T>(row: T, index: number, rowKey?: keyof T | ((r: T, i: numbe
   return String(r?.id ?? r?.key ?? index);
 }
 
-function defaultSorter(a: unknown, b: unknown): number {
+function isNumericLike(value: unknown): boolean {
+  if (typeof value === "number") return Number.isFinite(value);
+  if (typeof value !== "string") return false;
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  return Number.isFinite(Number(trimmed));
+}
+
+function toNumber(value: unknown): number {
+  return typeof value === "number" ? value : Number(String(value).trim());
+}
+
+function defaultSorter(a: unknown, b: unknown, sortType: "auto" | "string" | "number" = "auto"): number {
   if (a == null && b == null) return 0;
   if (a == null) return 1;
   if (b == null) return -1;
-  if (typeof a === "number" && typeof b === "number") return a - b;
+
+  const shouldUseNumericSort =
+    sortType === "number" ||
+    (sortType === "auto" && isNumericLike(a) && isNumericLike(b));
+
+  if (shouldUseNumericSort) {
+    return toNumber(a) - toNumber(b);
+  }
+
   return String(a).localeCompare(String(b));
 }
 
@@ -58,6 +78,7 @@ function TableInner<T extends Record<string, unknown>>({
   emptyComponent,
   striped = true,
   bordered = false,
+  verticalDivider = false,
   hover = true,
   compact = false,
   headerColor = "light",
@@ -111,7 +132,14 @@ function TableInner<T extends Record<string, unknown>>({
     if (!sortState.key || !sortState.dir) return filteredData;
     const col = visibleColumns.find((c) => c.key === sortState.key);
     if (!col?.sortable) return filteredData;
-    const sorter = col.sorter ?? ((a, b) => defaultSorter((a as Record<string, unknown>)[col.key], (b as Record<string, unknown>)[col.key]));
+    const sorter =
+      col.sorter ??
+      ((a, b) =>
+        defaultSorter(
+          (a as Record<string, unknown>)[col.key],
+          (b as Record<string, unknown>)[col.key],
+          col.sortType ?? "auto"
+        ));
     const sorted = [...filteredData].sort((a, b) => {
       const v = sorter(a, b, col.key);
       return sortState.dir === "asc" ? v : -v;
@@ -232,6 +260,7 @@ function TableInner<T extends Record<string, unknown>>({
         tableLayout === "fixed" && "table-layout-fixed",
         variant === "minimal" && "table-variant-minimal",
         (bordered || variant === "bordered") && "table-bordered",
+        verticalDivider && "table-vertical-divider",
         stickyHeader && "table-sticky-header",
         striped && config.striped,
         hover && config.hover,
@@ -418,6 +447,7 @@ function TableInner<T extends Record<string, unknown>>({
               <Select
                 options={pageSizeOptions.map((n) => ({ label: String(n), value: String(n) }))}
                 value={String(itemsPerPage)}
+                size="sm"
                 onValueChange={(v) => {
                   setItemsPerPage(Number(v));
                   setCurrentPage(1);

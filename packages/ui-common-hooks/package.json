@@ -1,0 +1,43 @@
+{
+  "name": "ui-common-hooks",
+  "version": "0.3.0",
+  "description": "Essential React hooks for ui-common-components (gestures, async, stale guards)",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
+    "clean": "rimraf dist",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["react", "hooks", "gestures", "debounce"],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@types/react-dom": "19.2.2",
+    "@types/react": "19.2.2",
+    "@vitejs/plugin-react": "^5.1.4",
+    "jsdom": "^28.1.0",
+    "react": "19.1.2",
+    "react-dom": "19.1.2",
+    "rimraf": "5.0.10",
+    "tsup": "6.7.0",
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

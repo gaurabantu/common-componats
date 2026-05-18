@@ -2241,7 +2241,7 @@ function TableHeader({
         "aria-sort": col.sortable && sortState.key === col.key ? sortState.dir === "asc" ? "ascending" : sortState.dir === "desc" ? "descending" : "none" : void 0,
         children: [
           col.headerRender ? col.headerRender(col) : col.header,
-          col.sortable && sortState.key === col.key && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "table-sort-icon", "aria-hidden": true, children: sortState.dir === "asc" ? " \u25B2" : sortState.dir === "desc" ? " \u25BC" : "" })
+          col.sortable && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "table-sort-icon", "aria-hidden": true, children: sortState.key !== col.key || !sortState.dir ? " \u2195" : sortState.dir === "asc" ? " \u25B2" : " \u25BC" })
         ]
       },
       col.key
@@ -2360,15 +2360,30 @@ function getRowKey(row, index, rowKey) {
   const r = row;
   return String((_b = (_a = r == null ? void 0 : r.id) != null ? _a : r == null ? void 0 : r.key) != null ? _b : index);
 }
-function defaultSorter(a, b) {
+function isNumericLike(value) {
+  if (typeof value === "number")
+    return Number.isFinite(value);
+  if (typeof value !== "string")
+    return false;
+  const trimmed = value.trim();
+  if (!trimmed)
+    return false;
+  return Number.isFinite(Number(trimmed));
+}
+function toNumber(value) {
+  return typeof value === "number" ? value : Number(String(value).trim());
+}
+function defaultSorter(a, b, sortType = "auto") {
   if (a == null && b == null)
     return 0;
   if (a == null)
     return 1;
   if (b == null)
     return -1;
-  if (typeof a === "number" && typeof b === "number")
-    return a - b;
+  const shouldUseNumericSort = sortType === "number" || sortType === "auto" && isNumericLike(a) && isNumericLike(b);
+  if (shouldUseNumericSort) {
+    return toNumber(a) - toNumber(b);
+  }
   return String(a).localeCompare(String(b));
 }
 function TableInner({
@@ -2397,6 +2412,7 @@ function TableInner({
   emptyComponent,
   striped = true,
   bordered = false,
+  verticalDivider = false,
   hover = true,
   compact = false,
   headerColor = "light",
@@ -2451,7 +2467,14 @@ function TableInner({
     const col = visibleColumns.find((c) => c.key === sortState.key);
     if (!(col == null ? void 0 : col.sortable))
       return filteredData;
-    const sorter = (_a2 = col.sorter) != null ? _a2 : (a, b) => defaultSorter(a[col.key], b[col.key]);
+    const sorter = (_a2 = col.sorter) != null ? _a2 : (a, b) => {
+      var _a3;
+      return defaultSorter(
+        a[col.key],
+        b[col.key],
+        (_a3 = col.sortType) != null ? _a3 : "auto"
+      );
+    };
     const sorted = [...filteredData].sort((a, b) => {
       const v = sorter(a, b, col.key);
       return sortState.dir === "asc" ? v : -v;
@@ -2567,6 +2590,7 @@ function TableInner({
         tableLayout === "fixed" && "table-layout-fixed",
         variant === "minimal" && "table-variant-minimal",
         (bordered || variant === "bordered") && "table-bordered",
+        verticalDivider && "table-vertical-divider",
         stickyHeader && "table-sticky-header",
         striped && config.striped,
         hover && config.hover,
@@ -2718,6 +2742,7 @@ function TableInner({
           {
             options: pageSizeOptions.map((n) => ({ label: String(n), value: String(n) })),
             value: String(itemsPerPage),
+            size: "sm",
             onValueChange: (v) => {
               setItemsPerPage(Number(v));
               setCurrentPage(1);
