@@ -74,7 +74,7 @@ export const SearchAction: Story = {
             style={{
               marginTop: 12,
               fontSize: "var(--text-small-size, 12px)",
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
             }}
           >
             {searched ? `Search: ${searched}` : "Clear is off by default beside the action; pass showClearButton to enable it. Press Enter or tap the trailing button."}

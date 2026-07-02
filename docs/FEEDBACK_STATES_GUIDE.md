@@ -2,6 +2,8 @@
 
 Reference for `EmptyState`, `ErrorState`, `OfflineBanner`, `FeedbackState`, and the animated SVG illustration set.
 
+**Governance:** [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §22a (canonical zones) · §34 (empty/loading/error rules) · §35a (agent feedback routing) · [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) (FRD examples + CTA hierarchy).
+
 ---
 
 ## Overview
@@ -279,7 +281,35 @@ interface IllustrationProps {
 
 ---
 
-## Zone mapping (COMPOSITION_RULES_1)
+## Motion & reduced motion (§18)
+
+Feedback SVG illustrations are **decorative only**. They must never be the sole carrier of status — always pair with `title` / `description` (or `OfflineBanner` `headline`).
+
+| Rule | Detail |
+|------|--------|
+| **`aria-hidden`** | Default `"true"` on all six animation components. Set `"false"` only if you also provide visible text that duplicates the meaning (rare). |
+| **No autoplay policy violation** | Loops are CSS-only, muted, and decorative — not video/audio. |
+| **`prefers-reduced-motion: reduce`** | Keyframes disabled via `.ds-feedback-illustration` in `FeedbackStates.css` — static SVG remains visible. |
+| **Hook (optional)** | `usePrefersReducedMotion()` from `ui-common-hooks` if you wrap illustrations in custom motion logic. |
+
+Governance: [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §18.
+
+### AI review — acceptance criteria
+
+Before merging FeedbackStates usage, verify:
+
+- [ ] `title` (and `description` when helpful) present — animation alone is insufficient
+- [ ] Illustration uses library export (`NoDataAnimation`, etc.) or omits `image` — no third-party Lottie without reduced-motion handling
+- [ ] Decorative SVGs have `aria-hidden="true"` (default on library animations)
+- [ ] With OS “Reduce motion” enabled, illustration shows **static** art (no pulsing/floating/bouncing)
+- [ ] `ErrorState` / offline messaging still exposed via `role="alert"` or `role="status"` + `aria-live` as appropriate
+- [ ] No animation substitutes for loading state — use skeleton/table loading or explicit loading UI
+
+---
+
+## Zone mapping (DESIGN_SYSTEM §22a)
+
+Canonical zone definitions live in **`design-system/DESIGN_SYSTEM.md` §22a**. This table maps FeedbackStates components to zones (matches Storybook real-world stories):
 
 | Zone | Component mode | Notes |
 |------|---------------|-------|
@@ -296,7 +326,7 @@ interface IllustrationProps {
 - Both `EmptyState` and `ErrorState` use `useId` internally to set `aria-labelledby` and `aria-describedby`.
 - `ErrorState` defaults `role="alert"` and `aria-live="assertive"` — override with `role="status"` + `aria-live="polite"` for non-critical errors.
 - `OfflineBanner` defaults `role="status"` and `aria-atomic="true"`.
-- Animated SVGs are `aria-hidden="true"` by default — they are decorative.
+- Animated SVGs are `aria-hidden="true"` by default — they are decorative; see **Motion & reduced motion** above.
 - Touch targets: all action buttons are ≥ 44×44px.
 
 ---

@@ -59,7 +59,7 @@ export const WithCover: Story = {
         style={{
           height: 160,
           background:
-            "linear-gradient(135deg, var(--color-accent-sky-10, #E6F2FF), var(--color-accent-lavender-10, #EEE7FF))",
+            "linear-gradient(135deg, var(--color-accent-sky-10), var(--color-accent-lavender-10))",
         }}
       />
     ),
@@ -88,7 +88,7 @@ export const RightAlignedActions: Story = {
         style={{
           height: 140,
           background:
-            "linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%)",
+            "linear-gradient(135deg, var(--color-accent-lavender-10) 0%, var(--color-accent-lavender-40) 100%)",
         }}
       />
     ),
@@ -171,7 +171,7 @@ export const ComposedWithImage: Story = {
           height: 140,
           width: "100%",
           background:
-            "linear-gradient(135deg, var(--color-accent-sky-10, #E6F2FF), var(--color-accent-lavender-10, #EEE7FF))",
+            "linear-gradient(135deg, var(--color-accent-sky-10), var(--color-accent-lavender-10))",
         }}
       />
       <CardHeader>

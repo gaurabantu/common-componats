@@ -293,8 +293,8 @@ const Calendar: React.FC<CalendarProps> = ({
     : (theme.borderRadius ?? 16);
   const resolvedBackground =
     variant === "filled"
-      ? "var(--color-bg-page, #F3F4F6)"
-      : (theme.background ?? "var(--color-bg-surface, #FFFFFF)");
+      ? "var(--color-bg-page)"
+      : (theme.background ?? "var(--color-bg-surface)");
 
   const containerStyle: React.CSSProperties = {
     ...cssVars,
@@ -331,7 +331,7 @@ const Calendar: React.FC<CalendarProps> = ({
     border: "none",
     borderRadius: theme.cellRadius ?? 10,
     background: "transparent",
-    color: theme.text ?? "var(--color-text-primary, #0D0D0D)",
+    color: theme.text ?? "var(--color-text-primary)",
     cursor: disabled ? "not-allowed" : "pointer",
     fontSize: 20,
     fontWeight: 500,
@@ -345,8 +345,8 @@ const Calendar: React.FC<CalendarProps> = ({
     borderRadius: theme.cellRadius ?? 10,
     fontSize: theme.cellFontSize ?? 14,
     fontWeight: 600,
-    color: theme.text ?? "var(--color-text-primary, #0D0D0D)",
-    backgroundColor: theme.background ?? "var(--color-bg-surface, #FFFFFF)",
+    color: theme.text ?? "var(--color-text-primary)",
+    backgroundColor: theme.background ?? "var(--color-bg-surface)",
     cursor: disabled ? "not-allowed" : "pointer",
     ...stylesProp?.select,
   };
@@ -374,7 +374,7 @@ const Calendar: React.FC<CalendarProps> = ({
     fontWeight: 600,
     letterSpacing: "0.5px",
     textTransform: "uppercase",
-    color: theme.textSecondary ?? "var(--color-text-secondary, #6B7280)",
+    color: theme.textSecondary ?? "var(--color-text-secondary)",
     padding: "10px 0",
     ...stylesProp?.weekday,
   };
@@ -427,7 +427,7 @@ const Calendar: React.FC<CalendarProps> = ({
               textAlign: "center",
               fontSize: theme.cellFontSize ?? 14,
               fontWeight: 600,
-              color: theme.text ?? "var(--color-text-primary, #0D0D0D)",
+              color: theme.text ?? "var(--color-text-primary)",
             }}
           >
             {captionLabel}
@@ -606,7 +606,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 style={{
                   ...cellBaseStyle,
                   fontSize: theme.weekdayFontSize ?? 11,
-                  color: theme.textSecondary ?? "var(--color-text-secondary, #757575)",
+                  color: theme.textSecondary ?? "var(--color-text-secondary)",
                 }}
               >
                 {weekNum}
@@ -631,18 +631,18 @@ const Calendar: React.FC<CalendarProps> = ({
             ...cellBaseStyle,
             cursor: isSelectable ? "pointer" : "default",
             color: isDisabled
-              ? (theme.textDisabled ?? "#B0B0B0")
+              ? (theme.textDisabled ?? "var(--color-text-disabled)")
               : !day.inCurrentMonth
-                ? (theme.textSecondary ?? "#9CA3AF")
+                ? (theme.textSecondary ?? "var(--color-text-secondary)")
                 : isSelected
-                  ? (theme.primaryText ?? "#FFFFFF")
-                  : (theme.text ?? "var(--color-text-primary, #0D0D0D)"),
+                  ? (theme.primaryText ?? "var(--color-text-on-primary)")
+                  : (theme.text ?? "var(--color-text-primary)"),
             background: isSelected
-              ? (theme.primary ?? "var(--button-primary-default-bg, #2563EB)")
+              ? (theme.primary ?? "var(--button-primary-default-bg)")
               : isInRange
-                ? (theme.rangeBackground ?? "var(--color-accent-sky-10, #E6F2FF)")
+                ? (theme.rangeBackground ?? "var(--color-accent-sky-10)")
                 : isToday
-                  ? (theme.todayBackground ?? "var(--color-accent-amber-10, #FFF6DD)")
+                  ? (theme.todayBackground ?? "var(--color-accent-amber-10)")
                   : "transparent",
             fontWeight: isSelected ? 700 : isToday ? 600 : 500,
             boxShadow: isToday && !isSelected

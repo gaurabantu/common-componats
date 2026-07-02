@@ -6,18 +6,14 @@ import type { Preview } from "@storybook/react";
  */
 import "../app/globals.css";
 import "./preview.css";
+import { applyDataTheme } from "./theme-bridge";
 
-/** Classic default: omit `data-theme` on `<html>`. Named values match blocks in `src/design-system/tokens.css`. */
+/** Same `data-theme` bridge as consumer apps — see `docs/design-system/THEMES.md`. */
 function withTheme(Story: React.ComponentType, context: { globals: { theme?: string } }) {
   const theme = context.globals.theme ?? "light";
   const Bridge = () => {
     useEffect(() => {
-      const root = document.documentElement;
-      if (theme === "light") {
-        root.removeAttribute("data-theme");
-      } else {
-        root.setAttribute("data-theme", theme);
-      }
+      applyDataTheme(theme);
     }, [theme]);
     return <Story />;
   };

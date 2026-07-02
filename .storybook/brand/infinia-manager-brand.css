@@ -1,10 +1,17 @@
 /**
- * Storybook manager shell — Infinia brand (staticDirs → /infinia-manager-brand.css).
- * `tokens.css` is linked first from manager-head; `html[data-theme="…"]` is set from the Theme toolbar sync.
+ * Storybook manager shell — token layer (canonical).
+ *
+ * Loaded after `tokens.css` in manager-head.html. `theme-bridge.ts` sets `data-theme` on `<html>`
+ * when the Theme toolbar changes, so these rules track the same Governance tokens as preview + apps.
+ *
+ * Hex values in `manager-palettes.ts` are a Storybook-only JS adapter (polished cannot parse var()).
+ * This file keeps manager chrome aligned with live token semantics where CSS can override emotion.
  */
 
 html {
   font-family: var(--font-family);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
 }
 
 img[src*="infinia-icon"],
@@ -15,4 +22,36 @@ img[src="/infinia-icon.png"] {
   height: auto !important;
   object-fit: contain !important;
   flex-shrink: 0 !important;
+}
+
+/* Sidebar search — token surfaces */
+input[aria-label="Search for components"],
+input[placeholder="Find components"],
+input[placeholder*="Find components"] {
+  background-color: var(--color-bg-surface) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border-default) !important;
+}
+
+input[aria-label="Search for components"]:focus-visible,
+input[placeholder="Find components"]:focus-visible,
+input[placeholder*="Find components"]:focus-visible {
+  outline: 2px solid var(--color-focus-ring) !important;
+  outline-offset: 2px;
+}
+
+/* Toolbar + panel chrome */
+button:focus-visible {
+  outline: 2px solid var(--color-focus-ring) !important;
+  outline-offset: 2px;
+}
+
+/* Selected story / accent — follows §42 `--color-theme-primary` after data-theme swap */
+[aria-selected="true"],
+[aria-current="true"] {
+  color: var(--color-theme-primary);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
 }

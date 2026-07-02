@@ -27,7 +27,7 @@ flowchart TD
   Idx --> Side["docs/internal/SIDEBAR_NAVIGATION_SYSTEM.md"]
   Idx --> Pkg["docs/internal/PACKAGES.md"]
   Idx --> Univ["docs/internal/AI_UNIVERSAL_DESIGN_RULES.md"]
-  Univ --> Comp["../COMPOSITION_RULES_1.md — zones + CTA hierarchy"]
+  Univ --> Comp["docs/COMPOSITION_RULES_1.md — zones + CTA hierarchy"]
   Comp --> Done["Apply: implement or generate using the whole doc set"]
 ```
 
@@ -51,7 +51,10 @@ flowchart TD
 14. [`internal/SIDEBAR_NAVIGATION_SYSTEM.md`](./internal/SIDEBAR_NAVIGATION_SYSTEM.md) — `AppSidebar` notes
 15. [`internal/PACKAGES.md`](./internal/PACKAGES.md) — dependency rationale
 16. [`internal/AI_UNIVERSAL_DESIGN_RULES.md`](./internal/AI_UNIVERSAL_DESIGN_RULES.md) — portable AI rules
-17. [`../COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md) — zones, CTA hierarchy, density
+17. [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) — zones, CTA hierarchy, density
+18. [`design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md) — token/CSS tables
+19. [`design-system/THEMES.md`](./design-system/THEMES.md) — theme enable syntax + QA
+20. [`design-system/COMPONENT_AUDIT.md`](./design-system/COMPONENT_AUDIT.md) — a11y/tokens checklist
 
 ---
 
@@ -59,9 +62,9 @@ flowchart TD
 
 | Location | Files |
 |----------|--------|
-| `./` (root) | `AGENTS.md`, `README.md`, `COMPOSITION_RULES_1.md` |
-| `docs/` | `README.md`, `AGENTS.md`, `AI_USAGE_GUIDE.md`, `UI_COMPONENTS_GUIDE.md`, `FEEDBACK_STATES_GUIDE.md`, `HOOKS_GUIDE.md` |
-| `docs/design-system/` | `README.md`, `DESIGN_SYSTEM.md`, `tokens.md`, `UX-Governance-Design-System.md` |
+| `./` (root) | `AGENTS.md`, `README.md` |
+| `docs/` | `README.md`, `AGENTS.md`, `AI_USAGE_GUIDE.md`, `UI_COMPONENTS_GUIDE.md`, `FEEDBACK_STATES_GUIDE.md`, `HOOKS_GUIDE.md`, `COMPOSITION_RULES_1.md` |
+| `docs/design-system/` | `README.md`, `DESIGN_SYSTEM.md`, `DESIGN_SYSTEM_TOKENS_REFERENCE.md`, `THEMES.md`, `COMPONENT_AUDIT.md`, `tokens.md`, `UX-Governance-Design-System.md` |
 | `docs/internal/` | `README.md`, `DOC_INDEX.md`, `APP_TOPBAR_SYSTEM.md`, `SIDEBAR_NAVIGATION_SYSTEM.md`, `PACKAGES.md`, `AI_UNIVERSAL_DESIGN_RULES.md` |
 | `packages/ui-common-hooks/` | `README.md` |
 
@@ -74,7 +77,10 @@ flowchart TD
 | [`UI_COMPONENTS_GUIDE.md`](./UI_COMPONENTS_GUIDE.md) | What to import, when to use each component, key props |
 | [`FEEDBACK_STATES_GUIDE.md`](./FEEDBACK_STATES_GUIDE.md) | EmptyState, ErrorState, OfflineBanner, FeedbackState, animated illustrations, zone mapping |
 | [`HOOKS_GUIDE.md`](./HOOKS_GUIDE.md) | All 25 hooks with examples and when to use each |
-| [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) | Designer source of truth: layout, spacing, cards, modals, accessibility |
+| [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) | Designer source of truth: layout, §22a zones, spacing, cards, modals, accessibility |
+| [`design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md) | Token/CSS tables (companion to DESIGN_SYSTEM.md) |
+| [`design-system/THEMES.md`](./design-system/THEMES.md) | Theme matrix, contrast, Storybook manager sync, QA checklist |
+| [`design-system/COMPONENT_AUDIT.md`](./design-system/COMPONENT_AUDIT.md) | Pre-ship a11y/tokens checklist |
 | [`design-system/tokens.md`](./design-system/tokens.md) | Token import path, theme hooks, token do/don't |
 | [`AI_USAGE_GUIDE.md`](./AI_USAGE_GUIDE.md) | How AI should read the docs and generate applications correctly |
 

@@ -23,7 +23,7 @@ const Avatar: React.FC<AvatarProps> = ({
   statusPosition = defaultStatusPosition,
   color,
   backgroundColor = defaultBackgroundColor,
-  textColor = "var(--color-text-primary, #0D0D0D)",
+  textColor = "var(--color-text-primary)",
   iconColor = defaultIconColor,
   iconSize,
   preserveColors = false,
@@ -54,17 +54,17 @@ const Avatar: React.FC<AvatarProps> = ({
       height: statusSize,
       position: "absolute",
       borderRadius: "9999px",
-      border: "2px solid var(--color-bg-surface, #FFFFFF)",
+      border: "2px solid var(--color-bg-surface)",
       backgroundColor:
         statusColor ||
         (status === "online"
-          ? "var(--color-state-success, #28A745)"
+          ? "var(--color-state-success)"
           : status === "busy"
-            ? "var(--color-state-error, #DC3545)"
+            ? "var(--color-state-error)"
             : status === "away"
-              ? "var(--color-state-warning, #FFC107)"
+              ? "var(--color-state-warning)"
               : status === "offline"
-                ? "var(--color-text-secondary, #757575)"
+                ? "var(--color-text-secondary)"
                 : "transparent"),
     };
 
@@ -166,7 +166,7 @@ const Avatar: React.FC<AvatarProps> = ({
                             : "var(--radius-lg, 8px)",
             border: bordered ? `1.5px solid ${borderColor}` : undefined,
             boxSizing: "border-box",
-            background: "var(--color-bg-surface, #FFFFFF)",
+            background: "var(--color-bg-surface)",
           }}
         />
       ) : (

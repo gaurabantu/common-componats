@@ -3,13 +3,13 @@ import React from "react";
 import type { GradientTextProps } from "./GradientText.types";
 
 const defaultGradient =
-  "linear-gradient(135deg, var(--color-brand-primary, #0d0d0d) 0%, var(--color-brand-secondary, #10b981) 100%)";
+  "linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%)";
 
 const GradientText = React.memo(function GradientText({
   children,
   as: Component = "span",
   gradient = defaultGradient,
-  fallbackColor = "var(--color-brand-primary, #0d0d0d)",
+  fallbackColor = "var(--color-brand-primary)",
   className = "",
   style,
 }: GradientTextProps) {

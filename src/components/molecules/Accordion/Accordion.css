@@ -31,13 +31,13 @@
 }
 
 .ds-accordion[data-variant="bordered"] {
-  border: 1px solid var(--color-border-default, #999999);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md, 8px);
   overflow: hidden;
 }
 
 .ds-accordion__item {
-  border-bottom: 1px solid var(--color-border-default, #999999);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .ds-accordion[data-variant="bordered"] .ds-accordion__item:last-child {
@@ -45,7 +45,7 @@
 }
 
 .ds-accordion[data-variant="default"] .ds-accordion__item {
-  border-bottom: 1px solid var(--color-border-default, #999999);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .ds-accordion[data-variant="default"] .ds-accordion__item:last-child {
@@ -68,7 +68,7 @@
   margin: 0;
   border: none;
   background: transparent;
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font: inherit;
   font-weight: 600;
   font-size: var(--text-secondary-size, 14px);
@@ -80,7 +80,7 @@
 }
 
 .ds-accordion__trigger:hover:not([data-disabled="true"]) {
-  background-color: var(--color-theme-surface-hover, var(--color-mist-20, #fafafa));
+  background-color: var(--color-theme-surface-hover, var(--color-mist-20));
 }
 
 .ds-accordion__trigger:focus {
@@ -88,7 +88,7 @@
 }
 
 .ds-accordion__trigger:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -106,7 +106,7 @@
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   transition: transform var(--duration-fast, 200ms) var(--easing-default);
 }
 
@@ -186,7 +186,7 @@
 
 .ds-accordion__content-body {
   padding: 0 var(--ds-accordion-content-px) var(--ds-accordion-content-pb);
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font-size: var(--text-body-size, 16px);
   line-height: 1.5;
 }

@@ -34,7 +34,7 @@ export function FeedbackState(props: FeedbackStateProps) {
       <EmptyState
         tone="success"
         icon={
-          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ color: "var(--color-success-strong, #15803d)" }}>
+          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ color: "var(--color-success-strong)" }}>
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
             <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -50,7 +50,7 @@ export function FeedbackState(props: FeedbackStateProps) {
       <EmptyState
         tone="info"
         icon={
-          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ color: "var(--color-info-strong, #1d4ed8)" }}>
+          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ color: "var(--color-info-strong)" }}>
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
             <path d="M12 8v.5M12 11v5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>

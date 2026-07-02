@@ -69,8 +69,8 @@ export default function Form({
     alignItems: "center",
     padding: "var(--space-1) var(--space-2)",
     borderRadius: 9999,
-    background: "var(--color-accent-lavender-10, #EEE7FF)",
-    color: "var(--color-brand-link, #002475)",
+    background: "var(--color-accent-lavender-10)",
+    color: "var(--color-brand-link)",
     fontSize: "var(--text-small-size)",
     fontWeight: 700,
     letterSpacing: "0.04em",
@@ -79,7 +79,7 @@ export default function Form({
 
   const titleStyle: React.CSSProperties = {
     margin: "var(--space-3) 0 var(--space-1)",
-    color: "var(--color-text-primary, #0D0D0D)",
+    color: "var(--color-text-primary)",
     fontSize: "clamp(var(--text-h2-size), 4vw, var(--text-h1-size))",
     lineHeight: "var(--text-h1-line-height)",
     fontWeight: 800,
@@ -87,7 +87,7 @@ export default function Form({
 
   const descriptionStyle: React.CSSProperties = {
     margin: 0,
-    color: "var(--color-text-secondary, #757575)",
+    color: "var(--color-text-secondary)",
     fontSize: "var(--text-body-size)",
     lineHeight: "var(--text-body-line-height)",
   };

@@ -2,6 +2,8 @@
   Storybook manager shell (sidebar, toolbar). Lighthouse audits the whole tab, including this.
   - Viewport: Storybook may inject user-scalable=no; we normalize after load.
   - Buttons: icon-only toolbar buttons get aria-label from title when present.
+  - Do NOT use a perpetual document MutationObserver here — Storybook mutates the tree constantly
+    and scanning all buttons on every change can freeze the tab (white screen).
 -->
 <title>Infinia StoryBook</title>
 <link rel="icon" type="image/png" href="/infinia-icon.png" />
@@ -60,15 +62,18 @@
       enforceViewport();
       fixUnlabeledButtons();
     }
-    var t;
-    function schedule() {
-      clearTimeout(t);
-      t = setTimeout(run, 50);
+    function runBoundedPasses() {
+      run();
+      [250, 1000, 3000].forEach(function (ms) {
+        setTimeout(run, ms);
+      });
     }
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
-    else run();
-    window.addEventListener("load", run);
-    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runBoundedPasses);
+    } else {
+      runBoundedPasses();
+    }
+    window.addEventListener("load", runBoundedPasses);
   })();
 </script>
 <!--
@@ -79,6 +84,7 @@
   (function () {
     "use strict";
     var BRAND_TEXT = "Infinia StoryBook";
+    var done = false;
 
     function hasVisibleLabel(link) {
       return Array.from(link.children).some(function (el) {
@@ -95,7 +101,10 @@
     }
 
     function enhance() {
+      if (done) return true;
+      var found = false;
       document.querySelectorAll('img[src*="infinia-icon"]').forEach(function (img) {
+        found = true;
         var link = img.closest("a");
         if (!link || link.getAttribute("data-infinia-brand-done")) return;
 
@@ -121,16 +130,32 @@
         link.setAttribute("aria-label", BRAND_TEXT);
         link.setAttribute("data-infinia-brand-done", "true");
       });
+      if (found) done = true;
+      return done;
     }
 
-    var r;
-    function schedule() {
-      clearTimeout(r);
-      r = setTimeout(enhance, 30);
+    function runBoundedPasses() {
+      if (enhance()) return;
+      var delays = [100, 400, 1200, 3000];
+      var observer = new MutationObserver(function () {
+        if (enhance()) observer.disconnect();
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+      delays.forEach(function (ms) {
+        setTimeout(function () {
+          if (enhance()) observer.disconnect();
+        }, ms);
+      });
+      setTimeout(function () {
+        observer.disconnect();
+      }, 5000);
     }
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", schedule);
-    else schedule();
-    window.addEventListener("load", schedule);
-    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runBoundedPasses);
+    } else {
+      runBoundedPasses();
+    }
+    window.addEventListener("load", runBoundedPasses);
   })();
 </script>

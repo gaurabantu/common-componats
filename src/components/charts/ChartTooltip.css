@@ -70,7 +70,7 @@
 .ds-chart-tooltip__name {
   flex: 1;
   min-width: 0;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
 }
 
 .ds-chart-tooltip__value {

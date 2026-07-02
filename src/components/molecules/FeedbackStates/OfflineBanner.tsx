@@ -137,11 +137,11 @@ export function OfflineBanner({
               justifyContent: "center",
               width: 28,
               height: 28,
-              borderRadius: "var(--radius-control, 6px)",
+              borderRadius: "var(--radius-control)",
               border: "none",
               background: "transparent",
               cursor: "pointer",
-              color: "var(--color-text-secondary, #475569)",
+              color: "var(--color-text-secondary)",
               fontSize: 14,
             }}
           >

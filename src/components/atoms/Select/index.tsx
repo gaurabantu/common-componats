@@ -102,21 +102,21 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
 
   const borderColor =
     resolvedStatus === "error"
-      ? "var(--color-state-error, #DC3545)"
+      ? "var(--color-state-error)"
       : resolvedStatus === "warning"
-        ? "var(--color-state-warning, #FFC107)"
+        ? "var(--color-state-warning)"
         : resolvedStatus === "success"
-          ? "var(--color-state-success, #28A745)"
-          : "var(--color-border-default, #999999)";
+          ? "var(--color-state-success)"
+          : "var(--color-border-default)";
 
   const footerColor =
     resolvedStatus === "error"
-      ? "var(--color-state-error, #DC3545)"
+      ? "var(--color-state-error)"
       : resolvedStatus === "warning"
-        ? "var(--color-state-warning, #FFC107)"
+        ? "var(--color-state-warning)"
         : resolvedStatus === "success"
-          ? "var(--color-state-success, #28A745)"
-          : "var(--color-text-secondary, #757575)";
+          ? "var(--color-state-success)"
+          : "var(--color-text-secondary)";
 
   const sizeConfig = {
     sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
@@ -150,8 +150,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     display: "block",
     marginBottom: 8,
     color: isDisabled
-      ? "var(--color-text-secondary, #757575)"
-      : "var(--color-text-primary, #0D0D0D)",
+      ? "var(--color-text-secondary)"
+      : "var(--color-text-primary)",
     fontSize: "var(--text-secondary-size, 14px)",
     fontWeight: 500,
     lineHeight: 1.5,
@@ -168,11 +168,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     borderRadius: radiusValue,
     border: `1.5px solid ${borderColor}`,
     backgroundColor: isDisabled
-      ? "var(--color-bg-page, #F3F4F6)"
-      : "var(--color-bg-surface, #FFFFFF)",
+      ? "var(--color-bg-page)"
+      : "var(--color-bg-surface)",
     color: isDisabled
-      ? "var(--color-text-secondary, #757575)"
-      : "var(--color-text-primary, #0D0D0D)",
+      ? "var(--color-text-secondary)"
+      : "var(--color-text-primary)",
     outline: "none",
     appearance: "none",
     WebkitAppearance: "none",

@@ -78,7 +78,7 @@ export const DividerAndText: Story = {
   render: () => (
     <Tabs
       defaultValue="one"
-      dividerColor="#2563eb"
+      dividerColor="var(--color-theme-primary)"
       dividerWidth={1}
       indicatorWidth={3}
       inactiveTextColor="var(--color-text-secondary)"

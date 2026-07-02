@@ -1,31 +1,31 @@
 // src/components/charts/Chart.types.ts
 var CHART_THEME_COLORS = {
   light: {
-    tooltipBg: "var(--color-bg-surface, #fff)",
-    tooltipBorder: "var(--color-border-default, #e5e7eb)",
-    tooltipText: "var(--color-text-primary, #0d0d0d)",
-    legendText: "var(--color-text-secondary, #757575)",
-    axisText: "var(--color-text-secondary, #757575)",
-    gridColor: "var(--color-border-default, #e5e7eb)"
+    tooltipBg: "var(--color-bg-surface)",
+    tooltipBorder: "var(--color-border-default)",
+    tooltipText: "var(--color-text-primary)",
+    legendText: "var(--color-text-secondary)",
+    axisText: "var(--color-text-secondary)",
+    gridColor: "var(--color-border-default)"
   },
   dark: {
-    tooltipBg: "var(--chart-tooltip-bg, #141b2d)",
-    tooltipBorder: "var(--chart-tooltip-border, #2a3548)",
-    tooltipText: "var(--chart-tooltip-text, #e8edf5)",
-    legendText: "var(--chart-legend-text, #8b9bb4)",
-    axisText: "var(--chart-axis-text, #8b9bb4)",
-    gridColor: "var(--chart-grid-color, #2a3548)"
+    tooltipBg: "var(--color-bg-surface)",
+    tooltipBorder: "var(--color-border-default)",
+    tooltipText: "var(--color-text-primary)",
+    legendText: "var(--color-text-secondary)",
+    axisText: "var(--color-text-secondary)",
+    gridColor: "var(--color-border-subtle)"
   }
 };
 var CHART_COLORS = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)",
-  "var(--color-accent-sky-10, #E6F2FF)",
-  "var(--color-accent-mint-10, #E9FFF4)",
-  "var(--color-accent-amber-10, #FFF6DD)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)",
+  "var(--color-accent-sky-10)",
+  "var(--color-accent-mint-10)",
+  "var(--color-accent-amber-10)"
 ];
 
 // src/components/charts/ChartTooltip.tsx
@@ -381,11 +381,11 @@ function arcPath(cx, cy, r, startAngleDeg, endAngleDeg, innerRadius = 0) {
 // src/components/charts/LineChart.tsx
 import { jsx as jsx3, jsxs as jsxs2 } from "react/jsx-runtime";
 var DEFAULT_COLORS = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
 ];
 var LineChartComponent = ({
   data,
@@ -667,11 +667,11 @@ var LineChart_default = React3.memo(LineChartComponent);
 import React4, { useCallback as useCallback2, useMemo as useMemo2, useRef as useRef3, useState as useState5 } from "react";
 import { jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
 var DEFAULT_COLORS2 = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
 ];
 var BarChartComponent = ({
   data,
@@ -920,14 +920,14 @@ var BarChart_default = React4.memo(BarChartComponent);
 import React5, { useCallback as useCallback3, useMemo as useMemo3, useRef as useRef4, useState as useState6 } from "react";
 import { jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
 var DEFAULT_COLORS3 = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)",
-  "var(--color-accent-sky-10, #E6F2FF)",
-  "var(--color-accent-mint-10, #E9FFF4)",
-  "var(--color-accent-amber-10, #FFF6DD)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)",
+  "var(--color-accent-sky-10)",
+  "var(--color-accent-mint-10)",
+  "var(--color-accent-amber-10)"
 ];
 var PieChartComponent = ({
   data,
@@ -1156,11 +1156,11 @@ var PieChart_default = React5.memo(PieChartComponent);
 import React6, { useCallback as useCallback4, useMemo as useMemo4, useState as useState7 } from "react";
 import { jsx as jsx6, jsxs as jsxs5 } from "react/jsx-runtime";
 var DEFAULT_COLORS4 = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
 ];
 var AreaChartComponent = ({
   data,
@@ -1469,4 +1469,4 @@ export {
   PieChart_default,
   AreaChart_default
 };
-//# sourceMappingURL=chunk-F2J27VCS.mjs.map
+//# sourceMappingURL=chunk-LJRR4P7R.mjs.map

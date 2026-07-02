@@ -117,7 +117,7 @@
   padding-block: var(--space-1, 8px);
   font-size: var(--text-secondary-size, 14px);
   font-weight: 500;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   white-space: nowrap;
 }
 

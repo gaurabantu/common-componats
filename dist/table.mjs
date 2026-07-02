@@ -8,8 +8,8 @@ import {
   TableRoot,
   TableRow,
   Table_default
-} from "./chunk-C3JMAVIN.mjs";
-import "./chunk-CUT5ODMN.mjs";
+} from "./chunk-G3GP3TFC.mjs";
+import "./chunk-LIZUDLXK.mjs";
 export {
   Table_default as Table,
   TableBody,

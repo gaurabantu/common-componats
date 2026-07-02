@@ -245,7 +245,7 @@ export const OnPressEnter: Story = {
             style={{
               marginTop: 12,
               fontSize: "var(--text-small-size, 12px)",
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
             }}
           >
             {submitted || "Press Enter or click Submit"}

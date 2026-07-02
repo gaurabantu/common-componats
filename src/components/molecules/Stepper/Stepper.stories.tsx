@@ -27,9 +27,9 @@ const storySurface = {
   padding: "var(--space-3, 24px)",
   maxWidth: 800,
   margin: "0 auto",
-  background: "var(--color-bg-surface, #ffffff)",
+  background: "var(--color-bg-surface)",
   borderRadius: "var(--radius-md, 8px)",
-  border: "1px solid var(--color-border-default, #999999)",
+  border: "1px solid var(--color-border-default)",
   boxShadow: "var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.06))",
 } as const;
 

@@ -90,7 +90,7 @@ const meta: Meta<typeof AppSidebar> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ minHeight: "100vh", background: "#e5e5e5" }}>
+      <div style={{ minHeight: "100vh", background: "var(--color-mist-80)" }}>
         <Story />
         <main
           style={{
@@ -100,7 +100,7 @@ const meta: Meta<typeof AppSidebar> = {
             boxSizing: "border-box",
           }}
         >
-          <p style={{ marginTop: 0, color: "#525252" }}>Content margin-left 320px when expanded</p>
+          <p style={{ marginTop: 0, color: "var(--color-text-secondary)" }}>Content margin-left 320px when expanded</p>
         </main>
       </div>
     ),

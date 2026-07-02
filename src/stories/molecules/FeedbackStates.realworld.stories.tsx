@@ -109,7 +109,7 @@ export const UserManagementTable: StoryObj = {
         flexWrap: "wrap",
         gap: "var(--space-3, 12px)",
         padding: "var(--space-4, 16px) 0",
-        borderBottom: "1px solid var(--color-border-subtle, #e2e8f0)",
+        borderBottom: "1px solid var(--color-border-subtle)",
         marginBottom: "var(--space-4, 16px)",
       }}>
         <TextView as="h1" variant="h3">User Management</TextView>
@@ -220,7 +220,7 @@ export const UserManagementTable: StoryObj = {
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
             <thead>
-              <tr style={{ borderBottom: "2px solid var(--color-border-subtle, #e2e8f0)" }}>
+              <tr style={{ borderBottom: "2px solid var(--color-border-subtle)" }}>
                 {["Name", "Email", "Status", "Role", "Actions"].map((h) => (
                   <th key={h} style={{ textAlign: "left", padding: "var(--space-2, 8px) var(--space-3, 12px)", fontWeight: 600 }}>
                     {h}
@@ -230,14 +230,14 @@ export const UserManagementTable: StoryObj = {
             </thead>
             <tbody>
               {filteredData.map((u) => (
-                <tr key={u.id} style={{ borderBottom: "1px solid var(--color-border-subtle, #e2e8f0)" }}>
+                <tr key={u.id} style={{ borderBottom: "1px solid var(--color-border-subtle)" }}>
                   <td style={{ padding: "var(--space-2, 8px) var(--space-3, 12px)" }}>{u.name}</td>
                   <td style={{ padding: "var(--space-2, 8px) var(--space-3, 12px)", color: "var(--color-text-secondary)" }}>{u.email}</td>
                   <td style={{ padding: "var(--space-2, 8px) var(--space-3, 12px)" }}>
                     <span style={{
                       padding: "2px 8px", borderRadius: 20, fontSize: 12, fontWeight: 500,
-                      background: u.status === "active" ? "var(--color-success-fill, #dcfce7)" : "var(--color-fill-muted, #f1f5f9)",
-                      color: u.status === "active" ? "var(--color-success-strong, #15803d)" : "var(--color-text-secondary)",
+                      background: u.status === "active" ? "var(--color-success-fill)" : "var(--color-fill-muted)",
+                      color: u.status === "active" ? "var(--color-success-strong)" : "var(--color-text-secondary)",
                     }}>
                       {u.status}
                     </span>
@@ -262,7 +262,7 @@ export const UserManagementTable: StoryObj = {
 
     // ── Zone 5: Footer ─────────────────────────────────────────────────────
     const zone5 = view.phase === "ready" ? (
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "var(--space-3, 12px) 0", marginTop: "var(--space-3, 12px)", borderTop: "1px solid var(--color-border-subtle, #e2e8f0)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "var(--space-3, 12px) 0", marginTop: "var(--space-3, 12px)", borderTop: "1px solid var(--color-border-subtle)" }}>
         <TextView as="p" variant="small" color="secondary">
           {filteredData.length} user{filteredData.length !== 1 ? "s" : ""}
         </TextView>
@@ -353,7 +353,7 @@ export const MetricsDashboardOffline: StoryObj = {
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "var(--space-4, 16px) 0",
-          borderBottom: "1px solid var(--color-border-subtle, #e2e8f0)",
+          borderBottom: "1px solid var(--color-border-subtle)",
           marginBottom: "var(--space-4, 16px)",
         }}>
           <TextView as="h1" variant="h3">Sales Dashboard</TextView>
@@ -388,7 +388,7 @@ export const MetricsDashboardOffline: StoryObj = {
                 <TextView as="p" variant="small" color="secondary">{m.label}</TextView>
                 <TextView as="h2" variant="h3">{m.value}</TextView>
                 <TextView as="p" variant="small" color={m.up ? "secondary" : "secondary"} style={{
-                  color: m.up ? "var(--color-success-strong, #15803d)" : "var(--color-danger-strong, #dc2626)"
+                  color: m.up ? "var(--color-success-strong)" : "var(--color-danger-strong)"
                 }}>
                   {m.delta} vs last month
                 </TextView>
@@ -443,15 +443,15 @@ export const WizardWithErrorInCard: StoryObj = {
               }}>
                 <span style={{
                   width: 24, height: 24, borderRadius: "50%", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 600,
-                  background: i === step ? "var(--color-primary, #2563eb)" : i < step ? "var(--color-success-strong, #15803d)" : "var(--color-fill-muted, #f1f5f9)",
-                  color: i <= step ? "#fff" : "var(--color-text-secondary)",
+                  background: i === step ? "var(--color-theme-primary)" : i < step ? "var(--color-success-strong)" : "var(--color-fill-muted)",
+                  color: i <= step ? "var(--color-text-on-primary)" : "var(--color-text-secondary)",
                 }}>
                   {i < step ? "✓" : i + 1}
                 </span>
                 <TextView as="span" variant="small">{s}</TextView>
               </div>
               {i < STEPS.length - 1 && (
-                <div style={{ flex: 1, height: 2, background: "var(--color-border-subtle, #e2e8f0)", minWidth: 16 }} />
+                <div style={{ flex: 1, height: 2, background: "var(--color-border-subtle)", minWidth: 16 }} />
               )}
             </React.Fragment>
           ))}

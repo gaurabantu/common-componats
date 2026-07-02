@@ -6,7 +6,7 @@ const Divider: React.FC<DividerProps> = ({
   orientation = "horizontal",
   length,
   thickness = "1px",
-  color = "var(--color-border-subtle, var(--color-mist-60, #ededed))",
+  color = "var(--color-border-subtle, var(--color-mist-60))",
   variant = "solid",
   align = "center",
   textPosition = "center",
@@ -89,7 +89,7 @@ const Divider: React.FC<DividerProps> = ({
 
   const contentStyle: React.CSSProperties = {
     flexShrink: 0,
-    color: "var(--color-text-secondary, #757575)",
+    color: "var(--color-text-secondary)",
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5,
     whiteSpace: "nowrap",

@@ -6,9 +6,9 @@
   max-width: min(360px, calc(100vw - 16px));
   padding: var(--space-1, 8px);
   border-radius: var(--radius-md, 6px);
-  border: 1px solid var(--color-border-default, #999999);
-  background-color: var(--color-bg-elevated, #ffffff);
-  color: var(--color-text-primary, #0d0d0d);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
   box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.1));
   font-family: var(--font-family, "Inter", system-ui, sans-serif);
   font-size: var(--text-secondary-size, 14px);
@@ -18,7 +18,7 @@
 }
 
 .ds-popover__content:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -44,7 +44,7 @@
   height: 0;
   border-style: solid;
   border-width: 0 7px 8px 7px;
-  border-color: transparent transparent var(--color-border-default, #999999) transparent;
+  border-color: transparent transparent var(--color-border-default) transparent;
   pointer-events: none;
   z-index: 0;
 }
@@ -59,7 +59,7 @@
   height: 0;
   border-style: solid;
   border-width: 0 6px 7px 6px;
-  border-color: transparent transparent var(--color-bg-elevated, #ffffff) transparent;
+  border-color: transparent transparent var(--color-bg-elevated) transparent;
   pointer-events: none;
   z-index: 1;
 }
@@ -74,7 +74,7 @@
   height: 0;
   border-style: solid;
   border-width: 8px 7px 0 7px;
-  border-color: var(--color-border-default, #999999) transparent transparent transparent;
+  border-color: var(--color-border-default) transparent transparent transparent;
   pointer-events: none;
   z-index: 0;
 }
@@ -89,7 +89,7 @@
   height: 0;
   border-style: solid;
   border-width: 7px 6px 0 6px;
-  border-color: var(--color-bg-elevated, #ffffff) transparent transparent transparent;
+  border-color: var(--color-bg-elevated) transparent transparent transparent;
   pointer-events: none;
   z-index: 1;
 }
@@ -104,7 +104,7 @@
   border: none;
   border-radius: var(--radius-sm, 3px);
   background: transparent;
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -122,7 +122,7 @@
 }
 
 .ds-dropdown-menu__item:hover:not(:disabled) {
-  background-color: var(--color-theme-surface-hover, var(--color-mist-20, #fafafa));
+  background-color: var(--color-theme-surface-hover, var(--color-mist-20));
 }
 
 .ds-dropdown-menu__item:focus {
@@ -130,7 +130,7 @@
 }
 
 .ds-dropdown-menu__item:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -140,14 +140,14 @@
 }
 
 .ds-dropdown-menu__item--danger {
-  color: var(--color-state-error, #dc3545);
+  color: var(--color-state-error);
 }
 
 .ds-dropdown-menu__item--danger:hover:not(:disabled) {
   background-color: color-mix(
     in srgb,
-    var(--color-state-error, #dc3545) 8%,
-    var(--color-bg-elevated, #ffffff)
+    var(--color-state-error) 8%,
+    var(--color-bg-elevated)
   );
 }
 

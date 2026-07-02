@@ -2,7 +2,7 @@ import {
   Button_default,
   Icon_default,
   TextInputSearch_default
-} from "./chunk-CUT5ODMN.mjs";
+} from "./chunk-LIZUDLXK.mjs";
 
 // src/components/atoms/Avatar/index.tsx
 import React from "react";
@@ -30,7 +30,7 @@ var Avatar = ({
   statusPosition = defaultStatusPosition,
   color,
   backgroundColor = defaultBackgroundColor,
-  textColor = "var(--color-text-primary, #0D0D0D)",
+  textColor = "var(--color-text-primary)",
   iconColor = defaultIconColor,
   iconSize,
   preserveColors = false,
@@ -53,8 +53,8 @@ var Avatar = ({
       height: statusSize,
       position: "absolute",
       borderRadius: "9999px",
-      border: "2px solid var(--color-bg-surface, #FFFFFF)",
-      backgroundColor: statusColor || (status === "online" ? "var(--color-state-success, #28A745)" : status === "busy" ? "var(--color-state-error, #DC3545)" : status === "away" ? "var(--color-state-warning, #FFC107)" : status === "offline" ? "var(--color-text-secondary, #757575)" : "transparent")
+      border: "2px solid var(--color-bg-surface)",
+      backgroundColor: statusColor || (status === "online" ? "var(--color-state-success)" : status === "busy" ? "var(--color-state-error)" : status === "away" ? "var(--color-state-warning)" : status === "offline" ? "var(--color-text-secondary)" : "transparent")
     };
     switch (statusPosition) {
       case "top-left":
@@ -139,7 +139,7 @@ var Avatar = ({
               borderRadius: shape === "circle" ? "50%" : shape === "square" ? 0 : rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : "var(--radius-lg, 8px)",
               border: bordered ? `1.5px solid ${borderColor}` : void 0,
               boxSizing: "border-box",
-              background: "var(--color-bg-surface, #FFFFFF)"
+              background: "var(--color-bg-surface)"
             }
           }
         ) : /* @__PURE__ */ jsx(
@@ -1540,4 +1540,4 @@ export {
   DashboardShell_default,
   AppShell
 };
-//# sourceMappingURL=chunk-XNJHIDQX.mjs.map
+//# sourceMappingURL=chunk-FAHPZKAB.mjs.map

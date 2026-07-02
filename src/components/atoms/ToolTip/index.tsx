@@ -49,12 +49,12 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 
   const tooltipBackground =
     variant === "light"
-      ? "var(--color-bg-surface, #FFFFFF)"
-      : "var(--color-text-primary, #0D0D0D)";
+      ? "var(--color-bg-surface)"
+      : "var(--color-text-primary)";
   const tooltipForeground =
     variant === "light"
-      ? "var(--color-text-primary, #0D0D0D)"
-      : "var(--color-bg-surface, #FFFFFF)";
+      ? "var(--color-text-primary)"
+      : "var(--color-bg-surface)";
   const tooltipBorder =
     variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
 

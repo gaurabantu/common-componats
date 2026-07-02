@@ -1,6 +1,6 @@
 # Design tokens — quick reference
 
-> **Version:** 2.0.0 · Narrative rules: [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) · Public alias: [`UX-Governance-Design-System.md`](./UX-Governance-Design-System.md) · Components: [`../UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md)
+> **Version:** 2.0.0 · Narrative rules: [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) · Tables: [`DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./DESIGN_SYSTEM_TOKENS_REFERENCE.md) · Themes: [`THEMES.md`](./THEMES.md)
 
 ## Runtime source of truth
 
@@ -26,8 +26,15 @@ Smaller JS graphs are available via subpath imports (`ui-common-components/chart
 - **Shorthand stroke (library):** `--border-thin` / `--border-default` are `*px solid` for `border: var(--border-thin) var(--color-border-default)`.
 - **Focus:** **`--color-border-focus`** and **`--color-focus-ring`** default to **`#0066CC`** (classic light / `blue` / `dark`). **`--color-focus-ring`** is overridden in some themes (`green`, `green-mist` pairings, `blue-mist`, etc.). **Primary filled** buttons use `--button-primary-focus-ring` (usually `var(--color-border-focus)`).
 - **Text:** `--text-caption-size` (alias of `--text-small-size`); **roles:** `--color-text-disabled`, `--color-text-on-primary`, `--color-text-on-primary-inverse`, `--color-text-link`.
-- **State:** includes `--color-state-info`.
-- **Accents:** tin/mid/foreground, e.g. `--color-accent-sky-40` and `--color-accent-sky-fg` (see `tokens.css`).
+- **State:** `--color-state-success`, `--color-state-warning`, `--color-state-error`, `--color-state-info` — base semantic colours.
+- **Feedback / status (EmptyState, ErrorState, OfflineBanner, illustrations):** layered tokens mapped from state + accent families:
+  - **Surfaces:** `--color-fill-muted` (panel wash, Ion Mist on light), `--color-fill-surface` (solid inset blocks).
+  - **Danger:** `--color-danger-strong` → `--color-state-error`; `--color-danger-fill` → `--color-accent-rose-10`.
+  - **Success:** `--color-success-strong` → `--color-accent-mint-fg` (light) / `--color-state-success` (dark); `--color-success-fill` → `--color-accent-mint-10`.
+  - **Info:** `--color-info-strong` → `--color-accent-sky-fg` (light) / `--color-state-info` (dark); `--color-info-fill` → `--color-accent-sky-10`.
+  - **Warning:** `--color-warning-strong` → `--color-accent-amber-fg` (light) / `--color-state-warning` (dark); `--color-warning-fill` → `--color-accent-amber-10`; `--color-warning-soft` → translucent banner wash.
+  - **Radius:** `--radius-control` — alias of `--radius-md` (6px) for compact controls inside feedback molecules.
+- **Accents:** tint/mid/foreground, e.g. `--color-accent-sky-40` and `--color-accent-sky-fg` (see `tokens.css`).
 - **Switch:** `--switch-track-on` / `off`, `--switch-thumb`, `--switch-border-on` / `off`, `--switch-focus-ring` (defaults to `var(--color-border-focus)`).
 - **Motion / opacity / layout:** `--duration-*`, `--easing-*`, `--opacity-*`, `--size-icon-*`, `--size-avatar-*`, `--grid-breakpoint`, etc.
 - **Primary / interaction theme (§42):** `--color-theme-primary`, `--color-theme-hover`, `--color-theme-active`, `--color-theme-disabled`, `--color-theme-text`, `--color-theme-surface-hover` — the six **brand** slots; named theme blocks may also change surfaces (e.g. `mist`).
@@ -49,6 +56,31 @@ Smaller JS graphs are available via subpath imports (`ui-common-components/chart
 **Dashboard shell (`AppTopbar`, `AppSidebar`):** Named themes set **`--app-shell-topbar-*`** and **`--app-sidebar-*`** on the document root so the left rail and header track **`data-theme`** automatically. Prefer importing **`tokens.css`** once on `<html>` and omitting `tokens` / `mergeTopbarTokensStyle` overrides unless you must support a bespoke host palette.
 
 Do **not** set conflicting `data-theme` on the same root. The header of **`src/design-system/tokens.css`** also documents `data-theme` values.
+
+**Storybook only:** the manager sidebar uses a hex snapshot adapter (`.storybook/manager-palettes.ts`) because Storybook's JS theme API cannot parse `var(--token)`. Preview iframe and all consumer apps use **`tokens.css` directly** — see [`THEMES.md`](./THEMES.md) § Theming architecture.
+
+### Feedback / status token map (v2.0.0)
+
+| Token | Light (classic blue) source | Used for |
+|-------|----------------------------|----------|
+| `--color-fill-muted` | `--color-mist-40` | Empty/error panel background wash |
+| `--color-fill-surface` | `--color-bg-surface` | Detail blocks, inset surfaces |
+| `--color-danger-strong` | `--color-state-error` | Error icons, illustration strokes |
+| `--color-danger-fill` | `--color-accent-rose-10` | Error panel tint |
+| `--color-success-strong` | `--color-accent-mint-fg` | Success icons |
+| `--color-success-fill` | `--color-accent-mint-10` | Success panel tint |
+| `--color-info-strong` | `--color-accent-sky-fg` | Info icons |
+| `--color-info-fill` | `--color-accent-sky-10` | Info panel tint |
+| `--color-warning-strong` | `--color-accent-amber-fg` | Warning icons, offline emphasis |
+| `--color-warning-fill` | `--color-accent-amber-10` | Warning panel tint |
+| `--color-warning-soft` | `color-mix(…)` of warning fill | Sticky offline banner wash |
+| `--radius-control` | `--radius-md` (6px) | Compact controls inside feedback UI |
+
+**Dark (`data-theme="dark"`):** strong colours use `--color-state-*`; fills use **`color-mix(in srgb, state 18–20%, var(--color-bg-surface))`** — not light accent `-10` washes; `--color-fill-muted` → `--color-surface-mist`; `--color-border-subtle` → `--color-surface-mist`.
+
+**Mist family (`mist`, `blue-mist`, `green-mist`):** `--color-fill-muted` → `--color-mist-80` for panel contrast on `#EDEDED` page.
+
+Component reference: [`../FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md).
 
 ## Do not
 

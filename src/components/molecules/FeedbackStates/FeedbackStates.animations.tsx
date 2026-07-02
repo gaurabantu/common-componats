@@ -4,9 +4,13 @@
  * Pure CSS-animated SVG illustrations — zero runtime dependencies.
  * Each component accepts an optional `size` (px) and uses CSS custom property
  * colours so they automatically adapt to `[data-theme="dark"]`.
+ * Decorative only (`aria-hidden="true"` default). Keyframes disabled under
+ * `prefers-reduced-motion: reduce` via `.ds-feedback-illustration` in FeedbackStates.css (§18).
  */
 
 import React from "react";
+
+import "./FeedbackStates.css";
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -31,7 +35,7 @@ export function NoDataAnimation({ size = 120, className, "aria-hidden": ariaHidd
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={["ds-feedback-illustration", className].filter(Boolean).join(" ")}
       aria-hidden={ariaHidden}
       style={{ overflow: "visible" }}
     >
@@ -62,21 +66,21 @@ export function NoDataAnimation({ size = 120, className, "aria-hidden": ariaHidd
 
       <g className="fb-tray-group">
         {/* Tray body */}
-        <rect x="18" y="50" width="84" height="48" rx="10" fill="var(--color-fill-muted,#f1f5f9)" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="2.5" />
+        <rect x="18" y="50" width="84" height="48" rx="10" fill="var(--color-fill-muted)" stroke="var(--color-border-subtle)" strokeWidth="2.5" />
         {/* Tray top lip */}
-        <path d="M18 72 Q18 50 60 50 Q102 50 102 72" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="2.5" fill="none" />
+        <path d="M18 72 Q18 50 60 50 Q102 50 102 72" stroke="var(--color-border-subtle)" strokeWidth="2.5" fill="none" />
         {/* Inbox arrow down (empty) */}
-        <path d="M60 34 L60 56M53 49 L60 56 L67 49" stroke="var(--color-text-secondary,#94a3b8)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M60 34 L60 56M53 49 L60 56 L67 49" stroke="var(--color-text-secondary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
         {/* Dotted lines inside tray (representing empty rows) */}
-        <line x1="32" y1="78" x2="62" y2="78" className="fb-line-1" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="2.5" strokeLinecap="round" />
-        <line x1="32" y1="86" x2="54" y2="86" className="fb-line-2" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="2.5" strokeLinecap="round" />
-        <line x1="32" y1="94" x2="48" y2="94" className="fb-line-3" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="32" y1="78" x2="62" y2="78" className="fb-line-1" stroke="var(--color-border-subtle)" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="32" y1="86" x2="54" y2="86" className="fb-line-2" stroke="var(--color-border-subtle)" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="32" y1="94" x2="48" y2="94" className="fb-line-3" stroke="var(--color-border-subtle)" strokeWidth="2.5" strokeLinecap="round" />
 
         {/* Blinking dots (top right) */}
-        <circle cx="82" cy="78" r="3" fill="var(--color-border-subtle,#cbd5e1)" className="fb-dot-1" />
-        <circle cx="91" cy="78" r="3" fill="var(--color-border-subtle,#cbd5e1)" className="fb-dot-2" />
-        <circle cx="100" cy="78" r="3" fill="var(--color-border-subtle,#cbd5e1)" className="fb-dot-3" />
+        <circle cx="82" cy="78" r="3" fill="var(--color-border-subtle)" className="fb-dot-1" />
+        <circle cx="91" cy="78" r="3" fill="var(--color-border-subtle)" className="fb-dot-2" />
+        <circle cx="100" cy="78" r="3" fill="var(--color-border-subtle)" className="fb-dot-3" />
       </g>
     </svg>
   );
@@ -93,7 +97,7 @@ export function NoSearchResultsAnimation({ size = 120, className, "aria-hidden":
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={["ds-feedback-illustration", className].filter(Boolean).join(" ")}
       aria-hidden={ariaHidden}
       style={{ overflow: "visible" }}
     >
@@ -114,11 +118,11 @@ export function NoSearchResultsAnimation({ size = 120, className, "aria-hidden":
       <ellipse cx="60" cy="110" rx="24" ry="4" fill="currentColor" opacity="0.07" />
 
       <g className="fb-lens">
-        <circle cx="52" cy="52" r="26" fill="var(--color-fill-muted,#f1f5f9)" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="3" />
-        <line x1="70" y1="70" x2="94" y2="94" stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="5" strokeLinecap="round" />
+        <circle cx="52" cy="52" r="26" fill="var(--color-fill-muted)" stroke="var(--color-border-subtle)" strokeWidth="3" />
+        <line x1="70" y1="70" x2="94" y2="94" stroke="var(--color-border-subtle)" strokeWidth="5" strokeLinecap="round" />
         <g className="fb-x-mark">
-          <line x1="43" y1="43" x2="61" y2="61" stroke="var(--color-danger-strong,#dc2626)" strokeWidth="3" strokeLinecap="round" />
-          <line x1="61" y1="43" x2="43" y2="61" stroke="var(--color-danger-strong,#dc2626)" strokeWidth="3" strokeLinecap="round" />
+          <line x1="43" y1="43" x2="61" y2="61" stroke="var(--color-danger-strong)" strokeWidth="3" strokeLinecap="round" />
+          <line x1="61" y1="43" x2="43" y2="61" stroke="var(--color-danger-strong)" strokeWidth="3" strokeLinecap="round" />
         </g>
       </g>
     </svg>
@@ -136,7 +140,7 @@ export function ErrorAnimation({ size = 120, className, "aria-hidden": ariaHidde
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={["ds-feedback-illustration", className].filter(Boolean).join(" ")}
       aria-hidden={ariaHidden}
       style={{ overflow: "visible" }}
     >
@@ -156,15 +160,15 @@ export function ErrorAnimation({ size = 120, className, "aria-hidden": ariaHidde
 
       {/* Pulse ring */}
       <circle cx="60" cy="58" r="38" className="fb-ring-anim"
-        fill="none" stroke="var(--color-danger-strong,#ef4444)" strokeWidth="2" />
+        fill="none" stroke="var(--color-danger-strong)" strokeWidth="2" />
 
       <g className="fb-shield-g">
         {/* Shield */}
         <path d="M60 18 L92 32 L92 62 Q92 84 60 100 Q28 84 28 62 L28 32 Z"
-          fill="var(--color-danger-fill,#fee2e2)" stroke="var(--color-danger-strong,#ef4444)" strokeWidth="2.5" strokeLinejoin="round" />
+          fill="var(--color-danger-fill)" stroke="var(--color-danger-strong)" strokeWidth="2.5" strokeLinejoin="round" />
         {/* Exclamation */}
-        <line x1="60" y1="44" x2="60" y2="65" stroke="var(--color-danger-strong,#dc2626)" strokeWidth="4" strokeLinecap="round" />
-        <circle cx="60" cy="75" r="3" fill="var(--color-danger-strong,#dc2626)" />
+        <line x1="60" y1="44" x2="60" y2="65" stroke="var(--color-danger-strong)" strokeWidth="4" strokeLinecap="round" />
+        <circle cx="60" cy="75" r="3" fill="var(--color-danger-strong)" />
       </g>
     </svg>
   );
@@ -184,7 +188,7 @@ export function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHid
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={["ds-feedback-illustration", className].filter(Boolean).join(" ")}
       aria-hidden={ariaHidden}
       style={{ overflow: "visible" }}
     >
@@ -211,22 +215,22 @@ export function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHid
       {/* Outer arc */}
       <path className="fb-arc-3"
         d="M22 58 Q22 26 60 26 Q98 26 98 58"
-        stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="5" strokeLinecap="round" fill="none" />
+        stroke="var(--color-border-subtle)" strokeWidth="5" strokeLinecap="round" fill="none" />
       {/* Mid arc */}
       <path className="fb-arc-2"
         d="M35 70 Q35 46 60 46 Q85 46 85 70"
-        stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="5" strokeLinecap="round" fill="none" />
+        stroke="var(--color-border-subtle)" strokeWidth="5" strokeLinecap="round" fill="none" />
       {/* Inner arc */}
       <path className="fb-arc-1"
         d="M48 82 Q48 66 60 66 Q72 66 72 82"
-        stroke="var(--color-border-subtle,#cbd5e1)" strokeWidth="5" strokeLinecap="round" fill="none" />
+        stroke="var(--color-border-subtle)" strokeWidth="5" strokeLinecap="round" fill="none" />
       {/* Dot */}
-      <circle className="fb-wifi-dot" cx="60" cy="92" r="4.5" fill="var(--color-border-subtle,#cbd5e1)" />
+      <circle className="fb-wifi-dot" cx="60" cy="92" r="4.5" fill="var(--color-border-subtle)" />
 
       {/* Red diagonal slash */}
       <line className="fb-slash"
         x1="24" y1="96" x2="96" y2="24"
-        stroke="var(--color-danger-strong,#ef4444)" strokeWidth="4" strokeLinecap="round" />
+        stroke="var(--color-danger-strong)" strokeWidth="4" strokeLinecap="round" />
     </svg>
   );
 }
@@ -241,8 +245,8 @@ export function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHid
       height={size}
       viewBox="0 0 120 120"
       fill="none"
-      xmlns="http.w3.org/2000/svg"
-      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      className={["ds-feedback-illustration", className].filter(Boolean).join(" ")}
       aria-hidden={ariaHidden}
       style={{ overflow: "visible" }}
     >
@@ -266,11 +270,11 @@ export function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHid
       `}</style>
 
       <g className="fb-success-g">
-        <circle cx="60" cy="60" r="34" fill="var(--color-success-fill,#dcfce7)" />
+        <circle cx="60" cy="60" r="34" fill="var(--color-success-fill)" />
         <circle cx="60" cy="60" r="34" className="fb-circle-draw"
-          stroke="var(--color-success-strong,#16a34a)" strokeWidth="3" fill="none" />
+          stroke="var(--color-success-strong)" strokeWidth="3" fill="none" />
         <path d="M42 60 l14 14 l22-22" className="fb-check-draw"
-          stroke="var(--color-success-strong,#16a34a)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+          stroke="var(--color-success-strong)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
       </g>
     </svg>
   );
@@ -287,7 +291,7 @@ export function InfoAnimation({ size = 120, className, "aria-hidden": ariaHidden
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={["ds-feedback-illustration", className].filter(Boolean).join(" ")}
       aria-hidden={ariaHidden}
       style={{ overflow: "visible" }}
     >
@@ -305,12 +309,12 @@ export function InfoAnimation({ size = 120, className, "aria-hidden": ariaHidden
       `}</style>
 
       <g className="fb-info-g">
-        <circle cx="60" cy="60" r="34" fill="var(--color-info-fill,#dbeafe)" stroke="var(--color-info-strong,#1d4ed8)" strokeWidth="2.5" />
+        <circle cx="60" cy="60" r="34" fill="var(--color-info-fill)" stroke="var(--color-info-strong)" strokeWidth="2.5" />
         {/* i stem */}
         <line x1="60" y1="54" x2="60" y2="76"
-          stroke="var(--color-info-strong,#1d4ed8)" strokeWidth="5" strokeLinecap="round" />
+          stroke="var(--color-info-strong)" strokeWidth="5" strokeLinecap="round" />
         {/* i dot */}
-        <circle cx="60" cy="43" r="3.5" fill="var(--color-info-strong,#1d4ed8)" className="fb-i-dot" />
+        <circle cx="60" cy="43" r="3.5" fill="var(--color-info-strong)" className="fb-i-dot" />
       </g>
     </svg>
   );

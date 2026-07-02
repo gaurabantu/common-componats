@@ -52,6 +52,41 @@ Use the **main entry** when a file mixes many areas (e.g. form + modal + card). 
 - `AlertDialog`: destructive, warning, success, or acknowledgement flows
 - `Popover`, `DropdownMenu`: anchored panels and menus (`PopoverTrigger` / `PopoverContent`, `DropdownMenuTrigger` / `DropdownMenuContent` / `DropdownMenuItem`)
 
+### Feedback states (empty, error, offline)
+
+Use the **`FeedbackStates`** module — do **not** build custom empty/error/offline panels.
+
+| Component | When |
+|-----------|------|
+| `EmptyState` | No table/list data, zero search results, onboarding blank section |
+| `ErrorState` | Section or page load failed; optional `onRetry`, `details`, `ErrorAnimation` |
+| `OfflineBanner` | Offline — slim sticky strip (Zone 2, no `image`) or full panel (Zone 4, with `image`) |
+| `FeedbackState` | Phase router when using `useAsyncContentPhase`: `variant="empty"\|"success"\|"info"\|"error"\|"offline"` |
+
+**Hooks:** `useAsyncContentPhase`, `useOnlineStatus` from `ui-common-hooks`.
+
+**Animations (optional `image` prop):** `NoDataAnimation`, `NoSearchResultsAnimation`, `ErrorAnimation`, `OfflineAnimation`, `SuccessAnimation`, `InfoAnimation`.
+
+**Docs:** [`FEEDBACK_STATES_GUIDE.md`](./FEEDBACK_STATES_GUIDE.md) (API + zones) · [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §34 · [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) (5 zones, CTA hierarchy).
+
+**CTA hierarchy (Zone 4):** `EmptyState` action → `Button variant="primary" size="md"`; extra → `ghost sm`. `ErrorState` retry → `outlinePrimary md`.
+
+### Notifications — Toast (**not shipped**)
+
+There is **no `Toast` / `Snackbar` component** in v0.0.2. The visual spec lives in [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §35 (target behaviour). Until Toast ships, use:
+
+| Need | Interim component |
+|------|-------------------|
+| Page/section load failure | `ErrorState` + `onRetry` |
+| No data / zero results | `EmptyState` or `FeedbackState variant="empty"` |
+| Offline | `OfflineBanner` (slim or full panel) |
+| Must acknowledge error/warning | `AlertDialog` |
+| Non-blocking warning strip | `OfflineBanner` `tone="warning"`, compact |
+| Async success on same screen | Inline helper text or `FeedbackState variant="success"` |
+| Field validation error | `Input` inline error (not `ErrorState`) |
+
+Do not add third-party toast libraries that bypass design tokens.
+
 ### Layout, navigation, and content
 
 - `TextView`: semantic typography and token-based text styling
@@ -614,6 +649,10 @@ Shared expectations:
 - Anchored menu: `Popover` or `DropdownMenu`
 - File pickers: `FileUpload` / `Dropzone`
 - Confirmation flow: `Modal` or `AlertDialog`
+- Empty list / zero search results: `EmptyState` or `FeedbackState variant="empty"` (+ `useAsyncContentPhase`)
+- Failed API / section error: `ErrorState` or `FeedbackState variant="error"` with `onRetry`
+- Offline: `OfflineBanner` (Zone 2 strip or Zone 4 panel) + `useOnlineStatus`
+- Transient success/error (no Toast yet): see **Notifications — Toast** section above
 - Searchable data table: `Table searchable`
 - Dashboard shell: `DashboardShell` with `AppSidebar` + `AppTopbar`
 - Responsive layout: `Grid` + `GridItem`

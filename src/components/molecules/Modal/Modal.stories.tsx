@@ -138,7 +138,7 @@ export const ConfirmButtonNoBackground: Story = {
     title: "Link-style confirm",
     confirmText: "OK",
     confirmButtonVariant: "link",
-    confirmButtonColor: "#2563eb",
+    confirmButtonColor: "var(--color-theme-primary)",
     children: (
       <p className="text-body text-text-primary">
         Confirm button with no background, text color only.
@@ -154,10 +154,10 @@ export const CustomButtonColors: Story = {
     confirmText: "Accept",
     cancelText: "Dismiss",
     confirmButtonVariant: "ghost",
-    confirmButtonColor: "#059669",
+    confirmButtonColor: "var(--color-state-success)",
     confirmButtonBackground: "transparent",
     cancelButtonVariant: "outlinePrimary",
-    cancelButtonColor: "#6b7280",
+    cancelButtonColor: "var(--color-text-secondary)",
     children: (
       <p className="text-body text-text-primary">
         Both buttons have custom colors and styles.

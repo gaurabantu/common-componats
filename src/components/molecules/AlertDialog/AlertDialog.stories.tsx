@@ -109,7 +109,7 @@ export const OkButtonNoBackground: Story = {
     variant: "success",
     confirmText: "OK",
     confirmButtonVariant: "link",
-    confirmButtonColor: "#22c55e",
+    confirmButtonColor: "var(--color-state-success)",
   },
 };
 
@@ -121,7 +121,7 @@ export const OkButtonCustomStyle: Story = {
     variant: "info",
     confirmText: "Got it",
     confirmButtonVariant: "ghost",
-    confirmButtonColor: "#0ea5e9",
+    confirmButtonColor: "var(--color-state-info)",
     confirmButtonBackground: "transparent",
   },
 };

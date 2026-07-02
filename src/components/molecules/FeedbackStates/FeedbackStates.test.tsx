@@ -122,6 +122,16 @@ describe("OfflineBanner", () => {
   });
 });
 
+describe("Feedback animations", () => {
+  it("NoDataAnimation renders with decorative aria-hidden and illustration class", async () => {
+    const { NoDataAnimation } = await import("./FeedbackStates.animations");
+    const { container } = render(<NoDataAnimation size={80} />);
+    const svg = container.querySelector("svg");
+    expect(svg).toHaveAttribute("aria-hidden", "true");
+    expect(svg).toHaveClass("ds-feedback-illustration");
+  });
+});
+
 describe("FeedbackState (variant router)", () => {
   it("variant=error routes to ErrorState", () => {
     const retry = vi.fn();

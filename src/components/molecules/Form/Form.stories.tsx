@@ -39,7 +39,7 @@ export const Default: Story = {
           <p
             style={{
               margin: 0,
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
               fontSize: 13,
               lineHeight: 1.5,
             }}
@@ -88,7 +88,7 @@ export const Default: Story = {
     maxWidth: 560,
     shellStyle: {
       background:
-        "linear-gradient(135deg, var(--color-accent-sky-10, #E6F2FF) 0%, var(--color-accent-lavender-10, #EEE7FF) 100%)",
+        "linear-gradient(135deg, var(--color-accent-sky-10) 0%, var(--color-accent-lavender-10) 100%)",
     },
   },
 };
@@ -109,7 +109,7 @@ export const GridLayout: Story = {
           <p
             style={{
               margin: 0,
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
               fontSize: 13,
               lineHeight: 1.5,
             }}
@@ -183,7 +183,7 @@ export const GridLayout: Story = {
     maxWidth: 760,
     shellStyle: {
       background:
-        "linear-gradient(135deg, var(--color-accent-lavender-10, #EEE7FF) 0%, var(--color-accent-sky-10, #E6F2FF) 100%)",
+        "linear-gradient(135deg, var(--color-accent-lavender-10) 0%, var(--color-accent-sky-10) 100%)",
     },
   },
 };

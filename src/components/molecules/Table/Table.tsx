@@ -440,7 +440,7 @@ function TableInner<T extends Record<string, unknown>>({
             </button>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <TextView as="small" style={{ color: "var(--color-text-secondary, #666)" }}>
+            <TextView as="small" style={{ color: "var(--color-text-secondary)" }}>
               Show
             </TextView>
             <div style={{ minWidth: 70 }}>
@@ -454,7 +454,7 @@ function TableInner<T extends Record<string, unknown>>({
                 }}
               />
             </div>
-            <TextView as="small" style={{ color: "var(--color-text-secondary, #666)" }}>
+            <TextView as="small" style={{ color: "var(--color-text-secondary)" }}>
               of {totalItems} {totalItems === 1 ? "item" : "items"}
             </TextView>
           </div>

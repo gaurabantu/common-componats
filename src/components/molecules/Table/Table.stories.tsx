@@ -53,8 +53,8 @@ const sampleColumns: TableColumn[] = [
           padding: "2px 8px",
           borderRadius: 4,
           fontSize: 12,
-          background: val === "Active" ? "#dcfce7" : "#fef3c7",
-          color: val === "Active" ? "#166534" : "#92400e",
+          background: val === "Active" ? "var(--color-success-fill)" : "var(--color-warning-fill)",
+          color: val === "Active" ? "var(--color-success-strong)" : "var(--color-warning-strong)",
         }}
       >
         {String(val)}
@@ -158,7 +158,7 @@ export const Expandable: Story = {
             return (
               <div style={{ padding: 16 }}>
                 <strong>Details for {r.name}</strong>
-                <p style={{ margin: "8px 0 0", color: "#666" }}>
+                <p style={{ margin: "8px 0 0", color: "var(--color-text-secondary)" }}>
                   Email: {r.email} | Role: {r.role}
                 </p>
               </div>
@@ -289,7 +289,7 @@ export const CustomToolbar: Story = {
             style={{
               padding: "8px 16px",
               background: "var(--color-brand-primary)",
-              color: "#fff",
+              color: "var(--color-text-on-primary)",
               border: "none",
               borderRadius: 6,
               cursor: "pointer",
@@ -305,7 +305,7 @@ export const CustomToolbar: Story = {
           style={{
             padding: "8px 16px",
             background: "var(--color-state-success)",
-            color: "#fff",
+            color: "var(--color-text-on-primary)",
             border: "none",
             borderRadius: 6,
             cursor: "pointer",

@@ -1,270 +1,13 @@
-# UX Governance — Developer Design System Reference
-> **Version:** 2.0.0 | **Viewport:** Desktop-First 1440px | **Compliance:** WCAG 2.2 AA
-> All hex values are reference examples. Implementation **must** use CSS variable tokens. **Tokens:** [tokens.md](./tokens.md) · **Alias for links:** [UX-Governance-Design-System.md](./UX-Governance-Design-System.md)
+<!--
+  DEPRECATED (2026-07-02): The duplicate §1–14 summary that previously appeared above this document
+  was removed. Use DESIGN_SYSTEM_TOKENS_REFERENCE.md for tables and this file for rules.
+-->
 
----
-
-## 1. Font
-
-| Property | Value |
-|---|---|
-| Family | `Inter` |
-| Fallback Stack | `-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif` |
-| Weights Used | 400 (Regular), 500 (Medium), 600 (Semi-Bold), 700 (Bold), 800 (Extra-Bold) |
-| CSS Variable | `var(--font-family)` |
-| Import | `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');` |
-
----
-
-## 2. Typography Scale
-
-| Token | Size | Weight | Line-Height | Usage |
-|---|---:|---:|---:|---|
-| `--text-h1-size` | 32px | 800 | 1.5 | Page titles, hero headings |
-| `--text-h2-size` | 25px | 800 | 1.5 | Section headers |
-| H3 | 18px | 500 | 1.5 | Subsection headers |
-| H4 | 16px | 500 | 1.5 | Card titles, labels |
-| Body | 16px | 400 | 1.5 | Paragraph text |
-| Secondary | 14px | 400 | 1.5 | Captions, helper text |
-| Small / Caption | 12px | 400 | 1.5 | Timestamps, metadata |
-| Micro | 10px | 600 | 1.2 | Badges, tracking labels |
-
----
-
-## 3. Colour Tokens — Brand & Semantic
-
-| Token | CSS Variable | Hex | Usage |
-|---|---|---|---|
-| color/brand/primary | `--color-brand-primary` | `#0D0D0D` | Primary brand colour, headers |
-| color/brand/secondary | `--color-brand-secondary` | `#FF4D00` | Accent, emphasis, secondary interactive highlights (not the default **keyboard** focus — use `--color-border-focus` / `--color-focus-ring`) |
-| color/brand/link | `--color-brand-link` | `#002475` | Linked text, navigational links |
-| color/text/primary | `--color-text-primary` | `#0D0D0D` | Main body text |
-| color/text/secondary | `--color-text-secondary` | `#757575` | Sub-headers, labels, secondary text |
-| color/text/on-accent | `--color-text-on-accent` | `#0D0D0D` | Text on accent-10 backgrounds |
-| color/bg/page | `--color-bg-page` | `#E0E0E0` | Default application background |
-| color/bg/surface | `--color-bg-surface` | `#FFFFFF` | Cards, modals, workspaces |
-| color/surface/mist | `--color-surface-mist` | `var(--color-mist-60)` (light) | Subtle neutral fills: badges, chips, muted status — **not** `--color-bg-page` |
-| color/interactive/row-hover | `--color-interactive-row-hover` | `var(--color-mist-20)` (light) | List/table row hover on `--color-bg-surface`; dark themes override in `tokens.css` |
-| color/border/default | `--color-border-default` | `#999999` | Standard UI borders (inputs, cards, tables, popovers) |
-| color/border/subtle | `--color-border-subtle` | `var(--color-mist-60)` (light) | Decorative separators: modal header/footer rules, card footer, tabs underline, button-group hairline, default `Divider`; softer than `--color-border-default` (see Modal §) |
-| color/state/success | `--color-state-success` | `#28A745` | Positive status, success feedback |
-| color/state/warning | `--color-state-warning` | `#FFC107` | Alerts, non-critical warnings |
-| color/state/error | `--color-state-error` | `#DC3545` | Critical errors, destructive actions |
-
-### Themes (`tokens.css`)
-
-| Variant | How to enable | Summary |
-|--------|----------------|---------|
-| Classic blue (light) — default | No attribute; or `data-theme="blue"` / `theme-blue` on `<html>` | Gray page, neutral borders, blue **interaction** theme (`#2563EB` family); **filled** primary CTA remains Noir (see §10). |
-| Green (light) | `data-theme="green"` or `theme-green` | Green **interaction** — `#15803D` / hover / active / disabled; remapped `button` / outline tokens in `tokens.css`. |
-| Dark (neutral / blue CTA) | `data-theme="dark"` or `dark` | Slate surfaces; blue primary tokens. |
-| Ion Mist (backgrounds) | `data-theme="mist"` or `theme-mist` | Lighter gray page, sidebar, and card surfaces. |
-| Custom (example rose) | `data-theme="custom"` or `theme-custom` | Only the six `--color-theme-*` slots (§42) swap to the rose set. |
-| Blue + Mist | `data-theme="blue-mist"` or `theme-blue-mist` | Blue **interaction** + Mist backgrounds; **focus ring** for outlines uses a brand tint via `--color-focus-ring` in `tokens.css`. |
-| Green + Mist | `data-theme="green-mist"` or `theme-green-mist` | Green **interaction** + Mist backgrounds; **focus ring** brand tint. |
-
-Do **not** combine conflicting `data-theme` values on the same root. Choose one named theme from `tokens.css` (for example **`dark`**, **`green`**, **`green-mist`**).
-
-### Focus (v2.0.0)
-
-- **`--color-border-focus`** / **`--color-focus-ring`:** default **`#0066CC`** on **classic light**, **`data-theme="blue"`**, and **`dark`** (strong contrast on gray structural borders `#999` / slate). **`#FF4D00`** remains **`--color-brand-secondary`** (accents), not the default focus border token.
-- **Green (light):** `#0D0D0D` for `--color-border-focus` / `--color-focus-ring` (strong on mint).
-- **Named** themes (`blue-mist`, `green-mist`, `custom`, etc.) may set a **tinted** `--color-focus-ring` per the theme block. Do not override focus tokens to a low-contrast colour.
-
----
-
-## 4. Colour Families
-
-### Core Noir (Black Family)
-| Variation | Hex | RGB | Usage |
-|---|---|---|---|
-| Noir-100 | `#0D0D0D` | R:13 G:13 B:13 | Primary text, main backgrounds |
-| Noir-80 | `#323232` | R:50 G:50 B:50 | Secondary backgrounds, hover |
-| Noir-60 | `#666666` | R:102 G:102 B:102 | Disabled elements, tertiary text |
-| Noir-40 | `#999999` | R:153 G:153 B:153 | Borders, dividers |
-| Noir-20 | `#CCCCCC` | R:204 G:204 B:204 | Light borders, subtle backgrounds |
-
-### Neutron Ash (Gray Family)
-| Variation | Hex | RGB | Usage |
-|---|---|---|---|
-| Gray-100 | `#4A4A4A` | R:74 G:74 B:74 | Secondary text emphasis |
-| Gray-80 | `#757575` | R:117 G:117 B:117 | Primary secondary text, labels |
-| Gray-60 | `#A0A0A0` | R:160 G:160 B:160 | Placeholder text, hints |
-| Gray-40 | `#CCCCCC` | R:204 G:204 B:204 | Light dividers, inactive states |
-| Gray-20 | `#E8E8E8` | R:232 G:232 B:232 | Subtle background tint |
-
-### Ion Mist (Light Gray Family)
-| Variation | Hex | RGB | Usage |
-|---|---|---|---|
-| Mist-100 | `#D9D9D9` | R:217 G:217 B:217 | Card borders, strong dividers |
-| Mist-80 | `#E0E0E0` | R:224 G:224 B:224 | Card backgrounds, overlays |
-| Mist-60 | `#EDEDED` | R:237 G:237 B:237 | Primary surface colour |
-| Mist-40 | `#F5F5F5` | R:245 G:245 B:245 | Slight background tint |
-| Mist-20 | `#FAFAFA` | R:250 G:250 B:250 | Almost white surfaces |
-
----
-
-## 5. Accent Colours
-
-| Token | CSS Variable | Hex-10 | Hex-40 | Allowed Usage |
-|---|---|---|---|---|
-| color/accent/lavender-10 | `--color-accent-lavender-10` | `#EEE7FF` | `#B9A7FF` | Avatar bg, row highlight |
-| color/accent/lavender-40 | `--color-accent-lavender-40` | `#B9A7FF` | `#B9A7FF` | Selected outline, avatar ring |
-| color/accent/sky-10 | `--color-accent-sky-10` | `#E6F2FF` | `#A0D2FF` | Info badges, avatar bg |
-| color/accent/mint-10 | `--color-accent-mint-10` | `#E9FFF4` | `#A0E7C4` | Success-support badges, avatar bg |
-| color/accent/amber-10 | `--color-accent-amber-10` | `#FFF6DD` | `#FFD966` | Warning-support tag bg |
-| color/accent/rose-10 | `--color-accent-rose-10` | `#FFE9EC` | `#FFB3BD` | Error-support tags and badges |
-
-> **Rule:** Accent colours must not be used for page backgrounds, headers, primary buttons, or navigation. Use only as contained component styling inside the main content area.
-
----
-
-## 6. Spacing — 8pt Grid
-
-| Token | CSS Variable | Value | Usage Example |
-|---|---|---:|---|
-| space-1 | `--space-1` | 8px | Tight padding, icon gaps |
-| space-2 | `--space-2` | 16px | Standard padding, input padding |
-| space-3 | `--space-3` | 24px | Card padding, section gaps |
-| space-4 | `--space-4` | 32px | Large section spacing |
-| space-5 | `--space-5` | 40px | Page margin, hero spacing |
-| space-6 | `--space-6` | 48px | Major section separation |
-| space-7 | `--space-7` | 56px | Oversized gaps |
-| space-8 | `--space-8` | 64px | Maximum standard spacing |
-
-> **Grid:** 12-column layout. Gutter: `--grid-gutter: 24px`. All spacing must be 8px increments.
-
----
-
-## 7. Corner Radii
-
-| Token | CSS Variable | Value | Usage |
-|---|---|---:|---|
-| radius/xs | `--radius-xs` | 2px | Badges, chips, tags |
-| radius/sm | `--radius-sm` | 3px | Small interactive elements |
-| radius/base | `--radius-base` | 4px | Inputs, small cards |
-| radius/md | `--radius-md` | 6px | Buttons |
-| radius/lg | `--radius-lg` | 8px | Cards, modals, panels |
-| radius/card | `--radius-card` | 10px | Large cards, containers |
-| circular | — | 50% | Avatars, status dots |
-
----
-
-## 8. Drop Shadows
-
-| Token | CSS Value | Usage |
-|---|---|---|
-| shadow/none | `none` | Flat surfaces, border-only separation |
-| shadow/xs | `0 1px 2px rgba(0,0,0,0.06)` | List-item hover, badges, chips |
-| shadow/sm | `0 2px 8px rgba(0,0,0,0.08)` | Content cards, input focus |
-| shadow/md | `0 4px 16px rgba(0,0,0,0.10)` | Dropdowns, popovers, date-pickers |
-| shadow/lg | `0 8px 32px rgba(0,0,0,0.12)` | Modals, side-drawers, palettes |
-| shadow/xl | `0 16px 48px rgba(0,0,0,0.16)` | Full-screen overlays |
-
----
-
-## 9. Stroke & Border Weight
-
-| Token | CSS Value | Usage |
-|---|---|---|
-| border/none | `0px` | Elements separated by bg colour or shadow |
-| border/thin | `1px solid` | Decorative dividers, separators |
-| border/default | `1.5px solid` | Input fields, selects, textareas |
-| border/medium | `2px solid` | Focus rings, active tabs, selected states |
-| border/thick | `3px solid` | High-emphasis focus, critical error fields |
-
-> Interactive borders should use accessible contrast. Decorative dividers can be lighter.
-
----
-
-## 10. Button States
-
-### Primary (Fill)
-| State | Background | Border | Text | Focus Ring |
-|---|---|---|---|---|
-| Default | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | — |
-| Hover | `#1A1A1A` | `#1A1A1A` | `#FFFFFF` | — |
-| Active | `#000000` | `#000000` | `#FFFFFF` | — |
-| Focus | `#0D0D0D` | `#0D0D0D` | `#FFFFFF` | `var(--color-border-focus)` (default `#0066CC`; `green` `#0D0D0D`) |
-| Disabled | `#2B2B2B` | `#2B2B2B` | `#B3B3B3` | — |
-
-### Secondary (Outline)
-| State | Background | Border | Text |
-|---|---|---|---|
-| Default | `#FFFFFF` | `1.5px #0D0D0D` | `#0D0D0D` |
-
-### Ghost (Transparent)
-| State | Background | Text |
-|---|---|---|
-| Default | `transparent` | `#0D0D0D` |
-
-> Minimum touch target: 44x44px. Radius: `--radius-md`.
-
-### CSS Variables (Primary Button)
-```css
---button-primary-default-bg:    #0D0D0D;
---button-primary-default-text:  #FFFFFF;
---button-primary-hover-bg:      #1A1A1A;
---button-primary-active-bg:     #000000;
---button-primary-disabled-bg:   #2B2B2B;
---button-primary-disabled-text: #B3B3B3;
---button-primary-focus-ring:    var(--color-border-focus); /* #0066CC default */
-```
-
----
-
-## 11. Icon System
-
-| Property | Value |
-|---|---|
-| Library | **Lucide** (outline style) |
-| Stroke Width | 1.5–2px |
-| Size — Dense | 16px |
-| Size — UI Default | 20px |
-| Size — Primary | 24px |
-| Colour | `currentColor` |
-
----
-
-## 12. Grid System
-
-| Property | Value |
-|---|---|
-| Columns | `--grid-columns: 12` |
-| Gutter | `--grid-gutter: 24px` |
-| Breakpoint | Desktop-first: 1440px |
-| Unit | 8px increments |
-
----
-
-## 13. Accessibility — WCAG 2.2 AA
-
-| Requirement | Standard |
-|---|---|
-| Text contrast | >= 4.5:1 against background |
-| Non-text UI contrast | >= 3:1 |
-| Focus indicator | 2px minimum visible outline |
-| Focus appearance | 2px outline offset, >= 3:1 contrast |
-| Touch target | >= 44x44px |
-| Colour-only indicators | Never; pair with shape/text/weight |
-
----
-
-## 14. Full CSS Variable Map
-
-Use the library token system as the source of truth. Refer to `README.md` for the current token blocks already exported by the library, including:
-
-- brand, text, background, border, state, and accent tokens
-- primary button tokens
-- spacing tokens
-- radius tokens
-- typography tokens
-- grid tokens
-- shadow tokens
-- dark mode overrides
 # UX Governance Design System
 
-> **Version:** 2.0.0 | **Updated:** 2026-04-01 | **Compliance:** WCAG 2.2 AA | **Platforms:** Web (Desktop-First 1440px) · Mobile App (iOS & Android) · Responsive Web
+> **Version:** 2.0.0 | **Updated:** 2026-07-02 | **Compliance:** WCAG 2.2 AA | **Platforms:** Web (Desktop-First 1440px) · Mobile App (iOS & Android) · Responsive Web
+>
+> **Doc maintenance:** Principles and governance rules only. Token/CSS tables → [`DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./DESIGN_SYSTEM_TOKENS_REFERENCE.md). Themes → [`THEMES.md`](./THEMES.md).
 >
 > **Purpose:** This is the single source of truth for all UI/UX decisions across our product ecosystem. Every developer, product manager, designer, and AI agent (Claude, Anythink, Stitch, etc.) must reference this document when generating FRDs, building components, creating mockups, or reviewing designs. If it's not in this document, it doesn't ship.
 
@@ -272,7 +15,7 @@ Use the library token system as the source of truth. Refer to `README.md` for th
 
 ## How to Use This Document
 
-**For Developers:** Use the token tables and CSS variable references to implement components. Every value has a token — never hard-code hex, px, or font values directly. Copy the CSS variables block (Section 25) into your project root.
+**For Developers:** Use the token tables and CSS variable references to implement components. Every value has a token — never hard-code hex, px, or font values directly. Import `tokens.css` once at app root (see [`tokens.md`](./tokens.md) — do not copy-paste CSS blocks).
 
 **For Product Managers:** Use the component rules, spacing system, and governance rules to write accurate FRDs. When describing a button, reference "Primary Fill button (Section 19)" not "a black button." When specifying spacing, say "space-3 (24px) padding" not "some padding."
 
@@ -306,6 +49,7 @@ Use the library token system as the source of truth. Refer to `README.md` for th
 20. [Button Size System](#20-button-size-system)
 21. [Action Hierarchy Rules](#21-action-hierarchy-rules)
 22. [Layout Composition Rules](#22-layout-composition-rules)
+22a. [Screen Zones (Canonical)](#22a-screen-zones-canonical)
 23. [Visual Hierarchy & AI Enforcement Rules](#23-visual-hierarchy--ai-enforcement-rules)
 24. [Switch / Toggle](#24-switch--toggle)
 25. [Form Inputs](#25-form-inputs)
@@ -320,7 +64,7 @@ Use the library token system as the source of truth. Refer to `README.md` for th
 34. [Empty States & Loading States](#34-empty-states--loading-states)
 35. [Feedback & Notifications](#35-feedback--notifications)
 35a. [Interaction glossary & feedback routing (agents)](#35a-interaction-glossary-feedback-routing-flows-agents)
-36. [CSS Variables Reference](#36-css-variables-reference)
+36. [CSS Variables Reference](#36-css-variables-reference) → [`DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./DESIGN_SYSTEM_TOKENS_REFERENCE.md)
 37. [Governance Rules Summary](#37-governance-rules-summary)
 38. [Persistent Primary CTA After Hero Exit — Web Only](#38-persistent-primary-cta-after-hero-exit--web-only)
 39. [CTA Button Background Contrast Rule](#39-cta-button-background-contrast-rule)
@@ -695,9 +439,26 @@ Consistent layering across platforms. Every positioned element must use a token 
 - Never animate colour alone as a state indicator (accessibility)
 - Loading spinners must include `aria-label="Loading"` or equivalent
 
+### FeedbackStates SVG illustrations
+
+> **Last verified against library:** 2026-07-02 · `FeedbackStates.animations.tsx`, `FeedbackStates.css`
+
+The **`NoDataAnimation`**, **`ErrorAnimation`**, **`OfflineAnimation`**, and related exports are **decorative** — they must not convey information alone.
+
+| Requirement | Implementation |
+|-------------|----------------|
+| Decorative | Default `aria-hidden="true"` on every illustration SVG |
+| Meaning in text | `title` / `description` on `EmptyState`, `ErrorState`, `OfflineBanner` carry the message |
+| Reduced motion | `@media (prefers-reduced-motion: reduce)` disables all `.ds-feedback-illustration` keyframes in `FeedbackStates.css` |
+| No JS gate required | CSS-only disable is sufficient; optional `usePrefersReducedMotion` from `ui-common-hooks` for custom wrappers |
+
+Full API and AI acceptance criteria: **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)** § Motion & reduced motion.
+
 ---
 
 ## 19. Button States
+
+> **Last verified against library:** 2026-07-02 · `Button` stories
 
 ### Primary (Fill) — Maximum 1 per screen
 
@@ -811,6 +572,8 @@ Every screen must have a clear, unambiguous action hierarchy. If a user cannot i
 
 ## 22. Layout Composition Rules
 
+> **Last verified against library:** 2026-07-02 · `DashboardShell`, `AppTopbar`, form/toolbar stories
+
 > **Rule Type:** UX Governance Rule | **Applies To:** All screens with inputs + actions (forms, filters, search, toolbars).
 
 Inputs and actions must live in separate visual rows. Mixing them in a single row creates ambiguous hierarchy and cluttered layouts.
@@ -851,6 +614,42 @@ Inputs and actions must live in separate visual rows. Mixing them in a single ro
 - Input rows stack vertically (one input per row, full width)
 - Action row: Primary button full-width, secondary buttons below as a row
 - Spacing between stacked inputs: `--space-2` (16px)
+
+---
+
+## 22a. Screen Zones (Canonical)
+
+> **Last verified against library:** 2026-07-02 · [`FeedbackStates.realworld.stories.tsx`](../../src/stories/molecules/FeedbackStates.realworld.stories.tsx), `DashboardShell` + `AppTopbar`
+
+> **Rule Type:** UX Governance Rule | **Applies To:** All dashboard / admin screens. **Single source of truth** for zone numbering — overrides any older doc that placed the primary CTA in Zone 2.
+
+Every screen uses **five vertical zones**. Define them **before** writing JSX. Full FRD examples: [`COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md). CTA hierarchy: same file + root [`AGENTS.md`](../../AGENTS.md).
+
+```
+┌──────────────────────────────────────────┐
+│ ZONE 1: AppTopbar                        │  Page title, search, profile, **primary CTA**
+├──────────────────────────────────────────┤
+│ ZONE 2: Alerts / notification strip      │  `OfflineBanner` sticky (no `image`), inline banners
+├──────────────────────────────────────────┤
+│ ZONE 3: Filters / tabs / breadcrumb      │  Tabs, date range, search filters
+├──────────────────────────────────────────┤
+│ ZONE 4: Main content                     │  Table, charts, form, `EmptyState`, `ErrorState`
+├──────────────────────────────────────────┤
+│ ZONE 5: Pagination / footer              │  Page controls, row count, secondary actions
+└──────────────────────────────────────────┘
+```
+
+| Zone | Components | Notes |
+|------|------------|-------|
+| **1** | `AppTopbar`, `DashboardShell` header | One **`primary`** CTA max (`md`/`lg`); alt actions → `outlineSecondary` `sm` |
+| **2** | `OfflineBanner` (compact, no `image`), future Toast strip | Sticky under topbar; omit when no alert |
+| **3** | `Tabs`, filters, `InputSearch`, `DatePicker` | Inputs only — not mixed with action buttons (see §22) |
+| **4** | `Table`, charts, `Card`, `EmptyState`, `ErrorState`, `FeedbackState` | Main focus; empty/error replaces table body |
+| **5** | Pagination, export links | `ghost` `sm` for footer actions |
+
+**Do not** put the page primary CTA in Zone 2 — it belongs in **Zone 1** (`AppTopbar` actions). Zone 2 is for **system/status** strips only.
+
+Feedback placement detail: [`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md) · §34.
 
 ---
 
@@ -975,6 +774,8 @@ After generating any UI, the AI must self-check:
 ---
 
 ## 25. Form Inputs
+
+> **Last verified against library:** 2026-07-02 · `Input`, `Select`, `DatePicker`
 
 ### Text Input / Textarea / Select
 
@@ -1208,6 +1009,8 @@ Before outputting any Card component, the AI must verify:
 ---
 
 ## 27. Modal / Dialog
+
+> **Last verified against library:** 2026-07-02 · `Modal`, `AlertDialog`
 
 > **Component Type:** Overlay | **Variants:** 3 | **AI-Readable:** Yes | **Applies To:** All platforms
 
@@ -1579,6 +1382,8 @@ Before outputting any Modal component, the AI must verify:
 
 ## 33. Navigation Patterns
 
+> **Last verified against library:** 2026-07-02 · `AppSidebar`, `AppTopbar`, `Tabs`
+
 ### Web Desktop — Sidebar
 - Width: `--size-sidebar` (320px), collapsible to 64px (icon-only)
 - Background: `--color-brand-primary` (#0D0D0D) or `--color-bg-surface` (#FFFFFF)
@@ -1603,60 +1408,144 @@ Before outputting any Modal component, the AI must verify:
 
 ## 34. Empty States & Loading States
 
-### Empty States
-- Background: Ion Mist (`--color-mist-60` / #EDEDED) — mandatory
-- Centered layout with icon (32px, `--size-icon-large`), heading (H3), and description (Secondary)
-- Single CTA button (Secondary Outlined or Primary Fill if it's the page's main action)
-- Illustration optional but must use brand colour palette only
+> **Last verified against library:** 2026-07-02 · `FeedbackStates` module
 
-### Loading States
-- **Content areas:** Skeleton screens using `--color-mist-40` (#F5F5F5) blocks with shimmer animation
-- **Buttons:** Inline spinner replacing label text (button width must not change)
-- **Full page:** Centered spinner + "Loading…" text in Secondary style
-- **Pull-to-refresh (mobile):** Native platform spinner
+> **Library implementation:** Use **`EmptyState`**, **`ErrorState`**, **`OfflineBanner`**, and **`FeedbackState`** from `ui-common-components` — not custom one-off layouts. Full API, props, animations, and zone mapping: **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)**. Zone placement (5 visual zones, CTA hierarchy): **[`COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md)**. Pair with **`useAsyncContentPhase`** from `ui-common-hooks` when switching loading → empty → error → offline → ready.
 
-### Error States
-- Inline error: red border (`--border-thick` 3px, `--color-state-error`) + error message below field
-- Page error: Empty state layout with error icon, H3 heading, description, and "Retry" button
-- Toast error: appears at bottom (mobile) or top-right (web), auto-dismisses after 5 seconds
+### Empty states (`EmptyState` / `FeedbackState variant="empty"`)
+
+**Do not** build a full-page empty layout from raw Ion Mist blocks. The shipped **`EmptyState`** shell is a **centered feedback panel** (max-width card) that uses governance tokens:
+
+| Aspect | Rule |
+|--------|------|
+| Background | `--color-fill-muted` (light: `--color-mist-40`; dark: `--color-surface-mist`) — **not** a full-bleed `--color-mist-60` page wash |
+| Border | `--color-border-subtle` hairline (`--border-width-thin`) |
+| Radius | `--radius-card` |
+| Layout | Centered by default; `align="start"` for left-aligned widget empty states |
+| Title / body | `title` + `description` — use **`TextView`** semantics in stories/apps; heading weight aligns with H3 scale |
+| Icon | Optional `icon` (32px class scale on `size="lg"`) **or** `image` slot with built-in animations (`NoDataAnimation`, `NoSearchResultsAnimation`, …) |
+| Tone | `neutral` \| `info` \| `success` \| `warning` — tints via `--color-*-fill` / `--color-*-strong` tokens ([`tokens.md`](./tokens.md)) |
+| Size | `sm` \| `md` \| `lg`; `compact` for inside **`CardContent`** |
+| Actions | `action` = primary CTA (`Button variant="primary" size="md"`); `extra` = escape hatch (`Button variant="ghost" size="sm"`) — **[§21](#21-action-hierarchy-rules)** |
+| Zone | **Zone 4** — replaces table/chart/form content when there is no data |
+
+**Legacy note:** Older specs described a mandatory full Ion Mist (`--color-mist-60`) empty **page** background. That remains valid for **page chrome** (`data-theme="mist"`) but **not** for the `EmptyState` panel itself.
+
+### Error states (`ErrorState` / `FeedbackState variant="error"`)
+
+| Aspect | Rule |
+|--------|------|
+| Default tone | `danger` (also `neutral`, `info`, `success`, `warning` for widget-level errors) |
+| Retry | `onRetry` → **`Button variant="outlinePrimary" size="md"`** |
+| Diagnostics | Optional `details` block (monospace, `--radius-control`) |
+| Live region | Default `role="alert"` + `aria-live="assertive"`; use `polite` for non-critical widget errors |
+| Illustration | `ErrorAnimation` or custom `image` |
+| Zone | **Zone 4** content replacement, or **compact** inside a card section |
+
+### Offline (`OfflineBanner` / `FeedbackState variant="offline"`)
+
+| Mode | When | Zone |
+|------|------|------|
+| **Slim bar** | No `image` prop — sticky notification | **Zone 2** (`sticky`, `compact`) |
+| **Full panel** | With `image` (e.g. `OfflineAnimation`) | **Zone 4** — replaces main content |
+
+Use **`useOnlineStatus`** + **`useAsyncContentPhase`** (`requireNetwork: true`) to drive offline vs ready.
+
+### Unified router (`FeedbackState`)
+
+When phase is driven by data fetching, prefer one component:
+
+```tsx
+<FeedbackState variant={phase} image={…} onRetry={…} />
+```
+
+Variants: `empty` \| `success` \| `info` \| `error` \| `offline`. See **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)**.
+
+### Loading states
+
+- **Content areas:** **`Table`** skeleton mode, or app-level placeholder blocks using `--color-mist-40` + shimmer (standalone **`Skeleton`** primitive — **not shipped yet**; see §35 interim notes)
+- **Buttons:** Inline spinner on **`Button`** (`loading` prop) — button width must not change
+- **Full page:** Centered spinner + “Loading…” in **`TextView`** secondary style, or skeleton layout
+- **Phase machine:** While `useAsyncContentPhase` returns `"loading"`, show skeleton/spinner — **not** `EmptyState`
+
+### Inline field errors (forms)
+
+- Red border: `--border-width-thick` + `--color-border-error` + message below field — **[§25](#25-form-inputs)**
+- Do **not** use `EmptyState` / `ErrorState` for single-field validation
+
+### Transient errors (no Toast yet)
+
+When an action fails but the user stays on the page, prefer **`ErrorState`** inline or **`AlertDialog`**. For async success/failure after navigation, see **§35** interim patterns until **`Toast`** ships.
 
 ---
 
 ## 35. Feedback & Notifications
 
-### Toast / Snackbar
+> **Last verified against library:** 2026-07-02 · interim patterns (Toast not shipped)
 
-| Property | Value |
-|----------|-------|
-| Background | `--color-noir-100` (#0D0D0D) |
-| Text | `#FFFFFF` |
-| Radius | `--radius-lg` (8px) |
+### Toast / Snackbar — **spec only (not shipped in v0.0.2)**
+
+> **Status:** There is **no `Toast` component** in `ui-common-components` yet. §35 below is the **target spec** for a future release. Until then, use the **interim patterns** in the table — do **not** build ad-hoc toast DOM or third-party snackbars that ignore tokens.
+
+| Property | Target value (when shipped) |
+|----------|----------------------------|
+| Background | `--color-noir-100` |
+| Text | `--color-text-on-primary` |
+| Radius | `--radius-lg` |
 | Shadow | `--shadow-md` |
-| Z-Index | `--z-toast` (500) |
-| Duration | 5 seconds auto-dismiss (with option to dismiss manually) |
+| Z-Index | `--z-toast` |
+| Duration | 5 seconds auto-dismiss (manual dismiss optional) |
 | Position | Bottom-center (mobile), bottom-right (web desktop) |
-| Max Width | 560px (web), full-width minus `--space-2` margins (mobile) |
+| Max Width | 560px (web), full-width minus `--space-2` (mobile) |
 
-### Semantic Variants
+#### Semantic variants (target)
 
-| Type | Left Accent | Icon |
-|------|------------|------|
-| Success | `--color-state-success` 4px bar | `check-circle` |
-| Warning | `--color-state-warning` 4px bar | `alert-triangle` |
-| Error | `--color-state-error` 4px bar | `alert-circle` |
-| Info | `--color-state-info` 4px bar | `info` |
+| Type | Left accent | Icon |
+|------|-------------|------|
+| Success | `--color-state-success` 4px bar | check-circle |
+| Warning | `--color-state-warning` 4px bar | alert-triangle |
+| Error | `--color-state-error` 4px bar | alert-circle |
+| Info | `--color-state-info` 4px bar | info |
 
-**Rules:**
-- Toasts never stack more than 3 deep
-- Action button (optional): Ghost style, `#FFFFFF` text
+**Target rules (future):** max 3 stacked toasts; optional ghost action on toast; never silent success; error toasts include actionable copy.
+
+#### Interim patterns (use today)
+
+| Need | Use instead of Toast |
+|------|----------------------|
+| Async success, user still on screen | Inline success near action; **`EmptyState` / `FeedbackState variant="success"`** for completed empty views; **`TextView`** + `--color-success-strong` helper text |
+| Async success, user navigated away | **`AlertDialog`** acknowledgement (lightweight) or persist status in page header |
+| Async / background error | **`ErrorState`** in Zone 4; **`OfflineBanner`** slim strip (Zone 2) for connectivity |
+| Non-blocking warning | **`OfflineBanner`** (`tone="warning"`, no `image`) or compact inline banner with `--color-warning-soft` |
+| Must acknowledge error | **`AlertDialog`** `variant="error"` or blocking **`Modal`** |
+| Field validation | Inline error under input — **[§25](#25-form-inputs)** |
+| Destructive confirm | **`AlertDialog`** — **[§27](#27-modal--dialog)** |
+
+Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md)** (Feedback states + Notifications).
+
+**Rules (apply now):**
 - Success feedback: always show — never silently succeed
 - Error feedback: always show — include actionable guidance
+- Do not stack multiple competing primary CTAs while showing interim banners — **[§21](#21-action-hierarchy-rules)**
 
 ---
 
 ## 35a. Interaction glossary, feedback routing, flows (agents)
 
-> **Purpose:** Shared vocabulary and routing rules for **agents and humans** (FRDs, codegen, design review). Reduces one-off decisions per screen. Use with **§18 Animation & Motion**, **[§27 Modal / Dialog](#27-modal--dialog)**, **[§34 Empty States & Loading States](#34-empty-states--loading-states)**, and **[§35 Feedback & Notifications](#35-feedback--notifications)**.
+> **Last verified against library:** 2026-07-02 · agent routing table, FeedbackStates v0.0.2
+
+> **Purpose:** Shared vocabulary and routing rules for **agents and humans** (FRDs, codegen, design review). Reduces one-off decisions per screen. Use with **§18 Animation & Motion**, **[§27 Modal / Dialog](#27-modal--dialog)**, **[§34 Empty States & Loading States](#34-empty-states--loading-states)**, **[§35 Feedback & Notifications](#35-feedback--notifications)**, and the **shipped library guide** **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)** (`EmptyState`, `ErrorState`, `OfflineBanner`, `FeedbackState`, `useAsyncContentPhase`).
+
+### B0 — Library components (use these, not custom empty/error UI)
+
+| Component | Import | When |
+|-----------|--------|------|
+| `EmptyState` | `ui-common-components` | No data, zero search results, intentional blank section |
+| `ErrorState` | `ui-common-components` | API/section failure with optional `onRetry` |
+| `OfflineBanner` | `ui-common-components` | Offline — slim Zone 2 strip or Zone 4 full panel (`image`) |
+| `FeedbackState` | `ui-common-components` | Phase router: `variant="empty"\|"success"\|"info"\|"error"\|"offline"` |
+| `useAsyncContentPhase` | `ui-common-hooks` | `loading → offline → error → empty → ready` |
+| `Toast` | — | **Not shipped** — use §35 interim patterns |
 
 ### B1 — Interaction glossary
 
@@ -1667,7 +1556,7 @@ Before outputting any Modal component, the AI must verify:
 | **Press / active** | Pointer or key down while activating (`:active`). Often one step darker than hover. | **§19 Button States**. On **touch**, this is the main transient feedback — use where **hover** does not exist (see **§26 Cards** mobile note). |
 | **Select** | A durable choice: list/table row, tab, radio, checkbox, combobox value. | Distinct from hover; typically **`--color-border-selected`** or component-specific selected styling. |
 | **Expand / collapse** | Shows or hides more content (`Accordion`, expandable **Table** rows, trees). | Motion obeys **§18**; respect **`prefers-reduced-motion`**. |
-| **Dismiss** | Closes an ephemeral layer: **Modal** (Cancel, backdrop if allowed, Escape if allowed), **Toast**, **Popover** / **Dropdown** (outside click / Escape). | **Destructive** flows require an explicit safe exit — see **B3** and **[§27](#27-modal--dialog)**. |
+| **Dismiss** | Closes an ephemeral layer: **Modal** (Cancel, backdrop if allowed, Escape if allowed), **Toast** *(future)*, **Popover** / **Dropdown** (outside click / Escape), **`OfflineBanner`** `onDismiss`. | **Destructive** flows require an explicit safe exit — see **B3** and **[§27](#27-modal--dialog)**. |
 
 **Mobile and touch (align with §32):**
 
@@ -1676,29 +1565,30 @@ Before outputting any Modal component, the AI must verify:
 
 ### B2 — Feedback map (surface selection)
 
-| Situation | Prefer | Escalate / avoid |
-|-----------|--------|-------------------|
-| **Success — async / off-screen action** | **Toast** success variant (**§35**). | If user must stay on the same form without noise, a subtle **inline** success near the action is acceptable. **Never** silent success (**§35**). |
-| **Success — field-level** | Inline validation / helper (muted success). | Usually **not** toast (avoids stacking next to inputs). |
-| **Error — field validation** | **Inline** + **`--border-thick`** + message (**§25**). | Toast only if the user already navigated away from the field. |
-| **Error — section or page load failed** | **Empty / error state** layout (**§34**) with **Retry** **or** error **Toast** with actionable copy. | Full-screen block only for hard stops (see below). |
-| **Error — must acknowledge** | **AlertDialog** `variant="error"` or blocking **Modal** when flow cannot continue. | Use sparingly; most errors stay **inline + toast**. |
-| **Warning — non-blocking** | Contextual **Toast** warning **or** inline compact banner in the region. | If the user **must** choose → **Modal** / **AlertDialog** `variant="warning"`. |
-| **Confirmation — safe** | **Modal** default or **AlertDialog** (info / success acknowledgement). **[§27](#27-modal--dialog)**. | Single clear primary (**§21** hierarchy). |
-| **Confirmation — destructive / irreversible** | **AlertDialog** with **destructive** pattern — hierarchy via placement, **never** red-filled primary (**§27**, destructive subsection). |
-| **Long-running / processing** | **Skeleton** (**§34**), **button loading**, **determinate/indeterminate progress** where needed. | **Avoid** toast spam for progress ticks; optionally **one** toast on completion/failure via **Toast** variants. |
+| Situation | Prefer (shipped) | Escalate / avoid |
+|-----------|------------------|-------------------|
+| **Success — async / off-screen action** | Inline success near action; **`FeedbackState variant="success"`** when view is empty-after-success. **Future:** Toast (**§35**). | Never silent success. Avoid toast-like custom DOM until **`Toast`** ships. |
+| **Success — field-level** | Inline validation / helper (muted success). | Usually **not** a full **`EmptyState`**. |
+| **Error — field validation** | **Inline** + **`--border-width-thick`** + message (**§25**). | **`ErrorState`** only for section/page failures, not per-field. |
+| **Error — section or page load failed** | **`ErrorState`** or **`FeedbackState variant="error"`** with **`onRetry`** + optional **`ErrorAnimation`** (**§34**, **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)**). **Future:** error Toast. | Full-screen block only for hard stops. |
+| **Error — must acknowledge** | **`AlertDialog`** `variant="error"` or blocking **`Modal`**. | Use sparingly. |
+| **Offline** | **`OfflineBanner`** slim (Zone 2) or full panel (Zone 4 with `image`); **`FeedbackState variant="offline"`**. | Do not duplicate offline strip + full panel without hierarchy. |
+| **Warning — non-blocking** | **`OfflineBanner`** `tone="warning"` or compact inline banner (`--color-warning-soft`). **Future:** warning Toast. | If user **must** choose → **`Modal`** / **`AlertDialog`**. |
+| **Confirmation — safe** | **`Modal`** or **`AlertDialog`** (info / success acknowledgement). **[§27](#27-modal--dialog)**. | Single clear primary (**§21**). |
+| **Confirmation — destructive / irreversible** | **`AlertDialog`** destructive pattern — **[§27](#27-modal--dialog)**. | Never red-filled primary. |
+| **Long-running / processing** | **`Table`** skeleton / button **`loading`**, **`ProgressBar`**. **Future:** Toast on completion only. | Avoid notification spam during progress. |
 
-**Rules of thumb:** **Toast** = transient outcomes the user might not see otherwise (**§35** stack limit). **Inline** = error/success tied to visible UI. **Modal** = interrupt only when consequence or scope requires (**§27** intro).
+**Rules of thumb:** **`ErrorState` / `EmptyState`** = persistent zone content. **Inline** = field or action-adjacent. **`Modal` / `AlertDialog`** = interrupt when consequence requires. **Toast** = *future* transient layer (**§35** interim table until shipped).
 
 ### B3 — Flow patterns (retry, destructive vs info)
 
 #### Retry flow
 
-1. **When:** Loads fail (network, API, segment error) — **[§34 — Error States](#34-empty-states--loading-states)**.
-2. **Layout:** Mandatory **Ion Mist** empty scaffold: icon (**§34**), **H3**, short explanation (what broke in plain language).
-3. **Primary action:** **Retry** — retriggers fetch with obvious **loading** state (button spinner / skeleton — **§34**, **§19**).
-4. **Guardrails:** Debounce duplicate retries; swap **Retry** for **Sign in** / **Contact support** when retry will not succeed (403, revoked token).
-5. **Toast vs inline:** Prefer **inline / empty Retry** while the user is on that page; use **toast** if failure surfaces after navigation or globally.
+1. **When:** Loads fail (network, API, segment error) — **[§34](#34-empty-states--loading-states)** + **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)**.
+2. **Layout:** **`ErrorState`** or **`FeedbackState variant="error"`** — `title`, `description`, optional **`ErrorAnimation`** `image`, tone `danger` default.
+3. **Primary action:** **`onRetry`** → **`Button variant="outlinePrimary" size="md"`** with loading state on re-fetch (**§19**).
+4. **Guardrails:** Debounce duplicate retries; swap Retry for Sign in / Contact support when retry will not succeed (403, revoked token).
+5. **Transient vs inline:** Prefer **`ErrorState`** while user is on that page. **Future Toast** only when failure surfaces after navigation (§35 interim: **`AlertDialog`** or return-route banner).
 
 #### Destructive vs info modal — cross-reference **[§27](#27-modal--dialog)**
 
@@ -1706,239 +1596,25 @@ Before outputting any Modal component, the AI must verify:
 |----------|----------|----------------|
 | Delete, revoke access, discard unsaved edits, exit without saving | **Destructive** modal semantics | Variant table (**Modal / Destructive**); **Destructive Modal — NO RED BUTTONS**; Cancel left, destructive **Outlined/Ghost** right; backdrop dismiss **off** unless product explicitly overrides (library **`AlertDialog`**: **`destructive`** defaults **`closeOnBackdropClick`** unset → **false**). |
 | Alert, acknowledgement, moderate-risk confirm | **Info** / **`AlertDialog`** non-destructive | **Modal / Info**; Escape and backdrop behaviour per **[§27](#27-modal--dialog)** rules. |
-| Timed toast equivalent | **Semantic toast** rows (**§35**) | Success / warning / error / info accent bars — not interchangeable with destructive **Modal** framing. |
+| Timed toast equivalent | **§35 interim** (inline banner / **`AlertDialog`**) until **`Toast`** ships | Success / warning / error / info accent patterns in **§35** target spec |
 
-**Agents:** Prefer linking to existing **§27** sections over paraphrasing button colours; **`Modal`** / **`AlertDialog`** in **`UI_COMPONENTS_GUIDE`** mirror these rules.
+**Agents:** Prefer **`FEEDBACK_STATES_GUIDE.md`**, **§34**, and **§35** interim table over custom empty/error UI. **`Modal`** / **`AlertDialog`** in **`UI_COMPONENTS_GUIDE.md`** mirror **§27** button rules.
 
 ---
 
 ## 36. CSS Variables Reference
 
-```css
-:root {
-  /* ─── Brand ─── */
-  --color-brand-primary: #0D0D0D;
-  --color-brand-secondary: #FF4D00;
-  --color-brand-link: #002475;
+> **Last verified against library:** 2026-07-02
 
-  /* ─── Text ─── */
-  --color-text-primary: #0D0D0D;
-  --color-text-secondary: #757575;
-  --color-text-on-accent: #0D0D0D;
-  --color-text-disabled: #B3B3B3;
-  --color-text-on-primary: #FFFFFF;
-  --color-text-on-primary-inverse: #0D0D0D;
-  --color-text-link: #002475;
+Full token tables and the legacy `:root` CSS snapshot live in **[`DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./DESIGN_SYSTEM_TOKENS_REFERENCE.md)**.
 
-  /* ─── Backgrounds ─── */
-  --color-bg-page: #E0E0E0;
-  --color-bg-surface: #FFFFFF;
-  --color-bg-elevated: #FFFFFF;
-  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+**Runtime source of truth:** `src/design-system/tokens.css` — import once at app root:
 
-  /* ─── Borders ─── */
-  --color-border-default: #999999;
-  --color-border-interactive: #757575;
-  --color-border-strong: #0D0D0D;
-  --color-border-focus: #0066CC;
-  --color-border-selected: #B9A7FF;
-  --color-border-error: #DC3545;
-
-  /* ─── State ─── */
-  --color-state-success: #28A745;
-  --color-state-warning: #FFC107;
-  --color-state-error: #DC3545;
-  --color-state-info: #002475;
-
-  /* ─── Core Noir ─── */
-  --color-noir-100: #0D0D0D;
-  --color-noir-80: #323232;
-  --color-noir-60: #666666;
-  --color-noir-40: #999999;
-  --color-noir-20: #CCCCCC;
-
-  /* ─── Neutron Ash ─── */
-  --color-gray-100: #4A4A4A;
-  --color-gray-80: #757575;
-  --color-gray-60: #A0A0A0;
-  --color-gray-40: #CCCCCC;
-  --color-gray-20: #E8E8E8;
-
-  /* ─── Ion Mist ─── */
-  --color-mist-100: #D9D9D9;
-  --color-mist-80: #E0E0E0;
-  --color-mist-60: #EDEDED;
-  --color-mist-40: #F5F5F5;
-  --color-mist-20: #FAFAFA;
-
-  /* ─── Accent: Lavender ─── */
-  --color-accent-lavender-10: #EEE7FF;
-  --color-accent-lavender-40: #B9A7FF;
-
-  /* ─── Accent: Sky ─── */
-  --color-accent-sky-10: #E6F2FF;
-  --color-accent-sky-40: #A0D2FF;
-
-  /* ─── Accent: Mint ─── */
-  --color-accent-mint-10: #E9FFF4;
-  --color-accent-mint-40: #A0E7C4;
-
-  /* ─── Accent: Amber ─── */
-  --color-accent-amber-10: #FFF6DD;
-  --color-accent-amber-40: #FFD966;
-
-  /* ─── Accent: Rose ─── */
-  --color-accent-rose-10: #FFE9EC;
-  --color-accent-rose-40: #FFB3BD;
-
-  /* ─── Accent Foreground (badge/tag text on white backgrounds) ─── */
-  --color-accent-lavender-fg: #5B36A3;
-  --color-accent-sky-fg: #1A6BB5;
-  --color-accent-mint-fg: #1A7A4F;
-  --color-accent-amber-fg: #8A6D00;
-  --color-accent-rose-fg: #A3293D;
-
-  /* ─── Buttons ─── */
-  --button-primary-default-bg: #0D0D0D;
-  --button-primary-default-text: #FFFFFF;
-  --button-primary-hover-bg: #1A1A1A;
-  --button-primary-active-bg: #000000;
-  --button-primary-disabled-bg: #2B2B2B;
-  --button-primary-disabled-text: #B3B3B3;
-  --button-primary-focus-ring: var(--color-border-focus);
-  --color-bg-button-primary: #0D0D0D;
-  --color-text-on-primary: #FFFFFF;
-  --color-bg-button-primary-inverse: #FFFFFF;
-  --color-text-on-primary-inverse: #0D0D0D;
-  --button-destructive-bg: #DC3545;
-  --button-destructive-hover-bg: #C82333;
-  --button-height-lg: 44px;
-  --button-height-md: 40px;
-  --button-height-sm: 36px;
-
-  /* ─── Switch / Toggle ─── */
-  --switch-track-on: #0D0D0D;
-  --switch-track-off: #E0E0E0;
-  --switch-thumb: #FFFFFF;
-  --switch-border-on: #0D0D0D;
-  --switch-border-off: #999999;
-  --switch-focus-ring: var(--color-border-focus);
-  --switch-sm-track-w: 36px;
-  --switch-sm-track-h: 20px;
-  --switch-sm-thumb: 14px;
-  --switch-md-track-w: 44px;
-  --switch-md-track-h: 24px;
-  --switch-md-thumb: 18px;
-  --switch-lg-track-w: 56px;
-  --switch-lg-track-h: 32px;
-  --switch-lg-thumb: 24px;
-
-  /* ─── Spacing (8pt Grid) ─── */
-  --space-0: 4px;
-  --space-1: 8px;
-  --space-2: 16px;
-  --space-3: 24px;
-  --space-4: 32px;
-  --space-5: 40px;
-  --space-6: 48px;
-  --space-7: 56px;
-  --space-8: 64px;
-
-  /* ─── Border Radius ─── */
-  --radius-xs: 2px;
-  --radius-sm: 3px;
-  --radius-base: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-card: 10px;
-  --radius-circle: 50%;
-  --radius-pill: 9999px;
-
-  /* ─── Box Shadow ─── */
-  --shadow-none: none;
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
-
-  /* ─── Border Width ─── */
-  --border-none: 0px;
-  --border-thin: 1px;
-  --border-default: 1.5px;
-  --border-medium: 2px;
-  --border-thick: 3px;
-
-  /* ─── Typography ─── */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --text-h1-size: 32px;
-  --text-h1-weight: 800;
-  --text-h2-size: 25px;
-  --text-h2-weight: 800;
-  --text-h3-size: 18px;
-  --text-h3-weight: 500;
-  --text-h4-size: 16px;
-  --text-h4-weight: 500;
-  --text-body-size: 16px;
-  --text-body-weight: 400;
-  --text-body-line-height: 1.5;
-  --text-secondary-size: 14px;
-  --text-caption-size: 12px;
-  --text-micro-size: 10px;
-  --weight-regular: 400;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --weight-bold: 700;
-  --weight-extrabold: 800;
-  --leading-body: 1.5;
-  --leading-micro: 1.2;
-
-  /* ─── Grid ─── */
-  --grid-columns: 12;
-  --grid-gutter: 24px;
-  --grid-breakpoint: 1440px;
-
-  /* ─── Sizing ─── */
-  --size-icon-dense: 16px;
-  --size-icon-ui: 20px;
-  --size-icon-primary: 24px;
-  --size-icon-large: 32px;
-  --size-avatar-dense: 32px;
-  --size-avatar-standard: 40px;
-  --size-touch-target: 44px;
-  --size-sidebar: 320px;
-  --size-viewport-desktop: 1440px;
-  --size-indicator-bar: 4px;
-  --size-status-dot: 8px;
-  --size-bottom-nav-height: 56px;
-  --size-app-bar-height: 56px;
-
-  /* ─── Z-Index ─── */
-  --z-base: 0;
-  --z-raised: 10;
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-drawer: 300;
-  --z-modal: 400;
-  --z-toast: 500;
-  --z-tooltip-top: 600;
-
-  /* ─── Animation ─── */
-  --duration-instant: 100ms;
-  --duration-fast: 200ms;
-  --duration-normal: 300ms;
-  --duration-slow: 500ms;
-  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --easing-enter: cubic-bezier(0, 0, 0.2, 1);
-  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
-
-  /* ─── Opacity ─── */
-  --opacity-disabled: 0.5;
-  --opacity-overlay: 0.5;
-}
+```ts
+import "ui-common-components/design-system/tokens.css";
 ```
 
----
+For theme keys, contrast notes, and QA checklist see **[`THEMES.md`](./THEMES.md)**. For import rules and feedback token map see **[`tokens.md`](./tokens.md)**.
 
 ## 37. Governance Rules Summary
 
@@ -2190,18 +1866,20 @@ All components across platforms should follow this naming pattern for consistenc
 - `Switch` — toggle switches
 - `Card` — all card variants
 - `Modal` — modals and dialogs
-- `Toast` — notification toasts / snackbars
+- `Toast` — notification toasts / snackbars (**planned — not in v0.0.2**; use §35 interim patterns)
 - `Nav` — navigation components (sidebar, tab bar, app bar)
 - `Badge` — status badges, chips, tags
 - `Avatar` — user avatars
 - `Icon` — icon wrappers
-- `Empty` — empty state layouts
-- `Loading` — skeleton screens, spinners
+- `Empty` — **`EmptyState`**, **`ErrorState`**, **`OfflineBanner`**, **`FeedbackState`** (see [`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md))
+- `Loading` — table skeleton, button loading (**standalone `Skeleton` — planned**)
 - `Form` — form groups, field wrappers
 
 ---
 
 ## 42. Theme System — Interaction Layer Colour Override
+
+> **Last verified against library:** 2026-07-02 · `tokens.css` theme blocks — see also [`THEMES.md`](./THEMES.md)
 
 > **Rule Type:** Theming Governance | **Applies To:** All platforms | **Scope:** Theme ONLY affects the interaction layer (buttons, CTAs, switches, active states). It does NOT affect structure, surfaces, text, borders, shadows, or any other system element.
 

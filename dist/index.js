@@ -1395,16 +1395,16 @@ var TextInput = (0, import_react5.forwardRef)(({
   };
   const shouldShowToggle = showToggleIcon && type === "password";
   const colors = {
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    bgPage: "var(--color-bg-page, #F3F4F6)",
-    borderDefault: "var(--color-border-default, #999999)",
-    stateError: "var(--color-state-error, #DC3545)",
-    stateWarning: "var(--color-state-warning, #FFC107)",
-    stateSuccess: "var(--color-state-success, #28A745)"
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    bgPage: "var(--color-bg-page)",
+    borderDefault: "var(--color-border-default)",
+    stateError: "var(--color-state-error)",
+    stateWarning: "var(--color-state-warning)",
+    stateSuccess: "var(--color-state-success)"
   };
-  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring, #3B82F6)" : colors.borderDefault;
+  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring)" : colors.borderDefault;
   const wrapperStyle = variant === "filled" ? {
     minHeight: fieldMetrics.minHeight,
     borderRadius: roundedStyle,
@@ -1776,12 +1776,12 @@ var Checkbox = import_react6.default.memo(function Checkbox2({
   const checkboxId = `${name}-${value}`;
   const hasVisibleLabel = label.trim().length > 0;
   const colors = {
-    brand: "var(--color-brand-primary, #0D0D0D)",
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    borderDefault: "var(--color-border-default, #999999)",
-    accentLavender: "var(--color-accent-lavender-10, #EEE7FF)",
+    brand: "var(--color-brand-primary)",
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    borderDefault: "var(--color-border-default)",
+    accentLavender: "var(--color-accent-lavender-10)",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const roundedStyle = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
@@ -1825,6 +1825,7 @@ var Checkbox = import_react6.default.memo(function Checkbox2({
             checked,
             disabled,
             onChange,
+            readOnly: onChange ? void 0 : true,
             "aria-label": !hasVisibleLabel && ariaLabel ? ariaLabel : void 0,
             "aria-labelledby": hasVisibleLabel ? `${checkboxId}-label` : !ariaLabel && ariaLabelledBy ? ariaLabelledBy : void 0,
             className: "peer ucs-cc-checkbox-native"
@@ -1865,12 +1866,12 @@ function cls3(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 var COLORS = {
-  trackOff: "var(--color-mist-80, #e0e0e0)",
-  trackOn: "var(--color-theme-primary, var(--color-brand-primary, #0d0d0d))",
-  thumb: "var(--color-bg-surface, #ffffff)",
-  border: "var(--color-border-default, #999999)",
-  text: "var(--color-text-primary, #0d0d0d)",
-  textMuted: "var(--color-text-secondary, #757575)"
+  trackOff: "var(--color-mist-80)",
+  trackOn: "var(--color-theme-primary, var(--color-brand-primary))",
+  thumb: "var(--color-bg-surface)",
+  border: "var(--color-border-default)",
+  text: "var(--color-text-primary)",
+  textMuted: "var(--color-text-secondary)"
 };
 var SIZE_STYLES = {
   sm: {
@@ -2123,12 +2124,12 @@ var RadioButton = ({
   const isBox = shape === "box";
   const id = `${name}-${value}`;
   const colors = {
-    brand: "var(--color-brand-primary, #0D0D0D)",
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    borderDefault: "var(--color-border-default, #999999)",
-    accentLavender: "var(--color-accent-lavender-10, #EEE7FF)",
+    brand: "var(--color-brand-primary)",
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    borderDefault: "var(--color-border-default)",
+    accentLavender: "var(--color-accent-lavender-10)",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const roundedStyle = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
@@ -2334,8 +2335,8 @@ function Form({
     alignItems: "center",
     padding: "var(--space-1) var(--space-2)",
     borderRadius: 9999,
-    background: "var(--color-accent-lavender-10, #EEE7FF)",
-    color: "var(--color-brand-link, #002475)",
+    background: "var(--color-accent-lavender-10)",
+    color: "var(--color-brand-link)",
     fontSize: "var(--text-small-size)",
     fontWeight: 700,
     letterSpacing: "0.04em",
@@ -2343,14 +2344,14 @@ function Form({
   };
   const titleStyle = {
     margin: "var(--space-3) 0 var(--space-1)",
-    color: "var(--color-text-primary, #0D0D0D)",
+    color: "var(--color-text-primary)",
     fontSize: "clamp(var(--text-h2-size), 4vw, var(--text-h1-size))",
     lineHeight: "var(--text-h1-line-height)",
     fontWeight: 800
   };
   const descriptionStyle = {
     margin: 0,
-    color: "var(--color-text-secondary, #757575)",
+    color: "var(--color-text-secondary)",
     fontSize: "var(--text-body-size)",
     lineHeight: "var(--text-body-line-height)"
   };
@@ -4348,13 +4349,13 @@ var TextArea = ({
   const resolvedStatus = status != null ? status : errorMessage ? "error" : void 0;
   const currentLength = internalValue.length;
   const footerMessage = errorMessage != null ? errorMessage : helperText;
-  const footerMessageColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-text-secondary, #757575)";
+  const footerMessageColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-text-secondary)";
   const minHeight = size === "lg" ? 128 : size === "sm" ? 96 : 112;
   const paddingX = size === "lg" ? 16 : size === "sm" ? 12 : 14;
   const paddingY = size === "lg" ? 12 : size === "sm" ? 8 : 10;
   const fontSize = size === "sm" ? "var(--text-small-size, 12px)" : "var(--text-body-size, 16px)";
   const resizeValue = resize === "horizontal" ? "horizontal" : resize === "both" ? "both" : resize === "none" ? "none" : "vertical";
-  const borderColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-border-default, #999999)";
+  const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
   const wrapperStyle = {
     width: fullWidth ? "100%" : "auto",
     display: fullWidth ? "block" : "inline-block"
@@ -4362,7 +4363,7 @@ var TextArea = ({
   const labelStyle = {
     display: "block",
     marginBottom: 8,
-    color: "var(--color-text-primary, #0D0D0D)",
+    color: "var(--color-text-primary)",
     fontSize: "var(--text-secondary-size, 14px)",
     fontWeight: 500,
     lineHeight: 1.5
@@ -4377,8 +4378,8 @@ var TextArea = ({
     resize: resizeValue,
     borderRadius: rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px",
     border: `1.5px solid ${borderColor}`,
-    background: disabled ? "var(--color-bg-page, #F3F4F6)" : "var(--color-bg-surface, #FFFFFF)",
-    color: disabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    background: disabled ? "var(--color-bg-page)" : "var(--color-bg-surface)",
+    color: disabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     outline: "none",
     fontSize,
     lineHeight: 1.5,
@@ -4400,7 +4401,7 @@ var TextArea = ({
   const countStyle = {
     margin: 0,
     flexShrink: 0,
-    color: "var(--color-text-secondary, #757575)",
+    color: "var(--color-text-secondary)",
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5
   };
@@ -4491,7 +4492,7 @@ var ProgressBar = ({
   const computedPct = computePercentage({ value, stepCount, formCount });
   const pct = clamp(computedPct);
   const visualFill = gradient || customColor;
-  const trackFill = trackColor || "var(--color-bg-page, #F3F4F6)";
+  const trackFill = trackColor || "var(--color-bg-page)";
   const resolvedAnimation = animation !== "smooth" ? animation : animated ? "pulse" : "smooth";
   const [animatedWidth, setAnimatedWidth] = import_react17.default.useState(0);
   import_react17.default.useEffect(() => {
@@ -4542,7 +4543,7 @@ var ProgressBar = ({
                   "span",
                   {
                     style: {
-                      color: "var(--color-text-primary, #0D0D0D)",
+                      color: "var(--color-text-primary)",
                       fontSize: "var(--text-small-size, 12px)",
                       fontWeight: 600,
                       lineHeight: 1.5
@@ -4554,7 +4555,7 @@ var ProgressBar = ({
                   "span",
                   {
                     style: {
-                      color: "var(--color-text-secondary, #757575)",
+                      color: "var(--color-text-secondary)",
                       fontSize: "var(--text-small-size, 12px)",
                       lineHeight: 1.5
                     },
@@ -4647,8 +4648,8 @@ var ProgressBar = ({
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("svg", { width: dims, height: dims, className: "block", children: [
                 gradient && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("defs", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("linearGradient", { id: `progress-gradient-${circleId}`, x1: "0%", y1: "0%", x2: "100%", y2: "100%", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("stop", { offset: "0%", stopColor: "#60A5FA" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("stop", { offset: "100%", stopColor: "#8B5CF6" })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("stop", { offset: "0%", stopColor: "var(--color-state-info)" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("stop", { offset: "100%", stopColor: "var(--color-accent-lavender-40)" })
                 ] }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
                   "circle",
@@ -4690,7 +4691,7 @@ var ProgressBar = ({
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    color: "var(--color-text-primary, #0D0D0D)",
+                    color: "var(--color-text-primary)",
                     fontWeight: 700,
                     lineHeight: 1,
                     fontSize: fontSize || 16
@@ -4705,7 +4706,7 @@ var ProgressBar = ({
           "div",
           {
             style: {
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
               fontSize: "var(--text-small-size, 12px)",
               textAlign: "center",
               lineHeight: 1.5
@@ -4740,12 +4741,12 @@ var ProgressBar_default = ProgressBar;
 // src/components/atoms/GradientText/index.tsx
 var import_react18 = __toESM(require("react"));
 var import_jsx_runtime20 = require("react/jsx-runtime");
-var defaultGradient = "linear-gradient(135deg, var(--color-brand-primary, #0d0d0d) 0%, var(--color-brand-secondary, #10b981) 100%)";
+var defaultGradient = "linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%)";
 var GradientText = import_react18.default.memo(function GradientText2({
   children,
   as: Component = "span",
   gradient = defaultGradient,
-  fallbackColor = "var(--color-brand-primary, #0d0d0d)",
+  fallbackColor = "var(--color-brand-primary)",
   className = "",
   style
 }) {
@@ -4819,8 +4820,8 @@ var TooltipIcon = ({
     left: 0
   });
   const [arrowStyle, setArrowStyle] = (0, import_react19.useState)({});
-  const tooltipBackground = variant === "light" ? "var(--color-bg-surface, #FFFFFF)" : "var(--color-text-primary, #0D0D0D)";
-  const tooltipForeground = variant === "light" ? "var(--color-text-primary, #0D0D0D)" : "var(--color-bg-surface, #FFFFFF)";
+  const tooltipBackground = variant === "light" ? "var(--color-bg-surface)" : "var(--color-text-primary)";
+  const tooltipForeground = variant === "light" ? "var(--color-text-primary)" : "var(--color-bg-surface)";
   const tooltipBorder = variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
   const clearTimers = () => {
     if (openTimerRef.current)
@@ -5411,7 +5412,7 @@ var Avatar = ({
   statusPosition = defaultStatusPosition,
   color,
   backgroundColor = defaultBackgroundColor,
-  textColor = "var(--color-text-primary, #0D0D0D)",
+  textColor = "var(--color-text-primary)",
   iconColor = defaultIconColor,
   iconSize: iconSize2,
   preserveColors = false,
@@ -5434,8 +5435,8 @@ var Avatar = ({
       height: statusSize,
       position: "absolute",
       borderRadius: "9999px",
-      border: "2px solid var(--color-bg-surface, #FFFFFF)",
-      backgroundColor: statusColor || (status === "online" ? "var(--color-state-success, #28A745)" : status === "busy" ? "var(--color-state-error, #DC3545)" : status === "away" ? "var(--color-state-warning, #FFC107)" : status === "offline" ? "var(--color-text-secondary, #757575)" : "transparent")
+      border: "2px solid var(--color-bg-surface)",
+      backgroundColor: statusColor || (status === "online" ? "var(--color-state-success)" : status === "busy" ? "var(--color-state-error)" : status === "away" ? "var(--color-state-warning)" : status === "offline" ? "var(--color-text-secondary)" : "transparent")
     };
     switch (statusPosition) {
       case "top-left":
@@ -5520,7 +5521,7 @@ var Avatar = ({
               borderRadius: shape === "circle" ? "50%" : shape === "square" ? 0 : rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : "var(--radius-lg, 8px)",
               border: bordered ? `1.5px solid ${borderColor}` : void 0,
               boxSizing: "border-box",
-              background: "var(--color-bg-surface, #FFFFFF)"
+              background: "var(--color-bg-surface)"
             }
           }
         ) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
@@ -6125,12 +6126,12 @@ var getElevationShadow = (elevation) => {
     case "none":
       return "none";
     case "sm":
-      return "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))";
+      return "var(--shadow-sm)";
     case "lg":
-      return "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))";
+      return "var(--shadow-lg)";
     case "md":
     default:
-      return "var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.10))";
+      return "var(--shadow-md)";
   }
 };
 var resolveElevation = (elevation, variant) => {
@@ -6147,19 +6148,19 @@ var resolveElevation = (elevation, variant) => {
   }
 };
 var defaultTheme = {
-  primary: "var(--button-primary-default-bg, #2563EB)",
-  primaryHover: "rgba(37, 99, 235, 0.08)",
-  primaryText: "#FFFFFF",
-  rangeBackground: "var(--color-accent-sky-10, #E6F2FF)",
-  todayBackground: "var(--color-accent-amber-10, #FFF6DD)",
-  todayRing: "rgba(245, 158, 11, 0.5)",
-  text: "var(--color-text-primary, #0D0D0D)",
-  textSecondary: "var(--color-text-secondary, #6B7280)",
-  textDisabled: "#B0B0B0",
-  background: "var(--color-bg-surface, #FFFFFF)",
-  border: "var(--color-border-default, #e5e7eb)",
-  selectBorder: "var(--color-border-default, #e5e7eb)",
-  focusRing: "rgba(37, 99, 235, 0.25)",
+  primary: "var(--button-primary-default-bg)",
+  primaryHover: "color-mix(in srgb, var(--button-primary-default-bg) 8%, transparent)",
+  primaryText: "var(--color-text-on-primary)",
+  rangeBackground: "var(--color-accent-sky-10)",
+  todayBackground: "var(--color-accent-amber-10)",
+  todayRing: "color-mix(in srgb, var(--color-state-warning) 50%, transparent)",
+  text: "var(--color-text-primary)",
+  textSecondary: "var(--color-text-secondary)",
+  textDisabled: "var(--color-text-disabled)",
+  background: "var(--color-bg-surface)",
+  border: "var(--color-border-default)",
+  selectBorder: "var(--color-border-default)",
+  focusRing: "color-mix(in srgb, var(--color-focus-ring) 25%, transparent)",
   padding: 12,
   gap: 2,
   cellSize: 36,
@@ -6168,7 +6169,7 @@ var defaultTheme = {
   navButtonSize: 28,
   cellFontSize: 14,
   weekdayFontSize: 11,
-  fontFamily: 'var(--font-family, "Inter"), system-ui, sans-serif',
+  fontFamily: "var(--font-family), system-ui, sans-serif",
   maxWidth: 320
 };
 var sizeOverrides = {
@@ -6538,7 +6539,7 @@ var Calendar = ({
   const [rangeStart, rangeEnd] = selectedRange;
   const animClass = animation === "none" || isInitialMountRef.current ? "" : animation === "slide" ? slideDirectionRef.current === "prev" ? "calendar-anim-slide-prev" : "calendar-anim-slide-next" : animation === "fade" ? "calendar-anim-fade" : animation === "scale" ? "calendar-anim-scale" : "";
   const resolvedRadius = radius !== void 0 ? typeof radius === "number" ? `${radius}px` : radius : (_b = theme.borderRadius) != null ? _b : 16;
-  const resolvedBackground = variant === "filled" ? "var(--color-bg-page, #F3F4F6)" : (_c = theme.background) != null ? _c : "var(--color-bg-surface, #FFFFFF)";
+  const resolvedBackground = variant === "filled" ? "var(--color-bg-page)" : (_c = theme.background) != null ? _c : "var(--color-bg-surface)";
   const containerStyle = {
     ...cssVars,
     width: fullWidth ? "100%" : "auto",
@@ -6572,7 +6573,7 @@ var Calendar = ({
     border: "none",
     borderRadius: (_j = theme.cellRadius) != null ? _j : 10,
     background: "transparent",
-    color: (_k = theme.text) != null ? _k : "var(--color-text-primary, #0D0D0D)",
+    color: (_k = theme.text) != null ? _k : "var(--color-text-primary)",
     cursor: disabled ? "not-allowed" : "pointer",
     fontSize: 20,
     fontWeight: 500,
@@ -6585,8 +6586,8 @@ var Calendar = ({
     borderRadius: (_m = theme.cellRadius) != null ? _m : 10,
     fontSize: (_n = theme.cellFontSize) != null ? _n : 14,
     fontWeight: 600,
-    color: (_o = theme.text) != null ? _o : "var(--color-text-primary, #0D0D0D)",
-    backgroundColor: (_p = theme.background) != null ? _p : "var(--color-bg-surface, #FFFFFF)",
+    color: (_o = theme.text) != null ? _o : "var(--color-text-primary)",
+    backgroundColor: (_p = theme.background) != null ? _p : "var(--color-bg-surface)",
     cursor: disabled ? "not-allowed" : "pointer",
     ...stylesProp == null ? void 0 : stylesProp.select
   };
@@ -6607,7 +6608,7 @@ var Calendar = ({
     fontWeight: 600,
     letterSpacing: "0.5px",
     textTransform: "uppercase",
-    color: (_s = theme.textSecondary) != null ? _s : "var(--color-text-secondary, #6B7280)",
+    color: (_s = theme.textSecondary) != null ? _s : "var(--color-text-secondary)",
     padding: "10px 0",
     ...stylesProp == null ? void 0 : stylesProp.weekday
   };
@@ -6659,7 +6660,7 @@ var Calendar = ({
                 textAlign: "center",
                 fontSize: (_v = theme.cellFontSize) != null ? _v : 14,
                 fontWeight: 600,
-                color: (_w = theme.text) != null ? _w : "var(--color-text-primary, #0D0D0D)"
+                color: (_w = theme.text) != null ? _w : "var(--color-text-primary)"
               },
               children: captionLabel
             }
@@ -6822,7 +6823,7 @@ var Calendar = ({
                     style: {
                       ...cellBaseStyle,
                       fontSize: (_a2 = theme.weekdayFontSize) != null ? _a2 : 11,
-                      color: (_b2 = theme.textSecondary) != null ? _b2 : "var(--color-text-secondary, #757575)"
+                      color: (_b2 = theme.textSecondary) != null ? _b2 : "var(--color-text-secondary)"
                     },
                     children: weekNum
                   }
@@ -6837,8 +6838,8 @@ var Calendar = ({
                   const cellStyle = {
                     ...cellBaseStyle,
                     cursor: isSelectable ? "pointer" : "default",
-                    color: isDisabled ? (_a3 = theme.textDisabled) != null ? _a3 : "#B0B0B0" : !day.inCurrentMonth ? (_b3 = theme.textSecondary) != null ? _b3 : "#9CA3AF" : isSelected ? (_c2 = theme.primaryText) != null ? _c2 : "#FFFFFF" : (_d2 = theme.text) != null ? _d2 : "var(--color-text-primary, #0D0D0D)",
-                    background: isSelected ? (_e2 = theme.primary) != null ? _e2 : "var(--button-primary-default-bg, #2563EB)" : isInRange ? (_f2 = theme.rangeBackground) != null ? _f2 : "var(--color-accent-sky-10, #E6F2FF)" : isToday ? (_g2 = theme.todayBackground) != null ? _g2 : "var(--color-accent-amber-10, #FFF6DD)" : "transparent",
+                    color: isDisabled ? (_a3 = theme.textDisabled) != null ? _a3 : "var(--color-text-disabled)" : !day.inCurrentMonth ? (_b3 = theme.textSecondary) != null ? _b3 : "var(--color-text-secondary)" : isSelected ? (_c2 = theme.primaryText) != null ? _c2 : "var(--color-text-on-primary)" : (_d2 = theme.text) != null ? _d2 : "var(--color-text-primary)",
+                    background: isSelected ? (_e2 = theme.primary) != null ? _e2 : "var(--button-primary-default-bg)" : isInRange ? (_f2 = theme.rangeBackground) != null ? _f2 : "var(--color-accent-sky-10)" : isToday ? (_g2 = theme.todayBackground) != null ? _g2 : "var(--color-accent-amber-10)" : "transparent",
                     fontWeight: isSelected ? 700 : isToday ? 600 : 500,
                     boxShadow: isToday && !isSelected ? `inset 0 0 0 2px ${(_h2 = theme.todayRing) != null ? _h2 : "rgba(245, 158, 11, 0.5)"}` : void 0
                   };
@@ -7029,7 +7030,7 @@ var DatePicker = ({
     lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
   }[size];
   const resolvedStatus = status != null ? status : error ? "error" : void 0;
-  const borderColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-border-default, #999999)";
+  const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
   const shellStyle = {
     width: fullWidth ? "100%" : "auto",
     display: fullWidth ? "block" : "inline-block"
@@ -7037,14 +7038,14 @@ var DatePicker = ({
   const labelStyle = {
     display: "block",
     marginBottom: 8,
-    color: disabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    color: disabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     fontSize: "var(--text-secondary-size, 14px)",
     fontWeight: 500,
     lineHeight: 1.5
   };
   const fieldBaseStyle = variant === "filled" ? {
     minHeight: currentSize.minHeight,
-    backgroundColor: "var(--color-bg-page, #F3F4F6)",
+    backgroundColor: "var(--color-bg-page)",
     border: `1.5px solid ${borderColor}`,
     borderRadius: resolveRadius(rounded)
   } : variant === "underlined" ? {
@@ -7055,7 +7056,7 @@ var DatePicker = ({
     borderRadius: 0
   } : {
     minHeight: currentSize.minHeight,
-    backgroundColor: "var(--color-bg-surface, #FFFFFF)",
+    backgroundColor: "var(--color-bg-surface)",
     border: `1.5px solid ${borderColor}`,
     borderRadius: resolveRadius(rounded)
   };
@@ -7067,7 +7068,7 @@ var DatePicker = ({
     border: "none",
     outline: "none",
     background: "transparent",
-    color: disabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    color: disabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     fontSize: currentSize.fontSize,
     lineHeight: 1.5,
     boxSizing: "border-box",
@@ -7078,7 +7079,7 @@ var DatePicker = ({
   const helperStyle = {
     marginTop: 8,
     marginBottom: 0,
-    color: resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : "var(--color-text-secondary, #757575)",
+    color: resolvedStatus === "error" ? "var(--color-state-error)" : "var(--color-text-secondary)",
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5
   };
@@ -7234,7 +7235,7 @@ var DatePicker = ({
     border: "none",
     borderRadius: "var(--radius-sm, 6px)",
     background: "transparent",
-    color: "var(--color-text-primary, #0D0D0D)",
+    color: "var(--color-text-primary)",
     cursor: disabled ? "not-allowed" : "pointer",
     flexShrink: 0
   };
@@ -7253,8 +7254,8 @@ var DatePicker = ({
     ...popoverStyle,
     padding: 0,
     borderRadius: "var(--radius-md, 8px)",
-    border: "1px solid var(--color-border-default, #e5e7eb)",
-    background: "var(--color-bg-surface, #FFFFFF)",
+    border: "1px solid var(--color-border-default)",
+    background: "var(--color-bg-surface)",
     boxShadow: "0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 10px 24px -4px rgba(15, 23, 42, 0.1)",
     transformOrigin: "top left",
     opacity: 1,
@@ -7300,7 +7301,7 @@ var DatePicker = ({
             }
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { color: "var(--color-text-secondary, #757575)", fontSize: 14, flexShrink: 0 }, children: rangeSeparator }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { color: "var(--color-text-secondary)", fontSize: 14, flexShrink: 0 }, children: rangeSeparator }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
           "input",
           {
@@ -7346,7 +7347,7 @@ var DatePicker = ({
               border: "none",
               borderRadius: "var(--radius-sm, 6px)",
               background: "transparent",
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
               cursor: disabled ? "not-allowed" : "pointer"
             },
             onClick: () => !disabled && setIsOpen((prev) => !prev),
@@ -7402,7 +7403,7 @@ var DatePicker = ({
                           textAlign: "center",
                           fontSize: "var(--text-secondary-size, 14px)",
                           fontWeight: 600,
-                          color: "var(--color-text-primary, #0D0D0D)"
+                          color: "var(--color-text-primary)"
                         },
                         children: [
                           visibleMonth.toLocaleDateString(void 0, { month: "long", year: "numeric" }),
@@ -7527,7 +7528,7 @@ var DatePicker = ({
             border: "none",
             borderRadius: "var(--radius-sm, 6px)",
             background: "transparent",
-            color: "var(--color-text-secondary, #757575)",
+            color: "var(--color-text-secondary)",
             cursor: disabled ? "not-allowed" : "pointer"
           },
           onClick: () => !disabled && setIsOpen((prev) => !prev),
@@ -7831,7 +7832,7 @@ var Divider = ({
   orientation = "horizontal",
   length,
   thickness = "1px",
-  color = "var(--color-border-subtle, var(--color-mist-60, #ededed))",
+  color = "var(--color-border-subtle, var(--color-mist-60))",
   variant = "solid",
   align = "center",
   textPosition = "center",
@@ -7897,7 +7898,7 @@ var Divider = ({
   const endFlex = align === "start" ? 0.8 : align === "end" ? 0.2 : 1;
   const contentStyle = {
     flexShrink: 0,
-    color: "var(--color-text-secondary, #757575)",
+    color: "var(--color-text-secondary)",
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5,
     whiteSpace: "nowrap"
@@ -8243,11 +8244,11 @@ function OfflineBanner({
                 justifyContent: "center",
                 width: 28,
                 height: 28,
-                borderRadius: "var(--radius-control, 6px)",
+                borderRadius: "var(--radius-control)",
                 border: "none",
                 background: "transparent",
                 cursor: "pointer",
-                color: "var(--color-text-secondary, #475569)",
+                color: "var(--color-text-secondary)",
                 fontSize: 14
               },
               children: "\u2715"
@@ -8272,7 +8273,7 @@ function FeedbackState(props) {
       EmptyState,
       {
         tone: "success",
-        icon: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { "aria-hidden": "true", width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", style: { color: "var(--color-success-strong, #15803d)" }, children: [
+        icon: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { "aria-hidden": "true", width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", style: { color: "var(--color-success-strong)" }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
           /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("path", { d: "M8 12l3 3 5-5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })
         ] }),
@@ -8286,7 +8287,7 @@ function FeedbackState(props) {
       EmptyState,
       {
         tone: "info",
-        icon: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { "aria-hidden": "true", width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", style: { color: "var(--color-info-strong, #1d4ed8)" }, children: [
+        icon: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("svg", { "aria-hidden": "true", width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", style: { color: "var(--color-info-strong)" }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("circle", { cx: "12", cy: "12", r: "9", stroke: "currentColor", strokeWidth: "1.75" }),
           /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("path", { d: "M12 8v.5M12 11v5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
         ] }),
@@ -8317,7 +8318,7 @@ function NoDataAnimation({ size = 120, className, "aria-hidden": ariaHidden = "t
       viewBox: "0 0 120 120",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      className,
+      className: ["ds-feedback-illustration", className].filter(Boolean).join(" "),
       "aria-hidden": ariaHidden,
       style: { overflow: "visible" },
       children: [
@@ -8344,15 +8345,15 @@ function NoDataAnimation({ size = 120, className, "aria-hidden": ariaHidden = "t
       ` }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("ellipse", { cx: "60", cy: "108", rx: "28", ry: "5", fill: "currentColor", opacity: "0.08" }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-tray-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("rect", { x: "18", y: "50", width: "84", height: "48", rx: "10", fill: "var(--color-fill-muted,#f1f5f9)", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M18 72 Q18 50 60 50 Q102 50 102 72", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", fill: "none" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M60 34 L60 56M53 49 L60 56 L67 49", stroke: "var(--color-text-secondary,#94a3b8)", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "78", x2: "62", y2: "78", className: "fb-line-1", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", strokeLinecap: "round" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "86", x2: "54", y2: "86", className: "fb-line-2", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", strokeLinecap: "round" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "94", x2: "48", y2: "94", className: "fb-line-3", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "2.5", strokeLinecap: "round" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "82", cy: "78", r: "3", fill: "var(--color-border-subtle,#cbd5e1)", className: "fb-dot-1" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "91", cy: "78", r: "3", fill: "var(--color-border-subtle,#cbd5e1)", className: "fb-dot-2" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "100", cy: "78", r: "3", fill: "var(--color-border-subtle,#cbd5e1)", className: "fb-dot-3" })
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("rect", { x: "18", y: "50", width: "84", height: "48", rx: "10", fill: "var(--color-fill-muted)", stroke: "var(--color-border-subtle)", strokeWidth: "2.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M18 72 Q18 50 60 50 Q102 50 102 72", stroke: "var(--color-border-subtle)", strokeWidth: "2.5", fill: "none" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M60 34 L60 56M53 49 L60 56 L67 49", stroke: "var(--color-text-secondary)", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "78", x2: "62", y2: "78", className: "fb-line-1", stroke: "var(--color-border-subtle)", strokeWidth: "2.5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "86", x2: "54", y2: "86", className: "fb-line-2", stroke: "var(--color-border-subtle)", strokeWidth: "2.5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "32", y1: "94", x2: "48", y2: "94", className: "fb-line-3", stroke: "var(--color-border-subtle)", strokeWidth: "2.5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "82", cy: "78", r: "3", fill: "var(--color-border-subtle)", className: "fb-dot-1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "91", cy: "78", r: "3", fill: "var(--color-border-subtle)", className: "fb-dot-2" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "100", cy: "78", r: "3", fill: "var(--color-border-subtle)", className: "fb-dot-3" })
         ] })
       ]
     }
@@ -8367,7 +8368,7 @@ function NoSearchResultsAnimation({ size = 120, className, "aria-hidden": ariaHi
       viewBox: "0 0 120 120",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      className,
+      className: ["ds-feedback-illustration", className].filter(Boolean).join(" "),
       "aria-hidden": ariaHidden,
       style: { overflow: "visible" },
       children: [
@@ -8386,11 +8387,11 @@ function NoSearchResultsAnimation({ size = 120, className, "aria-hidden": ariaHi
       ` }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("ellipse", { cx: "60", cy: "110", rx: "24", ry: "4", fill: "currentColor", opacity: "0.07" }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-lens", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "52", cy: "52", r: "26", fill: "var(--color-fill-muted,#f1f5f9)", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "3" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "70", y1: "70", x2: "94", y2: "94", stroke: "var(--color-border-subtle,#cbd5e1)", strokeWidth: "5", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "52", cy: "52", r: "26", fill: "var(--color-fill-muted)", stroke: "var(--color-border-subtle)", strokeWidth: "3" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "70", y1: "70", x2: "94", y2: "94", stroke: "var(--color-border-subtle)", strokeWidth: "5", strokeLinecap: "round" }),
           /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-x-mark", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "43", y1: "43", x2: "61", y2: "61", stroke: "var(--color-danger-strong,#dc2626)", strokeWidth: "3", strokeLinecap: "round" }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "61", y1: "43", x2: "43", y2: "61", stroke: "var(--color-danger-strong,#dc2626)", strokeWidth: "3", strokeLinecap: "round" })
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "43", y1: "43", x2: "61", y2: "61", stroke: "var(--color-danger-strong)", strokeWidth: "3", strokeLinecap: "round" }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "61", y1: "43", x2: "43", y2: "61", stroke: "var(--color-danger-strong)", strokeWidth: "3", strokeLinecap: "round" })
           ] })
         ] })
       ]
@@ -8406,7 +8407,7 @@ function ErrorAnimation({ size = 120, className, "aria-hidden": ariaHidden = "tr
       viewBox: "0 0 120 120",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      className,
+      className: ["ds-feedback-illustration", className].filter(Boolean).join(" "),
       "aria-hidden": ariaHidden,
       style: { overflow: "visible" },
       children: [
@@ -8431,7 +8432,7 @@ function ErrorAnimation({ size = 120, className, "aria-hidden": ariaHidden = "tr
             r: "38",
             className: "fb-ring-anim",
             fill: "none",
-            stroke: "var(--color-danger-strong,#ef4444)",
+            stroke: "var(--color-danger-strong)",
             strokeWidth: "2"
           }
         ),
@@ -8440,14 +8441,14 @@ function ErrorAnimation({ size = 120, className, "aria-hidden": ariaHidden = "tr
             "path",
             {
               d: "M60 18 L92 32 L92 62 Q92 84 60 100 Q28 84 28 62 L28 32 Z",
-              fill: "var(--color-danger-fill,#fee2e2)",
-              stroke: "var(--color-danger-strong,#ef4444)",
+              fill: "var(--color-danger-fill)",
+              stroke: "var(--color-danger-strong)",
               strokeWidth: "2.5",
               strokeLinejoin: "round"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "60", y1: "44", x2: "60", y2: "65", stroke: "var(--color-danger-strong,#dc2626)", strokeWidth: "4", strokeLinecap: "round" }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "75", r: "3", fill: "var(--color-danger-strong,#dc2626)" })
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("line", { x1: "60", y1: "44", x2: "60", y2: "65", stroke: "var(--color-danger-strong)", strokeWidth: "4", strokeLinecap: "round" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "75", r: "3", fill: "var(--color-danger-strong)" })
         ] })
       ]
     }
@@ -8462,7 +8463,7 @@ function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
       viewBox: "0 0 120 120",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      className,
+      className: ["ds-feedback-illustration", className].filter(Boolean).join(" "),
       "aria-hidden": ariaHidden,
       style: { overflow: "visible" },
       children: [
@@ -8490,7 +8491,7 @@ function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
           {
             className: "fb-arc-3",
             d: "M22 58 Q22 26 60 26 Q98 26 98 58",
-            stroke: "var(--color-border-subtle,#cbd5e1)",
+            stroke: "var(--color-border-subtle)",
             strokeWidth: "5",
             strokeLinecap: "round",
             fill: "none"
@@ -8501,7 +8502,7 @@ function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
           {
             className: "fb-arc-2",
             d: "M35 70 Q35 46 60 46 Q85 46 85 70",
-            stroke: "var(--color-border-subtle,#cbd5e1)",
+            stroke: "var(--color-border-subtle)",
             strokeWidth: "5",
             strokeLinecap: "round",
             fill: "none"
@@ -8512,13 +8513,13 @@ function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
           {
             className: "fb-arc-1",
             d: "M48 82 Q48 66 60 66 Q72 66 72 82",
-            stroke: "var(--color-border-subtle,#cbd5e1)",
+            stroke: "var(--color-border-subtle)",
             strokeWidth: "5",
             strokeLinecap: "round",
             fill: "none"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { className: "fb-wifi-dot", cx: "60", cy: "92", r: "4.5", fill: "var(--color-border-subtle,#cbd5e1)" }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { className: "fb-wifi-dot", cx: "60", cy: "92", r: "4.5", fill: "var(--color-border-subtle)" }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
           "line",
           {
@@ -8527,7 +8528,7 @@ function OfflineAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
             y1: "96",
             x2: "96",
             y2: "24",
-            stroke: "var(--color-danger-strong,#ef4444)",
+            stroke: "var(--color-danger-strong)",
             strokeWidth: "4",
             strokeLinecap: "round"
           }
@@ -8544,8 +8545,8 @@ function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
       height: size,
       viewBox: "0 0 120 120",
       fill: "none",
-      xmlns: "http.w3.org/2000/svg",
-      className,
+      xmlns: "http://www.w3.org/2000/svg",
+      className: ["ds-feedback-illustration", className].filter(Boolean).join(" "),
       "aria-hidden": ariaHidden,
       style: { overflow: "visible" },
       children: [
@@ -8568,7 +8569,7 @@ function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
         .fb-check-draw  { stroke-dasharray: 60;  animation: fb-check-draw  0.4s 0.4s both ease-out; }
       ` }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-success-g", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "60", r: "34", fill: "var(--color-success-fill,#dcfce7)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "60", r: "34", fill: "var(--color-success-fill)" }),
           /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
             "circle",
             {
@@ -8576,7 +8577,7 @@ function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
               cy: "60",
               r: "34",
               className: "fb-circle-draw",
-              stroke: "var(--color-success-strong,#16a34a)",
+              stroke: "var(--color-success-strong)",
               strokeWidth: "3",
               fill: "none"
             }
@@ -8586,7 +8587,7 @@ function SuccessAnimation({ size = 120, className, "aria-hidden": ariaHidden = "
             {
               d: "M42 60 l14 14 l22-22",
               className: "fb-check-draw",
-              stroke: "var(--color-success-strong,#16a34a)",
+              stroke: "var(--color-success-strong)",
               strokeWidth: "4.5",
               strokeLinecap: "round",
               strokeLinejoin: "round"
@@ -8606,7 +8607,7 @@ function InfoAnimation({ size = 120, className, "aria-hidden": ariaHidden = "tru
       viewBox: "0 0 120 120",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      className,
+      className: ["ds-feedback-illustration", className].filter(Boolean).join(" "),
       "aria-hidden": ariaHidden,
       style: { overflow: "visible" },
       children: [
@@ -8623,7 +8624,7 @@ function InfoAnimation({ size = 120, className, "aria-hidden": ariaHidden = "tru
         .fb-i-dot   { animation: fb-i-dot 2.5s ease-in-out infinite; transform-origin: 60px 40px; }
       ` }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("g", { className: "fb-info-g", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "60", r: "34", fill: "var(--color-info-fill,#dbeafe)", stroke: "var(--color-info-strong,#1d4ed8)", strokeWidth: "2.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "60", r: "34", fill: "var(--color-info-fill)", stroke: "var(--color-info-strong)", strokeWidth: "2.5" }),
           /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
             "line",
             {
@@ -8631,12 +8632,12 @@ function InfoAnimation({ size = 120, className, "aria-hidden": ariaHidden = "tru
               y1: "54",
               x2: "60",
               y2: "76",
-              stroke: "var(--color-info-strong,#1d4ed8)",
+              stroke: "var(--color-info-strong)",
               strokeWidth: "5",
               strokeLinecap: "round"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "43", r: "3.5", fill: "var(--color-info-strong,#1d4ed8)", className: "fb-i-dot" })
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("circle", { cx: "60", cy: "43", r: "3.5", fill: "var(--color-info-strong)", className: "fb-i-dot" })
         ] })
       ]
     }
@@ -8742,8 +8743,8 @@ var Select = (0, import_react27.forwardRef)((props, ref) => {
   const isDisabled = rest.disabled;
   const resolvedStatus = status != null ? status : error ? "error" : void 0;
   const helperMessage = error || helperText;
-  const borderColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-border-default, #999999)";
-  const footerColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-text-secondary, #757575)";
+  const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
+  const footerColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-text-secondary)";
   const sizeConfig = {
     sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
     md: { minHeight: 44, paddingX: 14, fontSize: "var(--text-body-size, 16px)" },
@@ -8758,7 +8759,7 @@ var Select = (0, import_react27.forwardRef)((props, ref) => {
   const labelStyle = {
     display: "block",
     marginBottom: 8,
-    color: isDisabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    color: isDisabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     fontSize: "var(--text-secondary-size, 14px)",
     fontWeight: 500,
     lineHeight: 1.5,
@@ -8773,8 +8774,8 @@ var Select = (0, import_react27.forwardRef)((props, ref) => {
     boxSizing: "border-box",
     borderRadius: radiusValue,
     border: `1.5px solid ${borderColor}`,
-    backgroundColor: isDisabled ? "var(--color-bg-page, #F3F4F6)" : "var(--color-bg-surface, #FFFFFF)",
-    color: isDisabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    backgroundColor: isDisabled ? "var(--color-bg-page)" : "var(--color-bg-surface)",
+    color: isDisabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     outline: "none",
     appearance: "none",
     WebkitAppearance: "none",
@@ -9005,7 +9006,7 @@ var Combobox = import_react28.default.memo(function Combobox2({
     };
     return map[size];
   }, [size]);
-  const borderColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : "var(--color-border-default, #999999)";
+  const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : "var(--color-border-default)";
   const renderOptionRow = (opt) => {
     const sel = isSelected(opt.value);
     return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
@@ -9411,7 +9412,7 @@ function Modal({
                   flexDirection: "column",
                   maxHeight: "100%",
                   overflow: "hidden",
-                  background: "var(--color-bg-surface, #fff)",
+                  background: "var(--color-bg-surface)",
                   borderRadius: "var(--radius-lg, 8px)",
                   boxShadow: "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))"
                 },
@@ -9434,7 +9435,7 @@ function Modal({
                           {
                             id: `${id}Label`,
                             className: "modal-title fw-semibold",
-                            style: { flex: 1, fontSize: "1.125rem", color: "var(--color-text-primary, #333)" },
+                            style: { flex: 1, fontSize: "1.125rem", color: "var(--color-text-primary)" },
                             children: [
                               titleIcon && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                                 Icon_default,
@@ -9535,30 +9536,34 @@ function Modal({
 var alertDialogVariantConfig = {
   info: {
     icon: "\u2139",
-    iconColor: "#0ea5e9",
-    bgColor: "rgba(14, 165, 233, 0.1)"
+    iconColor: "var(--color-state-info)",
+    bgColor: "color-mix(in srgb, var(--color-state-info) 10%, transparent)"
   },
   success: {
     icon: "\u2713",
-    iconColor: "#22c55e",
-    bgColor: "rgba(34, 197, 94, 0.1)"
+    iconColor: "var(--color-state-success)",
+    bgColor: "color-mix(in srgb, var(--color-state-success) 10%, transparent)"
   },
   warning: {
     icon: "\u26A0",
-    iconColor: "#f59e0b",
-    bgColor: "rgba(245, 158, 11, 0.1)"
+    iconColor: "var(--color-state-warning)",
+    bgColor: "color-mix(in srgb, var(--color-state-warning) 10%, transparent)"
   },
   error: {
     icon: "\u2715",
-    iconColor: "#ef4444",
-    bgColor: "rgba(239, 68, 68, 0.1)"
+    iconColor: "var(--color-state-error)",
+    bgColor: "color-mix(in srgb, var(--color-state-error) 10%, transparent)"
   }
 };
 
 // src/components/molecules/AlertDialog/AlertDialogIcons.tsx
 var import_jsx_runtime36 = require("react/jsx-runtime");
 var iconSize = 56;
-function SuccessIconSvg({ animated, color = "#22c55e" }) {
+function SuccessIconSvg({
+  animated,
+  color = "var(--color-state-success)",
+  bgColor = "color-mix(in srgb, var(--color-state-success) 10%, transparent)"
+}) {
   return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
     "svg",
     {
@@ -9568,7 +9573,7 @@ function SuccessIconSvg({ animated, color = "#22c55e" }) {
       fill: "none",
       className: animated ? "alert-dialog-svg--success" : "",
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: `${color}20` }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: bgColor }),
         /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
           "path",
           {
@@ -9585,7 +9590,11 @@ function SuccessIconSvg({ animated, color = "#22c55e" }) {
     }
   );
 }
-function ErrorIconSvg({ animated, color = "#ef4444" }) {
+function ErrorIconSvg({
+  animated,
+  color = "var(--color-state-error)",
+  bgColor = "color-mix(in srgb, var(--color-state-error) 10%, transparent)"
+}) {
   return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
     "svg",
     {
@@ -9595,14 +9604,18 @@ function ErrorIconSvg({ animated, color = "#ef4444" }) {
       fill: "none",
       className: animated ? "alert-dialog-svg--error" : "",
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: `${color}20` }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "28", r: "26", fill: bgColor }),
         /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("path", { d: "M28 18v14", stroke: color, strokeWidth: "3", strokeLinecap: "round" }),
         /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("circle", { cx: "28", cy: "38", r: "2.5", fill: color })
       ]
     }
   );
 }
-function WarningIconSvg({ animated, color = "#f59e0b" }) {
+function WarningIconSvg({
+  animated,
+  color = "var(--color-state-warning)",
+  bgColor = "color-mix(in srgb, var(--color-state-warning) 10%, transparent)"
+}) {
   return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
     "svg",
     {
@@ -9616,7 +9629,7 @@ function WarningIconSvg({ animated, color = "#f59e0b" }) {
           "path",
           {
             d: "M28 12L44 42H12L28 12z",
-            fill: `${color}20`,
+            fill: bgColor,
             stroke: color,
             strokeWidth: "2",
             strokeLinejoin: "round"
@@ -9637,14 +9650,15 @@ function VariantIcon({
 }) {
   const config = alertDialogVariantConfig[variant];
   const color = config.iconColor;
+  const bgColor = config.bgColor;
   if (variant === "success") {
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(SuccessIconSvg, { animated, color });
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(SuccessIconSvg, { animated, color, bgColor });
   }
   if (variant === "error") {
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(ErrorIconSvg, { animated, color });
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(ErrorIconSvg, { animated, color, bgColor });
   }
   if (variant === "warning") {
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(WarningIconSvg, { animated, color });
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(WarningIconSvg, { animated, color, bgColor });
   }
   return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
     "span",
@@ -9734,7 +9748,7 @@ function AlertDialog({
                   margin: 0,
                   fontSize: "1.25rem",
                   fontWeight: 600,
-                  color: "var(--color-text-primary, #333)"
+                  color: "var(--color-text-primary)"
                 },
                 children: title
               }
@@ -9746,7 +9760,7 @@ function AlertDialog({
                 style: {
                   margin: "0.5rem 0 1.25rem",
                   fontSize: "0.9375rem",
-                  color: "var(--color-text-secondary, #666)",
+                  color: "var(--color-text-secondary)",
                   lineHeight: 1.5
                 },
                 children: description
@@ -10566,7 +10580,7 @@ function TableInner({
         )
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: "Show" }),
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: "Show" }),
         /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("div", { style: { minWidth: 70 }, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
           Select_default,
           {
@@ -10579,7 +10593,7 @@ function TableInner({
             }
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: [
           "of ",
           totalItems,
           " ",
@@ -12053,20 +12067,20 @@ var import_react43 = __toESM(require("react"));
 // src/components/charts/Chart.types.ts
 var CHART_THEME_COLORS = {
   light: {
-    tooltipBg: "var(--color-bg-surface, #fff)",
-    tooltipBorder: "var(--color-border-default, #e5e7eb)",
-    tooltipText: "var(--color-text-primary, #0d0d0d)",
-    legendText: "var(--color-text-secondary, #757575)",
-    axisText: "var(--color-text-secondary, #757575)",
-    gridColor: "var(--color-border-default, #e5e7eb)"
+    tooltipBg: "var(--color-bg-surface)",
+    tooltipBorder: "var(--color-border-default)",
+    tooltipText: "var(--color-text-primary)",
+    legendText: "var(--color-text-secondary)",
+    axisText: "var(--color-text-secondary)",
+    gridColor: "var(--color-border-default)"
   },
   dark: {
-    tooltipBg: "var(--chart-tooltip-bg, #141b2d)",
-    tooltipBorder: "var(--chart-tooltip-border, #2a3548)",
-    tooltipText: "var(--chart-tooltip-text, #e8edf5)",
-    legendText: "var(--chart-legend-text, #8b9bb4)",
-    axisText: "var(--chart-axis-text, #8b9bb4)",
-    gridColor: "var(--chart-grid-color, #2a3548)"
+    tooltipBg: "var(--color-bg-surface)",
+    tooltipBorder: "var(--color-border-default)",
+    tooltipText: "var(--color-text-primary)",
+    legendText: "var(--color-text-secondary)",
+    axisText: "var(--color-text-secondary)",
+    gridColor: "var(--color-border-subtle)"
   }
 };
 
@@ -12420,11 +12434,11 @@ function arcPath(cx2, cy, r, startAngleDeg, endAngleDeg, innerRadius = 0) {
 // src/components/charts/LineChart.tsx
 var import_jsx_runtime53 = require("react/jsx-runtime");
 var DEFAULT_COLORS = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
 ];
 var LineChartComponent = ({
   data,
@@ -12706,11 +12720,11 @@ var LineChart_default = import_react43.default.memo(LineChartComponent);
 var import_react44 = __toESM(require("react"));
 var import_jsx_runtime54 = require("react/jsx-runtime");
 var DEFAULT_COLORS2 = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
 ];
 var BarChartComponent = ({
   data,
@@ -12959,14 +12973,14 @@ var BarChart_default = import_react44.default.memo(BarChartComponent);
 var import_react45 = __toESM(require("react"));
 var import_jsx_runtime55 = require("react/jsx-runtime");
 var DEFAULT_COLORS3 = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)",
-  "var(--color-accent-sky-10, #E6F2FF)",
-  "var(--color-accent-mint-10, #E9FFF4)",
-  "var(--color-accent-amber-10, #FFF6DD)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)",
+  "var(--color-accent-sky-10)",
+  "var(--color-accent-mint-10)",
+  "var(--color-accent-amber-10)"
 ];
 var PieChartComponent = ({
   data,
@@ -13195,11 +13209,11 @@ var PieChart_default = import_react45.default.memo(PieChartComponent);
 var import_react46 = __toESM(require("react"));
 var import_jsx_runtime56 = require("react/jsx-runtime");
 var DEFAULT_COLORS4 = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)"
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
 ];
 var AreaChartComponent = ({
   data,

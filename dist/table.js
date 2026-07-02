@@ -136,8 +136,8 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
   const isDisabled = rest.disabled;
   const resolvedStatus = status != null ? status : error ? "error" : void 0;
   const helperMessage = error || helperText;
-  const borderColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-border-default, #999999)";
-  const footerColor = resolvedStatus === "error" ? "var(--color-state-error, #DC3545)" : resolvedStatus === "warning" ? "var(--color-state-warning, #FFC107)" : resolvedStatus === "success" ? "var(--color-state-success, #28A745)" : "var(--color-text-secondary, #757575)";
+  const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
+  const footerColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-text-secondary)";
   const sizeConfig = {
     sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
     md: { minHeight: 44, paddingX: 14, fontSize: "var(--text-body-size, 16px)" },
@@ -152,7 +152,7 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
   const labelStyle = {
     display: "block",
     marginBottom: 8,
-    color: isDisabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    color: isDisabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     fontSize: "var(--text-secondary-size, 14px)",
     fontWeight: 500,
     lineHeight: 1.5,
@@ -167,8 +167,8 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
     boxSizing: "border-box",
     borderRadius: radiusValue,
     border: `1.5px solid ${borderColor}`,
-    backgroundColor: isDisabled ? "var(--color-bg-page, #F3F4F6)" : "var(--color-bg-surface, #FFFFFF)",
-    color: isDisabled ? "var(--color-text-secondary, #757575)" : "var(--color-text-primary, #0D0D0D)",
+    backgroundColor: isDisabled ? "var(--color-bg-page)" : "var(--color-bg-surface)",
+    color: isDisabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
     outline: "none",
     appearance: "none",
     WebkitAppearance: "none",
@@ -1227,16 +1227,16 @@ var TextInput = (0, import_react4.forwardRef)(({
   };
   const shouldShowToggle = showToggleIcon && type === "password";
   const colors = {
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    bgPage: "var(--color-bg-page, #F3F4F6)",
-    borderDefault: "var(--color-border-default, #999999)",
-    stateError: "var(--color-state-error, #DC3545)",
-    stateWarning: "var(--color-state-warning, #FFC107)",
-    stateSuccess: "var(--color-state-success, #28A745)"
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    bgPage: "var(--color-bg-page)",
+    borderDefault: "var(--color-border-default)",
+    stateError: "var(--color-state-error)",
+    stateWarning: "var(--color-state-warning)",
+    stateSuccess: "var(--color-state-success)"
   };
-  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring, #3B82F6)" : colors.borderDefault;
+  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring)" : colors.borderDefault;
   const wrapperStyle = variant === "filled" ? {
     minHeight: fieldMetrics.minHeight,
     borderRadius: roundedStyle,
@@ -2107,12 +2107,12 @@ var Checkbox = import_react7.default.memo(function Checkbox2({
   const checkboxId = `${name}-${value}`;
   const hasVisibleLabel = label.trim().length > 0;
   const colors = {
-    brand: "var(--color-brand-primary, #0D0D0D)",
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    borderDefault: "var(--color-border-default, #999999)",
-    accentLavender: "var(--color-accent-lavender-10, #EEE7FF)",
+    brand: "var(--color-brand-primary)",
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    borderDefault: "var(--color-border-default)",
+    accentLavender: "var(--color-accent-lavender-10)",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const roundedStyle = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
@@ -2156,6 +2156,7 @@ var Checkbox = import_react7.default.memo(function Checkbox2({
             checked,
             disabled,
             onChange,
+            readOnly: onChange ? void 0 : true,
             "aria-label": !hasVisibleLabel && ariaLabel ? ariaLabel : void 0,
             "aria-labelledby": hasVisibleLabel ? `${checkboxId}-label` : !ariaLabel && ariaLabelledBy ? ariaLabelledBy : void 0,
             className: "peer ucs-cc-checkbox-native"
@@ -2736,7 +2737,7 @@ function TableInner({
         )
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: "Show" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: "Show" }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { minWidth: 70 }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           Select_default,
           {
@@ -2749,7 +2750,7 @@ function TableInner({
             }
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary, #666)" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: [
           "of ",
           totalItems,
           " ",

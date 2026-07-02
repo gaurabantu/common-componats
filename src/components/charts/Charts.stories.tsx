@@ -57,10 +57,10 @@ export const LineChartCustomColors: StoryObj<typeof LineChart> = {
     data: lineData,
     xAxisKey: "name",
     series: [
-      { dataKey: "uv", name: "UV", color: "#8B5CF6" },
-      { dataKey: "pv", name: "PV", color: "#10B981" },
+      { dataKey: "uv", name: "UV", color: "var(--color-accent-lavender-40)" },
+      { dataKey: "pv", name: "PV", color: "var(--color-state-success)" },
     ],
-    colors: ["#8B5CF6", "#10B981", "#F59E0B"],
+    colors: ["var(--color-accent-lavender-40)", "var(--color-state-success)", "var(--color-state-warning)"],
     curve: "monotone",
     dotSize: 6,
     showDots: true,

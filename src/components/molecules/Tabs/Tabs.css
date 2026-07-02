@@ -4,9 +4,9 @@
   /* List baseline: soft rule (DESIGN_SYSTEM — subtle separator). Active tab line + label stay stronger. */
   --tabs-divider-color: var(--color-border-subtle, var(--color-mist-60));
   --tabs-divider-width: 1px;
-  --tabs-indicator-color: var(--color-border-default, #999999);
+  --tabs-indicator-color: var(--color-border-default);
   --tabs-indicator-width: var(--tabs-divider-width);
-  --tabs-text-inactive: var(--color-text-secondary, #757575);
+  --tabs-text-inactive: var(--color-text-secondary);
   --tabs-text-active: var(--tabs-indicator-color);
   --tabs-font-size: unset;
 
@@ -61,7 +61,7 @@
   gap: var(--space-1, 8px);
   padding: var(--space-1, 8px);
   border-radius: var(--radius-md, 10px);
-  background: var(--color-surface-mist, var(--color-mist-40, #f5f5f5));
+  background: var(--color-surface-mist, var(--color-mist-40));
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
@@ -85,7 +85,7 @@
   left: 0;
   top: 0;
   border-radius: var(--radius-sm, 8px);
-  background: var(--color-bg-elevated, #ffffff);
+  background: var(--color-bg-elevated);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.05),
     0 2px 8px rgba(0, 0, 0, 0.06);
@@ -124,7 +124,7 @@
 }
 
 .ds-tabs[data-variant="segmented"] .ds-tabs__trigger[data-state="active"] {
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   background: transparent;
 }
 
@@ -133,12 +133,12 @@
 }
 
 .ds-tabs[data-variant="segmented"] .ds-tabs__trigger:hover:not([data-disabled="true"]) {
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   background: transparent;
 }
 
 .ds-tabs[data-variant="segmented"] .ds-tabs__trigger[data-state="active"]:hover:not([data-disabled="true"]) {
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
 }
 
 .ds-tabs[data-variant="segmented"][data-list-layout="equal"] .ds-tabs__trigger {
@@ -380,8 +380,8 @@
 }
 
 .ds-tabs__trigger:hover:not([data-disabled="true"]) {
-  color: var(--color-text-primary, #0d0d0d);
-  background-color: var(--color-theme-surface-hover, var(--color-mist-20, #fafafa));
+  color: var(--color-text-primary);
+  background-color: var(--color-theme-surface-hover, var(--color-mist-20));
 }
 
 .ds-tabs__trigger[data-state="active"]:hover:not([data-disabled="true"]) {
@@ -397,7 +397,7 @@
   background-color: color-mix(
     in srgb,
     var(--tabs-indicator-color) 10%,
-    var(--color-bg-surface, #ffffff)
+    var(--color-bg-surface)
   );
 }
 
@@ -415,7 +415,7 @@
 }
 
 .ds-tabs__trigger:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -428,7 +428,7 @@
   width: 100%;
   min-width: 0;
   padding-top: var(--space-3, 24px);
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font-size: var(--text-body-size, 16px);
   line-height: var(--text-body-line-height, 1.5);
 }

@@ -2,16 +2,12 @@ import { GLOBALS_UPDATED } from "@storybook/core/core-events";
 import { addons } from "@storybook/manager-api";
 import { create } from "@storybook/theming/create";
 
-/** Matches Toolbar “Theme” in `preview.tsx` globalTypes.theme */
-export type ToolbarTheme =
-  | "light"
-  | "blue"
-  | "dark"
-  | "green"
-  | "mist"
-  | "custom"
-  | "blue-mist"
-  | "green-mist";
+import { resolveManagerPalette } from "./manager-palettes";
+import {
+  applyDataTheme,
+  managerThemeConfigKey,
+  readToolbarTheme,
+} from "./theme-bridge";
 
 const BRAND = {
   brandTitle: "Infinia StoryBook",
@@ -19,65 +15,64 @@ const BRAND = {
   brandTarget: "_self",
 } as const;
 
-function applyDataTheme(theme: string): void {
-  const root = document.documentElement;
-  if (theme === "light") root.removeAttribute("data-theme");
-  else root.setAttribute("data-theme", theme);
-}
+const FONT_BASE =
+  "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const FONT_CODE =
+  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace';
 
 /**
- * Storybook manager chrome tinted with Governance tokens (`tokens.css` on `<html>`).
- * `--color-*` values change when `data-theme` matches preview / apps.
+ * Storybook manager JS theme — hex adapter only (see manager-palettes.ts).
+ * Token-driven chrome overrides live in `.storybook/brand/infinia-manager-brand.css`.
  */
-function buildManagerTheme(sbBase: "light" | "dark") {
+function buildManagerTheme(toolbarTheme: string) {
+  const palette = resolveManagerPalette(toolbarTheme);
   return create({
-    base: sbBase,
+    base: palette.sbBase,
     ...BRAND,
-    fontBase: "var(--font-family)",
-    fontCode:
-      'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-    appBg: "var(--color-bg-page)",
-    appContentBg: "var(--color-bg-surface)",
-    appPreviewBg: "var(--color-bg-page)",
-    appBorderColor: "var(--color-border-default)",
-    textColor: "var(--color-text-primary)",
-    textMutedColor: "var(--color-text-secondary)",
-    textInverseColor: "var(--color-theme-text)",
-    barBg: "var(--color-bg-sidebar)",
-    barTextColor: "var(--color-text-primary)",
-    barHoverColor: "var(--color-text-secondary)",
-    barSelectedColor: "var(--color-theme-primary)",
-    colorPrimary: "var(--color-theme-primary)",
-    colorSecondary: "var(--color-text-secondary)",
-    inputBg: "var(--color-bg-surface)",
-    inputBorder: "var(--color-border-default)",
-    inputTextColor: "var(--color-text-primary)",
-    buttonBg: "var(--color-bg-surface)",
-    buttonBorder: "var(--color-border-default)",
-    booleanBg: "var(--color-surface-mist)",
-    booleanSelectedBg: "var(--color-theme-primary)",
+    fontBase: FONT_BASE,
+    fontCode: FONT_CODE,
+    appBg: palette.appBg,
+    appContentBg: palette.appContentBg,
+    appPreviewBg: palette.appPreviewBg,
+    appBorderColor: palette.appBorderColor,
+    textColor: palette.textColor,
+    textMutedColor: palette.textMutedColor,
+    textInverseColor: palette.textInverseColor,
+    barBg: palette.barBg,
+    barTextColor: palette.barTextColor,
+    barHoverColor: palette.barHoverColor,
+    barSelectedColor: palette.barSelectedColor,
+    colorPrimary: palette.colorPrimary,
+    colorSecondary: palette.colorSecondary,
+    inputBg: palette.inputBg,
+    inputBorder: palette.inputBorder,
+    inputTextColor: palette.inputTextColor,
+    buttonBg: palette.buttonBg,
+    buttonBorder: palette.buttonBorder,
+    booleanBg: palette.booleanBg,
+    booleanSelectedBg: palette.booleanSelectedBg,
   });
 }
 
-/** Only `dark` uses Storybook dark math; accent themes stay light base with token swaps */
-function storybookChromeBase(theme: string): "light" | "dark" {
-  return theme === "dark" ? "dark" : "light";
-}
-
-function readToolbarTheme(globals: Record<string, unknown> | undefined): string {
-  const t = globals?.theme;
-  return typeof t === "string" && t.length ? t : "light";
-}
+/** Remount manager theme only when toolbar theme identity changes. */
+let lastConfigKey: string | null = null;
 
 function syncManagerUi(globals?: Record<string, unknown>): void {
   const toolbarTheme = readToolbarTheme(globals);
+  const configKey = managerThemeConfigKey(toolbarTheme);
+
   applyDataTheme(toolbarTheme);
+
+  if (configKey === lastConfigKey) return;
+  lastConfigKey = configKey;
+
   addons.setConfig({
-    theme: buildManagerTheme(storybookChromeBase(toolbarTheme)),
+    theme: buildManagerTheme(toolbarTheme),
   });
 }
 
-/** First paint before preview emits globals — classic light Governance */
+lastConfigKey = managerThemeConfigKey("light");
+applyDataTheme("light");
 addons.setConfig({
   theme: buildManagerTheme("light"),
 });

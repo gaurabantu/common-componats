@@ -8,11 +8,11 @@ import { resolveChartAnimation, barProgressForIndex, useChartAnimationProgress }
 import { getValueExtent, scaleLinear } from "./utils";
 
 const DEFAULT_COLORS = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)",
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)",
 ];
 
 export interface BarChartProps extends ChartLayoutProps {

@@ -23,12 +23,12 @@ export const getElevationShadow = (elevation: CalendarElevation): string => {
     case "none":
       return "none";
     case "sm":
-      return "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))";
+      return "var(--shadow-sm)";
     case "lg":
-      return "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))";
+      return "var(--shadow-lg)";
     case "md":
     default:
-      return "var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.10))";
+      return "var(--shadow-md)";
   }
 };
 
@@ -50,19 +50,19 @@ export const resolveElevation = (
 };
 
 export const defaultTheme: CalendarTheme = {
-  primary: "var(--button-primary-default-bg, #2563EB)",
-  primaryHover: "rgba(37, 99, 235, 0.08)",
-  primaryText: "#FFFFFF",
-  rangeBackground: "var(--color-accent-sky-10, #E6F2FF)",
-  todayBackground: "var(--color-accent-amber-10, #FFF6DD)",
-  todayRing: "rgba(245, 158, 11, 0.5)",
-  text: "var(--color-text-primary, #0D0D0D)",
-  textSecondary: "var(--color-text-secondary, #6B7280)",
-  textDisabled: "#B0B0B0",
-  background: "var(--color-bg-surface, #FFFFFF)",
-  border: "var(--color-border-default, #e5e7eb)",
-  selectBorder: "var(--color-border-default, #e5e7eb)",
-  focusRing: "rgba(37, 99, 235, 0.25)",
+  primary: "var(--button-primary-default-bg)",
+  primaryHover: "color-mix(in srgb, var(--button-primary-default-bg) 8%, transparent)",
+  primaryText: "var(--color-text-on-primary)",
+  rangeBackground: "var(--color-accent-sky-10)",
+  todayBackground: "var(--color-accent-amber-10)",
+  todayRing: "color-mix(in srgb, var(--color-state-warning) 50%, transparent)",
+  text: "var(--color-text-primary)",
+  textSecondary: "var(--color-text-secondary)",
+  textDisabled: "var(--color-text-disabled)",
+  background: "var(--color-bg-surface)",
+  border: "var(--color-border-default)",
+  selectBorder: "var(--color-border-default)",
+  focusRing: "color-mix(in srgb, var(--color-focus-ring) 25%, transparent)",
   padding: 12,
   gap: 2,
   cellSize: 36,
@@ -71,7 +71,7 @@ export const defaultTheme: CalendarTheme = {
   navButtonSize: 28,
   cellFontSize: 14,
   weekdayFontSize: 11,
-  fontFamily: 'var(--font-family, "Inter"), system-ui, sans-serif',
+  fontFamily: "var(--font-family), system-ui, sans-serif",
   maxWidth: 320,
 };
 

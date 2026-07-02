@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AppTopbar from "./index";
 
@@ -41,11 +41,15 @@ describe("AppTopbar", () => {
     const input = screen.getByRole("searchbox");
     expect(input).toHaveAttribute("id", "top-search");
 
-    await user.keyboard("/");
+    await act(async () => {
+      await user.keyboard("/");
+    });
     expect(document.activeElement).toBe(input);
 
-    (input as HTMLInputElement).blur();
-    await user.keyboard("{Meta>}k{/Meta}");
+    await act(async () => {
+      (input as HTMLInputElement).blur();
+      await user.keyboard("{Meta>}k{/Meta}");
+    });
     expect(document.activeElement).toBe(input);
   });
 

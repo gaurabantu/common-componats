@@ -161,7 +161,7 @@ export const CustomCellRender: Story = {
                 width: 4,
                 height: 4,
                 borderRadius: "50%",
-                background: "var(--button-primary-default-bg, #2563EB)",
+                background: "var(--button-primary-default-bg)",
               }}
             />
           )}
@@ -260,19 +260,19 @@ export const CardElevationLevels: Story = {
   render: (args) => (
     <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "flex-start" }}>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>none</div>
+        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 8 }}>none</div>
         <ControlledSingle {...args} elevation="none" />
       </div>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>sm</div>
+        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 8 }}>sm</div>
         <ControlledSingle {...args} elevation="sm" />
       </div>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>md</div>
+        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 8 }}>md</div>
         <ControlledSingle {...args} elevation="md" />
       </div>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>lg</div>
+        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 8 }}>lg</div>
         <ControlledSingle {...args} elevation="lg" />
       </div>
     </div>
@@ -307,13 +307,13 @@ export const CustomTheme: Story = {
   render: (args) => <ControlledSingle {...args} />,
   args: {
     theme: {
-      primary: "#7C3AED",
-      primaryText: "#FFFFFF",
-      rangeBackground: "#EDE9FE",
-      todayBackground: "#FEF3C7",
+      primary: "var(--color-accent-lavender-40)",
+      primaryText: "var(--color-text-on-primary)",
+      rangeBackground: "var(--color-accent-lavender-10)",
+      todayBackground: "var(--color-accent-amber-10)",
       todayRing: "rgba(217, 119, 6, 0.5)",
-      text: "#1F2937",
-      textSecondary: "#6B7280",
+      text: "var(--color-text-primary)",
+      textSecondary: "var(--color-text-secondary)",
       borderRadius: 20,
       cellRadius: 12,
     },
@@ -325,9 +325,9 @@ export const GreenTheme: Story = {
   render: (args) => <ControlledSingle {...args} />,
   args: {
     theme: {
-      primary: "#059669",
-      rangeBackground: "#D1FAE5",
-      todayBackground: "#ECFDF5",
+      primary: "var(--color-state-success)",
+      rangeBackground: "var(--color-accent-mint-10)",
+      todayBackground: "var(--color-fill-muted)",
     },
     fullWidth: false,
   },
@@ -352,10 +352,10 @@ export const LargeSize: Story = {
 export const WithStyleOverrides: Story = {
   render: (args) => <ControlledSingle {...args} />,
   args: {
-    theme: { primary: "#DC2626" },
+    theme: { primary: "var(--color-state-error)" },
     styles: {
-      header: { borderBottom: "1px solid #E5E7EB", paddingBottom: 12 },
-      weekday: { color: "#9CA3AF" },
+      header: { borderBottom: "1px solid var(--color-border-subtle)", paddingBottom: 12 },
+      weekday: { color: "var(--color-text-secondary)" },
     },
     fullWidth: false,
   },

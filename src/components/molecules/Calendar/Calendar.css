@@ -72,7 +72,7 @@
   border: none;
   border-radius: var(--cal-cell-radius, var(--radius-sm, 6px));
   background: transparent;
-  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  color: var(--cal-text, var(--color-text-primary));
   font: inherit;
   font-size: var(--cal-cell-font, 14px);
   font-weight: 600;
@@ -83,8 +83,8 @@
 }
 
 .calendar-caption-btn:hover:not(:disabled) {
-  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary, #2563eb) 10%, transparent));
-  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary) 10%, transparent));
+  color: var(--cal-text, var(--color-text-primary));
 }
 
 .calendar-caption-btn:focus {
@@ -92,7 +92,7 @@
 }
 
 .calendar-caption-btn:focus-visible {
-  outline: 2px solid var(--cal-focus-ring, var(--color-focus-ring, #0066cc));
+  outline: 2px solid var(--cal-focus-ring, var(--color-focus-ring));
   outline-offset: 2px;
 }
 
@@ -109,8 +109,8 @@
   z-index: 30;
   padding: var(--space-1, 8px);
   border-radius: var(--radius-md, 8px);
-  border: 1px solid var(--cal-border, var(--color-border-default, #e5e7eb));
-  background: var(--cal-bg, var(--color-bg-elevated, #ffffff));
+  border: 1px solid var(--cal-border, var(--color-border-default));
+  background: var(--cal-bg, var(--color-bg-elevated));
   box-shadow: var(--cal-shadow, var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.1)));
 }
 
@@ -137,7 +137,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-md, 8px);
   background: transparent;
-  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  color: var(--cal-text, var(--color-text-primary));
   font: inherit;
   font-size: var(--cal-cell-font, 13px);
   font-weight: 600;
@@ -150,21 +150,21 @@
 }
 
 .calendar-month-grid__btn:hover:not(.is-selected) {
-  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary, #2563eb) 8%, transparent));
+  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary) 8%, transparent));
 }
 
 /* Selected: subtle chip (tint + primary text), not a solid filled button — matches common DayPicker / Material-style pickers */
 .calendar-month-grid__btn.is-selected {
   background: color-mix(
     in srgb,
-    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 12%,
-    var(--color-bg-elevated, #ffffff)
+    var(--cal-primary, var(--button-primary-default-bg)) 12%,
+    var(--color-bg-elevated)
   );
-  color: var(--cal-primary, var(--button-primary-default-bg, #2563eb));
+  color: var(--cal-primary, var(--button-primary-default-bg));
   font-weight: 700;
   border-color: color-mix(
     in srgb,
-    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 28%,
+    var(--cal-primary, var(--button-primary-default-bg)) 28%,
     transparent
   );
   box-shadow: none;
@@ -173,8 +173,8 @@
 .calendar-month-grid__btn.is-selected:hover {
   background: color-mix(
     in srgb,
-    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 18%,
-    var(--color-bg-elevated, #ffffff)
+    var(--cal-primary, var(--button-primary-default-bg)) 18%,
+    var(--color-bg-elevated)
   );
 }
 
@@ -196,7 +196,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-md, 8px);
   background: transparent;
-  color: var(--cal-text, var(--color-text-primary, #0d0d0d));
+  color: var(--cal-text, var(--color-text-primary));
   font: inherit;
   font-size: var(--cal-cell-font, 14px);
   font-weight: 600;
@@ -209,20 +209,20 @@
 }
 
 .calendar-year-list__btn:hover:not(.is-selected) {
-  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary, #2563eb) 8%, transparent));
+  background: var(--cal-primary-hover, color-mix(in srgb, var(--cal-primary) 8%, transparent));
 }
 
 .calendar-year-list__btn.is-selected {
   background: color-mix(
     in srgb,
-    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 12%,
-    var(--color-bg-elevated, #ffffff)
+    var(--cal-primary, var(--button-primary-default-bg)) 12%,
+    var(--color-bg-elevated)
   );
-  color: var(--cal-primary, var(--button-primary-default-bg, #2563eb));
+  color: var(--cal-primary, var(--button-primary-default-bg));
   font-weight: 700;
   border-color: color-mix(
     in srgb,
-    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 28%,
+    var(--cal-primary, var(--button-primary-default-bg)) 28%,
     transparent
   );
 }
@@ -230,8 +230,8 @@
 .calendar-year-list__btn.is-selected:hover {
   background: color-mix(
     in srgb,
-    var(--cal-primary, var(--button-primary-default-bg, #2563eb)) 18%,
-    var(--color-bg-elevated, #ffffff)
+    var(--cal-primary, var(--button-primary-default-bg)) 18%,
+    var(--color-bg-elevated)
   );
 }
 
@@ -318,7 +318,7 @@
 
 .calendar-nav-btn:hover:not(:disabled) {
   background: var(--cal-primary-hover, rgba(37, 99, 235, 0.08)) !important;
-  color: var(--cal-primary, var(--button-primary-default-bg, #2563EB)) !important;
+  color: var(--cal-primary, var(--button-primary-default-bg)) !important;
   transition: all 0.2s ease;
 }
 
@@ -331,7 +331,7 @@
 }
 
 .calendar-select:hover:not(:disabled) {
-  border-color: var(--cal-primary, var(--button-primary-default-bg, #2563EB)) !important;
+  border-color: var(--cal-primary, var(--button-primary-default-bg)) !important;
 }
 
 .calendar-select:focus {
@@ -344,6 +344,6 @@
 }
 
 .calendar-cell--hoverable:focus-visible {
-  outline: 2px solid var(--cal-focus-ring, var(--button-primary-focus-ring, #3B82F6));
+  outline: 2px solid var(--cal-focus-ring, var(--button-primary-focus-ring));
   outline-offset: 2px;
 }

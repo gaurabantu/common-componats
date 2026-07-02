@@ -10,14 +10,14 @@
 .ds-combobox__label {
   display: block;
   margin-bottom: var(--space-1, 8px);
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font-size: var(--text-secondary-size, 14px);
   font-weight: 500;
   line-height: 1.5;
 }
 
 .ds-combobox[data-disabled="true"] .ds-combobox__label {
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
 }
 
@@ -33,9 +33,9 @@
   padding: 0 var(--space-2, 16px);
   text-align: left;
   border-radius: var(--radius-md, 6px);
-  border: 1.5px solid var(--combobox-border, var(--color-border-default, #999999));
-  background: var(--color-bg-surface, #ffffff);
-  color: var(--color-text-primary, #0d0d0d);
+  border: 1.5px solid var(--combobox-border, var(--color-border-default));
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
   font-size: var(--combobox-font-size, var(--text-body-size, 16px));
   line-height: 1.5;
   cursor: pointer;
@@ -47,22 +47,22 @@
 }
 
 .ds-combobox__trigger:hover:not(:disabled) {
-  border-color: var(--color-text-secondary, #757575);
+  border-color: var(--color-text-secondary);
 }
 
 .ds-combobox__trigger:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
 .ds-combobox__trigger:disabled {
   cursor: not-allowed;
   opacity: 0.55;
-  background: var(--color-bg-page, #f3f4f6);
+  background: var(--color-bg-page);
 }
 
 .ds-combobox[data-status="error"] .ds-combobox__trigger {
-  border-color: var(--color-state-error, #dc3545);
+  border-color: var(--color-state-error);
 }
 
 .ds-combobox__trigger-inner {
@@ -94,7 +94,7 @@
 }
 
 .ds-combobox__trigger-label--placeholder {
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
 }
 
 .ds-combobox__chevron {
@@ -125,20 +125,20 @@
   padding: 0 var(--space-2, 16px);
   box-sizing: border-box;
   border-radius: var(--radius-sm, 3px);
-  border: 1px solid var(--color-border-default, #999999);
-  background: var(--color-bg-surface, #ffffff);
-  color: var(--color-text-primary, #0d0d0d);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
   font-size: var(--text-secondary-size, 14px);
   outline: none;
 }
 
 .ds-combobox__search:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
 .ds-combobox__search::placeholder {
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
 }
 
 .ds-combobox__listbox {
@@ -162,7 +162,7 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
 }
 
 .ds-combobox__option {
@@ -177,7 +177,7 @@
   border: none;
   border-radius: var(--radius-sm, 3px);
   background: transparent;
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font: inherit;
   font-size: var(--text-secondary-size, 14px);
   text-align: left;
@@ -188,7 +188,7 @@
 
 .ds-combobox__option:hover:not(:disabled),
 .ds-combobox__option:focus-visible:not(:disabled) {
-  background: color-mix(in srgb, var(--color-text-primary, #0d0d0d) 6%, transparent);
+  background: color-mix(in srgb, var(--color-text-primary) 6%, transparent);
   outline: none;
 }
 
@@ -198,7 +198,7 @@
 }
 
 .ds-combobox__option[data-selected="true"] {
-  background: color-mix(in srgb, var(--color-brand-secondary, #ff4d00) 12%, transparent);
+  background: color-mix(in srgb, var(--color-brand-secondary) 12%, transparent);
   font-weight: 600;
 }
 
@@ -219,13 +219,13 @@
   flex-shrink: 0;
   width: 1em;
   height: 1em;
-  color: var(--color-state-success, #28a745);
+  color: var(--color-state-success);
 }
 
 .ds-combobox__empty {
   padding: var(--space-2, 16px);
   font-size: var(--text-secondary-size, 14px);
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   text-align: center;
 }
 
@@ -233,9 +233,9 @@
   margin: var(--space-1, 8px) 0 0;
   font-size: var(--text-small-size, 12px);
   line-height: 1.5;
-  color: var(--combobox-helper, var(--color-text-secondary, #757575));
+  color: var(--combobox-helper, var(--color-text-secondary));
 }
 
 .ds-combobox[data-status="error"] .ds-combobox__helper {
-  color: var(--color-state-error, #dc3545);
+  color: var(--color-state-error);
 }

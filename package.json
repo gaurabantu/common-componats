@@ -38,12 +38,17 @@
   },
   "files": [
     "dist",
-    "src/design-system"
+    "src/design-system",
+    "tailwind.preset.js",
+    "AGENTS.md",
+    "docs/**/*.md"
   ],
   "style": "src/design-system/tokens.css",
   "unpkg": "dist/index.mjs",
   "jsdelivr": "dist/index.mjs",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "workspaces": [
     "packages/*"
   ],

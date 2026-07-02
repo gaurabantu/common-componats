@@ -1,6 +1,8 @@
 # UX Governance — design system (alias)
 
-**Canonical file:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) — layout, components, color governance, and WCAG reference.
+**Canonical file:** [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) — principles, rules, §22a zones, component governance.
+
+**Token tables:** [DESIGN_SYSTEM_TOKENS_REFERENCE.md](./DESIGN_SYSTEM_TOKENS_REFERENCE.md) · **Themes:** [THEMES.md](./THEMES.md) · **Checklist:** [COMPONENT_AUDIT.md](./COMPONENT_AUDIT.md)
 
 **Tokens import:** [tokens.md](./tokens.md) · **Runtime CSS:** `src/design-system/tokens.css`
 

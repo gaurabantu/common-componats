@@ -16,15 +16,18 @@ This project uses `ui-common-components` (v0.0.2) + `ui-common-hooks` (v0.3.0) t
 6. [`FEEDBACK_STATES_GUIDE.md`](./FEEDBACK_STATES_GUIDE.md) — FeedbackStates + animations
 7. [`HOOKS_GUIDE.md`](./HOOKS_GUIDE.md) — ui-common-hooks reference
 8. [`design-system/README.md`](./design-system/README.md)
-9. [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md)
-10. [`design-system/tokens.md`](./design-system/tokens.md)
-11. [`internal/README.md`](./internal/README.md)
-12. [`internal/DOC_INDEX.md`](./internal/DOC_INDEX.md)
-13. [`internal/APP_TOPBAR_SYSTEM.md`](./internal/APP_TOPBAR_SYSTEM.md)
-14. [`internal/SIDEBAR_NAVIGATION_SYSTEM.md`](./internal/SIDEBAR_NAVIGATION_SYSTEM.md)
-15. [`internal/PACKAGES.md`](./internal/PACKAGES.md)
-16. [`internal/AI_UNIVERSAL_DESIGN_RULES.md`](./internal/AI_UNIVERSAL_DESIGN_RULES.md)
-17. [`../COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md) — zones + CTA hierarchy
+9. [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) — principles + rules (§22a zones)
+10. [`design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md) — token/CSS tables
+11. [`design-system/tokens.md`](./design-system/tokens.md)
+12. [`design-system/THEMES.md`](./design-system/THEMES.md)
+13. [`design-system/COMPONENT_AUDIT.md`](./design-system/COMPONENT_AUDIT.md)
+14. [`internal/README.md`](./internal/README.md)
+15. [`internal/DOC_INDEX.md`](./internal/DOC_INDEX.md)
+16. [`internal/APP_TOPBAR_SYSTEM.md`](./internal/APP_TOPBAR_SYSTEM.md)
+17. [`internal/SIDEBAR_NAVIGATION_SYSTEM.md`](./internal/SIDEBAR_NAVIGATION_SYSTEM.md)
+18. [`internal/PACKAGES.md`](./internal/PACKAGES.md)
+19. [`internal/AI_UNIVERSAL_DESIGN_RULES.md`](./internal/AI_UNIVERSAL_DESIGN_RULES.md)
+20. [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) — zones + CTA hierarchy (FRD examples)
 
 ---
 
@@ -35,7 +38,7 @@ This project uses `ui-common-components` (v0.0.2) + `ui-common-hooks` (v0.3.0) t
 - Import `ui-common-hooks` for hooks.
 - Do not use Bootstrap. Do not hardcode token values.
 - Follow WCAG 2.2 AA. Support `[data-theme="dark"]`.
-- Follow COMPOSITION_RULES_1 zone structure for every new screen.
+- Follow **DESIGN_SYSTEM §22a** zone structure for every new screen ([`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) for FRD examples).
 
 ---
 

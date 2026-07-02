@@ -37,6 +37,6 @@ export const Heading: Story = {
 export const CustomGradient: Story = {
   args: {
     children: "Purple to sky",
-    gradient: "linear-gradient(135deg, #8b5cf6 0%, #38bdf8 100%)",
+    gradient: "linear-gradient(135deg, var(--color-accent-lavender-40) 0%, var(--color-accent-sky-40) 100%)",
   },
 };

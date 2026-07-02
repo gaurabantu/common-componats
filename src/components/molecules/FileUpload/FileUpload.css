@@ -32,10 +32,10 @@
   min-height: 120px;
   padding: var(--space-3, 24px);
   text-align: center;
-  border: 1.5px dashed var(--color-border-default, #999999);
+  border: 1.5px dashed var(--color-border-default);
   border-radius: var(--radius-md, 6px);
-  background-color: var(--color-bg-surface, #ffffff);
-  color: var(--color-text-primary, #0d0d0d);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition:
     border-color 0.15s ease,
@@ -53,23 +53,23 @@
 }
 
 .ds-file-upload__zone:hover:not([data-disabled="true"]) {
-  border-color: var(--color-theme-primary, var(--color-brand-primary, #0d0d0d));
-  background-color: var(--color-theme-surface-hover, var(--color-mist-20, #fafafa));
+  border-color: var(--color-theme-primary, var(--color-brand-primary));
+  background-color: var(--color-theme-surface-hover, var(--color-mist-20));
 }
 
 .ds-file-upload[data-dragging="true"] .ds-file-upload__zone {
-  border-color: var(--color-theme-primary, var(--color-brand-primary, #0d0d0d));
+  border-color: var(--color-theme-primary, var(--color-brand-primary));
   border-style: solid;
   background-color: color-mix(
     in srgb,
-    var(--color-theme-primary, var(--color-brand-primary, #0d0d0d)) 6%,
-    var(--color-bg-surface, #ffffff)
+    var(--color-theme-primary, var(--color-brand-primary)) 6%,
+    var(--color-bg-surface)
   );
   box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.06));
 }
 
 .ds-file-upload[data-error="true"] .ds-file-upload__zone {
-  border-color: var(--color-state-error, #dc3545);
+  border-color: var(--color-state-error);
   border-style: dashed;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .ds-file-upload:focus-within .ds-file-upload__zone:not([data-disabled="true"]) {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -105,7 +105,7 @@
 .ds-file-upload__description {
   margin: 0;
   font-weight: 400;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   font-size: var(--text-small-size, 12px);
   line-height: 1.45;
   max-width: 36rem;
@@ -114,20 +114,20 @@
 .ds-file-upload__hint {
   margin: var(--space-1, 8px) 0 0;
   font-size: var(--text-small-size, 12px);
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
 }
 
 .ds-file-upload__error {
   margin: var(--space-1, 8px) 0 0;
   font-size: var(--text-small-size, 12px);
-  color: var(--color-state-error, #dc3545);
+  color: var(--color-state-error);
 }
 
 .ds-file-upload__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
 }
 
 .ds-file-upload__icon svg {
@@ -136,7 +136,7 @@
 }
 
 .ds-file-upload[data-dragging="true"] .ds-file-upload__icon {
-  color: var(--color-theme-primary, var(--color-brand-primary, #0d0d0d));
+  color: var(--color-theme-primary, var(--color-brand-primary));
 }
 
 @media (max-width: 640px) {

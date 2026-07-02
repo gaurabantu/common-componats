@@ -45,9 +45,9 @@ export const DarkFull: Story = {
   },
   decorators: [
     (StoryEl) => (
-      <div style={{ minHeight: "100vh", background: "#1a1a1a" }}>
+      <div style={{ minHeight: "100vh", background: "var(--color-noir-80)" }}>
         <StoryEl />
-        <p style={{ color: "#ccc", padding: 24 }}>Page content scrolls under the sticky bar.</p>
+        <p style={{ color: "var(--color-noir-20)", padding: 24 }}>Page content scrolls under the sticky bar.</p>
       </div>
     ),
   ],

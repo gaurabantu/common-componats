@@ -14,9 +14,12 @@ Use this folder when you are maintaining the library, consuming it in an app, re
 - [`../UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md) — full component catalog (patterns, `Card` compound API, `Table` data + semantic primitives, `Select`/`Combobox`, `Tabs`, `Stepper`, forms, shell, charts including `ChartTooltip`)
 - [`../FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md) — `EmptyState`, `ErrorState`, `OfflineBanner`, `FeedbackState`, animated illustrations, zone mapping
 - [`../HOOKS_GUIDE.md`](../HOOKS_GUIDE.md) — all 25 `ui-common-hooks` with examples
-- [`../design-system/DESIGN_SYSTEM.md`](../design-system/DESIGN_SYSTEM.md) — visual governance
+- [`../design-system/DESIGN_SYSTEM.md`](../design-system/DESIGN_SYSTEM.md) — visual governance (§22a zones)
+- [`../design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md`](../design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md) — token/CSS tables
+- [`../design-system/THEMES.md`](../design-system/THEMES.md) — theme matrix + QA
+- [`../design-system/COMPONENT_AUDIT.md`](../design-system/COMPONENT_AUDIT.md) — production checklist
 - [`../design-system/tokens.md`](../design-system/tokens.md) — token import, `--color-border-subtle` vs `--color-border-default`
-- [`../../COMPOSITION_RULES_1.md`](../../COMPOSITION_RULES_1.md) — 5 visual zones, CTA hierarchy, information density
+- [`../COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md) — zone FRD examples, CTA hierarchy, information density
 
 ---
 

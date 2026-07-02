@@ -106,7 +106,7 @@ export const Playground: StoryObj<OfflineStoryArgs> = {
       return (
         <button
           type="button"
-          style={{ padding: "6px 16px", borderRadius: 6, border: "1px solid var(--color-border-subtle,#cbd5e1)", background: "transparent", cursor: "pointer" }}
+          style={{ padding: "6px 16px", borderRadius: 6, border: "1px solid var(--color-border-subtle)", background: "transparent", cursor: "pointer" }}
           onClick={() => setDismissed(false)}
         >
           Restore banner

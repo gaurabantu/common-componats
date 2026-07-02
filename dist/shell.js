@@ -188,7 +188,7 @@ var Avatar = ({
   statusPosition = defaultStatusPosition,
   color,
   backgroundColor = defaultBackgroundColor,
-  textColor = "var(--color-text-primary, #0D0D0D)",
+  textColor = "var(--color-text-primary)",
   iconColor = defaultIconColor,
   iconSize,
   preserveColors = false,
@@ -211,8 +211,8 @@ var Avatar = ({
       height: statusSize,
       position: "absolute",
       borderRadius: "9999px",
-      border: "2px solid var(--color-bg-surface, #FFFFFF)",
-      backgroundColor: statusColor || (status === "online" ? "var(--color-state-success, #28A745)" : status === "busy" ? "var(--color-state-error, #DC3545)" : status === "away" ? "var(--color-state-warning, #FFC107)" : status === "offline" ? "var(--color-text-secondary, #757575)" : "transparent")
+      border: "2px solid var(--color-bg-surface)",
+      backgroundColor: statusColor || (status === "online" ? "var(--color-state-success)" : status === "busy" ? "var(--color-state-error)" : status === "away" ? "var(--color-state-warning)" : status === "offline" ? "var(--color-text-secondary)" : "transparent")
     };
     switch (statusPosition) {
       case "top-left":
@@ -297,7 +297,7 @@ var Avatar = ({
               borderRadius: shape === "circle" ? "50%" : shape === "square" ? 0 : rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : "var(--radius-lg, 8px)",
               border: bordered ? `1.5px solid ${borderColor}` : void 0,
               boxSizing: "border-box",
-              background: "var(--color-bg-surface, #FFFFFF)"
+              background: "var(--color-bg-surface)"
             }
           }
         ) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
@@ -2118,16 +2118,16 @@ var TextInput = (0, import_react9.forwardRef)(({
   };
   const shouldShowToggle = showToggleIcon && type === "password";
   const colors = {
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    bgPage: "var(--color-bg-page, #F3F4F6)",
-    borderDefault: "var(--color-border-default, #999999)",
-    stateError: "var(--color-state-error, #DC3545)",
-    stateWarning: "var(--color-state-warning, #FFC107)",
-    stateSuccess: "var(--color-state-success, #28A745)"
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    bgPage: "var(--color-bg-page)",
+    borderDefault: "var(--color-border-default)",
+    stateError: "var(--color-state-error)",
+    stateWarning: "var(--color-state-warning)",
+    stateSuccess: "var(--color-state-success)"
   };
-  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring, #3B82F6)" : colors.borderDefault;
+  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring)" : colors.borderDefault;
   const wrapperStyle = variant === "filled" ? {
     minHeight: fieldMetrics.minHeight,
     borderRadius: roundedStyle,

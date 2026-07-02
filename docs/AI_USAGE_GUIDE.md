@@ -23,7 +23,10 @@ Use this file when you want an AI tool to build a real application with `ui-comm
 13. [`internal/SIDEBAR_NAVIGATION_SYSTEM.md`](./internal/SIDEBAR_NAVIGATION_SYSTEM.md)
 14. [`internal/PACKAGES.md`](./internal/PACKAGES.md)
 15. [`internal/AI_UNIVERSAL_DESIGN_RULES.md`](./internal/AI_UNIVERSAL_DESIGN_RULES.md)
-16. [`../COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md) — this file (rules consolidation)
+16. [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) — zones + CTA hierarchy (FRD examples)
+17. [`design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md) — token tables
+18. [`design-system/THEMES.md`](./design-system/THEMES.md) — themes + QA
+19. [`design-system/COMPONENT_AUDIT.md`](./design-system/COMPONENT_AUDIT.md) — production checklist
 
 ---
 
@@ -36,7 +39,8 @@ Use this file when you want an AI tool to build a real application with `ui-comm
 | [`HOOKS_GUIDE.md`](./HOOKS_GUIDE.md) | Choose and use the right hook |
 | [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) | Apply layout, spacing, hierarchy, accessibility |
 | [`design-system/tokens.md`](./design-system/tokens.md) | Apply token-based styling |
-| [`COMPOSITION_RULES_1.md`](../COMPOSITION_RULES_1.md) | Zone layout, CTA hierarchy, information density |
+| [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) | Zone layout (FRD examples), CTA hierarchy, information density |
+| [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) | **§22a** canonical zone diagram |
 | [`internal/`](./internal/) | Shell implementation, package rationale, portable rules |
 
 ---
@@ -51,7 +55,7 @@ Use this file when you want an AI tool to build a real application with `ui-comm
 - For dashboard-style apps, use `DashboardShell` with `AppSidebar` and `AppTopbar`
 - For card UIs, prefer `Card` compound parts (`CardHeader`, `CardTitle`, `CardContent`, `CardFooter`)
 - Use tokens instead of hardcoded colors, spacing, radius, or shadows
-- Define the 5 visual zones before writing any new screen (see `COMPOSITION_RULES_1.md`)
+- Define the 5 visual zones before writing any new screen (see **DESIGN_SYSTEM §22a** + `COMPOSITION_RULES_1.md`)
 - Keep one primary CTA per zone (never two competing `variant="primary"` buttons)
 - Use `EmptyState` / `ErrorState` / `OfflineBanner` for feedback — not custom one-offs
 - Pair feedback state components with `useAsyncContentPhase` from `ui-common-hooks`
@@ -119,7 +123,7 @@ Use `ui-common-components` (v0.0.2) and `ui-common-hooks` (v0.3.0).
 Follow the UX Governance design system.
 
 Read ALL files under `docs/` in the order in `docs/README.md` (including `docs/internal/`).
-Also read `AGENTS.md` (root), `COMPOSITION_RULES_1.md`.
+Also read `AGENTS.md` (root), `docs/COMPOSITION_RULES_1.md`, `design-system/DESIGN_SYSTEM.md` §22a.
 
 Rules:
 - Use library components + hooks before building custom ones

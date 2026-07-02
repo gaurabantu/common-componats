@@ -48,7 +48,7 @@ export const WithInitials: Story = {
     name: "Gaurab Kumar",
     size: 56,
     backgroundColor: "var(--color-accent-lavender-10)",
-    textColor: "var(--color-brand-link, #002475)",
+    textColor: "var(--color-brand-link)",
     status: "online",
   },
 };
@@ -68,8 +68,8 @@ export const CustomBackgroundColor: Story = {
   args: {
     name: "Design System",
     size: 56,
-    color: "#DBEAFE",
-    textColor: "#1D4ED8",
+    color: "var(--color-accent-sky-10)",
+    textColor: "var(--color-brand-link)",
     status: "online",
   },
 };

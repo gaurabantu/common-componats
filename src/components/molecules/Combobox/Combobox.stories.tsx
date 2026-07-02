@@ -62,9 +62,9 @@ const surface = {
   padding: "var(--space-3, 24px)",
   maxWidth: 420,
   margin: "0 auto",
-  background: "var(--color-bg-surface, #ffffff)",
+  background: "var(--color-bg-surface)",
   borderRadius: "var(--radius-md, 8px)",
-  border: "1px solid var(--color-border-default, #999999)",
+  border: "1px solid var(--color-border-default)",
 } as const;
 
 export const SearchableSingle: Story = {

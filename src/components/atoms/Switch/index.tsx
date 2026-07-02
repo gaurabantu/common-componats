@@ -9,12 +9,12 @@ function cls(...parts: (string | false | undefined)[]): string {
 }
 
 const COLORS = {
-  trackOff: "var(--color-mist-80, #e0e0e0)",
-  trackOn: "var(--color-theme-primary, var(--color-brand-primary, #0d0d0d))",
-  thumb: "var(--color-bg-surface, #ffffff)",
-  border: "var(--color-border-default, #999999)",
-  text: "var(--color-text-primary, #0d0d0d)",
-  textMuted: "var(--color-text-secondary, #757575)",
+  trackOff: "var(--color-mist-80)",
+  trackOn: "var(--color-theme-primary, var(--color-brand-primary))",
+  thumb: "var(--color-bg-surface)",
+  border: "var(--color-border-default)",
+  text: "var(--color-text-primary)",
+  textMuted: "var(--color-text-secondary)",
 } as const;
 
 const SIZE_STYLES = {

@@ -41,7 +41,7 @@ export const GradientLine: Story = {
     type: "line",
     value: 68,
     label: "Upload progress",
-    gradient: "linear-gradient(90deg, #3B82F6 0%, #8B5CF6 100%)",
+    gradient: "linear-gradient(90deg, var(--color-state-info) 0%, var(--color-accent-lavender-40) 100%)",
     animation: "stripes-flow",
     striped: true,
   },

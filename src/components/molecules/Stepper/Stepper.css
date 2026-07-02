@@ -65,7 +65,7 @@
 .ds-stepper__track-line--bg {
   z-index: 0;
   right: 0;
-  background: var(--color-border-default, #999999);
+  background: var(--color-border-default);
   opacity: 0.9;
 }
 
@@ -73,7 +73,7 @@
   z-index: 1;
   width: var(--stepper-progress-pct, 0%);
   max-width: 100%;
-  background: var(--color-state-success, #28a745);
+  background: var(--color-state-success);
   transition: width var(--duration-normal, 300ms) var(--easing-default);
 }
 
@@ -85,8 +85,8 @@
 .ds-stepper[data-appearance="emphasized"] .ds-stepper__track-line--fill {
   background: linear-gradient(
     90deg,
-    var(--color-state-success, #28a745),
-    color-mix(in srgb, var(--color-state-success, #28a745) 75%, var(--color-brand-secondary, #ff4d00))
+    var(--color-state-success),
+    color-mix(in srgb, var(--color-state-success) 75%, var(--color-brand-secondary))
   );
 }
 
@@ -128,7 +128,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--color-text-primary, #0d0d0d);
+  color: var(--color-text-primary);
   font: inherit;
   cursor: pointer;
   border-radius: var(--radius-md, 6px);
@@ -139,7 +139,7 @@
 }
 
 .ds-stepper__marker-btn:focus-visible {
-  outline: 2px solid var(--color-focus-ring, #0066cc);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -157,12 +157,12 @@
   height: var(--stepper-marker, 44px);
   flex-shrink: 0;
   border-radius: 999px;
-  border: 2px solid var(--color-border-default, #999999);
-  background: var(--color-bg-elevated, #ffffff);
+  border: 2px solid var(--color-border-default);
+  background: var(--color-bg-elevated);
   font-weight: 600;
   font-size: var(--text-secondary-size, 14px);
   line-height: 1;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   transition:
     border-color var(--duration-instant, 100ms) var(--easing-default),
     background-color var(--duration-instant, 100ms) var(--easing-default),
@@ -170,22 +170,22 @@
 }
 
 .ds-stepper__marker-btn[data-state="complete"] .ds-stepper__marker {
-  border-color: var(--color-state-success, #28a745);
-  background: var(--color-state-success, #28a745);
-  color: #ffffff;
+  border-color: var(--color-state-success);
+  background: var(--color-state-success);
+  color: var(--color-text-on-primary);
 }
 
 .ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
-  border-color: var(--color-brand-primary, #0d0d0d);
-  background: var(--color-bg-elevated, #ffffff);
-  color: var(--color-text-primary, #0d0d0d);
-  box-shadow: 0 0 0 2px var(--color-bg-elevated, #ffffff), 0 0 0 4px var(--color-brand-secondary, #ff4d00);
+  border-color: var(--color-brand-primary);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-brand-secondary);
 }
 
 .ds-stepper[data-appearance="emphasized"] .ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
   box-shadow:
-    0 0 0 2px var(--color-bg-elevated, #ffffff),
-    0 0 0 5px color-mix(in srgb, var(--color-brand-secondary, #ff4d00) 65%, transparent);
+    0 0 0 2px var(--color-bg-elevated),
+    0 0 0 5px color-mix(in srgb, var(--color-brand-secondary) 65%, transparent);
 }
 
 .ds-stepper__check {
@@ -243,7 +243,7 @@
 }
 
 .ds-stepper__label-block[data-state="upcoming"] .ds-stepper__label {
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -258,7 +258,7 @@
   font-size: var(--stepper-desc-size, 12px);
   font-weight: 400;
   line-height: 1.4;
-  color: var(--color-text-secondary, #757575);
+  color: var(--color-text-secondary);
   word-break: break-word;
 }
 
@@ -270,7 +270,7 @@
   width: 100%;
   height: 3px;
   border-radius: 2px;
-  background: var(--color-border-default, #999999);
+  background: var(--color-border-default);
   opacity: 0.9;
 }
 
@@ -280,7 +280,7 @@
 }
 
 .ds-stepper__gap--complete {
-  background: color-mix(in srgb, var(--color-state-success, #28a745) 80%, var(--color-border-default, #999999));
+  background: color-mix(in srgb, var(--color-state-success) 80%, var(--color-border-default));
 }
 
 /* Continuous mode: full-width track handles the line; gap columns are layout-only */

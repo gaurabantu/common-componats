@@ -2,7 +2,17 @@ import React from "react";
 
 const iconSize = 56;
 
-export function SuccessIconSvg({ animated, color = "#22c55e" }: { animated?: boolean; color?: string }) {
+type AlertDialogIconSvgProps = {
+  animated?: boolean;
+  color?: string;
+  bgColor?: string;
+};
+
+export function SuccessIconSvg({
+  animated,
+  color = "var(--color-state-success)",
+  bgColor = "color-mix(in srgb, var(--color-state-success) 10%, transparent)",
+}: AlertDialogIconSvgProps) {
   return (
     <svg
       width={iconSize}
@@ -11,7 +21,7 @@ export function SuccessIconSvg({ animated, color = "#22c55e" }: { animated?: boo
       fill="none"
       className={animated ? "alert-dialog-svg--success" : ""}
     >
-      <circle cx="28" cy="28" r="26" fill={`${color}20`} />
+      <circle cx="28" cy="28" r="26" fill={bgColor} />
       <path
         className={animated ? "alert-dialog-checkmark" : ""}
         d="M16 28l8 8 16-16"
@@ -25,7 +35,11 @@ export function SuccessIconSvg({ animated, color = "#22c55e" }: { animated?: boo
   );
 }
 
-export function ErrorIconSvg({ animated, color = "#ef4444" }: { animated?: boolean; color?: string }) {
+export function ErrorIconSvg({
+  animated,
+  color = "var(--color-state-error)",
+  bgColor = "color-mix(in srgb, var(--color-state-error) 10%, transparent)",
+}: AlertDialogIconSvgProps) {
   return (
     <svg
       width={iconSize}
@@ -34,14 +48,18 @@ export function ErrorIconSvg({ animated, color = "#ef4444" }: { animated?: boole
       fill="none"
       className={animated ? "alert-dialog-svg--error" : ""}
     >
-      <circle cx="28" cy="28" r="26" fill={`${color}20`} />
+      <circle cx="28" cy="28" r="26" fill={bgColor} />
       <path d="M28 18v14" stroke={color} strokeWidth="3" strokeLinecap="round" />
       <circle cx="28" cy="38" r="2.5" fill={color} />
     </svg>
   );
 }
 
-export function WarningIconSvg({ animated, color = "#f59e0b" }: { animated?: boolean; color?: string }) {
+export function WarningIconSvg({
+  animated,
+  color = "var(--color-state-warning)",
+  bgColor = "color-mix(in srgb, var(--color-state-warning) 10%, transparent)",
+}: AlertDialogIconSvgProps) {
   return (
     <svg
       width={iconSize}
@@ -52,7 +70,7 @@ export function WarningIconSvg({ animated, color = "#f59e0b" }: { animated?: boo
     >
       <path
         d="M28 12L44 42H12L28 12z"
-        fill={`${color}20`}
+        fill={bgColor}
         stroke={color}
         strokeWidth="2"
         strokeLinejoin="round"

@@ -28,7 +28,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const computedPct = computePercentage({ value, stepCount, formCount });
   const pct = clamp(computedPct);
   const visualFill = gradient || customColor;
-  const trackFill = trackColor || "var(--color-bg-page, #F3F4F6)";
+  const trackFill = trackColor || "var(--color-bg-page)";
   const resolvedAnimation =
     animation !== "smooth"
       ? animation
@@ -90,7 +90,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           {showLabel && label ? (
             <span
               style={{
-                color: "var(--color-text-primary, #0D0D0D)",
+                color: "var(--color-text-primary)",
                 fontSize: "var(--text-small-size, 12px)",
                 fontWeight: 600,
                 lineHeight: 1.5,
@@ -104,7 +104,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           {showValue && (
             <span
               style={{
-                color: "var(--color-text-secondary, #757575)",
+                color: "var(--color-text-secondary)",
                 fontSize: "var(--text-small-size, 12px)",
                 lineHeight: 1.5,
               }}
@@ -198,8 +198,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           {gradient && (
             <defs>
               <linearGradient id={`progress-gradient-${circleId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#60A5FA" />
-                <stop offset="100%" stopColor="#8B5CF6" />
+                <stop offset="0%" stopColor="var(--color-state-info)" />
+                <stop offset="100%" stopColor="var(--color-accent-lavender-40)" />
               </linearGradient>
             </defs>
           )}
@@ -239,7 +239,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            color: "var(--color-text-primary, #0D0D0D)",
+            color: "var(--color-text-primary)",
             fontWeight: 700,
             lineHeight: 1,
             fontSize: fontSize || 16,
@@ -252,7 +252,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       {showLabel && label && (
         <div
           style={{
-            color: "var(--color-text-secondary, #757575)",
+            color: "var(--color-text-secondary)",
             fontSize: "var(--text-small-size, 12px)",
             textAlign: "center",
             lineHeight: 1.5,

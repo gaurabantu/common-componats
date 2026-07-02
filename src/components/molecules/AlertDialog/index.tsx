@@ -18,15 +18,16 @@ function VariantIcon({
 }) {
   const config = alertDialogVariantConfig[variant];
   const color = config.iconColor;
+  const bgColor = config.bgColor;
 
   if (variant === "success") {
-    return <SuccessIconSvg animated={animated} color={color} />;
+    return <SuccessIconSvg animated={animated} color={color} bgColor={bgColor} />;
   }
   if (variant === "error") {
-    return <ErrorIconSvg animated={animated} color={color} />;
+    return <ErrorIconSvg animated={animated} color={color} bgColor={bgColor} />;
   }
   if (variant === "warning") {
-    return <WarningIconSvg animated={animated} color={color} />;
+    return <WarningIconSvg animated={animated} color={color} bgColor={bgColor} />;
   }
   return (
     <span
@@ -118,7 +119,7 @@ export default function AlertDialog({
             margin: 0,
             fontSize: "1.25rem",
             fontWeight: 600,
-            color: "var(--color-text-primary, #333)",
+            color: "var(--color-text-primary)",
           }}
         >
           {title}
@@ -129,7 +130,7 @@ export default function AlertDialog({
             style={{
               margin: "0.5rem 0 1.25rem",
               fontSize: "0.9375rem",
-              color: "var(--color-text-secondary, #666)",
+              color: "var(--color-text-secondary)",
               lineHeight: 1.5,
             }}
           >

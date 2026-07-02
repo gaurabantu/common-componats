@@ -83,31 +83,31 @@ export interface ChartLayoutProps {
 /** Theme-based colors for tooltip, legend, axis, grid */
 export const CHART_THEME_COLORS = {
   light: {
-    tooltipBg: "var(--color-bg-surface, #fff)",
-    tooltipBorder: "var(--color-border-default, #e5e7eb)",
-    tooltipText: "var(--color-text-primary, #0d0d0d)",
-    legendText: "var(--color-text-secondary, #757575)",
-    axisText: "var(--color-text-secondary, #757575)",
-    gridColor: "var(--color-border-default, #e5e7eb)",
+    tooltipBg: "var(--color-bg-surface)",
+    tooltipBorder: "var(--color-border-default)",
+    tooltipText: "var(--color-text-primary)",
+    legendText: "var(--color-text-secondary)",
+    axisText: "var(--color-text-secondary)",
+    gridColor: "var(--color-border-default)",
   },
   dark: {
-    tooltipBg: "var(--chart-tooltip-bg, #141b2d)",
-    tooltipBorder: "var(--chart-tooltip-border, #2a3548)",
-    tooltipText: "var(--chart-tooltip-text, #e8edf5)",
-    legendText: "var(--chart-legend-text, #8b9bb4)",
-    axisText: "var(--chart-axis-text, #8b9bb4)",
-    gridColor: "var(--chart-grid-color, #2a3548)",
+    tooltipBg: "var(--color-bg-surface)",
+    tooltipBorder: "var(--color-border-default)",
+    tooltipText: "var(--color-text-primary)",
+    legendText: "var(--color-text-secondary)",
+    axisText: "var(--color-text-secondary)",
+    gridColor: "var(--color-border-subtle)",
   },
 };
 
 /** Default color palette (design system tokens) */
 export const CHART_COLORS = [
-  "var(--button-primary-default-bg, #2563EB)",
-  "var(--color-state-success, #28A745)",
-  "var(--color-state-warning, #FFC107)",
-  "var(--color-state-error, #DC3545)",
-  "var(--color-accent-lavender-40, #B9A7FF)",
-  "var(--color-accent-sky-10, #E6F2FF)",
-  "var(--color-accent-mint-10, #E9FFF4)",
-  "var(--color-accent-amber-10, #FFF6DD)",
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)",
+  "var(--color-accent-sky-10)",
+  "var(--color-accent-mint-10)",
+  "var(--color-accent-amber-10)",
 ];

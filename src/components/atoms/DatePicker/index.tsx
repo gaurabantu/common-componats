@@ -190,12 +190,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const resolvedStatus = status ?? (error ? "error" : undefined);
   const borderColor =
     resolvedStatus === "error"
-      ? "var(--color-state-error, #DC3545)"
+      ? "var(--color-state-error)"
       : resolvedStatus === "warning"
-        ? "var(--color-state-warning, #FFC107)"
+        ? "var(--color-state-warning)"
         : resolvedStatus === "success"
-          ? "var(--color-state-success, #28A745)"
-          : "var(--color-border-default, #999999)";
+          ? "var(--color-state-success)"
+          : "var(--color-border-default)";
 
   const shellStyle: React.CSSProperties = {
     width: fullWidth ? "100%" : "auto",
@@ -206,8 +206,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
     display: "block",
     marginBottom: 8,
     color: disabled
-      ? "var(--color-text-secondary, #757575)"
-      : "var(--color-text-primary, #0D0D0D)",
+      ? "var(--color-text-secondary)"
+      : "var(--color-text-primary)",
     fontSize: "var(--text-secondary-size, 14px)",
     fontWeight: 500,
     lineHeight: 1.5,
@@ -217,7 +217,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     variant === "filled"
       ? {
           minHeight: currentSize.minHeight,
-          backgroundColor: "var(--color-bg-page, #F3F4F6)",
+          backgroundColor: "var(--color-bg-page)",
           border: `1.5px solid ${borderColor}`,
           borderRadius: resolveRadius(rounded),
         }
@@ -231,7 +231,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           }
         : {
             minHeight: currentSize.minHeight,
-            backgroundColor: "var(--color-bg-surface, #FFFFFF)",
+            backgroundColor: "var(--color-bg-surface)",
             border: `1.5px solid ${borderColor}`,
             borderRadius: resolveRadius(rounded),
           };
@@ -245,8 +245,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
     outline: "none",
     background: "transparent",
     color: disabled
-      ? "var(--color-text-secondary, #757575)"
-      : "var(--color-text-primary, #0D0D0D)",
+      ? "var(--color-text-secondary)"
+      : "var(--color-text-primary)",
     fontSize: currentSize.fontSize,
     lineHeight: 1.5,
     boxSizing: "border-box",
@@ -260,8 +260,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
     marginBottom: 0,
     color:
       resolvedStatus === "error"
-        ? "var(--color-state-error, #DC3545)"
-        : "var(--color-text-secondary, #757575)",
+        ? "var(--color-state-error)"
+        : "var(--color-text-secondary)",
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5,
   };
@@ -436,7 +436,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     border: "none",
     borderRadius: "var(--radius-sm, 6px)",
     background: "transparent",
-    color: "var(--color-text-primary, #0D0D0D)",
+    color: "var(--color-text-primary)",
     cursor: disabled ? "not-allowed" : "pointer",
     flexShrink: 0,
   };
@@ -457,8 +457,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
     ...popoverStyle,
     padding: 0,
     borderRadius: "var(--radius-md, 8px)",
-    border: "1px solid var(--color-border-default, #e5e7eb)",
-    background: "var(--color-bg-surface, #FFFFFF)",
+    border: "1px solid var(--color-border-default)",
+    background: "var(--color-bg-surface)",
     boxShadow:
       "0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 10px 24px -4px rgba(15, 23, 42, 0.1)",
     transformOrigin: "top left",
@@ -504,7 +504,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               cursor: disabled ? "not-allowed" : "text",
             }}
           />
-          <span style={{ color: "var(--color-text-secondary, #757575)", fontSize: 14, flexShrink: 0 }}>
+          <span style={{ color: "var(--color-text-secondary)", fontSize: 14, flexShrink: 0 }}>
             {rangeSeparator}
           </span>
           <input
@@ -546,7 +546,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               border: "none",
               borderRadius: "var(--radius-sm, 6px)",
               background: "transparent",
-              color: "var(--color-text-secondary, #757575)",
+              color: "var(--color-text-secondary)",
               cursor: disabled ? "not-allowed" : "pointer",
             }}
             onClick={() => !disabled && setIsOpen((prev) => !prev)}
@@ -597,7 +597,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                     textAlign: "center",
                     fontSize: "var(--text-secondary-size, 14px)",
                     fontWeight: 600,
-                    color: "var(--color-text-primary, #0D0D0D)",
+                    color: "var(--color-text-primary)",
                   }}
                 >
                   {visibleMonth.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
@@ -709,7 +709,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
             border: "none",
             borderRadius: "var(--radius-sm, 6px)",
             background: "transparent",
-            color: "var(--color-text-secondary, #757575)",
+            color: "var(--color-text-secondary)",
             cursor: disabled ? "not-allowed" : "pointer",
           }}
           onClick={() => !disabled && setIsOpen((prev) => !prev)}

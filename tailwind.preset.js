@@ -1,7 +1,7 @@
 /**
- * Tailwind preset for ui-pan-common-components design system.
+ * Tailwind preset for ui-common-components design system.
  * In your app's tailwind.config.js:
- *   module.exports = { presets: [require('ui-pan-common-components/tailwind.preset.js')], content: ['...', './node_modules/ui-pan-common-components/dist/**\/*.js'] }
+ *   module.exports = { presets: [require('ui-common-components/tailwind.preset.js')], content: ['...', './node_modules/ui-common-components/dist/**/*.js'] }
  */
 module.exports = {
   theme: {

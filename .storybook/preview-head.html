@@ -1,5 +1,6 @@
 <!--
   Preview iframe (Canvas / Docs). Same viewport + button fixes as manager, for iframe-only audits.
+  Bounded passes only — perpetual MutationObserver freezes Storybook during heavy story renders.
 -->
 <meta
   name="viewport"
@@ -54,14 +55,17 @@
       enforceViewport();
       fixUnlabeledButtons();
     }
-    var t;
-    function schedule() {
-      clearTimeout(t);
-      t = setTimeout(run, 50);
+    function runBoundedPasses() {
+      run();
+      [250, 1000, 3000].forEach(function (ms) {
+        setTimeout(run, ms);
+      });
     }
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
-    else run();
-    window.addEventListener("load", run);
-    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runBoundedPasses);
+    } else {
+      runBoundedPasses();
+    }
+    window.addEventListener("load", runBoundedPasses);
   })();
 </script>

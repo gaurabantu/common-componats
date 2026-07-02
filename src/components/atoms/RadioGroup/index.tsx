@@ -27,12 +27,12 @@ const RadioButton: React.FC<RadioButtonProps & { itemMarginClass: string; tabInd
   const isBox = shape === "box";
   const id = `${name}-${value}`;
   const colors = {
-    brand: "var(--color-brand-primary, #0D0D0D)",
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    borderDefault: "var(--color-border-default, #999999)",
-    accentLavender: "var(--color-accent-lavender-10, #EEE7FF)",
+    brand: "var(--color-brand-primary)",
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    borderDefault: "var(--color-border-default)",
+    accentLavender: "var(--color-accent-lavender-10)",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))",
   } as const;
 

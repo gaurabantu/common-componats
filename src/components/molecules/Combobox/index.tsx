@@ -165,8 +165,8 @@ export const Combobox = React.memo(function Combobox({
 
   const borderColor =
     resolvedStatus === "error"
-      ? "var(--color-state-error, #DC3545)"
-      : "var(--color-border-default, #999999)";
+      ? "var(--color-state-error)"
+      : "var(--color-border-default)";
 
   const renderOptionRow = (opt: ComboboxOption) => {
     const sel = isSelected(opt.value);

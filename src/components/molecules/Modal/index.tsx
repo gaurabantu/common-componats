@@ -221,7 +221,7 @@ export default function Modal({
               flexDirection: "column",
               maxHeight: "100%",
               overflow: "hidden",
-              background: "var(--color-bg-surface, #fff)",
+              background: "var(--color-bg-surface)",
               borderRadius: "var(--radius-lg, 8px)",
               boxShadow: "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))",
             }}
@@ -241,7 +241,7 @@ export default function Modal({
                 <span
                   id={`${id}Label`}
                   className="modal-title fw-semibold"
-                  style={{ flex: 1, fontSize: "1.125rem", color: "var(--color-text-primary, #333)" }}
+                  style={{ flex: 1, fontSize: "1.125rem", color: "var(--color-text-primary)" }}
                 >
                   {titleIcon && (
                     <Icon

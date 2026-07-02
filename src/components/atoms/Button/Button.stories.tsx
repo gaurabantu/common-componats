@@ -143,10 +143,10 @@ export const CustomColors: Story = {
       <p className="sb-section-subtitle">backgroundColor, borderColor, textColor apply on top of variant (works in main app too).</p>
       <div className="sb-card">
         <div className="sb-inline">
-          <Button variant="default" size="md" backgroundColor="#6366f1" borderColor="#6366f1" textColor="#fff">
+          <Button variant="default" size="md" backgroundColor="var(--color-accent-lavender-40)" borderColor="var(--color-accent-lavender-40)" textColor="var(--color-text-on-primary)">
             Custom fill
           </Button>
-          <Button variant="default" size="md" backgroundColor="transparent" borderColor="#6366f1" textColor="#6366f1">
+          <Button variant="default" size="md" backgroundColor="transparent" borderColor="var(--color-accent-lavender-40)" textColor="var(--color-accent-lavender-40)">
             Custom outline
           </Button>
         </div>
@@ -159,9 +159,9 @@ export const GradientButton: Story = {
   args: {
     children: "Upgrade plan",
     variant: "primary",
-    gradient: "linear-gradient(135deg, var(--color-brand-primary, #064e3b) 0%, var(--color-brand-secondary, #10b981) 100%)",
-    gradientHover: "linear-gradient(135deg, #065f46 0%, #059669 100%)",
-    gradientActive: "linear-gradient(135deg, #064e3b 0%, #047857 100%)",
+    gradient: "linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%)",
+    gradientHover: "linear-gradient(135deg, var(--color-theme-active) 0%, var(--color-state-success) 100%)",
+    gradientActive: "linear-gradient(135deg, var(--color-theme-active) 0%, var(--color-theme-hover) 100%)",
   },
   render: (args) => (
     <div className="sb-page">

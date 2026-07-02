@@ -1,5 +1,52 @@
 # UX Composition Guidelines (Flexible)
 
+> **Tailwind preset mapping (read before using `gap-*`, `p-*`, `grid` examples below)**  
+> This repo’s examples assume the **`ui-common-components` Tailwind preset** (`tailwind.preset.js`), **not** default Tailwind spacing. If your app does not extend the preset, `gap-3` is **12px** in stock Tailwind but **24px** here.
+
+### Spacing scale (`theme.extend.spacing`)
+
+| Class suffix | Token | Pixel size | Typical use |
+|--------------|-------|-------------|-------------|
+| `1` | `--space-1` | 8px | Icon gaps, tight button groups |
+| `2` | `--space-2` | 16px | Field gaps, secondary clusters (`gap-2`, `p-2`) |
+| `3` | `--space-3` | 24px | Section padding, filter rows (`gap-3`, `mb-3`) |
+| `4` | `--space-4` | 32px | Metric grids, card gutters (`gap-4`) |
+| `5` | `--space-5` | 40px | Large section breaks |
+| `6` | `--space-6` | 48px | Form stacks (`space-y-6`, `gap-6`) |
+| `7` | `--space-7` | 56px | Rare — hero spacing |
+| `8` | `--space-8` | 64px | Page-level rhythm |
+
+Applies to **`gap-*`**, **`p-*`**, **`m-*`**, **`space-x/y-*`**, and grid gutters when using preset spacing keys.
+
+**Micro gap (`--space-0` = 4px)** is not mapped to Tailwind `1` in the preset — use tokens in CSS or component props for intra-control gaps.
+
+### Layout preference
+
+**Prefer `Grid` + `GridItem`** from `ui-common-components` for responsive dashboard sections instead of raw `grid grid-cols-*` when building library-aligned screens. Use Tailwind grid classes in examples here only when showing density patterns or when the preset is confirmed in the host app.
+
+```tsx
+import { Grid, GridItem } from "ui-common-components";
+
+{/* gap={24} = --space-3 when using preset spacing in Tailwind elsewhere */}
+<Grid columns={4} gap={24}>
+  <GridItem>{/* metric card */}</GridItem>
+</Grid>
+```
+
+**Enable preset in host app:**
+
+```js
+// tailwind.config.js
+module.exports = {
+  presets: [require("ui-common-components/tailwind.preset.js")],
+  content: ["./src/**/*.{js,ts,jsx,tsx}", "./node_modules/ui-common-components/dist/**/*.js"],
+};
+```
+
+**Also token-mapped:** `rounded-md` → `--radius-md`, `text-h2` → `--text-h2-size`, `shadow-sm` → `--shadow-sm`, `min-h-touch` / `min-w-touch` → 44px. See [`design-system/tokens.md`](./design-system/tokens.md).
+
+---
+
 ## Core Principle: Visual Hierarchy, Not Arbitrary Limits
 
 **Goal:** User knows what action to take without confusion.  
@@ -62,23 +109,26 @@ AI Maps To:
 
 ### The 5 Visual Zones
 
+> **Canonical definition:** [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §22a. This file expands with FRD examples and CTA hierarchy.
+
 Every screen should have a **clear visual structure** before AI writes code:
 
 ```
-┌─────────────────────────────────────┐
-│ ZONE 1: Header/Topbar               │ ← Page title, search, profile
-├─────────────────────────────────────┤
-│ ZONE 2: Primary Action              │ ← Main CTA (Add, Create, etc)
-├─────────────────────────────────────┤
-│ ZONE 3: Filters/Navigation          │ ← Tabs, filters, date range
-├─────────────────────────────────────┤
-│ ZONE 4: Content (Main Focus)        │ ← Table, charts, cards, form
-│                                     │
-│                                     │
-├─────────────────────────────────────┤
-│ ZONE 5: Secondary Actions/Context   │ ← Pagination, footer, help
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│ ZONE 1: AppTopbar                        │ ← Page title, search, profile, primary CTA
+├──────────────────────────────────────────┤
+│ ZONE 2: Alerts / notification strip      │ ← OfflineBanner sticky, inline warnings (optional)
+├──────────────────────────────────────────┤
+│ ZONE 3: Filters / tabs / breadcrumb      │ ← Tabs, filters, date range
+├──────────────────────────────────────────┤
+│ ZONE 4: Main content                     │ ← Table, charts, EmptyState, ErrorState, form
+│                                          │
+├──────────────────────────────────────────┤
+│ ZONE 5: Pagination / footer              │ ← Pagination, row count, secondary actions
+└──────────────────────────────────────────┘
 ```
+
+**Primary CTA lives in Zone 1** (`AppTopbar` actions), not Zone 2. Zone 2 is for system/status strips only (`OfflineBanner` without `image`).
 
 ### AI Must Define Zones BEFORE Coding
 
@@ -90,8 +140,8 @@ AI: [immediately writes JSX code]
 **Right Process:**
 ```
 AI: "Screen structure:
-Zone 1: AppTopbar with 'Users Dashboard' title + search
-Zone 2: Primary button 'Add User' (top-right)
+Zone 1: AppTopbar — 'Users Dashboard' title + search + 'Add User' (primary)
+Zone 2: (none — online)
 Zone 3: Tabs for 'All', 'Active', 'Inactive'
 Zone 4: Table with user data (name, email, status, actions)
 Zone 5: Pagination (10 per page)
@@ -239,11 +289,11 @@ Before writing code, AI must answer:
    - Multi-step process? → Stepper
    ↓
 3. DEFINE 5 VISUAL ZONES
-   - Zone 1: Header/Title
-   - Zone 2: Primary Action
-   - Zone 3: Filters/Nav
-   - Zone 4: Main Content
-   - Zone 5: Secondary Actions
+   - Zone 1: AppTopbar (title + primary CTA)
+   - Zone 2: Alerts / notification strip (optional)
+   - Zone 3: Filters / tabs / breadcrumb
+   - Zone 4: Main content
+   - Zone 5: Pagination / footer
    ↓
 4. MAP TO COMPONENTS
    - Choose from 78 components
@@ -274,8 +324,8 @@ Primary Goal: View all users
 Secondary Goals: Add, Edit, Delete, Export
 
 Visual Structure:
-- Zone 1: Title "User Management"
-- Zone 2: "Add User" button (primary, top-right)
+- Zone 1: AppTopbar — "User Management" + "Add User" (primary, md)
+- Zone 2: (none — online)
 - Zone 3: Tabs: All | Active | Inactive
 - Zone 4: Table with columns (Name, Email, Status, Actions)
 - Zone 5: Pagination
@@ -299,9 +349,9 @@ Primary Goal: View revenue performance
 Secondary Goals: Filter by date, Export report
 
 Visual Structure:
-- Zone 1: Title "Sales Dashboard"
-- Zone 2: Date range picker + Export button
-- Zone 3: 4 metric cards (Revenue, Orders, Avg Order, Growth)
+- Zone 1: AppTopbar — "Sales Dashboard" + Export (outlineSecondary, sm)
+- Zone 2: (none)
+- Zone 3: Date range picker + 4 metric cards (Revenue, Orders, Avg Order, Growth)
 - Zone 4: Revenue trend chart (line chart)
 - Zone 5: Top products table
 
@@ -325,10 +375,10 @@ Primary Goal: Create new product
 Steps: Basic info → Images → Pricing → Review
 
 Visual Structure:
-- Zone 1: Title "Create Product"
-- Zone 2: Stepper showing progress
-- Zone 3: Current step form
-- Zone 4: Help text / preview
+- Zone 1: AppTopbar — "Create Product"
+- Zone 2: (none)
+- Zone 3: Stepper showing progress + current step form
+- Zone 4: Help text / preview panel
 - Zone 5: Back + Next buttons
 
 Components:

@@ -53,6 +53,8 @@
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-card: 10px;
+  /** Controls inside molecules (feedback detail blocks, compact chips) — alias of `--radius-md` */
+  --radius-control: var(--radius-md);
 
   /* TYPOGRAPHY — default UI font: Inter (see Google Fonts @import). Host app: `:root { --font-family: … }` */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -352,6 +354,23 @@ select {
   --color-state-warning: #ffc107;
   --color-state-error: #dc3545;
 
+  /*
+   * Feedback & status semantics — EmptyState, ErrorState, OfflineBanner, SVG illustrations.
+   * Strong = icons / emphasis text · Fill = tinted panel · Soft = banner wash.
+   * Mapped from `--color-state-*` + accent families (§3 / §5 DESIGN_SYSTEM.md).
+   */
+  --color-fill-muted: var(--color-mist-40);
+  --color-fill-surface: var(--color-bg-surface);
+  --color-danger-strong: var(--color-state-error);
+  --color-danger-fill: var(--color-accent-rose-10);
+  --color-success-strong: var(--color-accent-mint-fg);
+  --color-success-fill: var(--color-accent-mint-10);
+  --color-info-strong: var(--color-accent-sky-fg);
+  --color-info-fill: var(--color-accent-sky-10);
+  --color-warning-strong: var(--color-accent-amber-fg);
+  --color-warning-fill: var(--color-accent-amber-10);
+  --color-warning-soft: color-mix(in srgb, var(--color-warning-fill) 55%, transparent);
+
   --color-accent-lavender-10: #eee7ff;
   --color-accent-lavender-40: #b9a7ff;
   --color-accent-sky-10: #e6f2ff;
@@ -462,6 +481,23 @@ select {
   --color-state-success: #34D399;
   --color-state-warning: #FBBF24;
   --color-state-error: #F87171;
+  --color-state-info: #60a5fa;
+
+  --color-surface-mist: #374151;
+  --color-border-subtle: var(--color-surface-mist);
+
+  --color-fill-muted: var(--color-surface-mist);
+  --color-fill-surface: var(--color-bg-surface);
+  --color-danger-strong: var(--color-state-error);
+  /* Dark fills: blend state colour into surface — avoids light accent-10 washes on slate */
+  --color-danger-fill: color-mix(in srgb, var(--color-state-error) 20%, var(--color-bg-surface));
+  --color-success-strong: var(--color-state-success);
+  --color-success-fill: color-mix(in srgb, var(--color-state-success) 18%, var(--color-bg-surface));
+  --color-info-strong: var(--color-state-info);
+  --color-info-fill: color-mix(in srgb, var(--color-state-info) 18%, var(--color-bg-surface));
+  --color-warning-strong: var(--color-state-warning);
+  --color-warning-fill: color-mix(in srgb, var(--color-state-warning) 18%, var(--color-bg-surface));
+  --color-warning-soft: color-mix(in srgb, var(--color-state-warning) 14%, var(--color-bg-page));
 
   --color-accent-lavender-10: #3730A3;
   --color-accent-lavender-40: #818CF8;
@@ -506,7 +542,6 @@ select {
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
 
-  --color-surface-mist: #374151;
   --color-interactive-row-hover: color-mix(in srgb, var(--color-bg-surface) 90%, #ffffff);
 
   /* Align shell chrome with dark surfaces (sidebar rail + topbar inherit from document). */
@@ -549,6 +584,7 @@ select {
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
   /* modals / elevated: stay white in v2.0.0 for contrast */
+  --color-fill-muted: var(--color-mist-80);
 }
 
 /* ========== CUSTOM (example rose brand — §42 slots only) ========== */
@@ -577,6 +613,7 @@ select {
   --color-bg-page: #ededed;
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
+  --color-fill-muted: var(--color-mist-80);
   --color-focus-ring: #7c3aed;
   /* Align focus outline with thematic ring — classic :root wins otherwise */
   --color-border-focus: #7c3aed;
@@ -615,6 +652,7 @@ select {
   --color-bg-page: #ededed;
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
+  --color-fill-muted: var(--color-mist-80);
   --color-focus-ring: #06b6d4;
   --color-border-focus: #0d0d0d;
 
@@ -804,9 +842,9 @@ select {
   background-color: transparent !important;
   background-image: var(
     --button-gradient-bg,
-    linear-gradient(135deg, var(--color-brand-primary, #0d0d0d) 0%, var(--color-brand-secondary, #10b981) 100%)
+    linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%)
   ) !important;
-  color: var(--button-primary-default-text, #ffffff) !important;
+  color: var(--button-primary-default-text) !important;
   border-color: transparent !important;
 }
 
@@ -822,9 +860,9 @@ select {
 
 :is(button, a).btn-base.btn-gradient:is(:disabled, [aria-disabled="true"]) {
   background-image: none !important;
-  background-color: var(--button-primary-disabled-bg, #9ca3af) !important;
-  color: var(--button-primary-disabled-text, #ffffff) !important;
-  border-color: var(--button-primary-disabled-bg, #9ca3af) !important;
+  background-color: var(--button-primary-disabled-bg) !important;
+  color: var(--button-primary-disabled-text) !important;
+  border-color: var(--button-primary-disabled-bg) !important;
 }
 
 /* Variant: primary (filled / solid) */

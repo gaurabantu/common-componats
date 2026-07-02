@@ -1110,16 +1110,16 @@ var TextInput = forwardRef(({
   };
   const shouldShowToggle = showToggleIcon && type === "password";
   const colors = {
-    textPrimary: "var(--color-text-primary, #0D0D0D)",
-    textSecondary: "var(--color-text-secondary, #757575)",
-    bgSurface: "var(--color-bg-surface, #FFFFFF)",
-    bgPage: "var(--color-bg-page, #F3F4F6)",
-    borderDefault: "var(--color-border-default, #999999)",
-    stateError: "var(--color-state-error, #DC3545)",
-    stateWarning: "var(--color-state-warning, #FFC107)",
-    stateSuccess: "var(--color-state-success, #28A745)"
+    textPrimary: "var(--color-text-primary)",
+    textSecondary: "var(--color-text-secondary)",
+    bgSurface: "var(--color-bg-surface)",
+    bgPage: "var(--color-bg-page)",
+    borderDefault: "var(--color-border-default)",
+    stateError: "var(--color-state-error)",
+    stateWarning: "var(--color-state-warning)",
+    stateSuccess: "var(--color-state-success)"
   };
-  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring, #3B82F6)" : colors.borderDefault;
+  const resolvedBorderColor = resolvedStatus === "error" ? colors.stateError : resolvedStatus === "warning" ? colors.stateWarning : resolvedStatus === "success" ? colors.stateSuccess : isFocused ? "var(--button-primary-focus-ring)" : colors.borderDefault;
   const wrapperStyle = variant === "filled" ? {
     minHeight: fieldMetrics.minHeight,
     borderRadius: roundedStyle,
@@ -1666,4 +1666,4 @@ export {
   TextInput_default,
   TextInputSearch_default
 };
-//# sourceMappingURL=chunk-CUT5ODMN.mjs.map
+//# sourceMappingURL=chunk-LIZUDLXK.mjs.map

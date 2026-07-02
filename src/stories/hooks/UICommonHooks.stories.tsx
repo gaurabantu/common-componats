@@ -254,7 +254,7 @@ export const UseTouchHandler: StoryObj = {
             minWidth: "44px",
             font: "inherit",
             cursor: "pointer",
-            background: "var(--color-fill-surface, #fff)",
+            background: "var(--color-fill-surface)",
           }}
         >
           Tap targets (tap: {taps})
@@ -384,7 +384,7 @@ export const UseFocusTrapAndDismissLayer: StoryObj = {
               style={{
                 position: "fixed",
                 inset: 0,
-                background: "color-mix(in srgb, var(--color-overlay-scrim, #000) 40%, transparent)",
+                background: "color-mix(in srgb, var(--color-overlay-scrim) 40%, transparent)",
                 zIndex: 1200,
               }}
             />
@@ -402,7 +402,7 @@ export const UseFocusTrapAndDismissLayer: StoryObj = {
                 width: "min(480px, 92vw)",
                 padding: "var(--space-4, 24px)",
                 borderRadius: "var(--radius-card, 8px)",
-                background: "var(--color-fill-surface, #fff)",
+                background: "var(--color-fill-surface)",
                 border: "1px solid var(--color-border-subtle)",
                 boxShadow: "var(--shadow-elev-md, 0 16px 40px rgb(15 23 42 / 0.15))",
                 zIndex: 1210,

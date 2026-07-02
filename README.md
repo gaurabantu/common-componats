@@ -393,7 +393,7 @@ Canonical docs live under **`docs/`** (start with [`docs/README.md`](docs/README
 | [`docs/design-system/DESIGN_SYSTEM.md`](docs/design-system/DESIGN_SYSTEM.md) | Visual tokens, spacing, typography, accessibility |
 | [`docs/design-system/tokens.md`](docs/design-system/tokens.md) | Importing `tokens.css` and token reference |
 | [`docs/internal/PACKAGES.md`](docs/internal/PACKAGES.md) | Dependency rationale |
-| [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) | UX composition rules — zones, CTA hierarchy, density |
+| [`docs/COMPOSITION_RULES_1.md`](docs/COMPOSITION_RULES_1.md) | UX composition rules — zones, CTA hierarchy, density |
 
 ## Storybook
 

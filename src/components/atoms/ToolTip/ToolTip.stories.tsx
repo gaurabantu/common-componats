@@ -61,7 +61,7 @@ export const CustomTrigger: Story = {
         type="button"
         style={{
           border: "1px solid rgba(153,153,153,0.35)",
-          background: "var(--color-bg-surface, #FFFFFF)",
+          background: "var(--color-bg-surface)",
           borderRadius: 8,
           padding: "8px 12px",
           cursor: "pointer",

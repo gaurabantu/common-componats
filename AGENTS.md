@@ -32,15 +32,18 @@
 6. docs/FEEDBACK_STATES_GUIDE.md               ← FeedbackStates + animations
 7. docs/HOOKS_GUIDE.md                         ← ui-common-hooks reference
 8. docs/design-system/README.md                ← design-system folder index
-9. docs/design-system/DESIGN_SYSTEM.md         ← design governance
-10. docs/design-system/tokens.md               ← token import + reference
-11. docs/internal/README.md                    ← internal folder index
-12. docs/internal/DOC_INDEX.md                 ← full internal map
-13. docs/internal/APP_TOPBAR_SYSTEM.md         ← AppTopbar notes
-14. docs/internal/SIDEBAR_NAVIGATION_SYSTEM.md ← AppSidebar notes
-15. docs/internal/PACKAGES.md                  ← dependency rationale
-16. docs/internal/AI_UNIVERSAL_DESIGN_RULES.md ← portable AI rules
-17. COMPOSITION_RULES_1.md                     ← zones, CTA hierarchy, density rules
+9. docs/design-system/DESIGN_SYSTEM.md         ← design governance (principles + rules)
+10. docs/design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md ← token/CSS tables
+11. docs/design-system/tokens.md               ← token import + reference
+12. docs/design-system/THEMES.md               ← theme matrix + QA checklist
+13. docs/design-system/COMPONENT_AUDIT.md      ← production-readiness checklist
+14. docs/internal/README.md                    ← internal folder index
+15. docs/internal/DOC_INDEX.md                 ← full internal map
+16. docs/internal/APP_TOPBAR_SYSTEM.md         ← AppTopbar notes
+17. docs/internal/SIDEBAR_NAVIGATION_SYSTEM.md ← AppSidebar notes
+18. docs/internal/PACKAGES.md                  ← dependency rationale
+19. docs/internal/AI_UNIVERSAL_DESIGN_RULES.md ← portable AI rules
+20. docs/COMPOSITION_RULES_1.md                ← zones, CTA hierarchy, density rules
 ```
 
 ---
@@ -91,9 +94,9 @@ import { useDebounce, useToggle }     from "ui-common-hooks";
 
 ---
 
-## The 5 visual zones (COMPOSITION_RULES_1 — apply to every screen)
+## The 5 visual zones (canonical — DESIGN_SYSTEM §22a)
 
-Before writing any code, define zones:
+Before writing any code, define zones (expanded examples: [`docs/COMPOSITION_RULES_1.md`](docs/COMPOSITION_RULES_1.md)):
 
 ```
 ZONE 1: AppTopbar — page title + primary CTA
@@ -223,7 +226,7 @@ import {
 - Use `ui-common-components` before building custom UI
 - Import `tokens.css` once at app root
 - Use CSS variable tokens, never hardcode hex/px values
-- Define 5 visual zones before writing code (COMPOSITION_RULES_1)
+- Define 5 visual zones before writing code ([`docs/design-system/DESIGN_SYSTEM.md`](docs/design-system/DESIGN_SYSTEM.md) §22a + [`docs/COMPOSITION_RULES_1.md`](docs/COMPOSITION_RULES_1.md))
 - Use `DashboardShell` for dashboard layouts (not raw flex + sidebar)
 - Pair `FeedbackState`/`EmptyState`/`ErrorState` with `useAsyncContentPhase`
 - Set `aria-live` appropriately on feedback components

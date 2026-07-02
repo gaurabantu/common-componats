@@ -15,7 +15,7 @@ const meta: Meta<typeof TextView> = {
       options: ["h1", "h2", "h3", "h4", "body", "secondary", "small", "micro"],
     },
     color: {
-      description: "Semantic token or any CSS color (e.g. #ff0000, rgb(255,0,0))",
+      description: "Semantic token or any CSS color (prefer design tokens)",
       control: { type: "select" },
       options: ["primary", "secondary", "hint", "disabled", "success", "warning", "error", "inherit"],
     },
@@ -77,8 +77,8 @@ export const Colors: Story = {
 export const ColorHexOrCSS: Story = {
   render: () => (
     <div className="flex flex-wrap gap-3 items-baseline">
-      <TextView color="#2563EB">Hex blue</TextView>
-      <TextView color="#dc2626">Hex red</TextView>
+      <TextView color="var(--color-theme-primary)">Theme primary</TextView>
+      <TextView color="var(--color-state-error)">Error token</TextView>
       <TextView color="rgb(34, 197, 94)">RGB green</TextView>
       <TextView color="var(--color-brand-secondary)">CSS variable</TextView>
     </div>
