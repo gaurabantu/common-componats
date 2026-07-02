@@ -1,0 +1,18 @@
+/**
+ * Storybook manager shell — Infinia brand (staticDirs → /infinia-manager-brand.css).
+ * `tokens.css` is linked first from manager-head; `html[data-theme="…"]` is set from the Theme toolbar sync.
+ */
+
+html {
+  font-family: var(--font-family);
+}
+
+img[src*="infinia-icon"],
+img[src="/infinia-icon.png"] {
+  max-height: 26px !important;
+  max-width: 26px !important;
+  width: 26px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}

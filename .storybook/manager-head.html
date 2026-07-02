@@ -3,13 +3,17 @@
   - Viewport: Storybook may inject user-scalable=no; we normalize after load.
   - Buttons: icon-only toolbar buttons get aria-label from title when present.
 -->
+<title>Infinia StoryBook</title>
+<link rel="icon" type="image/png" href="/infinia-icon.png" />
+<link rel="stylesheet" href="/design-system/tokens.css" />
+<link rel="stylesheet" href="/infinia-manager-brand.css" />
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
 />
 <meta
   name="description"
-  content="UX Governance design system — ui-common-components Storybook."
+  content="Infinia StoryBook — ui-common-components UX Governance design system."
 />
 <script>
   (function () {
@@ -64,6 +68,69 @@
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
     else run();
     window.addEventListener("load", run);
+    new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>
+<!--
+  Storybook hides `brandTitle` when `brandImage` is set (title becomes img alt only).
+  Inject a compact label beside the logo and keep a horizontal layout.
+-->
+<script>
+  (function () {
+    "use strict";
+    var BRAND_TEXT = "Infinia StoryBook";
+
+    function hasVisibleLabel(link) {
+      return Array.from(link.children).some(function (el) {
+        if (el.tagName === "IMG") return false;
+        if (el.hasAttribute && el.hasAttribute("data-infinia-brand-text")) return true;
+        return (el.textContent || "").trim().length > 0;
+      });
+    }
+
+    function layout(link) {
+      link.style.display = "inline-flex";
+      link.style.alignItems = "center";
+      link.style.gap = "10px";
+    }
+
+    function enhance() {
+      document.querySelectorAll('img[src*="infinia-icon"]').forEach(function (img) {
+        var link = img.closest("a");
+        if (!link || link.getAttribute("data-infinia-brand-done")) return;
+
+        layout(link);
+
+        if (hasVisibleLabel(link)) {
+          link.setAttribute("data-infinia-brand-done", "true");
+          return;
+        }
+
+        var span = document.createElement("span");
+        span.setAttribute("data-infinia-brand-text", "");
+        span.textContent = BRAND_TEXT;
+        span.style.fontWeight = "600";
+        span.style.fontSize = "13px";
+        span.style.lineHeight = "1.25";
+        span.style.color = "inherit";
+        span.style.whiteSpace = "nowrap";
+
+        if (img.nextSibling) link.insertBefore(span, img.nextSibling);
+        else link.appendChild(span);
+
+        link.setAttribute("aria-label", BRAND_TEXT);
+        link.setAttribute("data-infinia-brand-done", "true");
+      });
+    }
+
+    var r;
+    function schedule() {
+      clearTimeout(r);
+      r = setTimeout(enhance, 30);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", schedule);
+    else schedule();
+    window.addEventListener("load", schedule);
     new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>

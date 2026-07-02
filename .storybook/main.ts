@@ -4,6 +4,15 @@ import type { StorybookConfig } from "@storybook/react-webpack5";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  /**
+   * Static assets for the Storybook shell (manager + preview iframe can share paths).
+   * - `.storybook/brand` → `/infinia-icon.png`, manager CSS helpers
+   * - `src/design-system` → `/design-system/tokens.css` (manager-head loads this so sidebar tracks Theme toolbar)
+   */
+  staticDirs: [
+    path.join(process.cwd(), ".storybook", "brand"),
+    { from: path.join(process.cwd(), "src", "design-system"), to: "/design-system" },
+  ],
   addons: [
     "@storybook/addon-essentials",
     "@storybook/addon-links",
