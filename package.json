@@ -71,10 +71,14 @@
     "next": ">=14",
     "react": ">=18",
     "react-dom": ">=18",
+    "ui-common-hooks": ">=0.3.0",
     "ui-pan-validators": "0.0.1"
   },
   "peerDependenciesMeta": {
     "next": {
+      "optional": true
+    },
+    "ui-common-hooks": {
       "optional": true
     },
     "ui-pan-validators": {
@@ -120,10 +124,10 @@
     "ts-loader": "^9.5.4",
     "tsup": "6.7.0",
     "typescript": "5.9.3",
+    "ui-common-hooks": "*",
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "react-day-picker": "^9.14.0",
-    "ui-common-hooks": "*"
+    "react-day-picker": "^9.14.0"
   }
 }

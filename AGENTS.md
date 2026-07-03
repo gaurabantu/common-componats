@@ -53,8 +53,10 @@
 ### Setup (every app that uses this library)
 
 ```tsx
-// 1. Install
-// npm install ui-common-components ui-common-hooks
+// 1. Install components (required)
+// npm install ui-common-components
+// Optional companion — recommended for FeedbackStates / useAsyncContentPhase:
+// npm install ui-common-hooks
 
 // 2. Import tokens once at app root
 import "ui-common-components/design-system/tokens.css";

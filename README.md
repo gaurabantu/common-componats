@@ -32,12 +32,31 @@ Reusable React components and hooks built around the UX Governance design system
 npm install ui-common-components
 ```
 
+**Optional companion** (recommended for async/feedback flows — `useAsyncContentPhase`, `useDebounce`, etc.):
+
+```bash
+npm install ui-common-hooks
+```
+
+**Local tarball install** (components only — no registry 404):
+
+```bash
+npm install ./ui-common-components-0.0.2.tgz
+```
+
+**With hooks** (recommended for dashboard apps):
+
+```bash
+npm install ./ui-common-components-0.0.2.tgz ./ui-common-hooks-0.3.0.tgz
+```
+
 ### Peer dependencies
 
 | Package | Version | Notes |
 |---------|---------|-------|
 | `react` | `>=18` | required |
 | `react-dom` | `>=18` | required |
+| `ui-common-hooks` | `>=0.3.0` | optional — recommended for FeedbackStates + async phase patterns |
 | `next` | `>=14` | optional |
 | `ui-pan-validators` | `0.0.1` | optional, used by validation-heavy input flows |
 

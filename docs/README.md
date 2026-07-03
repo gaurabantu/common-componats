@@ -4,8 +4,8 @@
 
 > **AI agents:** start at [`../AGENTS.md`](../AGENTS.md) (repo root) — it is the universal entry point.
 
-Latest shared package bundle: `ui-common-components-0.0.2.tgz`  
-Hooks package: `ui-common-hooks` v0.3.0
+Latest shared package bundle: `ui-common-components-0.0.2.tgz` (installs alone; no npm registry required)  
+Hooks package: `ui-common-hooks-0.3.0.tgz` — optional peer; recommended for async/feedback patterns
 
 ---
 
