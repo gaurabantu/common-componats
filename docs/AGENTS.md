@@ -39,6 +39,7 @@ This project uses `ui-common-components` (v0.0.2) + `ui-common-hooks` (v0.3.0) t
 - Do not use Bootstrap. Do not hardcode token values.
 - Follow WCAG 2.2 AA. Support `[data-theme="dark"]`.
 - Follow **DESIGN_SYSTEM §22a** zone structure for every new screen ([`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) for FRD examples).
+- **Before using any component:** read `*Props` in `dist/index.d.ts` (or Storybook Playground `argTypes`). Map user intent using **Prop discovery** tables in [`../AGENTS.md`](../AGENTS.md) — never add CSS for borders/shadows/colors when props exist (`Card` `variant`/`elevation`, `Button` `variant`, `Badge` `variant`/`tone`).
 
 ---
 

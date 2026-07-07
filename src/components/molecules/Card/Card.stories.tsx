@@ -10,16 +10,109 @@ import Card, {
   CardTitle,
 } from "./index";
 
+const variantOptions = [
+  "bordered",
+  "elevated",
+  "withIndicator",
+  "outlined",
+  "filled",
+] as const;
+
+const elevationOptions = ["none", "sm", "md", "lg"] as const;
+
 const meta: Meta<typeof Card> = {
   title: "Design System/Molecules/Card",
   component: Card,
   tags: ["autodocs"],
   parameters: { layout: "padded", storyMedium: true },
+  argTypes: {
+    title: { control: "text" },
+    subtitle: { control: "text" },
+    children: { control: "text" },
+    footer: { control: "text" },
+    variant: {
+      control: "select",
+      options: [...variantOptions],
+      description:
+        'Surface role: bordered (static + border), elevated (shadow), withIndicator (selected row). Legacy outlined/filled → bordered.',
+    },
+    elevation: {
+      control: "select",
+      options: [...elevationOptions],
+      description: "Shadow tier when elevated/withIndicator. Use with variant=elevated — not for bordered cards.",
+    },
+    size: {
+      control: "radio",
+      options: ["default", "sm"],
+      description: "Padding density — sm for compact dashboards.",
+    },
+    hoverable: {
+      control: "boolean",
+      description: "Pointer + hover shadow lift — use with variant=elevated or withIndicator.",
+    },
+    selected: {
+      control: "boolean",
+      description: "Left indicator bar — only with variant=withIndicator.",
+    },
+    actionsAlign: {
+      control: "select",
+      options: ["left", "center", "right", "between"],
+    },
+    bordered: {
+      control: "boolean",
+      description: "Deprecated — prefer variant=bordered.",
+    },
+    cover: { control: false },
+    actions: { control: false },
+    extra: { control: false },
+    padding: { control: "text" },
+    radius: { control: "text" },
+  },
+  args: {
+    title: "Project summary",
+    subtitle: "Use Controls to try variant, elevation, hoverable, selected",
+    children:
+      "Bordered = border only. Elevated = shadow via elevation prop — never both. See AGENTS.md intent table.",
+    footer: "Last updated 2 hours ago",
+    variant: "bordered",
+    elevation: "none",
+    size: "default",
+    hoverable: false,
+    selected: false,
+    actionsAlign: "left",
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Card>;
+
+/** Legacy API — full Controls for variant, elevation, hoverable, selected, size */
+export const Playground: Story = {
+  args: {
+    title: "Card playground",
+    subtitle: "§26 — bordered OR elevated, never both via CSS",
+    children:
+      "Switch variant to elevated and elevation to md/lg for shadow surfaces. Do not add box-shadow in className.",
+    footer: "Footer metadata",
+    variant: "bordered",
+    elevation: "none",
+    hoverable: false,
+    selected: false,
+  },
+  render: (args) => (
+    <div className="sb-page">
+      <h3 className="sb-section-title">Playground</h3>
+      <p className="sb-section-subtitle">
+        Variant: <strong>{args.variant}</strong>
+        {args.elevation ? ` · elevation: ${args.elevation}` : ""}
+        {args.hoverable ? " · hoverable" : ""}
+        {args.selected ? " · selected" : ""}
+      </p>
+      <Card {...args} style={{ maxWidth: 420 }} />
+    </div>
+  ),
+};
 
 export const Default: Story = {
   args: {
@@ -36,6 +129,7 @@ export const Elevated: Story = {
     title: "Material-style elevated card",
     subtitle: "Higher emphasis surface",
     variant: "elevated",
+    elevation: "md",
     hoverable: true,
     children:
       "This card uses elevation and hover motion similar to material-style surfaces.",
@@ -137,7 +231,7 @@ export const Composed: Story = {
 /** Denser padding and typography (matches compact card patterns) */
 export const ComposedSmall: Story = {
   render: () => (
-    <Card size="sm" variant="elevated" hoverable style={{ maxWidth: 360 }}>
+    <Card size="sm" variant="elevated" elevation="sm" hoverable style={{ maxWidth: 360 }}>
       <CardHeader>
         <CardTitle>Small card</CardTitle>
         <CardDescription>

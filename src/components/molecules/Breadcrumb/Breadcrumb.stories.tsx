@@ -15,6 +15,21 @@ export default meta;
 
 type Story = StoryObj<typeof Breadcrumb>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <Breadcrumb {...args}>
+      <BreadcrumbItem href="/">Home</BreadcrumbItem>
+      <BreadcrumbItem href="/products">Products</BreadcrumbItem>
+      <BreadcrumbItem>Details</BreadcrumbItem>
+    </Breadcrumb>
+  ),
+  args: {
+    ariaLabel: "Breadcrumb",
+    separator: "slash",
+    size: "sm",
+  },
+};
+
 export const Default: Story = {
   render: (args) => (
     <Breadcrumb {...args}>

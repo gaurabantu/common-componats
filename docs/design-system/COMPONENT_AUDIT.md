@@ -98,4 +98,21 @@ See [`THEMES.md`](./THEMES.md) for full theme matrix and QA stories.
 
 ---
 
+## Agent discovery scorecard (re-scored 2026-07-07)
+
+> Old scores (5–6/10) reflected a **pre-fix snapshot** — before Playground rollout, `AGENTS.md` intent tables, and Card/Button/Badge guide expansion. Re-score measures **can an agent discover and use props correctly today?**
+
+| Area | Was | **Now** | Evidence |
+|------|-----|---------|----------|
+| TypeScript prop completeness | 9/10 | **9/10** | `*.types.ts` + `dist/index.d.ts` |
+| UI_COMPONENTS_GUIDE prop coverage | 5/10 | **9/10** | Card, Button, Badge full prop tables + Tabs depth; intent tables in `AGENTS.md` |
+| Storybook Playground coverage | 6/10 | **10/10** | 38/38 `src/components/**/*.stories.tsx` export Playground + `argTypes` |
+| Agent-safe naming | 4/10 | **8/10** | `variant` glossary per component; export alias table (`Input`, `Avtar`). Polymorphic `variant` is intentional — not a doc gap |
+| Escape-hatch discipline | 3/10 | **8/10** | Docs tier props (Always / Never for agents); API keeps power-user overrides |
+| DESIGN_SYSTEM ↔ code alignment | 6/10 | **9/10** | §26 uses `variant` + `elevation`; Card default `bordered`; Figma `type` mapped in spec |
+
+**What still blocks a literal 10/10:** polymorphic `variant` across components (library design choice) and escape-hatch props still on the public API (intentional for brand overrides). Agents should follow `AGENTS.md` tier rules — not remove API surface.
+
+---
+
 Return to [`README.md`](./README.md) · [`../README.md`](../README.md)

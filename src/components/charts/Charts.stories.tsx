@@ -25,13 +25,57 @@ const pieData = [
   { name: "Group D", value: 200 },
 ];
 
-const meta: Meta = {
+const meta: Meta<typeof LineChart> = {
   title: "Design System/Molecules/Charts",
+  component: LineChart,
   tags: ["autodocs"],
   parameters: { layout: "padded", storyMedium: true },
+  argTypes: {
+    height: { control: { type: "number", min: 120, max: 600 } },
+    width: { control: "text" },
+    theme: { control: "radio", options: ["light", "dark"] },
+    showGrid: { control: "boolean" },
+    showLegend: { control: "boolean" },
+    showTooltip: { control: "boolean" },
+    showCrosshair: { control: "boolean" },
+    legendPosition: { control: "select", options: ["top", "bottom", "left", "right"] },
+    curve: { control: "select", options: ["linear", "monotone", "step", "stepBefore", "stepAfter"] },
+    showDots: { control: "boolean" },
+    strokeWidth: { control: { type: "number", min: 1, max: 6 } },
+    dotSize: { control: { type: "number", min: 0, max: 12 } },
+    chartAnimation: { control: "boolean" },
+    data: { control: false },
+    series: { control: false },
+    xAxisKey: { control: "text" },
+    colors: { control: false },
+  },
 };
 
 export default meta;
+
+type Story = StoryObj<typeof LineChart>;
+
+export const Playground: Story = {
+  render: (args) => <LineChart {...args} />,
+  args: {
+    data: lineData,
+    xAxisKey: "name",
+    series: [
+      { dataKey: "uv", name: "UV" },
+      { dataKey: "pv", name: "PV" },
+    ],
+    width: "100%",
+    height: 300,
+    showGrid: true,
+    showTooltip: true,
+    showLegend: true,
+    legendPosition: "bottom",
+    theme: "light",
+    chartAnimation: true,
+    showDots: true,
+    curve: "monotone",
+  },
+};
 
 export const LineChartDefault: StoryObj<typeof LineChart> = {
   render: (args) => <LineChart {...args} />,

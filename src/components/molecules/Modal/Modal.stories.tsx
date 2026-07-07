@@ -25,6 +25,21 @@ export default meta;
 
 type Story = StoryObj<typeof Modal>;
 
+export const Playground: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Modal title",
+    children: (
+      <p className="text-body text-text-primary">
+        This is the modal body. You can put any content here.
+      </p>
+    ),
+    confirmText: "Confirm",
+    cancelText: "Cancel",
+    showCancel: true,
+  },
+};
+
 const WithTrigger = (args: any) => {
   const [open, setOpen] = useState(false);
   return (

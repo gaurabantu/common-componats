@@ -7,11 +7,42 @@ const meta: Meta<typeof Grid> = {
   component: Grid,
   tags: ["autodocs"],
   parameters: { layout: "padded", storyMedium: true },
+  argTypes: {
+    columns: { control: { type: "number", min: 1, max: 6 } },
+    gap: { control: { type: "number", min: 0, max: 48 } },
+    minItemWidth: { control: { type: "number", min: 120, max: 400 } },
+    alignItems: {
+      control: "select",
+      options: ["start", "center", "end", "stretch", "baseline"],
+    },
+    justifyItems: {
+      control: "select",
+      options: ["start", "center", "end", "stretch"],
+    },
+    autoFit: { control: "boolean" },
+    fullWidth: { control: "boolean" },
+    children: { control: false },
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Grid>;
+
+export const Playground: Story = {
+  render: (args) => (
+    <Grid {...args}>
+      <Card title="Card 1">First grid item</Card>
+      <Card title="Card 2">Second grid item</Card>
+      <Card title="Card 3">Third grid item</Card>
+      <Card title="Card 4">Fourth grid item</Card>
+    </Grid>
+  ),
+  args: {
+    columns: 2,
+    gap: 20,
+  },
+};
 
 export const FixedColumns: Story = {
   render: (args) => (

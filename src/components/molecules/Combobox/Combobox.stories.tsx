@@ -52,6 +52,22 @@ const meta: Meta<typeof Combobox> = {
   title: "Design System/Molecules/Combobox",
   component: Combobox,
   tags: ["autodocs"],
+  argTypes: {
+    label: { control: "text" },
+    placeholder: { control: "text" },
+    searchable: { control: "boolean" },
+    searchPlaceholder: { control: "text" },
+    multiple: { control: "boolean" },
+    disabled: { control: "boolean" },
+    fullWidth: { control: "boolean" },
+    size: { control: "radio", options: ["sm", "md", "lg"] },
+    error: { control: "text" },
+    helperText: { control: "text" },
+    options: { control: false },
+    groups: { control: false },
+    value: { control: false },
+    onValueChange: { control: false },
+  },
 };
 
 export default meta;
@@ -66,6 +82,32 @@ const surface = {
   borderRadius: "var(--radius-md, 8px)",
   border: "1px solid var(--color-border-default)",
 } as const;
+
+export const Playground: Story = {
+  render: function PlaygroundDemo(args) {
+    const [v, setV] = useState("en");
+    return (
+      <div style={surface}>
+        <Combobox
+          {...args}
+          options={flat}
+          value={v}
+          onValueChange={(next) => setV(typeof next === "string" ? next : v)}
+        />
+      </div>
+    );
+  },
+  args: {
+    label: "Language",
+    placeholder: "Choose language…",
+    searchable: true,
+    searchPlaceholder: "Filter languages…",
+    size: "md",
+    disabled: false,
+    multiple: false,
+    fullWidth: true,
+  },
+};
 
 export const SearchableSingle: Story = {
   name: "Search + single",

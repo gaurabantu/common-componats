@@ -29,6 +29,16 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    leftIcon: SearchIcon,
+    placeholder: "Search...",
+    value: "",
+    fullWidth: true,
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

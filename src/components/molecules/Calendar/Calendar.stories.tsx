@@ -31,6 +31,17 @@ export default meta;
 
 type Story = StoryObj<typeof Calendar>;
 
+export const Playground: Story = {
+  render: (args) => <ControlledSingle {...args} />,
+  args: {
+    fullWidth: false,
+    captionLayout: "menus",
+    variant: "outlined",
+    elevation: "none",
+    bordered: true,
+  },
+};
+
 const ControlledSingle = (args: any) => {
   const [value, setValue] = useState<Date | null>(args.value ?? null);
   return (

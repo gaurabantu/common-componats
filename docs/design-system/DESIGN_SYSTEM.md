@@ -818,10 +818,11 @@ Cards group related content into a single container, provide visual separation f
 
 | Property | Type | Values |
 |----------|------|--------|
-| `type` | Enum | `bordered` · `elevated` |
+| `variant` | Enum | `bordered` · `elevated` · `withIndicator` (React prop name; Figma/Stitch may label this **type**) |
+| `elevation` | Enum | `none` · `sm` · `md` · `lg` — shadow tier when `variant` is `elevated` or `withIndicator` |
 | `state` | Enum | `default` · `hover` · `focus` · `active` · `disabled` |
-| `indicator` | Enum | `none` · `left` |
-| `interactive` | Boolean | `false` (bordered) · `true` (elevated, with-indicator) |
+| `indicator` | Enum | `none` · `left` — use `variant="withIndicator"` + `selected` in code |
+| `interactive` | Boolean | `false` (bordered) · `true` (elevated, with-indicator) — use `hoverable` in code |
 
 ### Container Spec (All Variants)
 

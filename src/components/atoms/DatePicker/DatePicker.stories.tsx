@@ -41,6 +41,16 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    label: "Select date",
+    placeholder: "Select date",
+    dateFormat: "DD-MM-YYYY",
+    variant: "outlined",
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

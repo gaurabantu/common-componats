@@ -7,6 +7,7 @@ const meta: Meta<typeof Divider> = {
   component: Divider,
   tags: ["autodocs"],
   argTypes: {
+    children: { control: "text" },
     orientation: {
       control: "select",
       options: ["horizontal", "vertical", "row", "column"],
@@ -29,6 +30,14 @@ const meta: Meta<typeof Divider> = {
 export default meta;
 
 type Story = StoryObj<typeof Divider>;
+
+export const Playground: Story = {
+  args: {
+    orientation: "horizontal",
+    variant: "solid",
+  },
+  render: (args) => <Divider {...args} />,
+};
 
 export const Horizontal: Story = {
   args: {

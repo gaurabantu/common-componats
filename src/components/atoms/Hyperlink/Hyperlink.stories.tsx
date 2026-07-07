@@ -6,6 +6,7 @@ const meta: Meta<typeof Hyperlink> = {
   component: Hyperlink,
   tags: ["autodocs"],
   argTypes: {
+    children: { control: "text" },
     openInNewTab: { control: "boolean" },
     disabled: { control: "boolean" },
   },
@@ -14,6 +15,14 @@ const meta: Meta<typeof Hyperlink> = {
 export default meta;
 
 type Story = StoryObj<typeof Hyperlink>;
+
+export const Playground: Story = {
+  args: {
+    children: "Design system link",
+    href: "#",
+  },
+  render: (args) => <Hyperlink {...args} />,
+};
 
 export const Default: Story = {
   args: {

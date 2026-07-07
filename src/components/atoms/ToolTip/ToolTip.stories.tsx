@@ -16,6 +16,14 @@ export default meta;
 
 type Story = StoryObj<typeof ToolTip>;
 
+export const Playground: Story = {
+  args: {
+    tooltipText: "Helpful hint here",
+    placement: "auto",
+  },
+  render: (args) => <ToolTip {...args} />,
+};
+
 export const Default: Story = {
   args: {
     tooltipText: "Helpful hint here",

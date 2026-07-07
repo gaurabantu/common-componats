@@ -14,11 +14,36 @@ const meta: Meta<typeof Popover> = {
   title: "Design System/Molecules/Popover",
   component: Popover,
   tags: ["autodocs"],
+  argTypes: {
+    placement: {
+      control: "select",
+      options: ["bottom-start", "bottom-end", "top-start", "top-end"],
+    },
+    defaultOpen: { control: "boolean" },
+    open: { control: "boolean" },
+    onOpenChange: { control: false },
+    children: { control: false },
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Popover>;
+
+export const Playground: Story = {
+  render: (args) => (
+    <Popover {...args}>
+      <PopoverTrigger>Open panel</PopoverTrigger>
+      <PopoverContent>
+        <p style={{ margin: 0 }}>Use Controls to try placement and defaultOpen.</p>
+      </PopoverContent>
+    </Popover>
+  ),
+  args: {
+    placement: "bottom-start",
+    defaultOpen: false,
+  },
+};
 
 export const BasicPopover: Story = {
   render: () => (

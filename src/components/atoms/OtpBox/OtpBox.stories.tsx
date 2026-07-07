@@ -32,6 +32,16 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    label: "Enter verification code",
+    length: 6,
+    type: "numeric",
+    variant: "boxes",
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

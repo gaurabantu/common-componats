@@ -17,6 +17,15 @@ export default meta;
 
 type Story = StoryObj<typeof FileUpload>;
 
+export const Playground: Story = {
+  args: {
+    label: "Drag files here or browse",
+    description: "PDF, PNG or JPG up to 10 MB",
+    accept: ".pdf,.png,.jpg,.jpeg",
+    size: "md",
+  },
+};
+
 export const Default: Story = {
   args: {
     label: "Drag files here or browse",

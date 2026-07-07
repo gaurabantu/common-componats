@@ -18,6 +18,16 @@ export default meta;
 
 type Story = StoryObj<typeof ProgressBar>;
 
+export const Playground: Story = {
+  args: {
+    type: "line",
+    value: 60,
+    showLabel: false,
+    showValue: true,
+  },
+  render: (args) => <ProgressBar {...args} />,
+};
+
 export const Line: Story = {
   args: {
     type: "line",

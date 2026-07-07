@@ -36,8 +36,6 @@ const meta: Meta<typeof Table> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Table>;
-
 const sampleColumns: TableColumn[] = [
   { key: "name", header: "Name", width: "30%", sortable: true },
   { key: "email", header: "Email", align: "left", sortable: true },
@@ -80,6 +78,18 @@ const sampleData: SampleRow[] = [
   { id: "6", name: "Frank", email: "frank@example.com", role: "Admin", status: "Active" },
   { id: "7", name: "Grace", email: "grace@example.com", role: "User", status: "Active" },
 ];
+
+type Story = StoryObj<typeof Table>;
+
+export const Playground: Story = {
+  args: {
+    columns: sampleColumns,
+    data: sampleData,
+    striped: true,
+    hover: true,
+    headerColor: "light",
+  },
+};
 
 export const Default: Story = {
   args: {

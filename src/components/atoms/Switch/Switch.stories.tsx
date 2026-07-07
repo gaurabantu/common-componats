@@ -32,6 +32,15 @@ const Controlled = (args: ComponentProps<typeof Switch>) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    label: "Enable notifications",
+    defaultChecked: false,
+    size: "md",
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

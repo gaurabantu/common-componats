@@ -20,6 +20,79 @@ export default meta;
 
 type Story = StoryObj<typeof Form>;
 
+export const Playground: Story = {
+  render: (args) => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [about, setAbout] = useState("");
+
+    return (
+      <Form
+        {...args}
+        onSubmit={(event) => event.preventDefault()}
+        actions={
+          <Button type="submit" variant="primary" size="lg" fullWidth>
+            Save
+          </Button>
+        }
+        footer={
+          <p
+            style={{
+              margin: 0,
+              color: "var(--color-text-secondary)",
+              fontSize: 13,
+              lineHeight: 1.5,
+            }}
+          >
+            Build your pages by composing fields inside the reusable form shell.
+          </p>
+        }
+      >
+        <Input
+          label="Full name"
+          placeholder="Enter your name"
+          value={name}
+          onChange={setName}
+          allowClear
+          rounded="5"
+        />
+        <Input
+          label="Email address"
+          type="email"
+          validation="email"
+          placeholder="name@example.com"
+          value={email}
+          onChange={setEmail}
+          allowClear
+          rounded="5"
+        />
+        <TextArea
+          label="About"
+          placeholder="Tell us about yourself"
+          value={about}
+          onChange={setAbout}
+          rows={4}
+          showCount
+          maxLength={200}
+          rounded="5"
+        />
+      </Form>
+    );
+  },
+  args: {
+    badge: "UI Common Components",
+    title: "Reusable form",
+    description: "A form shell for composing your own fields and actions.",
+    layout: "stacked",
+    columns: 2,
+    maxWidth: 560,
+    shellStyle: {
+      background:
+        "linear-gradient(135deg, var(--color-accent-sky-10) 0%, var(--color-accent-lavender-10) 100%)",
+    },
+  },
+};
+
 export const Default: Story = {
   render: (args) => {
     const [name, setName] = useState("");

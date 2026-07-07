@@ -7,6 +7,7 @@ const meta: Meta<typeof Badge> = {
   component: Badge,
   tags: ["autodocs"],
   argTypes: {
+    children: { control: "text" },
     variant: {
       control: "select",
       options: ["neutral", "primary", "success", "warning", "danger", "info"],
@@ -22,6 +23,17 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 
 type Story = StoryObj<typeof Badge>;
+
+export const Playground: Story = {
+  args: {
+    children: "Label",
+    variant: "neutral",
+    tone: "soft",
+    shape: "rounded",
+    size: "sm",
+  },
+  render: (args) => <Badge {...args} />,
+};
 
 export const Default: Story = {
   args: {

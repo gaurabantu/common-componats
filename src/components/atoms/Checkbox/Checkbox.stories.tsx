@@ -27,6 +27,16 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    name: "agree",
+    value: "yes",
+    label: "I agree to the terms",
+    checked: false,
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

@@ -41,6 +41,15 @@ const Controlled = (args: React.ComponentProps<typeof Input>) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    label: "Label",
+    placeholder: "Placeholder",
+    value: "",
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

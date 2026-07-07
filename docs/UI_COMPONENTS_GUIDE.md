@@ -265,11 +265,43 @@ Key ideas:
 
 ### `Badge`, `Chip`, and `Tag`
 
-Use for status, counts, filters, and inline labels instead of ad-hoc styled spans.
+Use for status, counts, filters, and inline labels instead of ad-hoc styled spans. **`Chip`** and **`Tag`** are aliases of **`Badge`** — same props.
 
-- **`Badge`**: general emphasis and status chips.
-- **`Chip`**: interactive or dismissible chip patterns where provided by the API.
-- **`Tag`**: lightweight textual tags.
+**Do not confuse:**
+
+- **`variant`** — semantic color: `neutral` · `primary` · `success` · `warning` · `danger` · `info`
+- **`tone`** — fill style: `soft` (tinted surface, default) · `solid` · `outline`
+- **`elevated`** — subtle `shadow-xs` on the badge (not Card shadow tiers)
+- **`shape`** — `rounded` (default tag) · `pill` (chip)
+
+| Intent | Props |
+|--------|-------|
+| Neutral label / metadata | `variant="neutral"` `tone="soft"` |
+| Primary emphasis | `variant="primary"` `tone="soft"` or `"solid"` |
+| Success / error status | `variant="success"` or `"danger"` + `tone="soft"` |
+| Filter chip | `shape="pill"`; add `onDismiss` for removable chip |
+| Live / unread indicator | `dot` + `variant="danger"` or `"warning"` |
+| Compact toolbar label | `size="sm"` `shape="pill"` |
+
+**Full prop reference (`BadgeProps`):**
+
+| Prop | Type | Default | Notes |
+|------|------|---------|-------|
+| `children` | `ReactNode` | — | Visible label text |
+| `variant` | `BadgeVariant` | `neutral` | Semantic color family |
+| `tone` | `soft` \| `solid` \| `outline` | `soft` | Fill treatment |
+| `shape` | `rounded` \| `pill` | `rounded` | Tag vs chip silhouette |
+| `size` | `sm` \| `md` | `sm` | Typography + padding tier |
+| `elevated` | `boolean` | `false` | Subtle shadow — not Card `elevation` |
+| `dot` | `boolean` | `false` | Leading status dot |
+| `icon` | `ReactNode` | — | Leading icon/node; pair with `size="md"` |
+| `onDismiss` | `() => void` | — | Renders dismiss control (chip pattern) |
+| `dismissLabel` | `string` | — | Accessible name for dismiss button |
+| `className` | `string` | — | **Layout only** — never for colors |
+
+**Never:** custom `<span className="badge …">` with Tailwind colors when `variant` + `tone` cover the design.
+
+**Storybook:** **Design System → Atoms → Badge → Playground** — all props in Controls.
 
 ### `Tabs`
 
@@ -370,28 +402,54 @@ See types for `FileUploadProps`, `DropzoneProps`, and security-related exports.
 
 Use for all actions before creating custom clickable UI.
 
-Variants:
+**Variants (full):** `default` (same as `primary`), `primary`, `secondary`, `outlinePrimary`, `outlineSecondary`, `success`, `danger`, `warning`, `link`, `ghost`.
 
-- `primary`
-- `secondary`
-- `outlinePrimary`
-- `outlineSecondary`
-- `success`
-- `danger`
-- `warning`
-- `link`
-- `ghost`
+**Sizes:** `xxs` · `xs` · `sm` · `md` · `lg` (§20 — primary screen CTAs use `md` or `lg`).
 
-Useful props:
+| Intent | Props |
+|--------|-------|
+| Zone 1 / page primary CTA | `variant="primary"` `size="md"` or `"lg"` |
+| Secondary outline action | `variant="outlinePrimary"` `size="sm"` or `"md"` |
+| Row / table action | `variant="ghost"` `size="sm"` |
+| Destructive | `variant="danger"` |
+| Text link | `variant="link"` |
+| Async submit | `loading` (disables interaction) |
+| Icon-only | `icon` + `ariaLabel` |
+| Full width | `fullWidth` or `block` |
+| Pill / circle icon button | `rounded="pill"` or `"circle"` |
 
-- `size`
-- `loading`
-- `icon`
-- `iconPosition`
-- `rounded`
-- `gradient`
-- `gradientHover`
-- `gradientActive`
+**Full prop reference (`ButtonProps`):**
+
+| Prop | Type | Default | Agent tier |
+|------|------|---------|------------|
+| `children` | `ReactNode` | — | **Always** |
+| `variant` | see list above | `primary` if omitted/`default` | **Always** |
+| `size` | `xxs`–`lg` | `lg` | **Always** |
+| `rounded` | `0`–`5`, `pill`, `circle` | `3` | **Always** when shape matters |
+| `disabled` | `boolean` | `false` | **Always** |
+| `loading` | `boolean` | `false` | **Always** for async |
+| `fullWidth` / `block` | `boolean` | `false` | When layout needs stretch |
+| `icon` | `IconSource` | — | Icon buttons |
+| `iconPosition` | `left` \| `right` | `left` | |
+| `iconWidth` / `iconHeight` | number \| string | size-tier default | Rare |
+| `iconColor` | string | — | Rare — prefer `variant` |
+| `iconGap` | number | — | Rare |
+| `preserveIconColor` | `boolean` | `false` | Brand icon exceptions |
+| `href` | string | — | Renders `<a>` link button |
+| `ariaLabel` | string | — | **Required** for icon-only |
+| `ripple` | `boolean` | `true` | Off when `loading`/`disabled` |
+| `gradient` / `gradientHover` / `gradientActive` | string | — | **Marketing CTA only** |
+| `width` / `height` | string \| number | — | Layout exceptions |
+| `textSize` | `sm` \| `md` \| `lg` | — | Rare |
+| `backgroundColor` / `borderColor` / `textColor` | string | — | **Never** (agents) — edge-case brand override |
+| `classOverrides` / `variantClass` | object / string | — | **Never** (agents) |
+| `className` | string | — | Layout only — not `bg-*` / `border-*` |
+
+**Agent rule:** use **Tier Always** props only. Escape-hatch color/class props exist for power users but are excluded from agent workflows (see `AGENTS.md`).
+
+**Never:** `className` with `bg-*` / `border-*` when `variant` + `size` suffice.
+
+**Storybook:** **Design System → Atoms → Button → Playground** — full `argTypes`.
 
 ### `Modal` and `AlertDialog`
 
@@ -417,18 +475,62 @@ Useful props:
 
 Use to group related content, metrics, or settings sections.
 
-**Compound API** (aligned with common card patterns such as [shadcn/ui Card](https://ui.shadcn.com/docs/components/radix/card)):
+**Governance (§26):** A card is **either bordered OR shadowed** — never both. Use props below; do not add border/shadow via CSS.
+
+**`variant` (surface role):**
+
+| Value | Border | Shadow | Interaction |
+|-------|--------|--------|-------------|
+| `bordered` | yes (`--color-border-default`) | none | static |
+| `elevated` | none | yes (`elevation` tier) | use with `hoverable` when clickable |
+| `withIndicator` | none | yes | selectable row; `selected` shows left bar |
+| `outlined` / `filled` | legacy → maps to `bordered` | — | prefer `bordered` in new code |
+
+**`elevation` (shadow tier):** `none` · `sm` · `md` · `lg` — applies when variant is `elevated` or `withIndicator`. Default: `sm` for elevated, `none` for bordered.
+
+| User intent | Props |
+|-------------|-------|
+| Static info panel | `variant="bordered"` |
+| Floating / clickable tile | `variant="elevated"` `elevation="md"` `hoverable` |
+| Stronger shadow | `elevation="lg"` (with `variant="elevated"`) |
+| Active list item | `variant="withIndicator"` `selected` `hoverable` |
+| Compact density | `size="sm"` |
+| Custom padding / radius | `padding`, `radius` (token strings or px) |
+
+**Compound API** (preferred for new screens — [shadcn/ui Card](https://ui.shadcn.com/docs/components/radix/card) pattern):
 
 - `CardHeader` — title row with optional top-right action area
 - `CardTitle` — heading (`as` defaults to `h3`)
 - `CardDescription` — muted helper text (`as` defaults to `p`)
 - `CardAction` — top-right slot (e.g. button or badge)
-- `CardContent` — main body; use `noPadding` for full-bleed media
-- `CardFooter` — bottom actions or metadata; set `borderTop={false}` for a softer footer
-
-Also supported: **`size="default" | "sm"`** (denser padding and typography when `sm`), plus existing props (`title`, `subtitle`, `cover`, `actions`, `variant`, `elevation`, etc.) for backward compatibility. Prefer the compound API for new screens.
+- `CardContent` — main body; `noPadding` for full-bleed media
+- `CardFooter` — bottom actions; `borderTop={false}` for softer footer (no top rule)
 
 Static namespace: `Card.Header`, `Card.Title`, … are aliases on the default export.
+
+**Legacy props** (still supported): `title`, `subtitle`, `extra`, `cover`, `actions`, `actionsAlign`, `footer`, `hoverable`, `selected`, `bordered` (deprecated — use `variant="bordered"`).
+
+**Full prop reference (`CardProps`):**
+
+| Prop | Type | Default | Notes |
+|------|------|---------|-------|
+| `variant` | `bordered` \| `elevated` \| `withIndicator` (+ legacy `outlined`/`filled`) | `bordered` | Surface role — §26 |
+| `elevation` | `none` \| `sm` \| `md` \| `lg` | `sm` if elevated | Shadow tier — not a substitute for `variant` |
+| `size` | `default` \| `sm` | `default` | Padding density |
+| `hoverable` | `boolean` | `false` | Pointer + hover lift on elevated/indicator |
+| `selected` | `boolean` | `false` | Left bar — only with `withIndicator` |
+| `padding` | number \| string | from `size` | Token string or px — overrides `size` padding |
+| `radius` | number \| string | `--radius-lg` | Token string or px |
+| `title` / `subtitle` / `children` / `footer` | `ReactNode` | — | Legacy flat API |
+| `extra` / `cover` / `actions` | `ReactNode` | — | Legacy slots |
+| `actionsAlign` | `left` \| `center` \| `right` \| `between` | `left` | Legacy actions row |
+| `bordered` | `boolean` | — | **Deprecated** — use `variant="bordered"` |
+
+**Compound parts:** `CardHeader`, `CardTitle` (`as`), `CardDescription`, `CardAction`, `CardContent` (`noPadding`), `CardFooter` (`borderTop`).
+
+**Never:** `style={{ boxShadow }}` or `className` border/shadow utilities when `variant` + `elevation` define the surface.
+
+**Storybook:** **Design System → Molecules → Card → Playground** — full controls for `variant`, `elevation`, `hoverable`, `selected`, `size`.
 
 ### `Form`
 

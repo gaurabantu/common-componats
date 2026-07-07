@@ -36,6 +36,17 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    label: "Choose option",
+    options,
+    placeholder: "Select...",
+    value: "",
+    size: "md",
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

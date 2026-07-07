@@ -6,6 +6,7 @@ const meta: Meta<typeof GradientText> = {
   component: GradientText,
   tags: ["autodocs"],
   argTypes: {
+    children: { control: "text" },
     as: { control: "select", options: ["span", "p", "h1", "h2", "h3", "div"] },
     gradient: { control: "text" },
     fallbackColor: { control: "color" },
@@ -19,6 +20,14 @@ const meta: Meta<typeof GradientText> = {
 export default meta;
 
 type Story = StoryObj<typeof GradientText>;
+
+export const Playground: Story = {
+  args: {
+    children: "Gradient text",
+    as: "span",
+  },
+  render: (args) => <GradientText {...args} />,
+};
 
 export const Default: Story = {};
 

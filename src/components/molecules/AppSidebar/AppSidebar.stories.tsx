@@ -88,6 +88,25 @@ const meta: Meta<typeof AppSidebar> = {
   parameters: {
     layout: "fullscreen",
   },
+  argTypes: {
+    collapsed: { control: "boolean" },
+    defaultCollapsed: { control: "boolean" },
+    showCollapseToggle: { control: "boolean" },
+    fixed: { control: "boolean" },
+    responsive: { control: "boolean" },
+    widthExpanded: { control: { type: "number", min: 240, max: 400 } },
+    widthCollapsed: { control: { type: "number", min: 48, max: 96 } },
+    navLabel: { control: "text", description: "Accessible label for the nav landmark" },
+    footerLayout: { control: "radio", options: ["profileFirst", "utilitiesFirst"] },
+    maxFooterActions: { control: { type: "number", min: 0, max: 4 } },
+    sections: { control: false },
+    header: { control: false },
+    user: { control: false },
+    footerActions: { control: false },
+    activeItemId: { control: false },
+    onCollapsedChange: { control: false },
+    onItemSelect: { control: false },
+  },
   decorators: [
     (Story) => (
       <div style={{ minHeight: "100vh", background: "var(--color-mist-80)" }}>
@@ -110,6 +129,45 @@ const meta: Meta<typeof AppSidebar> = {
 export default meta;
 
 type Story = StoryObj<typeof AppSidebar>;
+
+export const Playground: Story = {
+  render: function PlaygroundDemo(args) {
+    const [collapsed, setCollapsed] = useState(args.collapsed ?? false);
+    const [active, setActive] = useState<string | null>("ws-1");
+    return (
+      <AppSidebar
+        {...args}
+        fixed={args.fixed ?? false}
+        collapsed={collapsed}
+        onCollapsedChange={setCollapsed}
+        activeItemId={active}
+        onItemSelect={(id) => setActive(id)}
+        header={{
+          icon: <Icon src={gridIcon} decorative width={24} height={24} color="currentColor" />,
+          title: "Control",
+          subtitle: "Workspace",
+        }}
+        sections={sections}
+        user={{
+          name: "Jordan Lee",
+          role: "Admin · Engineering",
+          onClick: () => {},
+        }}
+        footerActions={[{ id: "logout", icon: logoutIcon, label: "Log out", onClick: () => {} }]}
+      />
+    );
+  },
+  args: {
+    fixed: false,
+    collapsed: false,
+    showCollapseToggle: true,
+    responsive: true,
+    widthExpanded: 320,
+    widthCollapsed: 64,
+    navLabel: "Main navigation",
+    footerLayout: "profileFirst",
+  },
+};
 
 export const GovernanceNoir: Story = {
   render: function Render() {

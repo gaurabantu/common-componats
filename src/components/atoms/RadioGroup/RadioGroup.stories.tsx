@@ -32,6 +32,15 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    name: "choice",
+    options,
+    selectedValue: "a",
+  },
+};
+
 export const Vertical: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

@@ -28,6 +28,19 @@ const meta = {
       },
     },
   },
+  argTypes: {
+    value: { control: { type: "number", min: 0, max: 3 } },
+    defaultValue: { control: { type: "number", min: 0, max: 1 } },
+    linear: { control: "boolean" },
+    size: { control: "radio", options: ["sm", "md"] },
+    trackMode: { control: "radio", options: ["none", "continuous", "segments"] },
+    appearance: { control: "radio", options: ["default", "emphasized"] },
+    scrollable: { control: "boolean" },
+    progressValue: { control: { type: "number", min: 0, max: 100 } },
+    ariaLabel: { control: "text" },
+    children: { control: false },
+    onValueChange: { control: false },
+  },
 } satisfies Meta<typeof Stepper>;
 
 export default meta;
@@ -43,6 +56,34 @@ const storySurface = {
   border: "1px solid var(--color-border-default)",
   boxShadow: "var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.06))",
 } as const;
+
+export const Playground: Story = {
+  render: function PlaygroundDemo(args) {
+    const [step, setStep] = useState(0);
+    return (
+      <div style={storySurface}>
+        <Stepper
+          {...args}
+          value={args.value ?? step}
+          onValueChange={setStep}
+          trackMode={args.trackMode ?? "continuous"}
+          ariaLabel={args.ariaLabel ?? "Edit and preview"}
+        >
+          <StepperStep label="Edit" description="Make changes" />
+          <StepperStep label="Preview" description="Review before publish" icon={<EyeIcon />} />
+        </Stepper>
+      </div>
+    );
+  },
+  args: {
+    linear: false,
+    size: "md",
+    trackMode: "continuous",
+    appearance: "default",
+    scrollable: false,
+    ariaLabel: "Edit and preview",
+  },
+};
 
 export const PreviewEyeTwoSteps: Story = {
   name: "Preview eye (2 steps)",

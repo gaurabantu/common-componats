@@ -24,6 +24,17 @@ export default meta;
 
 type Story = StoryObj<typeof AlertDialog>;
 
+export const Playground: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Information",
+    description: "This is an informational message. You can use it to share updates or tips.",
+    variant: "info",
+    confirmText: "Got it",
+    showCancel: false,
+  },
+};
+
 const WithTrigger = (args: any) => {
   const [open, setOpen] = useState(false);
   return (

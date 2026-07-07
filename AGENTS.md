@@ -96,6 +96,73 @@ import { useDebounce, useToggle }     from "ui-common-hooks";
 
 ---
 
+## Prop discovery (mandatory before generating UI)
+
+1. **Read types first** — open `node_modules/ui-common-components/dist/index.d.ts` (or `CardProps` / `ButtonProps` in source) for the **full** public API. Do not invent props or limit yourself to doc examples.
+2. **Map user intent → props** — use the intent tables below. Do not guess from generic React/Tailwind habits.
+3. **Never style what props already cover** — do not add `className`, `style`, or Tailwind utility classes on library components for borders, shadows, colors, radius, or size when a prop exists (`variant`, `elevation`, `tone`, `size`, `rounded`, `borderTop`, etc.).
+4. **Prefer compound APIs** for `Card`, `Table`, `Tabs` when building new screens.
+5. **Storybook Playground** — every component under `Design System → Atoms/Molecules` has a **Playground** story (38/38) with `argTypes` — use Controls as the live prop catalog before guessing.
+
+### `variant` means different things per component
+
+| Component | `variant` controls | Not the same as |
+|-----------|-------------------|-----------------|
+| `Card` | Surface role: `bordered` · `elevated` · `withIndicator` | `elevation` (shadow **tier**: `none` \| `sm` \| `md` \| `lg`) |
+| `Button` | Visual style: `primary` · `ghost` · `outlinePrimary` · … | `backgroundColor` / `borderColor` overrides |
+| `Badge` | Semantic color: `neutral` · `primary` · `danger` · … | `tone` (`soft` \| `solid` \| `outline`) or `elevated` |
+| `Input` | Chrome: `outlined` · `filled` · `borderless` · `underlined` | `status` (`error` \| `warning` \| `success`) |
+| `Table` | Chrome: `default` · `bordered` · `minimal` | `theme` (`light` \| `dark`) |
+| `Tabs` | Strip style: `line` · `minimal` · `segmented` | `dividerColor` / `indicatorColor` |
+| `FeedbackState` | State router: `empty` · `error` · `offline` · … | `tone` on child shells |
+
+### Card — intent → props (DESIGN_SYSTEM §26)
+
+| User / FRD intent | Correct props | Never do |
+|-------------------|---------------|----------|
+| Static panel, visible edge, read-only | `variant="bordered"` | `elevation`, `className` shadow/border |
+| Shadow / floating / clickable tile | `variant="elevated"` + `elevation="sm"` or `"md"` + `hoverable` | `variant="bordered"` + CSS `box-shadow` |
+| Stronger shadow | `elevation="lg"` (keep `variant="elevated"`) | `style={{ boxShadow: … }}` |
+| Selected / active list row | `variant="withIndicator"` + `selected` + usually `hoverable` | left `border-left` in CSS |
+| Softer footer line | `CardFooter` with `borderTop={false}` | extra wrapper + border CSS |
+| Compact density | `size="sm"` | ad-hoc padding classes |
+
+**Rule:** bordered = border, no shadow. elevated = shadow, no border. Never both (§26).
+
+Legacy: `variant="outlined"` / `"filled"` map to `bordered`. Prefer `variant="bordered"` in new code.
+
+### Button — intent → props
+
+| User / FRD intent | Correct props | Never do |
+|-------------------|---------------|----------|
+| Main page / zone CTA | `variant="primary"` `size="md"` or `"lg"` | `backgroundColor`, Tailwind `bg-*` |
+| Secondary outline | `variant="outlinePrimary"` `size="sm"` or `"md"` | `ghost` + border classes |
+| Tertiary / row action | `variant="ghost"` `size="sm"` | unstyled `<button>` |
+| Destructive confirm | `variant="danger"` | red `className` |
+| Text link action | `variant="link"` | raw `<a>` with token colors |
+| Loading submit | `loading` + `disabled` implied | spinner div beside button |
+| Icon only | `icon` + `ariaLabel` | icon div + click handler |
+
+**Variants (full):** `default` (= `primary`), `primary`, `secondary`, `outlinePrimary`, `outlineSecondary`, `success`, `danger`, `warning`, `link`, `ghost`.
+
+**Sizes:** `xxs` · `xs` · `sm` · `md` · `lg`.
+
+**Overrides:** `backgroundColor`, `borderColor`, `textColor`, `classOverrides` exist for edge cases — **do not use** unless the user explicitly requests a one-off brand override. Prefer `variant` + `size` + `rounded`.
+
+### Badge — intent → props
+
+| User / FRD intent | Correct props | Never do |
+|-------------------|---------------|----------|
+| Neutral metadata label | `variant="neutral"` `tone="soft"` | styled `<span>` |
+| Status emphasis (success/error) | `variant="success"` or `"danger"` + `tone="soft"` or `"solid"` | Tailwind badge classes |
+| Filter chip / pill | `shape="pill"` + optional `onDismiss` | custom chip div |
+| Live / unread dot | `dot` + `variant="danger"` or `"warning"` | CSS `::before` circle |
+| Subtle lift on surface | `elevated` | `shadow-*` className |
+
+**`variant`** = semantic color (`neutral` · `primary` · `success` · `warning` · `danger` · `info`). **`tone`** = fill style (`soft` · `solid` · `outline`). **`elevated`** = shadow only — not the same as Card elevation.
+
+---
+
 ## The 5 visual zones (canonical — DESIGN_SYSTEM §22a)
 
 Before writing any code, define zones (expanded examples: [`docs/COMPOSITION_RULES_1.md`](docs/COMPOSITION_RULES_1.md)):
@@ -240,6 +307,7 @@ import {
 - Skip reading `docs/internal/` — it is required, not optional
 - Use `AppShell` in new code (legacy alias; use `DashboardShell`)
 - Use `dangerouslySetInnerHTML`
+- Add `className` / `style` / Tailwind on library components for visuals covered by props (`variant`, `elevation`, `tone`, `size`, `rounded`, etc.) — read `dist/index.d.ts` and use props instead
 
 ---
 
@@ -250,7 +318,7 @@ npm run storybook        # http://localhost:6006
 npm run build-storybook  # static build → storybook-static/
 ```
 
-Stories live under `src/stories/`. Each component has a **Playground** story with full Storybook controls (argTypes) so every prop is configurable via the Controls panel — same experience as shown in the Calendar/Card documentation.
+Component stories live under `src/components/**/**/*.stories.tsx` (38 files); examples and hooks live under `src/stories/`. **Every** Design System component story exports a **Playground** as the first story, with `argTypes` on `meta` so props are discoverable via the Controls panel — same experience as Button/Card/Calendar.
 
 ---
 

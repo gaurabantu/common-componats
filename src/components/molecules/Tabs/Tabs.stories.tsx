@@ -30,6 +30,35 @@ export default meta;
 
 type Story = StoryObj<typeof Tabs>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <Tabs {...args} defaultValue="a">
+      <TabsList ariaLabel="Example tabs">
+        <TabsTrigger value="a">General</TabsTrigger>
+        <TabsTrigger value="b">Security</TabsTrigger>
+        <TabsTrigger value="c" disabled>
+          Billing
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="a">
+        <p style={{ margin: 0 }}>General settings content.</p>
+      </TabsContent>
+      <TabsContent value="b">
+        <p style={{ margin: 0 }}>Security settings content.</p>
+      </TabsContent>
+      <TabsContent value="c">
+        <p style={{ margin: 0 }}>Billing content.</p>
+      </TabsContent>
+    </Tabs>
+  ),
+  args: {
+    orientation: "horizontal",
+    variant: "line",
+    size: "md",
+    listLayout: "wrap",
+  },
+};
+
 export const Default: Story = {
   render: (args) => (
     <Tabs {...args} defaultValue="a">

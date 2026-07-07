@@ -22,6 +22,36 @@ export default meta;
 
 type Story = StoryObj<typeof Accordion>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <Accordion
+      {...args}
+      collapsible={args.type !== "multiple"}
+      defaultValue={args.type === "multiple" ? ["shipping"] : "shipping"}
+    >
+      <AccordionItem value="shipping">
+        <AccordionTrigger>What are your shipping options?</AccordionTrigger>
+        <AccordionContent>
+          We offer standard (5–7 days), express (2–3 days), and overnight shipping. Free shipping on many orders.
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="returns">
+        <AccordionTrigger>What is your return policy?</AccordionTrigger>
+        <AccordionContent>30-day returns on unused items in original packaging.</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="support">
+        <AccordionTrigger>How can I contact support?</AccordionTrigger>
+        <AccordionContent>Email support@example.com or use in-app chat 24/7.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ),
+  args: {
+    type: "single",
+    variant: "default",
+    motion: "default",
+  },
+};
+
 export const SingleBasic: Story = {
   name: "Single (basic)",
   render: () => (

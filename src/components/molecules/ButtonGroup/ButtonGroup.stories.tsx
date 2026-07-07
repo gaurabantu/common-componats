@@ -20,6 +20,25 @@ export default meta;
 
 type Story = StoryObj<typeof ButtonGroup>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <ButtonGroup {...args} aria-label="Document actions">
+      <Button variant="outlinePrimary" size="md">
+        Archive
+      </Button>
+      <Button variant="outlinePrimary" size="md">
+        Report
+      </Button>
+      <Button variant="outlinePrimary" size="md">
+        Snooze
+      </Button>
+    </ButtonGroup>
+  ),
+  args: {
+    orientation: "horizontal",
+  },
+};
+
 export const Basic: Story = {
   render: () => (
     <ButtonGroup aria-label="Document actions">

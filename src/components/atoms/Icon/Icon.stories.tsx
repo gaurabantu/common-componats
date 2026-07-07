@@ -19,6 +19,16 @@ export default meta;
 
 type Story = StoryObj<typeof Icon>;
 
+export const Playground: Story = {
+  args: {
+    src: ErrorIcon,
+    alt: "Icon",
+    width: 20,
+    height: 20,
+  },
+  render: (args) => <Icon {...args} />,
+};
+
 export const Default: Story = {
   args: {
     src: ErrorIcon,

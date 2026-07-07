@@ -32,6 +32,18 @@ const Controlled = (args: any) => {
   );
 };
 
+export const Playground: Story = {
+  render: (args) => <Controlled {...args} />,
+  args: {
+    label: "Message",
+    placeholder: "Enter your message...",
+    rows: 4,
+    value: "",
+    helperText: "Share a short message with your team.",
+    showCount: true,
+  },
+};
+
 export const Default: Story = {
   render: (args) => <Controlled {...args} />,
   args: {

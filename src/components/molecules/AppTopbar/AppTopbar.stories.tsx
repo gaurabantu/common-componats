@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import AppTopbar from "./index";
+import type { AppTopbarProps } from "./AppTopbar.types";
+
+type AppTopbarStoryArgs = AppTopbarProps & { showSearch?: boolean };
 
 const bellIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -14,17 +17,78 @@ const plusIcon = (
   </svg>
 );
 
-const meta: Meta<typeof AppTopbar> = {
+const meta: Meta<AppTopbarStoryArgs> = {
   title: "Design System/Molecules/AppTopbar",
   component: AppTopbar,
+  tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+  },
+  argTypes: {
+    theme: { control: "radio", options: ["dark", "light"] },
+    title: { control: "text" },
+    titleAs: { control: "radio", options: ["h1", "h2"] },
+    sticky: { control: "boolean" },
+    responsive: { control: "boolean" },
+    showSearch: {
+      control: "boolean",
+      description: "Toggle search region visibility (story-only control)",
+    },
+    search: { control: false },
+    actions: { control: false },
+    profile: { control: false },
+    mobileMenuItems: { control: false },
+    onMobileMenuClick: { control: false },
+    centerSlot: { control: false },
+    leftSlot: { control: false },
+    rightSlot: { control: false },
   },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof AppTopbar>;
+type Story = StoryObj<AppTopbarStoryArgs>;
+
+export const Playground: Story = {
+  render: function PlaygroundDemo(args) {
+    const { showSearch, ...topbarArgs } = args;
+    return (
+      <AppTopbar
+        {...topbarArgs}
+        search={
+          showSearch !== false
+            ? topbarArgs.search ?? { value: "", onChange: () => {}, placeholder: "Search..." }
+            : undefined
+        }
+      />
+    );
+  },
+  args: {
+    theme: "dark",
+    title: "Revenue",
+    titleAs: "h1",
+    showSearch: true,
+    sticky: true,
+    search: {
+      value: "",
+      onChange: () => {},
+      placeholder: "Search...",
+    },
+    actions: [
+      { id: "create", icon: plusIcon, label: "Create", variant: "outlinePrimary", onClick: () => {} },
+      { id: "notify", icon: bellIcon, label: "Notifications", badgeCount: 3, onClick: () => {} },
+    ],
+    profile: { name: "Alex Morgan", onClick: () => {} },
+  },
+  decorators: [
+    (StoryEl) => (
+      <div style={{ minHeight: "100vh", background: "var(--color-noir-80)" }}>
+        <StoryEl />
+        <p style={{ color: "var(--color-noir-20)", padding: 24 }}>Page content scrolls under the sticky bar.</p>
+      </div>
+    ),
+  ],
+};
 
 export const DarkFull: Story = {
   args: {

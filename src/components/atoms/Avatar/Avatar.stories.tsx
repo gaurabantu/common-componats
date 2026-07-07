@@ -16,6 +16,15 @@ export default meta;
 
 type Story = StoryObj<typeof Avtar>;
 
+export const Playground: Story = {
+  args: {
+    alt: "Avatar",
+    size: 40,
+    status: "none",
+  },
+  render: (args) => <Avtar {...args} />,
+};
+
 export const Placeholder: Story = {
   args: {
     alt: "Avatar",
