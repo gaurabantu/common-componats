@@ -5,11 +5,13 @@ import {
   variantClasses,
   sizeClasses,
   iconOnlySizeClasses,
+  textSizeClasses,
   radiusClass,
   defaultIconOnlySizeBySize,
   defaultIconWithLabelSizeBySize,
   type ButtonVariant,
   type ButtonSize,
+  type ButtonTextSize,
 } from "./Button.config";
 import Icon from "../Icon";
 
@@ -78,6 +80,10 @@ const Button = React.memo(function Button({
   const sizeClassNames = isIconOnly
     ? iconOnlySizeClasses[sizeKey] ?? iconOnlySizeClasses.lg
     : sizeClasses[sizeKey] ?? sizeClasses.lg;
+  const textSizeClassNames =
+    textSize && textSize in textSizeClasses
+      ? textSizeClasses[textSize as ButtonTextSize]
+      : "";
 
   /** Icon-only buttons need an explicit name; text buttons use visible children (do not override with aria-label). */
   const computedAriaLabel =
@@ -101,6 +107,7 @@ const Button = React.memo(function Button({
     "btn-base",
     variantClassNames,
     sizeClassNames,
+    textSizeClassNames,
     loading ? "btn-loading" : "",
     gradient ? "btn-gradient" : "",
     variantClass ?? "",

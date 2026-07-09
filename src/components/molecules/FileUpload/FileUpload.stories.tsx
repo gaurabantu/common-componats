@@ -7,9 +7,27 @@ const meta: Meta<typeof FileUpload> = {
   component: FileUpload,
   tags: ["autodocs"],
   argTypes: {
+    label: { control: "text" },
+    description: { control: "text" },
+    errorMessage: { control: "text" },
+    name: { control: "text" },
+    accept: { control: "text" },
     size: { control: "radio", options: ["sm", "md"] },
     disabled: { control: "boolean" },
     multiple: { control: "boolean" },
+    required: { control: "boolean" },
+    maxFiles: { control: { type: "number", min: 1, max: 10 } },
+    maxSizeBytes: { control: { type: "number", min: 1024, step: 1024 } },
+    verifyMagicBytes: { control: "boolean" },
+    scanPdfForSqlInjection: { control: "boolean" },
+    maxScanBytes: { control: { type: "number", min: 1024, step: 1024 } },
+    clearInputAfterSelect: { control: "boolean" },
+    capture: { control: "select", options: [undefined, false, true, "user", "environment"] },
+    allowedExtensions: { control: "object" },
+    allowedMimeTypes: { control: "object" },
+    icon: { control: false },
+    onFilesChange: { control: false },
+    onError: { control: false },
   },
 };
 
@@ -23,6 +41,10 @@ export const Playground: Story = {
     description: "PDF, PNG or JPG up to 10 MB",
     accept: ".pdf,.png,.jpg,.jpeg",
     size: "md",
+    multiple: false,
+    disabled: false,
+    required: false,
+    clearInputAfterSelect: true,
   },
 };
 

@@ -2,7 +2,7 @@ import {
   Button_default,
   Icon_default,
   TextInputSearch_default
-} from "./chunk-LIZUDLXK.mjs";
+} from "./chunk-ULF52PMF.mjs";
 
 // src/components/atoms/Avatar/index.tsx
 import React from "react";
@@ -1540,4 +1540,4 @@ export {
   DashboardShell_default,
   AppShell
 };
-//# sourceMappingURL=chunk-FAHPZKAB.mjs.map
+//# sourceMappingURL=chunk-FNW4UGG7.mjs.map

@@ -49,4 +49,16 @@ describe("Button", () => {
       "--button-gradient-hover-bg": "linear-gradient(90deg, blue, purple)",
     });
   });
+
+  it("applies rounded and text size classes from props", () => {
+    render(
+      <Button rounded="pill" textSize="sm">
+        Rounded
+      </Button>
+    );
+
+    const button = screen.getByRole("button", { name: /rounded/i });
+    expect(button).toHaveClass("btn-rounded-pill");
+    expect(button).toHaveClass("btn-text-size-sm");
+  });
 });

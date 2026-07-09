@@ -1,13 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import RadioGroup from "./index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const meta: Meta<typeof RadioGroup> = {
   title: "Design System/Atoms/RadioGroup",
   component: RadioGroup,
   tags: ["autodocs"],
   argTypes: {
+    name: { control: "text" },
+    selectedValue: { control: "select", options: ["a", "b", "c", "basic", "pro", "enterprise"] },
     layout: { control: "radio", options: ["vertical", "horizontal", "grid", "grid-auto"] },
+    columns: { control: { type: "number", min: 1, max: 4 } },
+    minWidth: { control: "text" },
+    gap: { control: "text" },
+    options: { control: false },
+    onChange: { control: false },
   },
 };
 
@@ -23,11 +30,18 @@ const options = [
 
 const Controlled = (args: any) => {
   const [value, setValue] = useState(args.selectedValue ?? "a");
+  useEffect(() => {
+    setValue(args.selectedValue ?? "a");
+  }, [args.selectedValue]);
+
   return (
     <RadioGroup
       {...args}
       selectedValue={value}
-      onChange={setValue}
+      onChange={(next) => {
+        setValue(next);
+        args.onChange?.(next);
+      }}
     />
   );
 };

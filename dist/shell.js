@@ -1203,6 +1203,11 @@ var sizeClasses = {
   md: "btn-size-md",
   lg: "btn-size-lg"
 };
+var textSizeClasses = {
+  sm: "btn-text-size-sm",
+  md: "btn-text-size-md",
+  lg: "btn-text-size-lg"
+};
 var iconOnlySizeClasses = {
   xxs: "btn-icon-only-xxs",
   xs: "btn-icon-only-xs",
@@ -1292,6 +1297,7 @@ var Button = import_react8.default.memo(function Button2({
   const dsVariant = VALID_VARIANTS.includes(resolvedVariant) ? resolvedVariant : "primary";
   const sizeKey = (size != null ? size : "lg") in sizeClasses ? size : "lg";
   const sizeClassNames = isIconOnly ? (_a = iconOnlySizeClasses[sizeKey]) != null ? _a : iconOnlySizeClasses.lg : (_b = sizeClasses[sizeKey]) != null ? _b : sizeClasses.lg;
+  const textSizeClassNames = textSize && textSize in textSizeClasses ? textSizeClasses[textSize] : "";
   const computedAriaLabel = ariaLabel != null ? ariaLabel : isIconOnly ? "Button" : void 0;
   const styleOverrides = {};
   if (backgroundColor)
@@ -1314,6 +1320,7 @@ var Button = import_react8.default.memo(function Button2({
     "btn-base",
     variantClassNames,
     sizeClassNames,
+    textSizeClassNames,
     loading ? "btn-loading" : "",
     gradient ? "btn-gradient" : "",
     variantClass != null ? variantClass : "",

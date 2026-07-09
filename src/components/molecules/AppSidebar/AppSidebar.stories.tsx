@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppSidebar from "./index";
 import Icon from "../../atoms/Icon";
 import type { AppSidebarNavItem, AppSidebarSection } from "./AppSidebar.types";
@@ -134,6 +134,10 @@ export const Playground: Story = {
   render: function PlaygroundDemo(args) {
     const [collapsed, setCollapsed] = useState(args.collapsed ?? false);
     const [active, setActive] = useState<string | null>("ws-1");
+    useEffect(() => {
+      setCollapsed(args.collapsed ?? args.defaultCollapsed ?? false);
+    }, [args.collapsed, args.defaultCollapsed]);
+
     return (
       <AppSidebar
         {...args}

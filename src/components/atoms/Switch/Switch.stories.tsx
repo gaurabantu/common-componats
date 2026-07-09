@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Switch from "./index";
 
 const meta: Meta<typeof Switch> = {
@@ -8,9 +8,17 @@ const meta: Meta<typeof Switch> = {
   component: Switch,
   tags: ["autodocs"],
   argTypes: {
+    checked: { control: "boolean" },
+    defaultChecked: { control: "boolean" },
+    label: { control: "text" },
     size: { control: "radio", options: ["sm", "md"] },
     disabled: { control: "boolean" },
     labelPosition: { control: "radio", options: ["start", "end"] },
+    name: { control: "text" },
+    value: { control: "text" },
+    uncheckedValue: { control: "text" },
+    id: { control: "text" },
+    onCheckedChange: { control: false },
   },
 };
 
@@ -20,6 +28,10 @@ type Story = StoryObj<typeof Switch>;
 
 const Controlled = (args: ComponentProps<typeof Switch>) => {
   const [on, setOn] = useState(args.checked ?? args.defaultChecked ?? false);
+  useEffect(() => {
+    setOn(args.checked ?? args.defaultChecked ?? false);
+  }, [args.checked, args.defaultChecked]);
+
   return (
     <Switch
       {...args}

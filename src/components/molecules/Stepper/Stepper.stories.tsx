@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../atoms/Button";
 import { Stepper, StepperStep } from "./index";
 import type { StepperTrackMode } from "./Stepper.types";
@@ -49,11 +49,15 @@ const storySurface = {
 export const Playground: Story = {
   render: function PlaygroundDemo(args) {
     const [step, setStep] = useState(args.defaultValue ?? 1);
+    useEffect(() => {
+      setStep(args.value ?? args.defaultValue ?? 1);
+    }, [args.value, args.defaultValue]);
+
     return (
       <div style={storySurface}>
         <Stepper
           {...args}
-          value={args.value ?? step}
+          value={step}
           onValueChange={setStep}
           ariaLabel={args.ariaLabel ?? "Playground stepper"}
         >

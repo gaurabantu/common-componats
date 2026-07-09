@@ -23,6 +23,8 @@ export type ButtonVariant =
 /** §20: xxs=inline 1.5rem · xs=section 1.75rem · sm=tertiary 2rem · md=secondary 2.25rem · lg=primary 2.5rem */
 export type ButtonSize = "xxs" | "xs" | "sm" | "md" | "lg";
 
+export type ButtonTextSize = "sm" | "md" | "lg";
+
 /** Variant → CSS class name (tokens.css). "default" = primary. */
 export const variantClasses: Record<ButtonVariant, string> = {
   default: "btn-primary",
@@ -44,6 +46,13 @@ export const sizeClasses: Record<ButtonSize, string> = {
   sm: "btn-size-sm",
   md: "btn-size-md",
   lg: "btn-size-lg",
+};
+
+/** Optional legacy font-size override. Prefer `size` for normal density. */
+export const textSizeClasses: Record<ButtonTextSize, string> = {
+  sm: "btn-text-size-sm",
+  md: "btn-text-size-md",
+  lg: "btn-text-size-lg",
 };
 
 /** Icon-only size → CSS class */

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import Calendar from "./index";
 
@@ -32,8 +32,9 @@ export default meta;
 type Story = StoryObj<typeof Calendar>;
 
 export const Playground: Story = {
-  render: (args) => <ControlledSingle {...args} />,
+  render: (args) => (args.mode === "range" ? <ControlledRange {...args} /> : <ControlledSingle {...args} />),
   args: {
+    mode: "single",
     fullWidth: false,
     captionLayout: "menus",
     variant: "outlined",
@@ -44,9 +45,14 @@ export const Playground: Story = {
 
 const ControlledSingle = (args: any) => {
   const [value, setValue] = useState<Date | null>(args.value ?? null);
+  useEffect(() => {
+    setValue(args.value ?? null);
+  }, [args.value]);
+
   return (
     <Calendar
       {...args}
+      mode="single"
       value={value}
       onChange={setValue}
     />
@@ -57,6 +63,10 @@ const ControlledRange = (args: any) => {
   const [range, setRange] = useState<[Date | null, Date | null]>(
     args.rangeValue ?? [null, null]
   );
+  useEffect(() => {
+    setRange(args.rangeValue ?? [null, null]);
+  }, [args.rangeValue]);
+
   return (
     <Calendar
       {...args}

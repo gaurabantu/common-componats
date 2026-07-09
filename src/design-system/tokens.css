@@ -1098,6 +1098,11 @@ select {
   line-height: 1.35;
 }
 
+/* Button: optional font-size override — use sparingly; `size` remains the primary density prop. */
+:is(button, a).btn-text-size-sm { font-size: var(--text-small-size, 0.75rem); }
+:is(button, a).btn-text-size-md { font-size: var(--text-secondary-size, 0.875rem); }
+:is(button, a).btn-text-size-lg { font-size: var(--text-body-size, 1rem); }
+
 /* Narrow screens: keep semantic button sizes but reduce horizontal inset so labels fit like common UI libraries. */
 @media (max-width: 640px) {
   :root {

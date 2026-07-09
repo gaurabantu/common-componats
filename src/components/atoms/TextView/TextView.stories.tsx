@@ -40,6 +40,23 @@ export default meta;
 
 type Story = StoryObj<typeof TextView>;
 
+export const Playground: Story = {
+  args: {
+    variant: "body",
+    color: "primary",
+    fontSize: undefined,
+    fontWeight: undefined,
+    lineHeight: undefined,
+    letterSpacing: undefined,
+    align: "left",
+    transform: "none",
+    decoration: "none",
+    truncate: false,
+    children: "Edit props in Controls to test fontSize, fontWeight, lineHeight, letterSpacing.",
+  },
+  render: (args) => <TextView {...args} />,
+};
+
 export const Variants: Story = {
   render: () => (
     <div className="flex flex-col gap-2">
@@ -160,18 +177,3 @@ export const AsParagraph: Story = {
   },
 };
 
-export const Playground: Story = {
-  args: {
-    variant: "body",
-    color: "primary",
-    fontSize: undefined,
-    fontWeight: undefined,
-    lineHeight: undefined,
-    letterSpacing: undefined,
-    align: "left",
-    transform: "none",
-    decoration: "none",
-    truncate: false,
-    children: "Edit props in Controls to test fontSize, fontWeight, lineHeight, letterSpacing.",
-  },
-};

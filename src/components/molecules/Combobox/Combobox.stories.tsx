@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Combobox } from "./index";
 import type { ComboboxGroup, ComboboxOption } from "./Combobox.types";
 
@@ -85,14 +85,26 @@ const surface = {
 
 export const Playground: Story = {
   render: function PlaygroundDemo(args) {
-    const [v, setV] = useState("en");
+    const [singleValue, setSingleValue] = useState("en");
+    const [multiValue, setMultiValue] = useState<string[]>(["en"]);
+    useEffect(() => {
+      setSingleValue("en");
+      setMultiValue(["en"]);
+    }, [args.multiple]);
+
     return (
       <div style={surface}>
         <Combobox
           {...args}
           options={flat}
-          value={v}
-          onValueChange={(next) => setV(typeof next === "string" ? next : v)}
+          value={args.multiple ? multiValue : singleValue}
+          onValueChange={(next) => {
+            if (Array.isArray(next)) {
+              setMultiValue(next);
+              return;
+            }
+            setSingleValue(next);
+          }}
         />
       </div>
     );

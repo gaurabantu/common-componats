@@ -1,14 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import CheckBox from "./index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const meta: Meta<typeof CheckBox> = {
   title: "Design System/Atoms/Checkbox",
   component: CheckBox,
   tags: ["autodocs"],
   argTypes: {
+    label: { control: "text" },
+    name: { control: "text" },
+    value: { control: "text" },
+    checked: { control: "boolean" },
     shape: { control: "radio", options: ["default", "box"] },
+    rounded: { control: "select", options: ["0", "1", "2", "3", "4", "5", "pill", "circle"] },
+    withShadow: { control: "boolean" },
     disabled: { control: "boolean" },
+    onChange: { control: false },
   },
 };
 
@@ -18,11 +25,18 @@ type Story = StoryObj<typeof CheckBox>;
 
 const Controlled = (args: any) => {
   const [checked, setChecked] = useState(args.checked ?? false);
+  useEffect(() => {
+    setChecked(args.checked ?? false);
+  }, [args.checked]);
+
   return (
     <CheckBox
       {...args}
       checked={checked}
-      onChange={(e) => setChecked((e.target as HTMLInputElement).checked)}
+      onChange={(e) => {
+        setChecked((e.target as HTMLInputElement).checked);
+        args.onChange?.(e);
+      }}
     />
   );
 };

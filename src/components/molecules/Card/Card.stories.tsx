@@ -58,10 +58,7 @@ const meta: Meta<typeof Card> = {
       control: "select",
       options: ["left", "center", "right", "between"],
     },
-    bordered: {
-      control: "boolean",
-      description: "Deprecated — prefer variant=bordered.",
-    },
+    bordered: { control: false, table: { disable: true } },
     cover: { control: false },
     actions: { control: false },
     extra: { control: false },

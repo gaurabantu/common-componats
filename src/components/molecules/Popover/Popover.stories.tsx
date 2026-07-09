@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,14 +31,21 @@ export default meta;
 type Story = StoryObj<typeof Popover>;
 
 export const Playground: Story = {
-  render: (args) => (
-    <Popover {...args}>
-      <PopoverTrigger>Open panel</PopoverTrigger>
-      <PopoverContent>
-        <p style={{ margin: 0 }}>Use Controls to try placement and defaultOpen.</p>
-      </PopoverContent>
-    </Popover>
-  ),
+  render: function PlaygroundDemo(args) {
+    const [open, setOpen] = useState(args.open ?? args.defaultOpen ?? false);
+    useEffect(() => {
+      setOpen(args.open ?? args.defaultOpen ?? false);
+    }, [args.open, args.defaultOpen]);
+
+    return (
+      <Popover {...args} open={open} onOpenChange={setOpen}>
+        <PopoverTrigger>Open panel</PopoverTrigger>
+        <PopoverContent>
+          <p style={{ margin: 0 }}>Use Controls to try placement, open, and defaultOpen.</p>
+        </PopoverContent>
+      </Popover>
+    );
+  },
   args: {
     placement: "bottom-start",
     defaultOpen: false,
