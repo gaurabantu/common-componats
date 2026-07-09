@@ -31,7 +31,18 @@ const meta: Meta<typeof Button> = {
       options: [...variantOptions],
       description: '"default" = primary. Others: fill, outline, link, ghost.',
     },
-    size: { control: "select", options: ["sm", "md", "lg"] },
+    size: {
+      control: "select",
+      options: ["xxs", "xs", "sm", "md", "lg"],
+      description: "Height/density tier: xxs, xs, sm, md, lg.",
+    },
+    textSize: {
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Legacy text size override. Prefer size for normal button density.",
+    },
+    width: { control: "text", description: "Optional CSS width, e.g. 240px or 100%." },
+    height: { control: "text", description: "Optional CSS height override." },
     fullWidth: { control: "boolean" },
     block: { control: "boolean", description: "Alias of fullWidth" },
     disabled: { control: "boolean" },
@@ -57,14 +68,26 @@ const meta: Meta<typeof Button> = {
     gradientHover: { control: "text", description: "Optional hover gradient override" },
     gradientActive: { control: "text", description: "Optional active gradient override" },
     iconPosition: { control: "radio", options: ["left", "right"] },
+    iconGap: { control: { type: "number", min: 0, max: 16, step: 4 } },
+    iconWidth: { control: "text" },
+    iconHeight: { control: "text" },
+    iconColor: { control: "text" },
+    preserveIconColor: { control: "boolean" },
     icon: { control: false },
     ariaLabel: { control: "text" },
     href: { control: "text", description: "If set, renders an <a> (link button)" },
+    ripple: { control: "boolean" },
+    className: {
+      control: "text",
+      description: "Layout-only class hook. Do not use for colors/radius when props exist.",
+    },
   },
   args: {
     children: "Button",
     variant: "primary",
     size: "md",
+    rounded: "3",
+    ripple: true,
   },
 };
 
@@ -78,6 +101,8 @@ export const Playground: Story = {
     children: "Button",
     variant: "primary",
     size: "md",
+    rounded: "3",
+    ripple: true,
   },
   render: (args) => (
     <div className="sb-page">

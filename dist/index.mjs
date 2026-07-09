@@ -3366,7 +3366,7 @@ var CardRoot = forwardRef2(function Card({
   footer,
   bordered: _legacyBordered = true,
   hoverable = false,
-  variant = "outlined",
+  variant = "bordered",
   elevation,
   selected = false,
   padding: paddingProp,

@@ -1168,15 +1168,15 @@ select {
 }
 
 /* Button: border radius options (use design tokens) */
-.btn-rounded-0 { border-radius: 0; }
-.btn-rounded-1 { border-radius: var(--radius-xs); }
-.btn-rounded-2 { border-radius: var(--radius-sm); }
-.btn-rounded-3 { border-radius: var(--radius-base); }
-.btn-rounded-md { border-radius: var(--radius-md); }
-.btn-rounded-4 { border-radius: var(--radius-md); }
-.btn-rounded-5 { border-radius: var(--radius-lg); }
-.btn-rounded-pill { border-radius: 9999px; }
-.btn-rounded-circle { border-radius: 50%; }
+:is(button, a).btn-rounded-0 { border-radius: 0; }
+:is(button, a).btn-rounded-1 { border-radius: var(--radius-xs); }
+:is(button, a).btn-rounded-2 { border-radius: var(--radius-sm); }
+:is(button, a).btn-rounded-3 { border-radius: var(--radius-base); }
+:is(button, a).btn-rounded-md { border-radius: var(--radius-md); }
+:is(button, a).btn-rounded-4 { border-radius: var(--radius-md); }
+:is(button, a).btn-rounded-5 { border-radius: var(--radius-lg); }
+:is(button, a).btn-rounded-pill { border-radius: 9999px; }
+:is(button, a).btn-rounded-circle { border-radius: 50%; }
 
 /* Button: icon inner (no Tailwind) */
 .btn-icon-inner {

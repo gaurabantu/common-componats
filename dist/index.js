@@ -5137,7 +5137,7 @@ var CardRoot = (0, import_react20.forwardRef)(function Card({
   footer,
   bordered: _legacyBordered = true,
   hoverable = false,
-  variant = "outlined",
+  variant = "bordered",
   elevation,
   selected = false,
   padding: paddingProp,
