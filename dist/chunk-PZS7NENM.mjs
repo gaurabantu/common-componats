@@ -192,10 +192,10 @@ var defaultIconWithLabelSizeBySize = {
   lg: { width: "1rem", height: "1rem" }
 };
 var defaultIconOnlySizeBySize = {
-  xxs: { width: "0.75rem", height: "0.75rem" },
-  xs: { width: "0.875rem", height: "0.875rem" },
-  sm: { width: "1.125rem", height: "1.125rem" },
-  md: { width: "1.25rem", height: "1.25rem" },
+  xxs: { width: "0.6875rem", height: "0.6875rem" },
+  xs: { width: "0.8125rem", height: "0.8125rem" },
+  sm: { width: "1rem", height: "1rem" },
+  md: { width: "1.125rem", height: "1.125rem" },
   lg: { width: "1.5rem", height: "1.5rem" }
 };
 var defaultIconConfig = {
@@ -506,11 +506,12 @@ var Masker = class {
 // src/components/atoms/TextInput/TextInput.config.ts
 var HEADER_SEARCH_LAYOUT = {
   /**
-   * Tier heights mirror `Select` sm/md/lg `minHeight` (36 / 44 / 48) so filter rows align in Storybook
+   * Tier heights mirror `Select` sm/md/lg `minHeight` (--button-height-sm / --button-height-lg / 3rem) so filter rows align in Storybook
    * and apps without ad-hoc pixel tweaks.
    */
   sm: {
-    shellMinHeight: 36,
+    shellMinHeight: 32,
+    shellMinHeightToken: "var(--button-height-sm)",
     horizontalPadding: 9,
     prefixAddonPadding: 7,
     suffixPadLeft: 7,
@@ -519,11 +520,12 @@ var HEADER_SEARCH_LAYOUT = {
     decorativeTrailingSearchIcon: 14,
     clearIconSize: 11,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 28,
+    searchActionInsetHeight: 24,
     integratedIconPadX: 9
   },
   md: {
-    shellMinHeight: 44,
+    shellMinHeight: 40,
+    shellMinHeightToken: "var(--button-height-lg)",
     horizontalPadding: 12,
     prefixAddonPadding: 9,
     suffixPadLeft: 10,
@@ -532,11 +534,12 @@ var HEADER_SEARCH_LAYOUT = {
     decorativeTrailingSearchIcon: 16,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 36,
+    searchActionInsetHeight: 32,
     integratedIconPadX: 11
   },
   lg: {
     shellMinHeight: 48,
+    shellMinHeightToken: "3rem",
     horizontalPadding: 12,
     prefixAddonPadding: 9,
     suffixPadLeft: 10,
@@ -1069,13 +1072,13 @@ var TextInput = forwardRef(({
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
-      minHeight: "2rem",
+      minHeight: "var(--button-height-sm)",
       horizontalPadding: "0.625rem",
       addonPadding: "0.5rem",
       fontSize: "var(--text-small-size)"
     },
     md: {
-      minHeight: "2.5rem",
+      minHeight: "var(--button-height-lg)",
       horizontalPadding: "0.75rem",
       addonPadding: "0.625rem",
       fontSize: "var(--text-body-size)"
@@ -1091,7 +1094,7 @@ var TextInput = forwardRef(({
   const isIntegratedRail = trailingRail === "integrated" && isHeaderSearchRail;
   const hdr = isHeaderSearchRail ? HEADER_SEARCH_LAYOUT[size] : void 0;
   const fieldMetrics = hdr ? {
-    minHeight: pxToRem(hdr.shellMinHeight),
+    minHeight: hdr.shellMinHeightToken,
     horizontalPadding: pxToRem(hdr.horizontalPadding),
     addonPadding: baseSizeTokens[size].addonPadding,
     fontSize: baseSizeTokens[size].fontSize,
@@ -1559,7 +1562,7 @@ var TextInputSearch = ({
     ...userSearchActionStyles && typeof userSearchActionStyles === "object" ? userSearchActionStyles : {},
     alignSelf: "stretch",
     height: "100%",
-    minHeight: pxToRem2(hdr.shellMinHeight),
+    minHeight: hdr.shellMinHeightToken,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
     borderTopRightRadius: trailingCorner,
@@ -1673,4 +1676,4 @@ export {
   TextInput_default,
   TextInputSearch_default
 };
-//# sourceMappingURL=chunk-ULF52PMF.mjs.map
+//# sourceMappingURL=chunk-PZS7NENM.mjs.map

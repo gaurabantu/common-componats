@@ -1,11 +1,403 @@
 import {
   Button_default,
   Icon_default,
-  TextInputSearch_default
-} from "./chunk-ULF52PMF.mjs";
+  TextInputSearch_default,
+  useRipple
+} from "./chunk-PZS7NENM.mjs";
+
+// src/components/molecules/Popover/index.tsx
+import React, {
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
+import { createPortal } from "react-dom";
+
+// src/components/molecules/Popover/popoverPosition.ts
+var GAP = 8;
+var VIEWPORT = 8;
+function computePopoverPosition(triggerRect, contentWidth, contentHeight, placement) {
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 768;
+  const cw = Math.min(contentWidth, vw - VIEWPORT * 2);
+  const ch = Math.min(contentHeight, vh - VIEWPORT * 2);
+  let top;
+  let left;
+  const placeBottom = placement.startsWith("bottom");
+  const alignEnd = placement.endsWith("end");
+  if (placeBottom) {
+    top = triggerRect.bottom + GAP;
+    if (top + ch > vh - VIEWPORT) {
+      const above = triggerRect.top - GAP - ch;
+      if (above >= VIEWPORT) {
+        top = above;
+      } else {
+        top = Math.max(VIEWPORT, vh - VIEWPORT - ch);
+      }
+    }
+  } else {
+    top = triggerRect.top - GAP - ch;
+    if (top < VIEWPORT) {
+      const below = triggerRect.bottom + GAP;
+      if (below + ch <= vh - VIEWPORT) {
+        top = below;
+      } else {
+        top = VIEWPORT;
+      }
+    }
+  }
+  if (alignEnd) {
+    left = triggerRect.right - cw;
+  } else {
+    left = triggerRect.left;
+  }
+  left = Math.min(Math.max(left, VIEWPORT), vw - VIEWPORT - cw);
+  return {
+    top,
+    left,
+    width: cw,
+    maxHeight: Math.min(ch, vh - VIEWPORT * 2)
+  };
+}
+
+// src/components/molecules/Popover/index.tsx
+import { jsx, jsxs } from "react/jsx-runtime";
+function cls(...parts) {
+  return parts.filter(Boolean).join(" ");
+}
+var PopoverContext = createContext(null);
+function usePopoverContext(component) {
+  const ctx = useContext(PopoverContext);
+  if (!ctx) {
+    throw new Error(`${component} must be used within <Popover> or <DropdownMenu>`);
+  }
+  return ctx;
+}
+var Popover = React.memo(function Popover2({
+  children,
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  placement = "bottom-start"
+}) {
+  const reactId = useId();
+  const base = reactId.replace(/:/g, "");
+  const triggerId = `popover-trigger-${base}`;
+  const contentId = `popover-content-${base}`;
+  const triggerRef = useRef(null);
+  const isControlled = openProp !== void 0;
+  const [innerOpen, setInnerOpen] = useState(defaultOpen);
+  const open = isControlled ? Boolean(openProp) : innerOpen;
+  const prevOpenRef = useRef(false);
+  const setOpen = useCallback(
+    (next) => {
+      if (!isControlled) {
+        setInnerOpen(next);
+      }
+      onOpenChange == null ? void 0 : onOpenChange(next);
+    },
+    [isControlled, onOpenChange]
+  );
+  useEffect(() => {
+    if (prevOpenRef.current && !open && triggerRef.current) {
+      requestAnimationFrame(() => {
+        var _a;
+        return (_a = triggerRef.current) == null ? void 0 : _a.focus();
+      });
+    }
+    prevOpenRef.current = open;
+  }, [open]);
+  const ctx = useMemo(
+    () => ({
+      open,
+      setOpen,
+      triggerId,
+      contentId,
+      triggerRef,
+      placement
+    }),
+    [open, setOpen, triggerId, contentId, placement]
+  );
+  return /* @__PURE__ */ jsx(PopoverContext.Provider, { value: ctx, children });
+});
+var PopoverTrigger = forwardRef(function PopoverTrigger2({ children, className, hasPopup = "dialog", type = "button", onClick, ...rest }, ref) {
+  const ctx = usePopoverContext("PopoverTrigger");
+  const open = ctx.open;
+  const setRefs = useCallback(
+    (el) => {
+      ctx.triggerRef.current = el;
+      if (typeof ref === "function")
+        ref(el);
+      else if (ref)
+        ref.current = el;
+    },
+    [ctx.triggerRef, ref]
+  );
+  return /* @__PURE__ */ jsx(
+    "button",
+    {
+      ...rest,
+      ref: setRefs,
+      type,
+      id: ctx.triggerId,
+      className: cls(className),
+      "aria-expanded": open,
+      "aria-controls": ctx.contentId,
+      "aria-haspopup": hasPopup,
+      onClick: (e) => {
+        onClick == null ? void 0 : onClick(e);
+        ctx.setOpen(!open);
+      },
+      children
+    }
+  );
+});
+var ARROW_EDGE_PAD = 12;
+var PopoverContent = React.memo(function PopoverContent2({
+  children,
+  className,
+  role: roleProp,
+  onKeyDown,
+  style,
+  showPointer = true,
+  ...rest
+}) {
+  const ctx = usePopoverContext("PopoverContent");
+  const contentRef = useRef(null);
+  const [pos, setPos] = useState({
+    top: 0,
+    left: 0
+  });
+  const updatePosition = useCallback(() => {
+    var _a;
+    const trigger = ctx.triggerRef.current;
+    const panel = contentRef.current;
+    if (!trigger || !panel || typeof window === "undefined")
+      return;
+    const tr = trigger.getBoundingClientRect();
+    const cw = panel.offsetWidth || 140;
+    const ch = Math.max(panel.offsetHeight || 80, 80);
+    const result = computePopoverPosition(tr, cw, ch, ctx.placement);
+    if (!showPointer) {
+      setPos(result);
+      return;
+    }
+    const below = result.top >= tr.bottom - 4;
+    const triggerCx = tr.left + tr.width / 2;
+    const panelW = (_a = result.width) != null ? _a : cw;
+    const arrowX = Math.min(
+      Math.max(triggerCx - result.left, ARROW_EDGE_PAD),
+      panelW - ARROW_EDGE_PAD
+    );
+    setPos({
+      ...result,
+      arrowEdge: below ? "top" : "bottom",
+      arrowX
+    });
+  }, [ctx.placement, ctx.triggerRef, showPointer]);
+  useLayoutEffect(() => {
+    if (!ctx.open)
+      return;
+    updatePosition();
+    const id = requestAnimationFrame(() => updatePosition());
+    return () => cancelAnimationFrame(id);
+  }, [ctx.open, updatePosition]);
+  useEffect(() => {
+    if (!ctx.open)
+      return;
+    const onResize = () => updatePosition();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onResize, true);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onResize, true);
+    };
+  }, [ctx.open, updatePosition]);
+  useEffect(() => {
+    if (!ctx.open)
+      return;
+    const onDocMouse = (e) => {
+      var _a, _b;
+      const t = e.target;
+      if (((_a = ctx.triggerRef.current) == null ? void 0 : _a.contains(t)) || ((_b = contentRef.current) == null ? void 0 : _b.contains(t)))
+        return;
+      ctx.setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape")
+        ctx.setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocMouse);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocMouse);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [ctx]);
+  useEffect(() => {
+    if (!ctx.open || !contentRef.current)
+      return;
+    const el = contentRef.current.querySelector(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    el == null ? void 0 : el.focus();
+  }, [ctx.open]);
+  const role = roleProp != null ? roleProp : "dialog";
+  if (!ctx.open)
+    return null;
+  const pointerStyle = showPointer && pos.arrowX != null ? { ["--popover-arrow-x"]: `${pos.arrowX}px` } : void 0;
+  const content = /* @__PURE__ */ jsx(
+    "div",
+    {
+      ...rest,
+      ref: contentRef,
+      id: ctx.contentId,
+      role: role === "none" ? void 0 : role,
+      "aria-modal": role === "dialog" ? false : void 0,
+      "aria-labelledby": ctx.triggerId,
+      className: cls(
+        "ds-popover__content",
+        showPointer && "ds-popover__content--with-pointer",
+        className
+      ),
+      "data-arrow-edge": showPointer ? pos.arrowEdge : void 0,
+      tabIndex: -1,
+      style: {
+        position: "fixed",
+        top: pos.top,
+        left: pos.left,
+        width: pos.width,
+        maxHeight: showPointer ? void 0 : pos.maxHeight,
+        overflow: showPointer ? "visible" : "auto",
+        zIndex: "var(--z-dropdown, 100)",
+        ...pointerStyle,
+        ...style
+      },
+      onKeyDown: (e) => {
+        onKeyDown == null ? void 0 : onKeyDown(e);
+        if (e.key === "Escape")
+          ctx.setOpen(false);
+      },
+      children: showPointer ? /* @__PURE__ */ jsx("div", { className: "ds-popover__content-scroll", style: { maxHeight: pos.maxHeight }, children }) : children
+    }
+  );
+  if (typeof document === "undefined")
+    return null;
+  return createPortal(content, document.body);
+});
+var DropdownMenu = Popover;
+var DropdownMenuTrigger = forwardRef(
+  function DropdownMenuTrigger2(props, ref) {
+    return /* @__PURE__ */ jsx(PopoverTrigger, { ...props, ref, hasPopup: "menu" });
+  }
+);
+var DropdownMenuContent = React.memo(function DropdownMenuContent2({
+  children,
+  className,
+  showPointer = false,
+  onKeyDown,
+  ...rest
+}) {
+  const handleMenuKeyDown = useCallback(
+    (e) => {
+      var _a;
+      onKeyDown == null ? void 0 : onKeyDown(e);
+      if (e.defaultPrevented)
+        return;
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Home" && e.key !== "End")
+        return;
+      const root = e.currentTarget;
+      const items = Array.from(root.querySelectorAll('[role="menuitem"]:not([disabled])'));
+      if (items.length === 0)
+        return;
+      const i = items.indexOf(document.activeElement);
+      let next = i;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        next = i < 0 ? 0 : (i + 1) % items.length;
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        next = i < 0 ? items.length - 1 : (i - 1 + items.length) % items.length;
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        next = 0;
+      } else if (e.key === "End") {
+        e.preventDefault();
+        next = items.length - 1;
+      }
+      (_a = items[next]) == null ? void 0 : _a.focus();
+    },
+    [onKeyDown]
+  );
+  return /* @__PURE__ */ jsx(
+    PopoverContent,
+    {
+      ...rest,
+      showPointer,
+      role: "menu",
+      "aria-orientation": "vertical",
+      className,
+      onKeyDown: handleMenuKeyDown,
+      children
+    }
+  );
+});
+var DropdownMenuItem = React.memo(function DropdownMenuItem2({
+  children,
+  className,
+  onSelect,
+  variant = "default",
+  disabled = false,
+  ripple = true,
+  onClick,
+  type = "button",
+  onPointerDown,
+  ...rest
+}) {
+  const ctx = usePopoverContext("DropdownMenuItem");
+  const rippleEnabled = ripple !== false && !disabled;
+  const rippleApi = useRipple(rippleEnabled);
+  return /* @__PURE__ */ jsxs(
+    "button",
+    {
+      ...rest,
+      type,
+      role: "menuitem",
+      disabled,
+      className: cls(
+        "ds-dropdown-menu__item",
+        variant === "danger" && "ds-dropdown-menu__item--danger",
+        rippleEnabled && "ucs-ripple-parent",
+        className
+      ),
+      onPointerDown: (e) => {
+        rippleApi.onPointerDown(e);
+        onPointerDown == null ? void 0 : onPointerDown(e);
+      },
+      onClick: (e) => {
+        onClick == null ? void 0 : onClick(e);
+        if (disabled)
+          return;
+        onSelect == null ? void 0 : onSelect();
+        ctx.setOpen(false);
+      },
+      children: [
+        rippleApi.RippleOverlay,
+        /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-inner", children })
+      ]
+    }
+  );
+});
 
 // src/components/atoms/Avatar/index.tsx
-import React from "react";
+import React2 from "react";
 
 // src/components/atoms/Avatar/Avatar.config.ts
 var defaultAvatarSize = 40;
@@ -14,7 +406,7 @@ var defaultBackgroundColor = "var(--color-accent-lavender-10)";
 var defaultIconColor = "var(--color-text-on-accent)";
 
 // src/components/atoms/Avatar/index.tsx
-import { jsx, jsxs } from "react/jsx-runtime";
+import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
 var Avatar = ({
   src,
   alt = "",
@@ -73,7 +465,7 @@ var Avatar = ({
     if (fallback)
       return fallback;
     if (resolvedInitials) {
-      return /* @__PURE__ */ jsx(
+      return /* @__PURE__ */ jsx2(
         "span",
         {
           style: {
@@ -87,9 +479,9 @@ var Avatar = ({
       );
     }
     if (!icon)
-      return /* @__PURE__ */ jsx("span", { style: { fontSize: `${size / 2.5}px`, fontWeight: 600 }, children: "?" });
+      return /* @__PURE__ */ jsx2("span", { style: { fontSize: `${size / 2.5}px`, fontWeight: 600 }, children: "?" });
     if (typeof icon === "string") {
-      return /* @__PURE__ */ jsx(
+      return /* @__PURE__ */ jsx2(
         Icon_default,
         {
           src: icon,
@@ -100,8 +492,8 @@ var Avatar = ({
         }
       );
     }
-    if (React.isValidElement(icon)) {
-      return React.cloneElement(icon, {
+    if (React2.isValidElement(icon)) {
+      return React2.cloneElement(icon, {
         color: iconColor,
         width: ((_a = icon.props) == null ? void 0 : _a.width) || calculatedIconSize,
         height: ((_b = icon.props) == null ? void 0 : _b.height) || calculatedIconSize,
@@ -112,7 +504,7 @@ var Avatar = ({
     }
     return icon;
   };
-  return /* @__PURE__ */ jsxs(
+  return /* @__PURE__ */ jsxs2(
     "div",
     {
       className,
@@ -124,7 +516,7 @@ var Avatar = ({
         ...style
       },
       children: [
-        src ? /* @__PURE__ */ jsx(
+        src ? /* @__PURE__ */ jsx2(
           "img",
           {
             src,
@@ -142,7 +534,7 @@ var Avatar = ({
               background: "var(--color-bg-surface)"
             }
           }
-        ) : /* @__PURE__ */ jsx(
+        ) : /* @__PURE__ */ jsx2(
           "div",
           {
             style: {
@@ -160,7 +552,7 @@ var Avatar = ({
             children: renderContent()
           }
         ),
-        status !== "none" && /* @__PURE__ */ jsx("span", { style: getStatusStyle() })
+        status !== "none" && /* @__PURE__ */ jsx2("span", { style: getStatusStyle() })
       ]
     }
   );
@@ -219,33 +611,33 @@ function writeAppSidebarPersist(key, collapsed, expanded) {
 }
 
 // src/components/molecules/AppSidebar/index.tsx
-import React4, { useCallback as useCallback2, useEffect, useId as useId2, useLayoutEffect as useLayoutEffect2, useMemo, useRef as useRef2, useState as useState2 } from "react";
-import { createPortal as createPortal2 } from "react-dom";
+import React5, { useCallback as useCallback3, useEffect as useEffect2, useId as useId3, useLayoutEffect as useLayoutEffect3, useMemo as useMemo2, useRef as useRef3, useState as useState3 } from "react";
+import { createPortal as createPortal3 } from "react-dom";
 
 // src/components/molecules/AppSidebar/AppSidebar.utils.tsx
-import React2 from "react";
-import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
-function cls(...parts) {
+import React3 from "react";
+import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
+function cls2(...parts) {
   return parts.filter(Boolean).join(" ");
 }
-var lockSvg = /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: [
-  /* @__PURE__ */ jsx2("rect", { x: "5", y: "11", width: "14", height: "10", rx: "2", ry: "2" }),
-  /* @__PURE__ */ jsx2("path", { d: "M8 11V7a4 4 0 0 1 8 0v4" })
+var lockSvg = /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: [
+  /* @__PURE__ */ jsx3("rect", { x: "5", y: "11", width: "14", height: "10", rx: "2", ry: "2" }),
+  /* @__PURE__ */ jsx3("path", { d: "M8 11V7a4 4 0 0 1 8 0v4" })
 ] });
-var checkSvg = /* @__PURE__ */ jsx2("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx2("path", { d: "M20 6L9 17l-5-5" }) });
+var checkSvg = /* @__PURE__ */ jsx3("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx3("path", { d: "M20 6L9 17l-5-5" }) });
 function renderTrailingIcon(trailing, size) {
   if (trailing == null || trailing === "none")
     return null;
   if (trailing === "lock") {
-    return /* @__PURE__ */ jsx2(Icon_default, { src: lockSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
+    return /* @__PURE__ */ jsx3(Icon_default, { src: lockSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
   }
   if (trailing === "check") {
-    return /* @__PURE__ */ jsx2(Icon_default, { src: checkSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
+    return /* @__PURE__ */ jsx3(Icon_default, { src: checkSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
   }
-  if (React2.isValidElement(trailing)) {
-    return /* @__PURE__ */ jsx2("span", { className: "app-sidebar__trailing-custom", children: trailing });
+  if (React3.isValidElement(trailing)) {
+    return /* @__PURE__ */ jsx3("span", { className: "app-sidebar__trailing-custom", children: trailing });
   }
-  return /* @__PURE__ */ jsx2(Icon_default, { src: trailing, decorative: true, width: size, height: size, className: "app-sidebar__trailing-icon" });
+  return /* @__PURE__ */ jsx3(Icon_default, { src: trailing, decorative: true, width: size, height: size, className: "app-sidebar__trailing-icon" });
 }
 
 // src/components/molecules/AppSidebar/AppSidebar.tree.ts
@@ -302,15 +694,15 @@ function getInitialExpandedSet(sections) {
 }
 
 // src/components/molecules/AppSidebar/AppSidebarTooltipHost.tsx
-import React3, { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
+import React4, { useCallback as useCallback2, useId as useId2, useLayoutEffect as useLayoutEffect2, useRef as useRef2, useState as useState2 } from "react";
+import { createPortal as createPortal2 } from "react-dom";
+import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
 function AppSidebarTooltipHost({ collapsed, label, children }) {
-  const tipId = useId();
-  const [visible, setVisible] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const hostRef = useRef(null);
-  const position = useCallback(() => {
+  const tipId = useId2();
+  const [visible, setVisible] = useState2(false);
+  const [coords, setCoords] = useState2({ top: 0, left: 0 });
+  const hostRef = useRef2(null);
+  const position = useCallback2(() => {
     const el = hostRef.current;
     if (!el)
       return;
@@ -323,7 +715,7 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
       return { top, left };
     });
   }, []);
-  useLayoutEffect(() => {
+  useLayoutEffect2(() => {
     if (!visible || !collapsed)
       return;
     position();
@@ -338,11 +730,11 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
   if (!collapsed) {
     return children;
   }
-  const child = React3.cloneElement(children, {
+  const child = React4.cloneElement(children, {
     "aria-describedby": visible ? tipId : void 0
   });
-  const tooltip = visible && typeof document !== "undefined" ? createPortal(
-    /* @__PURE__ */ jsx3(
+  const tooltip = visible && typeof document !== "undefined" ? createPortal2(
+    /* @__PURE__ */ jsx4(
       "span",
       {
         id: tipId,
@@ -360,7 +752,7 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
     ),
     document.body
   ) : null;
-  return /* @__PURE__ */ jsxs3(
+  return /* @__PURE__ */ jsxs4(
     "span",
     {
       ref: hostRef,
@@ -401,20 +793,20 @@ function useBelowWidth(collapseBelowWidth, enabled) {
 }
 
 // src/components/molecules/AppSidebar/index.tsx
-import { Fragment, jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
+import { Fragment, jsx as jsx5, jsxs as jsxs5 } from "react/jsx-runtime";
 var NAV_ICON = 24;
 var TRAIL_ICON = 24;
 var FOOTER_ACTION_ICON = 18;
-var chevronRailLeft = /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx4("path", { d: "M15 6l-6 6 6 6" }) });
-var chevronRailRight = /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx4("path", { d: "M9 6l6 6-6 6" }) });
-var chevronNested = /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx4("path", { d: "M9 6l6 6-6 6" }) });
+var chevronRailLeft = /* @__PURE__ */ jsx5("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx5("path", { d: "M15 6l-6 6 6 6" }) });
+var chevronRailRight = /* @__PURE__ */ jsx5("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx5("path", { d: "M9 6l6 6-6 6" }) });
+var chevronNested = /* @__PURE__ */ jsx5("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", "aria-hidden": true, children: /* @__PURE__ */ jsx5("path", { d: "M9 6l6 6-6 6" }) });
 function renderItemIcon(icon) {
   if (icon == null)
     return null;
-  if (React4.isValidElement(icon)) {
-    return /* @__PURE__ */ jsx4("span", { className: "app-sidebar__item-icon", children: icon });
+  if (React5.isValidElement(icon)) {
+    return /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: icon });
   }
-  return /* @__PURE__ */ jsx4("span", { className: "app-sidebar__item-icon", children: /* @__PURE__ */ jsx4(Icon_default, { src: icon, decorative: true, width: NAV_ICON, height: NAV_ICON, color: "currentColor" }) });
+  return /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: /* @__PURE__ */ jsx5(Icon_default, { src: icon, decorative: true, width: NAV_ICON, height: NAV_ICON, color: "currentColor" }) });
 }
 function AppSidebar({
   sections: sectionsProp,
@@ -455,25 +847,25 @@ function AppSidebar({
   ...rest
 }) {
   var _a, _b, _c;
-  const baseId = useId2().replace(/:/g, "");
+  const baseId = useId3().replace(/:/g, "");
   const panelId = `app-sidebar-panel-${baseId}`;
-  const navRef = useRef2(null);
-  const drawerFocusSentinel = useRef2(false);
-  const prevNarrowRef = useRef2(null);
+  const navRef = useRef3(null);
+  const drawerFocusSentinel = useRef3(false);
+  const prevNarrowRef = useRef3(null);
   const isNarrow = useBelowWidth(collapseBelowWidth, responsive);
   const isMobileDrawerViewport = useBelowWidth(drawerOverlayBelowWidth, responsive);
-  const sections = useMemo(
+  const sections = useMemo2(
     () => normalizeSections(sectionsProp, itemsProp),
     [sectionsProp, itemsProp]
   );
-  const visibleFooterActions = useMemo(() => {
+  const visibleFooterActions = useMemo2(() => {
     if (!(footerActions == null ? void 0 : footerActions.length))
       return [];
     if (maxFooterActions == null)
       return footerActions;
     return footerActions.slice(0, Math.max(0, maxFooterActions));
   }, [footerActions, maxFooterActions]);
-  const [uncontrolledCollapsed, setUncontrolledCollapsed] = useState2(() => {
+  const [uncontrolledCollapsed, setUncontrolledCollapsed] = useState3(() => {
     const pr = readAppSidebarPersist(persistenceKey);
     if ((pr == null ? void 0 : pr.collapsed) !== void 0)
       return pr.collapsed;
@@ -485,7 +877,7 @@ function AppSidebar({
   );
   const useViewportFixedChrome = Boolean(fixed);
   const sidebarWidthPx = collapsed ? widthCollapsed : widthExpanded;
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => {
     if (typeof document === "undefined")
       return;
     const root = document.documentElement;
@@ -516,7 +908,7 @@ function AppSidebar({
     sidebarWidthPx,
     widthCollapsed
   ]);
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => {
     if (!responsive || collapsedProp !== void 0)
       return;
     if (prevNarrowRef.current === null) {
@@ -533,21 +925,21 @@ function AppSidebar({
     }
     prevNarrowRef.current = isNarrow;
   }, [isNarrow, responsive, collapsedProp, persistenceKey]);
-  const [uncontrolledActive, setUncontrolledActive] = useState2(defaultActiveItemId);
+  const [uncontrolledActive, setUncontrolledActive] = useState3(defaultActiveItemId);
   const activeItemId = activeItemIdProp !== void 0 ? activeItemIdProp : uncontrolledActive;
-  const [internalExpanded, setInternalExpanded] = useState2(() => {
+  const [internalExpanded, setInternalExpanded] = useState3(() => {
     var _a2, _b2;
     const s = new Set(getInitialExpandedSet(sections));
     defaultExpandedIds == null ? void 0 : defaultExpandedIds.forEach((id) => s.add(id));
     (_b2 = (_a2 = readAppSidebarPersist(persistenceKey)) == null ? void 0 : _a2.expanded) == null ? void 0 : _b2.forEach((id) => s.add(id));
     return s;
   });
-  const expandedSet = useMemo(() => {
+  const expandedSet = useMemo2(() => {
     if (expandedIdsProp != null)
       return new Set(expandedIdsProp);
     return internalExpanded;
   }, [expandedIdsProp, internalExpanded]);
-  useEffect(() => {
+  useEffect2(() => {
     if (!activeItemId)
       return;
     const parents = findParentIdsForActiveItem(sections, activeItemId);
@@ -578,7 +970,7 @@ function AppSidebar({
       return changed ? n : prev;
     });
   }, [activeItemId, sections, expandedIdsProp, onExpandedChange]);
-  useEffect(() => {
+  useEffect2(() => {
     if (!persistenceKey)
       return;
     if (typeof window === "undefined")
@@ -593,7 +985,7 @@ function AppSidebar({
     expandedIdsProp,
     internalExpanded
   ]);
-  const setCollapsed = useCallback2(
+  const setCollapsed = useCallback3(
     (next) => {
       if (collapsedProp === void 0)
         setUncontrolledCollapsed(next);
@@ -601,7 +993,7 @@ function AppSidebar({
     },
     [collapsedProp, onCollapsedChange]
   );
-  useEffect(() => {
+  useEffect2(() => {
     if (!showDrawerOverlay || !lockBodyScrollWhenDrawer || typeof document === "undefined")
       return;
     const prev = document.body.style.overflow;
@@ -610,7 +1002,7 @@ function AppSidebar({
       document.body.style.overflow = prev;
     };
   }, [showDrawerOverlay, lockBodyScrollWhenDrawer]);
-  useEffect(() => {
+  useEffect2(() => {
     if (!showDrawerOverlay || typeof document === "undefined")
       return;
     const onKey = (e) => {
@@ -622,7 +1014,7 @@ function AppSidebar({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [showDrawerOverlay, setCollapsed]);
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => {
     if (!showDrawerOverlay) {
       drawerFocusSentinel.current = false;
       return;
@@ -642,7 +1034,7 @@ function AppSidebar({
     });
     return () => cancelAnimationFrame(id);
   }, [showDrawerOverlay]);
-  const toggleExpand = useCallback2(
+  const toggleExpand = useCallback3(
     (id) => {
       if (expandedIdsProp != null) {
         const n = new Set(expandedIdsProp);
@@ -664,7 +1056,7 @@ function AppSidebar({
     },
     [expandedIdsProp, onExpandedChange]
   );
-  const handleSelect = useCallback2(
+  const handleSelect = useCallback3(
     (item) => {
       var _a2;
       if (item.disabled)
@@ -683,15 +1075,15 @@ function AppSidebar({
   const renderLeaf = (item, level, opts) => {
     const isActive = activeItemId === item.id;
     const trailing = renderTrailingIcon(item.trailing, TRAIL_ICON);
-    const inactiveCls = cls(
+    const inactiveCls = cls2(
       "app-sidebar__link",
       opts.nested && "app-sidebar__link--nested",
       isActive && "app-sidebar__link--active"
     );
-    const inner = /* @__PURE__ */ jsxs4(Fragment, { children: [
+    const inner = /* @__PURE__ */ jsxs5(Fragment, { children: [
       renderItemIcon(item.icon),
-      /* @__PURE__ */ jsx4("span", { className: "app-sidebar__item-label", children: item.label }),
-      trailing ? /* @__PURE__ */ jsx4(
+      /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-label", children: item.label }),
+      trailing ? /* @__PURE__ */ jsx5(
         "span",
         {
           className: "app-sidebar__trailing-wrap",
@@ -700,7 +1092,7 @@ function AppSidebar({
         }
       ) : null
     ] });
-    const control = item.href && !item.disabled ? /* @__PURE__ */ jsx4(
+    const control = item.href && !item.disabled ? /* @__PURE__ */ jsx5(
       "a",
       {
         href: item.href,
@@ -715,7 +1107,7 @@ function AppSidebar({
         },
         children: inner
       }
-    ) : /* @__PURE__ */ jsx4(
+    ) : /* @__PURE__ */ jsx5(
       "button",
       {
         type: "button",
@@ -726,7 +1118,7 @@ function AppSidebar({
         children: inner
       }
     );
-    return /* @__PURE__ */ jsx4(AppSidebarTooltipHost, { collapsed, label: item.label, children: control });
+    return /* @__PURE__ */ jsx5(AppSidebarTooltipHost, { collapsed, label: item.label, children: control });
   };
   const renderBranch = (item, level) => {
     const hasChildren = !!(item.children && item.children.length > 0);
@@ -737,18 +1129,18 @@ function AppSidebar({
       return renderLeaf(item, level, { nested: level > 0 });
     }
     const trailing = renderTrailingIcon(item.trailing, TRAIL_ICON);
-    const parentInner = /* @__PURE__ */ jsxs4(Fragment, { children: [
+    const parentInner = /* @__PURE__ */ jsxs5(Fragment, { children: [
       renderItemIcon(item.icon),
-      /* @__PURE__ */ jsx4("span", { className: "app-sidebar__item-label", children: item.label }),
-      /* @__PURE__ */ jsx4(
+      /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-label", children: item.label }),
+      /* @__PURE__ */ jsx5(
         "span",
         {
-          className: cls("app-sidebar__chevron", isOpen && "app-sidebar__chevron--open"),
+          className: cls2("app-sidebar__chevron", isOpen && "app-sidebar__chevron--open"),
           "aria-hidden": true,
           children: chevronNested
         }
       ),
-      trailing ? /* @__PURE__ */ jsx4(
+      trailing ? /* @__PURE__ */ jsx5(
         "span",
         {
           className: "app-sidebar__trailing-wrap",
@@ -757,11 +1149,11 @@ function AppSidebar({
         }
       ) : null
     ] });
-    const parentBtn = /* @__PURE__ */ jsx4(
+    const parentBtn = /* @__PURE__ */ jsx5(
       "button",
       {
         type: "button",
-        className: cls(
+        className: cls2(
           "app-sidebar__parent",
           level > 0 && "app-sidebar__link--nested",
           isActive && "app-sidebar__parent--active"
@@ -777,21 +1169,21 @@ function AppSidebar({
         children: parentInner
       }
     );
-    return /* @__PURE__ */ jsxs4(Fragment, { children: [
-      /* @__PURE__ */ jsx4(AppSidebarTooltipHost, { collapsed, label: item.label, children: parentBtn }),
-      isOpen && !collapsed ? /* @__PURE__ */ jsxs4("ul", { id: submenuId, className: "app-sidebar__list app-sidebar__list--nested", role: "list", children: [
+    return /* @__PURE__ */ jsxs5(Fragment, { children: [
+      /* @__PURE__ */ jsx5(AppSidebarTooltipHost, { collapsed, label: item.label, children: parentBtn }),
+      isOpen && !collapsed ? /* @__PURE__ */ jsxs5("ul", { id: submenuId, className: "app-sidebar__list app-sidebar__list--nested", role: "list", children: [
         item.children.map((child) => {
           var _a2;
-          return /* @__PURE__ */ jsx4("li", { className: "app-sidebar__item", children: !((_a2 = child.children) == null ? void 0 : _a2.length) ? renderLeaf(child, level + 1, { nested: true }) : renderBranch(child, level + 1) }, child.id);
+          return /* @__PURE__ */ jsx5("li", { className: "app-sidebar__item", children: !((_a2 = child.children) == null ? void 0 : _a2.length) ? renderLeaf(child, level + 1, { nested: true }) : renderBranch(child, level + 1) }, child.id);
         }),
-        item.createAction ? /* @__PURE__ */ jsx4("li", { className: "app-sidebar__item", children: /* @__PURE__ */ jsxs4(
+        item.createAction ? /* @__PURE__ */ jsx5("li", { className: "app-sidebar__item", children: /* @__PURE__ */ jsxs5(
           "button",
           {
             type: "button",
             className: "app-sidebar__create",
             onClick: item.createAction.onClick,
             children: [
-              item.createAction.icon ? /* @__PURE__ */ jsx4("span", { className: "app-sidebar__item-icon", children: React4.isValidElement(item.createAction.icon) ? item.createAction.icon : /* @__PURE__ */ jsx4(
+              item.createAction.icon ? /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: React5.isValidElement(item.createAction.icon) ? item.createAction.icon : /* @__PURE__ */ jsx5(
                 Icon_default,
                 {
                   src: item.createAction.icon,
@@ -800,35 +1192,35 @@ function AppSidebar({
                   height: 20,
                   color: "currentColor"
                 }
-              ) }) : /* @__PURE__ */ jsx4("span", { "aria-hidden": true, className: "app-sidebar__item-label", style: { flex: "none", width: 24 }, children: "+" }),
-              /* @__PURE__ */ jsx4("span", { children: item.createAction.label })
+              ) }) : /* @__PURE__ */ jsx5("span", { "aria-hidden": true, className: "app-sidebar__item-label", style: { flex: "none", width: 24 }, children: "+" }),
+              /* @__PURE__ */ jsx5("span", { children: item.createAction.label })
             ]
           }
         ) }) : null
       ] }) : null
     ] });
   };
-  const renderSection = (section, idx) => /* @__PURE__ */ jsxs4("div", { className: "app-sidebar__section", "data-tier": section.tier, "data-grouping": section.grouping, children: [
-    idx > 0 && section.grouping === "divider" ? /* @__PURE__ */ jsx4("div", { role: "separator", className: "app-sidebar__section-divider" }) : null,
-    section.grouping === "label" && section.label ? /* @__PURE__ */ jsx4("div", { className: "app-sidebar__section-label", children: section.label }) : null,
-    /* @__PURE__ */ jsx4("ul", { className: "app-sidebar__list", role: "list", children: section.items.map((item) => {
+  const renderSection = (section, idx) => /* @__PURE__ */ jsxs5("div", { className: "app-sidebar__section", "data-tier": section.tier, "data-grouping": section.grouping, children: [
+    idx > 0 && section.grouping === "divider" ? /* @__PURE__ */ jsx5("div", { role: "separator", className: "app-sidebar__section-divider" }) : null,
+    section.grouping === "label" && section.label ? /* @__PURE__ */ jsx5("div", { className: "app-sidebar__section-label", children: section.label }) : null,
+    /* @__PURE__ */ jsx5("ul", { className: "app-sidebar__list", role: "list", children: section.items.map((item) => {
       var _a2;
-      return /* @__PURE__ */ jsx4("li", { className: "app-sidebar__item", children: !((_a2 = item.children) == null ? void 0 : _a2.length) ? renderLeaf(item, 0, {}) : renderBranch(item, 0) }, item.id);
+      return /* @__PURE__ */ jsx5("li", { className: "app-sidebar__item", children: !((_a2 = item.children) == null ? void 0 : _a2.length) ? renderLeaf(item, 0, {}) : renderBranch(item, 0) }, item.id);
     }) })
   ] }, section.id);
   const roleLine = (_a = user == null ? void 0 : user.role) != null ? _a : user == null ? void 0 : user.description;
   const profileTip = user && collapsed ? [user.name, roleLine].filter(Boolean).join(" \xB7 ") : "";
   let profileWrapped = null;
   if (user) {
-    const body = /* @__PURE__ */ jsxs4(Fragment, { children: [
-      /* @__PURE__ */ jsx4("div", { className: "app-sidebar__profile-avatar", children: user.avatar ? user.avatar : /* @__PURE__ */ jsx4(Avatar_default, { size: 34, shape: "circle", name: user.name, ...user.avatarProps }) }),
-      /* @__PURE__ */ jsxs4("div", { className: "app-sidebar__profile-text", children: [
-        /* @__PURE__ */ jsx4("p", { className: "app-sidebar__profile-name", children: user.name }),
-        roleLine ? /* @__PURE__ */ jsx4("p", { className: "app-sidebar__profile-role", children: roleLine }) : null
+    const body = /* @__PURE__ */ jsxs5(Fragment, { children: [
+      /* @__PURE__ */ jsx5("div", { className: "app-sidebar__profile-avatar", children: user.avatar ? user.avatar : /* @__PURE__ */ jsx5(Avatar_default, { size: 34, shape: "circle", name: user.name, ...user.avatarProps }) }),
+      /* @__PURE__ */ jsxs5("div", { className: "app-sidebar__profile-text", children: [
+        /* @__PURE__ */ jsx5("p", { className: "app-sidebar__profile-name", children: user.name }),
+        roleLine ? /* @__PURE__ */ jsx5("p", { className: "app-sidebar__profile-role", children: roleLine }) : null
       ] }),
-      /* @__PURE__ */ jsx4("span", { className: "app-sidebar__profile-arrow", "aria-hidden": true, children: chevronNested })
+      /* @__PURE__ */ jsx5("span", { className: "app-sidebar__profile-arrow", "aria-hidden": true, children: chevronNested })
     ] });
-    const control = user.onClick ? /* @__PURE__ */ jsx4(
+    const control = user.onClick ? /* @__PURE__ */ jsx5(
       "button",
       {
         type: "button",
@@ -837,7 +1229,7 @@ function AppSidebar({
         "aria-label": (_b = user.profileRowLabel) != null ? _b : `${user.name}, open account menu`,
         children: body
       }
-    ) : /* @__PURE__ */ jsx4(
+    ) : /* @__PURE__ */ jsx5(
       "div",
       {
         className: "app-sidebar__profile app-sidebar__profile--static",
@@ -846,7 +1238,7 @@ function AppSidebar({
         children: body
       }
     );
-    profileWrapped = collapsed && profileTip ? /* @__PURE__ */ jsx4(AppSidebarTooltipHost, { collapsed: true, label: profileTip, children: control }) : control;
+    profileWrapped = collapsed && profileTip ? /* @__PURE__ */ jsx5(AppSidebarTooltipHost, { collapsed: true, label: profileTip, children: control }) : control;
   }
   const rootStyle = mergeSidebarTokensStyle(tokens, {
     width,
@@ -854,8 +1246,8 @@ function AppSidebar({
     maxWidth: width,
     ...style
   });
-  const backdrop = showDrawerOverlay && typeof document !== "undefined" ? createPortal2(
-    /* @__PURE__ */ jsx4(
+  const backdrop = showDrawerOverlay && typeof document !== "undefined" ? createPortal3(
+    /* @__PURE__ */ jsx5(
       "button",
       {
         type: "button",
@@ -866,14 +1258,14 @@ function AppSidebar({
     ),
     document.body
   ) : null;
-  return /* @__PURE__ */ jsxs4(Fragment, { children: [
+  return /* @__PURE__ */ jsxs5(Fragment, { children: [
     backdrop,
-    /* @__PURE__ */ jsxs4(
+    /* @__PURE__ */ jsxs5(
       "aside",
       {
         ...rest,
         id: panelId,
-        className: cls(
+        className: cls2(
           "app-sidebar",
           useViewportFixedChrome && "app-sidebar--fixed",
           collapsed && "app-sidebar--collapsed",
@@ -884,8 +1276,8 @@ function AppSidebar({
         ),
         style: rootStyle,
         children: [
-          header ? /* @__PURE__ */ jsxs4("div", { className: cls("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: [
-            showCollapseToggle ? /* @__PURE__ */ jsx4(
+          header ? /* @__PURE__ */ jsxs5("div", { className: cls2("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: [
+            showCollapseToggle ? /* @__PURE__ */ jsx5(
               "button",
               {
                 type: "button",
@@ -894,20 +1286,20 @@ function AppSidebar({
                 "aria-expanded": !collapsed,
                 "aria-controls": isNarrow ? panelId : void 0,
                 onClick: () => setCollapsed(!collapsed),
-                children: /* @__PURE__ */ jsx4(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
+                children: /* @__PURE__ */ jsx5(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
               }
             ) : null,
-            /* @__PURE__ */ jsxs4("div", { className: "app-sidebar__header-body", children: [
-              /* @__PURE__ */ jsxs4("div", { className: "app-sidebar__header-main", children: [
-                header.icon ? /* @__PURE__ */ jsx4("div", { className: "app-sidebar__header-icon", children: header.icon }) : null,
-                /* @__PURE__ */ jsxs4("div", { className: "app-sidebar__header-text", children: [
-                  /* @__PURE__ */ jsx4("p", { className: "app-sidebar__title", children: header.title }),
-                  header.subtitle ? /* @__PURE__ */ jsx4("p", { className: "app-sidebar__subtitle", children: header.subtitle }) : null
+            /* @__PURE__ */ jsxs5("div", { className: "app-sidebar__header-body", children: [
+              /* @__PURE__ */ jsxs5("div", { className: "app-sidebar__header-main", children: [
+                header.icon ? /* @__PURE__ */ jsx5("div", { className: "app-sidebar__header-icon", children: header.icon }) : null,
+                /* @__PURE__ */ jsxs5("div", { className: "app-sidebar__header-text", children: [
+                  /* @__PURE__ */ jsx5("p", { className: "app-sidebar__title", children: header.title }),
+                  header.subtitle ? /* @__PURE__ */ jsx5("p", { className: "app-sidebar__subtitle", children: header.subtitle }) : null
                 ] })
               ] }),
-              header.trailing ? /* @__PURE__ */ jsx4("div", { className: cls("app-sidebar__header-trailing", classNames == null ? void 0 : classNames.headerTrailing), children: header.trailing }) : null
+              header.trailing ? /* @__PURE__ */ jsx5("div", { className: cls2("app-sidebar__header-trailing", classNames == null ? void 0 : classNames.headerTrailing), children: header.trailing }) : null
             ] })
-          ] }) : showCollapseToggle ? /* @__PURE__ */ jsx4("div", { className: cls("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: /* @__PURE__ */ jsx4(
+          ] }) : showCollapseToggle ? /* @__PURE__ */ jsx5("div", { className: cls2("app-sidebar__header", classNames == null ? void 0 : classNames.header), children: /* @__PURE__ */ jsx5(
             "button",
             {
               type: "button",
@@ -916,36 +1308,36 @@ function AppSidebar({
               "aria-expanded": !collapsed,
               "aria-controls": isNarrow ? panelId : void 0,
               onClick: () => setCollapsed(!collapsed),
-              children: /* @__PURE__ */ jsx4(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
+              children: /* @__PURE__ */ jsx5(Icon_default, { src: collapsed ? chevronRailRight : chevronRailLeft, decorative: true, width: 22, height: 22 })
             }
           ) }) : null,
-          /* @__PURE__ */ jsx4(
+          /* @__PURE__ */ jsx5(
             "nav",
             {
               ref: navRef,
-              className: cls("app-sidebar__nav", classNames == null ? void 0 : classNames.nav),
+              className: cls2("app-sidebar__nav", classNames == null ? void 0 : classNames.nav),
               "aria-label": navLabel,
               children: sections.map((s, i) => renderSection(s, i))
             }
           ),
-          footerSlot ? /* @__PURE__ */ jsx4("div", { className: cls("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: footerSlot }) : user || visibleFooterActions.length > 0 ? /* @__PURE__ */ jsx4("div", { className: cls("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: /* @__PURE__ */ jsxs4(
+          footerSlot ? /* @__PURE__ */ jsx5("div", { className: cls2("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: footerSlot }) : user || visibleFooterActions.length > 0 ? /* @__PURE__ */ jsx5("div", { className: cls2("app-sidebar__footer", classNames == null ? void 0 : classNames.footer), children: /* @__PURE__ */ jsxs5(
             "div",
             {
-              className: cls(
+              className: cls2(
                 "app-sidebar__footer-row",
                 footerLayout === "utilitiesFirst" && "app-sidebar__footer-row--utilities-first",
                 classNames == null ? void 0 : classNames.footerRow
               ),
               children: [
-                profileWrapped ? /* @__PURE__ */ jsx4("div", { className: cls("app-sidebar__footer-profile", classNames == null ? void 0 : classNames.footerProfile), children: profileWrapped }) : null,
-                visibleFooterActions.length > 0 ? /* @__PURE__ */ jsx4(
+                profileWrapped ? /* @__PURE__ */ jsx5("div", { className: cls2("app-sidebar__footer-profile", classNames == null ? void 0 : classNames.footerProfile), children: profileWrapped }) : null,
+                visibleFooterActions.length > 0 ? /* @__PURE__ */ jsx5(
                   "div",
                   {
-                    className: cls("app-sidebar__footer-utilities", classNames == null ? void 0 : classNames.footerUtilities),
+                    className: cls2("app-sidebar__footer-utilities", classNames == null ? void 0 : classNames.footerUtilities),
                     role: "group",
                     "aria-label": "Utility actions",
                     children: visibleFooterActions.map((action) => {
-                      const iconNode = React4.isValidElement(action.icon) ? action.icon : /* @__PURE__ */ jsx4(
+                      const iconNode = React5.isValidElement(action.icon) ? action.icon : /* @__PURE__ */ jsx5(
                         Icon_default,
                         {
                           src: action.icon,
@@ -955,7 +1347,7 @@ function AppSidebar({
                           color: "currentColor"
                         }
                       );
-                      const node = action.href ? /* @__PURE__ */ jsx4(
+                      const node = action.href ? /* @__PURE__ */ jsx5(
                         "a",
                         {
                           href: action.href,
@@ -964,7 +1356,7 @@ function AppSidebar({
                           onClick: action.onClick,
                           children: iconNode
                         }
-                      ) : /* @__PURE__ */ jsx4(
+                      ) : /* @__PURE__ */ jsx5(
                         "button",
                         {
                           type: "button",
@@ -974,7 +1366,7 @@ function AppSidebar({
                           children: iconNode
                         }
                       );
-                      return /* @__PURE__ */ jsx4(AppSidebarTooltipHost, { collapsed, label: action.label, children: node }, action.id);
+                      return /* @__PURE__ */ jsx5(AppSidebarTooltipHost, { collapsed, label: action.label, children: node }, action.id);
                     })
                   }
                 ) : null
@@ -1015,17 +1407,17 @@ function mergeTopbarTokensStyle(tokens, base) {
 }
 
 // src/components/molecules/AppTopbar/index.tsx
-import { useEffect as useEffect3, useId as useId3, useMemo as useMemo2, useRef as useRef4, useState as useState3 } from "react";
+import { useEffect as useEffect4, useId as useId4, useMemo as useMemo3, useRef as useRef5, useState as useState4 } from "react";
 
 // src/components/molecules/AppTopbar/AppTopbarMenu.tsx
-import React5, { useEffect as useEffect2, useLayoutEffect as useLayoutEffect3, useRef as useRef3 } from "react";
-import { createPortal as createPortal3 } from "react-dom";
-import { Fragment as Fragment2, jsx as jsx5, jsxs as jsxs5 } from "react/jsx-runtime";
-function cls2(...parts) {
+import React6, { useEffect as useEffect3, useLayoutEffect as useLayoutEffect4, useRef as useRef4 } from "react";
+import { createPortal as createPortal4 } from "react-dom";
+import { Fragment as Fragment2, jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
+function cls3(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
-  const menuRef = useRef3(null);
+  const menuRef = useRef4(null);
   const positionMenu = () => {
     const el = triggerRef.current;
     const menu = menuRef.current;
@@ -1047,12 +1439,12 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
     menu.style.zIndex = "70";
     menu.style.maxHeight = `${Math.max(120, maxH)}px`;
   };
-  useLayoutEffect3(() => {
+  useLayoutEffect4(() => {
     if (!open)
       return;
     positionMenu();
   }, [open]);
-  useEffect2(() => {
+  useEffect3(() => {
     if (!open)
       return;
     const onScrollResize = () => positionMenu();
@@ -1063,7 +1455,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
       window.removeEventListener("resize", onScrollResize);
     };
   }, [open]);
-  useEffect2(() => {
+  useEffect3(() => {
     if (!open)
       return;
     const onDoc = (e) => {
@@ -1086,7 +1478,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
       document.removeEventListener("keydown", onKey);
     };
   }, [open, onClose, triggerRef]);
-  useEffect2(() => {
+  useEffect3(() => {
     if (!open || !menuRef.current)
       return;
     const first = menuRef.current.querySelector(
@@ -1096,21 +1488,21 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
   }, [open]);
   if (!open || typeof document === "undefined")
     return null;
-  return createPortal3(
-    /* @__PURE__ */ jsx5(
+  return createPortal4(
+    /* @__PURE__ */ jsx6(
       "div",
       {
         ref: menuRef,
         id,
         role: "menu",
         "aria-orientation": "vertical",
-        className: cls2("app-topbar-menu", theme === "dark" && "app-topbar-menu--dark"),
+        className: cls3("app-topbar-menu", theme === "dark" && "app-topbar-menu--dark"),
         children: items.map((item) => {
-          const content = /* @__PURE__ */ jsxs5(Fragment2, { children: [
-            item.icon ? /* @__PURE__ */ jsx5("span", { className: "app-topbar-menu__icon", "aria-hidden": true, children: /* @__PURE__ */ jsx5(Icon_default, { src: item.icon, width: 18, height: 18, color: "currentColor", decorative: true }) }) : null,
-            /* @__PURE__ */ jsx5("span", { className: "app-topbar-menu__label", children: item.label })
+          const content = /* @__PURE__ */ jsxs6(Fragment2, { children: [
+            item.icon ? /* @__PURE__ */ jsx6("span", { className: "app-topbar-menu__icon", "aria-hidden": true, children: /* @__PURE__ */ jsx6(Icon_default, { src: item.icon, width: 18, height: 18, color: "currentColor", decorative: true }) }) : null,
+            /* @__PURE__ */ jsx6("span", { className: "app-topbar-menu__label", children: item.label })
           ] });
-          const className = cls2(
+          const className = cls3(
             "app-topbar-menu__item",
             item.destructive && "app-topbar-menu__item--destructive",
             item.disabled && "app-topbar-menu__item--disabled"
@@ -1120,7 +1512,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
             className,
             tabIndex: item.disabled ? -1 : void 0
           };
-          const node = item.href && !item.disabled ? /* @__PURE__ */ jsx5(
+          const node = item.href && !item.disabled ? /* @__PURE__ */ jsx6(
             "a",
             {
               ...common,
@@ -1130,7 +1522,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
               },
               children: content
             }
-          ) : /* @__PURE__ */ jsx5(
+          ) : /* @__PURE__ */ jsx6(
             "button",
             {
               ...common,
@@ -1146,7 +1538,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
               children: content
             }
           );
-          return /* @__PURE__ */ jsx5(React5.Fragment, { children: node }, item.id);
+          return /* @__PURE__ */ jsx6(React6.Fragment, { children: node }, item.id);
         })
       }
     ),
@@ -1155,13 +1547,13 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
 }
 
 // src/components/molecules/AppTopbar/index.tsx
-import { Fragment as Fragment3, jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
-var TOPBAR_SEARCH_ICON = /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", "aria-hidden": true, children: [
-  /* @__PURE__ */ jsx6("circle", { cx: "11", cy: "11", r: "7", stroke: "currentColor", strokeWidth: "2" }),
-  /* @__PURE__ */ jsx6("path", { d: "M20 20l-4.3-4.3", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
+import { Fragment as Fragment3, jsx as jsx7, jsxs as jsxs7 } from "react/jsx-runtime";
+var TOPBAR_SEARCH_ICON = /* @__PURE__ */ jsxs7("svg", { viewBox: "0 0 24 24", width: 18, height: 18, fill: "none", "aria-hidden": true, children: [
+  /* @__PURE__ */ jsx7("circle", { cx: "11", cy: "11", r: "7", stroke: "currentColor", strokeWidth: "2" }),
+  /* @__PURE__ */ jsx7("path", { d: "M20 20l-4.3-4.3", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" })
 ] });
-var MENU_ICON = /* @__PURE__ */ jsx6("svg", { viewBox: "0 0 20 20", width: 20, height: 20, fill: "none", "aria-hidden": true, children: /* @__PURE__ */ jsx6("path", { d: "M3 5h14M3 10h14M3 15h14", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" }) });
-function cls3(...parts) {
+var MENU_ICON = /* @__PURE__ */ jsx7("svg", { viewBox: "0 0 20 20", width: 20, height: 20, fill: "none", "aria-hidden": true, children: /* @__PURE__ */ jsx7("path", { d: "M3 5h14M3 10h14M3 15h14", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" }) });
+function cls4(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 function actionAriaLabel(action) {
@@ -1196,27 +1588,29 @@ var AppTopbar = ({
   className,
   classNames
 }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
-  const rootId = useId3();
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p;
+  const rootId = useId4();
   const baseId = rootId.replace(/[^a-zA-Z0-9_-]/g, "");
   const searchInputId = (_a = search == null ? void 0 : search.inputId) != null ? _a : `app-topbar-search-${baseId}`;
-  const menuDomId = useMemo2(() => `app-topbar-menu-root-${baseId}`, [baseId]);
+  const menuDomId = useMemo3(() => `app-topbar-menu-root-${baseId}`, [baseId]);
   const isNarrow = useBelowWidth(collapseCenterBelowWidth, responsive);
   const hasMenuItems = Boolean(mobileMenuItems && mobileMenuItems.length > 0);
   const showHamburger = isNarrow && (hasMenuItems || Boolean(onMobileMenuClick));
   const hasCenterContent = centerSlot != null || search != null;
   const hideCenterColumn = isNarrow && search != null && centerSlot == null;
   const showCenterCell = hasCenterContent && !hideCenterColumn;
-  const [mobileSearchOpen, setMobileSearchOpen] = useState3(false);
-  const [menuOpen, setMenuOpen] = useState3(false);
-  const menuTriggerWrapRef = useRef4(null);
-  useEffect3(() => {
+  const [mobileSearchOpen, setMobileSearchOpen] = useState4(false);
+  const [menuOpen, setMenuOpen] = useState4(false);
+  const menuTriggerWrapRef = useRef5(null);
+  const hasProfileMenu = Boolean((profile == null ? void 0 : profile.menuItems) && profile.menuItems.length > 0);
+  const [profileMenuOpen, setProfileMenuOpen] = useState4(false);
+  useEffect4(() => {
     if (!isNarrow) {
       setMobileSearchOpen(false);
       setMenuOpen(false);
     }
   }, [isNarrow]);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!mobileSearchOpen)
       return;
     const onKey = (e) => {
@@ -1226,7 +1620,7 @@ var AppTopbar = ({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileSearchOpen]);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!mobileSearchOpen || !hideCenterColumn)
       return;
     const id = requestAnimationFrame(() => {
@@ -1235,7 +1629,7 @@ var AppTopbar = ({
     });
     return () => cancelAnimationFrame(id);
   }, [mobileSearchOpen, hideCenterColumn, searchInputId]);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!search)
       return;
     const onKey = (e) => {
@@ -1280,7 +1674,7 @@ var AppTopbar = ({
   const rootStyle = mergeTopbarTokensStyle(tokens, {
     ...sticky ? { zIndex } : {}
   });
-  const searchField = search ? /* @__PURE__ */ jsx6(
+  const searchField = search ? /* @__PURE__ */ jsx7(
     TextInputSearch_default,
     {
       id: searchInputId,
@@ -1302,17 +1696,18 @@ var AppTopbar = ({
   ) : null;
   const handleHamburgerClick = () => {
     setMobileSearchOpen(false);
+    setProfileMenuOpen(false);
     if (hasMenuItems) {
       setMenuOpen((o) => !o);
       return;
     }
     onMobileMenuClick == null ? void 0 : onMobileMenuClick();
   };
-  return /* @__PURE__ */ jsxs6(Fragment3, { children: [
-    /* @__PURE__ */ jsxs6(
+  return /* @__PURE__ */ jsxs7(Fragment3, { children: [
+    /* @__PURE__ */ jsxs7(
       "header",
       {
-        className: cls3(
+        className: cls4(
           "app-topbar",
           theme === "dark" && "app-topbar--dark",
           sticky && "app-topbar--sticky",
@@ -1324,9 +1719,9 @@ var AppTopbar = ({
         ),
         style: rootStyle,
         children: [
-          /* @__PURE__ */ jsxs6("div", { className: cls3("app-topbar__inner", classNames == null ? void 0 : classNames.inner), children: [
-            /* @__PURE__ */ jsxs6("div", { className: cls3("app-topbar__left", classNames == null ? void 0 : classNames.left), children: [
-              showHamburger ? /* @__PURE__ */ jsx6("div", { ref: menuTriggerWrapRef, className: "app-topbar__menu", children: /* @__PURE__ */ jsx6(
+          /* @__PURE__ */ jsxs7("div", { className: cls4("app-topbar__inner", classNames == null ? void 0 : classNames.inner), children: [
+            /* @__PURE__ */ jsxs7("div", { className: cls4("app-topbar__left", classNames == null ? void 0 : classNames.left), children: [
+              showHamburger ? /* @__PURE__ */ jsx7("div", { ref: menuTriggerWrapRef, className: "app-topbar__menu", children: /* @__PURE__ */ jsx7(
                 Button_default,
                 {
                   type: "button",
@@ -1343,12 +1738,12 @@ var AppTopbar = ({
                 }
               ) }) : null,
               leftSlot,
-              /* @__PURE__ */ jsx6("div", { className: "app-topbar__context", children: /* @__PURE__ */ jsx6(TitleTag, { className: cls3("app-topbar__title", classNames == null ? void 0 : classNames.title), children: title }) })
+              /* @__PURE__ */ jsx7("div", { className: "app-topbar__context", children: /* @__PURE__ */ jsx7(TitleTag, { className: cls4("app-topbar__title", classNames == null ? void 0 : classNames.title), children: title }) })
             ] }),
-            showCenterCell ? /* @__PURE__ */ jsx6(
+            showCenterCell ? /* @__PURE__ */ jsx7(
               "div",
               {
-                className: cls3(
+                className: cls4(
                   "app-topbar__center",
                   search && !centerSlot && "app-topbar__center--expands",
                   classNames == null ? void 0 : classNames.center
@@ -1356,8 +1751,8 @@ var AppTopbar = ({
                 children: centerSlot != null ? centerSlot : searchField
               }
             ) : null,
-            /* @__PURE__ */ jsxs6("div", { className: cls3("app-topbar__right", classNames == null ? void 0 : classNames.right), children: [
-              hideCenterColumn && search ? /* @__PURE__ */ jsx6(
+            /* @__PURE__ */ jsxs7("div", { className: cls4("app-topbar__right", classNames == null ? void 0 : classNames.right), children: [
+              hideCenterColumn && search ? /* @__PURE__ */ jsx7(
                 Button_default,
                 {
                   type: "button",
@@ -1379,8 +1774,8 @@ var AppTopbar = ({
                 const count = action.badgeCount;
                 const hasBadge = showDot || count != null && count > 0;
                 const showCountChip = hasBadge && !showDot && count != null && count > 0;
-                return /* @__PURE__ */ jsxs6("span", { className: "app-topbar__action-wrap", children: [
-                  /* @__PURE__ */ jsx6(
+                return /* @__PURE__ */ jsxs7("span", { className: "app-topbar__action-wrap", children: [
+                  /* @__PURE__ */ jsx7(
                     Button_default,
                     {
                       type: "button",
@@ -1395,41 +1790,70 @@ var AppTopbar = ({
                       onClick: action.onClick
                     }
                   ),
-                  hasBadge ? /* @__PURE__ */ jsx6(
+                  hasBadge ? /* @__PURE__ */ jsx7(
                     "span",
                     {
-                      className: cls3("app-topbar__badge", showCountChip && "app-topbar__badge--count"),
+                      className: cls4("app-topbar__badge", showCountChip && "app-topbar__badge--count"),
                       "aria-hidden": true,
                       children: showCountChip ? count > 99 ? "99+" : count : null
                     }
                   ) : null
                 ] }, action.id);
               }),
-              profile ? profile.onClick ? /* @__PURE__ */ jsx6(
+              profile && hasProfileMenu ? /* @__PURE__ */ jsxs7(DropdownMenu, { open: profileMenuOpen, onOpenChange: setProfileMenuOpen, placement: "bottom-end", children: [
+                /* @__PURE__ */ jsx7(
+                  DropdownMenuTrigger,
+                  {
+                    className: "app-topbar__profile",
+                    "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
+                    onClick: () => setMenuOpen(false),
+                    children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ jsx7(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
+                  }
+                ),
+                /* @__PURE__ */ jsx7(DropdownMenuContent, { showPointer: true, className: "app-topbar__profile-menu", children: profile.menuItems.map((item) => /* @__PURE__ */ jsxs7(
+                  DropdownMenuItem,
+                  {
+                    variant: item.destructive ? "danger" : "default",
+                    disabled: item.disabled,
+                    onSelect: () => {
+                      var _a2;
+                      if (item.href && typeof window !== "undefined")
+                        window.location.assign(item.href);
+                      else
+                        (_a2 = item.onClick) == null ? void 0 : _a2.call(item);
+                    },
+                    children: [
+                      item.icon ? /* @__PURE__ */ jsx7("span", { className: "ds-dropdown-menu__icon", "aria-hidden": true, children: /* @__PURE__ */ jsx7(Icon_default, { src: item.icon, width: 16, height: 16, color: "currentColor", decorative: true }) }) : null,
+                      item.label
+                    ]
+                  },
+                  item.id
+                )) })
+              ] }) : profile ? profile.onClick ? /* @__PURE__ */ jsx7(
                 "button",
                 {
                   type: "button",
                   className: "app-topbar__profile",
-                  "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
+                  "aria-label": (_j = profile.menuLabel) != null ? _j : profile.name ? `Account menu for ${profile.name}` : "Account menu",
                   onClick: profile.onClick,
-                  children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ jsx6(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
+                  children: (_l = profile.avatar) != null ? _l : /* @__PURE__ */ jsx7(Avatar_default, { size: 32, shape: "circle", name: (_k = profile.name) != null ? _k : "User", ...profile.avatarProps })
                 }
-              ) : /* @__PURE__ */ jsx6(
+              ) : /* @__PURE__ */ jsx7(
                 "span",
                 {
                   className: "app-topbar__profile app-topbar__profile--static",
-                  "aria-label": (_k = (_j = profile.menuLabel) != null ? _j : profile.name) != null ? _k : "Profile",
-                  children: (_m = profile.avatar) != null ? _m : /* @__PURE__ */ jsx6(Avatar_default, { size: 32, shape: "circle", name: (_l = profile.name) != null ? _l : "User", ...profile.avatarProps })
+                  "aria-label": (_n = (_m = profile.menuLabel) != null ? _m : profile.name) != null ? _n : "Profile",
+                  children: (_p = profile.avatar) != null ? _p : /* @__PURE__ */ jsx7(Avatar_default, { size: 32, shape: "circle", name: (_o = profile.name) != null ? _o : "User", ...profile.avatarProps })
                 }
               ) : null,
               rightSlot
             ] })
           ] }),
-          hideCenterColumn && mobileSearchOpen && search ? /* @__PURE__ */ jsx6("div", { id: `${searchInputId}-panel`, className: "app-topbar__mobile-search", children: searchField }) : null
+          hideCenterColumn && mobileSearchOpen && search ? /* @__PURE__ */ jsx7("div", { id: `${searchInputId}-panel`, className: "app-topbar__mobile-search", children: searchField }) : null
         ]
       }
     ),
-    hasMenuItems ? /* @__PURE__ */ jsx6(
+    hasMenuItems ? /* @__PURE__ */ jsx7(
       AppTopbarMenu,
       {
         id: menuDomId,
@@ -1446,9 +1870,9 @@ AppTopbar.displayName = "AppTopbar";
 var AppTopbar_default = AppTopbar;
 
 // src/components/molecules/DashboardShell/DashboardShell.tsx
-import React7 from "react";
-import { jsx as jsx7, jsxs as jsxs7 } from "react/jsx-runtime";
-function cls4(...parts) {
+import React8 from "react";
+import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
+function cls5(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 function isAppTopbarElement(node) {
@@ -1456,10 +1880,10 @@ function isAppTopbarElement(node) {
   return t === AppTopbar_default || (t == null ? void 0 : t.displayName) === "AppTopbar" || (t == null ? void 0 : t.name) === "AppTopbar";
 }
 function prepareTopbar(topbar, pinTopbar) {
-  if (!pinTopbar || !React7.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
+  if (!pinTopbar || !React8.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
     return topbar;
   }
-  return React7.cloneElement(topbar, { sticky: false });
+  return React8.cloneElement(topbar, { sticky: false });
 }
 var DEFAULT_ROOT_CLASSNAME = "flex flex-nowrap h-[100dvh] max-h-[100dvh] min-h-0 w-full min-w-0 max-w-[100vw] items-stretch overflow-hidden bg-[var(--color-bg-page)] text-[var(--color-text-primary)]";
 var DEFAULT_INSET_CLASSNAME = "isolate flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden";
@@ -1481,13 +1905,13 @@ function DashboardShell({
   const { fixed: fixedProp, className: sidebarClassName, classNames: sidebarClassNames, ...restSidebar } = sidebar;
   const fixed = fixedProp !== false;
   const topbarNode = prepareTopbar(topbar, pinTopbar);
-  const renderInset = (style) => /* @__PURE__ */ jsxs7("div", { className: cls4(DEFAULT_INSET_CLASSNAME, insetClassName), style, children: [
-    topbar ? /* @__PURE__ */ jsx7("div", { className: cls4(DEFAULT_TOPBAR_WRAPPER_CLASSNAME, topbarClassName), style: topbarStyle, children: topbarNode }) : null,
-    /* @__PURE__ */ jsx7("div", { className: cls4(DEFAULT_CONTENT_CLASSNAME, contentClassName), style: contentStyle, children })
+  const renderInset = (style) => /* @__PURE__ */ jsxs8("div", { className: cls5(DEFAULT_INSET_CLASSNAME, insetClassName), style, children: [
+    topbar ? /* @__PURE__ */ jsx8("div", { className: cls5(DEFAULT_TOPBAR_WRAPPER_CLASSNAME, topbarClassName), style: topbarStyle, children: topbarNode }) : null,
+    /* @__PURE__ */ jsx8("div", { className: cls5(DEFAULT_CONTENT_CLASSNAME, contentClassName), style: contentStyle, children })
   ] });
   if (!fixed) {
-    return /* @__PURE__ */ jsxs7("div", { className: cls4(DEFAULT_ROOT_CLASSNAME, className), children: [
-      /* @__PURE__ */ jsx7(
+    return /* @__PURE__ */ jsxs8("div", { className: cls5(DEFAULT_ROOT_CLASSNAME, className), children: [
+      /* @__PURE__ */ jsx8(
         AppSidebar,
         {
           ...restSidebar,
@@ -1505,8 +1929,8 @@ function DashboardShell({
       })
     ] });
   }
-  return /* @__PURE__ */ jsxs7("div", { className: cls4(DEFAULT_ROOT_CLASSNAME, className), children: [
-    /* @__PURE__ */ jsx7(
+  return /* @__PURE__ */ jsxs8("div", { className: cls5(DEFAULT_ROOT_CLASSNAME, className), children: [
+    /* @__PURE__ */ jsx8(
       AppSidebar,
       {
         ...restSidebar,
@@ -1530,6 +1954,13 @@ var DashboardShell_default = DashboardShell;
 var AppShell = DashboardShell;
 
 export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
   Avatar_default,
   mergeSidebarTokensStyle,
   readAppSidebarPersist,
@@ -1540,4 +1971,4 @@ export {
   DashboardShell_default,
   AppShell
 };
-//# sourceMappingURL=chunk-FNW4UGG7.mjs.map
+//# sourceMappingURL=chunk-WTQVOSBL.mjs.map

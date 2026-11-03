@@ -1,7 +1,7 @@
 import {
   TextInputSearch_default,
   search_default
-} from "./chunk-ULF52PMF.mjs";
+} from "./chunk-PZS7NENM.mjs";
 
 // src/components/atoms/TextView/index.tsx
 import React from "react";
@@ -377,8 +377,8 @@ var Select = forwardRef((props, ref) => {
   const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
   const footerColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-text-secondary)";
   const sizeConfig = {
-    sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: 44, paddingX: 14, fontSize: "var(--text-body-size, 16px)" },
+    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
+    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
     lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
   };
   const currentSize = sizeConfig[size];
@@ -1163,4 +1163,4 @@ export {
   TableCell,
   Table_default
 };
-//# sourceMappingURL=chunk-CKSW7ATG.mjs.map
+//# sourceMappingURL=chunk-4HMWV3BR.mjs.map

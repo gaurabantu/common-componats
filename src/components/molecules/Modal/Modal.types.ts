@@ -23,6 +23,8 @@ export interface ModalProps {
   showCancel?: boolean;
   /** Hide footer */
   hideFooter?: boolean;
+  /** Custom footer content (fixed below the scrolling body); replaces the Cancel/Confirm pair */
+  footer?: React.ReactNode;
   /** Modal size */
   size?: ModalSize;
   /** DOM id for accessibility */

@@ -153,7 +153,8 @@ export const PopoverContent = React.memo(function PopoverContent({
     const panel = contentRef.current;
     if (!trigger || !panel || typeof window === "undefined") return;
     const tr = trigger.getBoundingClientRect();
-    const cw = Math.max(panel.offsetWidth || 200, 200);
+    // Natural width (CSS min-width sets the floor) so short menus stay compact.
+    const cw = panel.offsetWidth || 140;
     const ch = Math.max(panel.offsetHeight || 80, 80);
     const result = computePopoverPosition(tr, cw, ch, ctx.placement);
     if (!showPointer) {

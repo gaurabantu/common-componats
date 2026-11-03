@@ -182,7 +182,7 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
           : {}),
         alignSelf: "stretch",
         height: "100%",
-        minHeight: pxToRem(hdr.shellMinHeight),
+        minHeight: hdr.shellMinHeightToken,
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
         borderTopRightRadius: trailingCorner,

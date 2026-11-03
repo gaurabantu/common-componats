@@ -5,8 +5,8 @@ export { i as InputSearch, j as InputSearchProps, k as SearchActionButtonProps, 
 import { I as IconSource } from './index-8a491a10.js';
 export { a as Icon, b as IconProps } from './index-8a491a10.js';
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import { A as AvatarProps } from './shell-056caa4d.js';
-export { b as AppShell, e as AppShellProps, a as AppSidebar, p as AppSidebarClassNames, m as AppSidebarFooterAction, q as AppSidebarFooterLayout, k as AppSidebarHeader, g as AppSidebarNavItem, E as AppSidebarPersistPayload, f as AppSidebarProps, h as AppSidebarSection, j as AppSidebarSectionGrouping, i as AppSidebarTier, o as AppSidebarTokens, n as AppSidebarTrailingPreset, l as AppSidebarUser, c as AppTopbar, u as AppTopbarAction, x as AppTopbarClassNames, y as AppTopbarMenuItem, v as AppTopbarProfile, r as AppTopbarProps, t as AppTopbarSearchConfig, s as AppTopbarTheme, w as AppTopbarTokens, D as DashboardShell, d as DashboardShellProps, z as mergeSidebarTokensStyle, F as mergeTopbarTokensStyle, B as readAppSidebarPersist, C as writeAppSidebarPersist } from './shell-056caa4d.js';
+import { A as AvatarProps } from './shell-81b82aed.js';
+export { b as AppShell, e as AppShellProps, a as AppSidebar, p as AppSidebarClassNames, m as AppSidebarFooterAction, q as AppSidebarFooterLayout, k as AppSidebarHeader, g as AppSidebarNavItem, E as AppSidebarPersistPayload, f as AppSidebarProps, h as AppSidebarSection, j as AppSidebarSectionGrouping, i as AppSidebarTier, o as AppSidebarTokens, n as AppSidebarTrailingPreset, l as AppSidebarUser, c as AppTopbar, u as AppTopbarAction, x as AppTopbarClassNames, y as AppTopbarMenuItem, v as AppTopbarProfile, r as AppTopbarProps, t as AppTopbarSearchConfig, s as AppTopbarTheme, w as AppTopbarTokens, D as DashboardShell, d as DashboardShellProps, z as mergeSidebarTokensStyle, F as mergeTopbarTokensStyle, B as readAppSidebarPersist, C as writeAppSidebarPersist } from './shell-81b82aed.js';
 export { AreaChart, AreaChartProps, BarChart, BarChartProps, ChartDataPoint, ChartDataSeries, ChartLayoutProps, ChartTheme, ChartTooltip, ChartTooltipItem, ChartTooltipProps, LineChart, LineChartProps, PieChart, PieChartDataPoint, PieChartProps } from './charts.js';
 
 declare const Button: React__default.NamedExoticComponent<ButtonProps>;
@@ -1479,6 +1479,8 @@ interface ModalProps {
     showCancel?: boolean;
     /** Hide footer */
     hideFooter?: boolean;
+    /** Custom footer content (fixed below the scrolling body); replaces the Cancel/Confirm pair */
+    footer?: React.ReactNode;
     /** Modal size */
     size?: ModalSize;
     /** DOM id for accessibility */
@@ -1529,7 +1531,7 @@ interface ModalProps {
     cancelButtonBorder?: string;
 }
 
-declare function Modal({ isOpen, onClose, title, children, onConfirm, confirmText, confirmDisabled, cancelText, showCancel, hideFooter, size, id, showCloseButton, isStackedBackground, zIndex, titleIcon, titleIconSize, animation, animationDuration, closeAfterTransition, closeOnBackdropClick, closeOnEscape, className, hideHeader, confirmButtonVariant, confirmButtonColor, confirmButtonBackground, confirmButtonBorder, cancelButtonVariant, cancelButtonColor, cancelButtonBackground, cancelButtonBorder, }: ModalProps): React__default.ReactPortal | null;
+declare function Modal({ isOpen, onClose, title, children, onConfirm, confirmText, confirmDisabled, cancelText, showCancel, hideFooter, footer, size, id, showCloseButton, isStackedBackground, zIndex, titleIcon, titleIconSize, animation, animationDuration, closeAfterTransition, closeOnBackdropClick, closeOnEscape, className, hideHeader, confirmButtonVariant, confirmButtonColor, confirmButtonBackground, confirmButtonBorder, cancelButtonVariant, cancelButtonColor, cancelButtonBackground, cancelButtonBorder, }: ModalProps): React__default.ReactPortal | null;
 
 type AlertDialogVariant = "info" | "success" | "warning" | "error";
 interface AlertDialogProps {

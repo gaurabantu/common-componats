@@ -182,8 +182,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }, [isOpen, updatePopoverPosition]);
 
   const currentSize = {
-    sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: 44, paddingX: 14, fontSize: "var(--text-body-size, 16px)" },
+    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
+    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
     lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" },
   }[size];
 

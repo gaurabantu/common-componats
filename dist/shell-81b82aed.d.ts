@@ -294,6 +294,11 @@ interface AppTopbarProfile {
     name?: string;
     onClick?: () => void;
     menuLabel?: string;
+    /**
+     * Account menu: when set, clicking the avatar opens a popover with these items
+     * (e.g. Edit profile, Sign out) instead of calling `onClick`.
+     */
+    menuItems?: AppTopbarMenuItem[];
 }
 interface AppTopbarTokens {
     bg?: string;

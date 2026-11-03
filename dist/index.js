@@ -207,10 +207,10 @@ var defaultIconWithLabelSizeBySize = {
   lg: { width: "1rem", height: "1rem" }
 };
 var defaultIconOnlySizeBySize = {
-  xxs: { width: "0.75rem", height: "0.75rem" },
-  xs: { width: "0.875rem", height: "0.875rem" },
-  sm: { width: "1.125rem", height: "1.125rem" },
-  md: { width: "1.25rem", height: "1.25rem" },
+  xxs: { width: "0.6875rem", height: "0.6875rem" },
+  xs: { width: "0.8125rem", height: "0.8125rem" },
+  sm: { width: "1rem", height: "1rem" },
+  md: { width: "1.125rem", height: "1.125rem" },
   lg: { width: "1.5rem", height: "1.5rem" }
 };
 var defaultIconConfig = {
@@ -791,11 +791,12 @@ var Masker = class {
 // src/components/atoms/TextInput/TextInput.config.ts
 var HEADER_SEARCH_LAYOUT = {
   /**
-   * Tier heights mirror `Select` sm/md/lg `minHeight` (36 / 44 / 48) so filter rows align in Storybook
+   * Tier heights mirror `Select` sm/md/lg `minHeight` (--button-height-sm / --button-height-lg / 3rem) so filter rows align in Storybook
    * and apps without ad-hoc pixel tweaks.
    */
   sm: {
-    shellMinHeight: 36,
+    shellMinHeight: 32,
+    shellMinHeightToken: "var(--button-height-sm)",
     horizontalPadding: 9,
     prefixAddonPadding: 7,
     suffixPadLeft: 7,
@@ -804,11 +805,12 @@ var HEADER_SEARCH_LAYOUT = {
     decorativeTrailingSearchIcon: 14,
     clearIconSize: 11,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 28,
+    searchActionInsetHeight: 24,
     integratedIconPadX: 9
   },
   md: {
-    shellMinHeight: 44,
+    shellMinHeight: 40,
+    shellMinHeightToken: "var(--button-height-lg)",
     horizontalPadding: 12,
     prefixAddonPadding: 9,
     suffixPadLeft: 10,
@@ -817,11 +819,12 @@ var HEADER_SEARCH_LAYOUT = {
     decorativeTrailingSearchIcon: 16,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 36,
+    searchActionInsetHeight: 32,
     integratedIconPadX: 11
   },
   lg: {
     shellMinHeight: 48,
+    shellMinHeightToken: "3rem",
     horizontalPadding: 12,
     prefixAddonPadding: 9,
     suffixPadLeft: 10,
@@ -1354,13 +1357,13 @@ var TextInput = (0, import_react5.forwardRef)(({
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
-      minHeight: "2rem",
+      minHeight: "var(--button-height-sm)",
       horizontalPadding: "0.625rem",
       addonPadding: "0.5rem",
       fontSize: "var(--text-small-size)"
     },
     md: {
-      minHeight: "2.5rem",
+      minHeight: "var(--button-height-lg)",
       horizontalPadding: "0.75rem",
       addonPadding: "0.625rem",
       fontSize: "var(--text-body-size)"
@@ -1376,7 +1379,7 @@ var TextInput = (0, import_react5.forwardRef)(({
   const isIntegratedRail = trailingRail === "integrated" && isHeaderSearchRail;
   const hdr = isHeaderSearchRail ? HEADER_SEARCH_LAYOUT[size] : void 0;
   const fieldMetrics = hdr ? {
-    minHeight: pxToRem(hdr.shellMinHeight),
+    minHeight: hdr.shellMinHeightToken,
     horizontalPadding: pxToRem(hdr.horizontalPadding),
     addonPadding: baseSizeTokens[size].addonPadding,
     fontSize: baseSizeTokens[size].fontSize,
@@ -4048,7 +4051,7 @@ var PopoverContent = import_react15.default.memo(function PopoverContent2({
     if (!trigger || !panel || typeof window === "undefined")
       return;
     const tr = trigger.getBoundingClientRect();
-    const cw = Math.max(panel.offsetWidth || 200, 200);
+    const cw = panel.offsetWidth || 140;
     const ch = Math.max(panel.offsetHeight || 80, 80);
     const result = computePopoverPosition(tr, cw, ch, ctx.placement);
     if (!showPointer) {
@@ -7032,8 +7035,8 @@ var DatePicker = ({
     };
   }, [isOpen, updatePopoverPosition]);
   const currentSize = {
-    sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: 44, paddingX: 14, fontSize: "var(--text-body-size, 16px)" },
+    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
+    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
     lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
   }[size];
   const resolvedStatus = status != null ? status : error ? "error" : void 0;
@@ -8753,8 +8756,8 @@ var Select = (0, import_react27.forwardRef)((props, ref) => {
   const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
   const footerColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-text-secondary)";
   const sizeConfig = {
-    sm: { minHeight: 36, paddingX: 12, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: 44, paddingX: 14, fontSize: "var(--text-body-size, 16px)" },
+    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
+    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
     lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
   };
   const currentSize = sizeConfig[size];
@@ -9007,9 +9010,9 @@ var Combobox = import_react28.default.memo(function Combobox2({
   const helperMessage = error != null ? error : helperText;
   const sizeStyles = (0, import_react28.useMemo)(() => {
     const map = {
-      sm: { minH: 36, font: "var(--text-small-size, 12px)" },
-      md: { minH: 44, font: "var(--text-body-size, 16px)" },
-      lg: { minH: 48, font: "var(--text-body-size, 16px)" }
+      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)" },
+      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)" },
+      lg: { minH: "3rem", font: "var(--text-body-size, 16px)" }
     };
     return map[size];
   }, [size]);
@@ -9076,7 +9079,7 @@ var Combobox = import_react28.default.memo(function Combobox2({
               "aria-expanded": open,
               "aria-controls": listboxId,
               style: {
-                "--combobox-min-h": `${sizeStyles.minH}px`,
+                "--combobox-min-h": sizeStyles.minH,
                 "--combobox-font-size": sizeStyles.font,
                 "--combobox-border": borderColor
               },
@@ -9229,6 +9232,7 @@ function Modal({
   cancelText = "Cancel",
   showCancel = true,
   hideFooter = false,
+  footer,
   size = defaultModalOptions.size,
   id = "dynamicModal",
   showCloseButton = defaultModalOptions.showCloseButton,
@@ -9486,7 +9490,7 @@ function Modal({
                       children
                     }
                   ),
-                  !hideFooter && onConfirm && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
+                  !hideFooter && (footer != null || onConfirm) && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                     "div",
                     {
                       className: "modal-footer",
@@ -9499,7 +9503,7 @@ function Modal({
                         padding: "1rem 1.25rem",
                         borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))"
                       },
-                      children: [
+                      children: footer != null ? footer : /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(import_jsx_runtime35.Fragment, { children: [
                         showCancel && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
                           Button_default,
                           {
@@ -9525,7 +9529,7 @@ function Modal({
                             children: confirmText
                           }
                         )
-                      ]
+                      ] })
                     }
                   )
                 ]
@@ -9907,7 +9911,7 @@ var TextInputSearch = ({
     ...userSearchActionStyles && typeof userSearchActionStyles === "object" ? userSearchActionStyles : {},
     alignSelf: "stretch",
     height: "100%",
-    minHeight: pxToRem2(hdr.shellMinHeight),
+    minHeight: hdr.shellMinHeightToken,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
     borderTopRightRadius: trailingCorner,
@@ -11701,7 +11705,7 @@ var AppTopbar = ({
   className,
   classNames
 }) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p;
   const rootId = (0, import_react38.useId)();
   const baseId = rootId.replace(/[^a-zA-Z0-9_-]/g, "");
   const searchInputId = (_a = search == null ? void 0 : search.inputId) != null ? _a : `app-topbar-search-${baseId}`;
@@ -11715,6 +11719,8 @@ var AppTopbar = ({
   const [mobileSearchOpen, setMobileSearchOpen] = (0, import_react38.useState)(false);
   const [menuOpen, setMenuOpen] = (0, import_react38.useState)(false);
   const menuTriggerWrapRef = (0, import_react38.useRef)(null);
+  const hasProfileMenu = Boolean((profile == null ? void 0 : profile.menuItems) && profile.menuItems.length > 0);
+  const [profileMenuOpen, setProfileMenuOpen] = (0, import_react38.useState)(false);
   (0, import_react38.useEffect)(() => {
     if (!isNarrow) {
       setMobileSearchOpen(false);
@@ -11807,6 +11813,7 @@ var AppTopbar = ({
   ) : null;
   const handleHamburgerClick = () => {
     setMobileSearchOpen(false);
+    setProfileMenuOpen(false);
     if (hasMenuItems) {
       setMenuOpen((o) => !o);
       return;
@@ -11910,21 +11917,50 @@ var AppTopbar = ({
                   ) : null
                 ] }, action.id);
               }),
-              profile ? profile.onClick ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+              profile && hasProfileMenu ? /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(DropdownMenu, { open: profileMenuOpen, onOpenChange: setProfileMenuOpen, placement: "bottom-end", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
+                  DropdownMenuTrigger,
+                  {
+                    className: "app-topbar__profile",
+                    "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
+                    onClick: () => setMenuOpen(false),
+                    children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(DropdownMenuContent, { showPointer: true, className: "app-topbar__profile-menu", children: profile.menuItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime48.jsxs)(
+                  DropdownMenuItem,
+                  {
+                    variant: item.destructive ? "danger" : "default",
+                    disabled: item.disabled,
+                    onSelect: () => {
+                      var _a2;
+                      if (item.href && typeof window !== "undefined")
+                        window.location.assign(item.href);
+                      else
+                        (_a2 = item.onClick) == null ? void 0 : _a2.call(item);
+                    },
+                    children: [
+                      item.icon ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)("span", { className: "ds-dropdown-menu__icon", "aria-hidden": true, children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Icon_default, { src: item.icon, width: 16, height: 16, color: "currentColor", decorative: true }) }) : null,
+                      item.label
+                    ]
+                  },
+                  item.id
+                )) })
+              ] }) : profile ? profile.onClick ? /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                 "button",
                 {
                   type: "button",
                   className: "app-topbar__profile",
-                  "aria-label": (_g = profile.menuLabel) != null ? _g : profile.name ? `Account menu for ${profile.name}` : "Account menu",
+                  "aria-label": (_j = profile.menuLabel) != null ? _j : profile.name ? `Account menu for ${profile.name}` : "Account menu",
                   onClick: profile.onClick,
-                  children: (_i = profile.avatar) != null ? _i : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_h = profile.name) != null ? _h : "User", ...profile.avatarProps })
+                  children: (_l = profile.avatar) != null ? _l : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_k = profile.name) != null ? _k : "User", ...profile.avatarProps })
                 }
               ) : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(
                 "span",
                 {
                   className: "app-topbar__profile app-topbar__profile--static",
-                  "aria-label": (_k = (_j = profile.menuLabel) != null ? _j : profile.name) != null ? _k : "Profile",
-                  children: (_m = profile.avatar) != null ? _m : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_l = profile.name) != null ? _l : "User", ...profile.avatarProps })
+                  "aria-label": (_n = (_m = profile.menuLabel) != null ? _m : profile.name) != null ? _n : "Profile",
+                  children: (_p = profile.avatar) != null ? _p : /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(Avatar_default, { size: 32, shape: "circle", name: (_o = profile.name) != null ? _o : "User", ...profile.avatarProps })
                 }
               ) : null,
               rightSlot

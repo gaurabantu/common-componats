@@ -86,10 +86,10 @@ export const defaultIconOnlySizeBySize: Record<
   ButtonSize,
   { width: number | string; height: number | string }
 > = {
-  xxs: { width: "0.75rem", height: "0.75rem" },
-  xs: { width: "0.875rem", height: "0.875rem" },
-  sm: { width: "1.125rem", height: "1.125rem" },
-  md: { width: "1.25rem", height: "1.25rem" },
+  xxs: { width: "0.6875rem", height: "0.6875rem" },
+  xs: { width: "0.8125rem", height: "0.8125rem" },
+  sm: { width: "1rem", height: "1rem" },
+  md: { width: "1.125rem", height: "1.125rem" },
   lg: { width: "1.5rem", height: "1.5rem" },
 };
 

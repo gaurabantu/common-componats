@@ -109,4 +109,31 @@ describe("AppTopbar", () => {
     await user.click(screen.getByRole("button", { name: /open menu/i }));
     expect(onMenu).toHaveBeenCalledTimes(1);
   });
+
+  it("opens the account menu from the avatar when profile.menuItems is set", async () => {
+    const user = userEvent.setup();
+    const onEdit = vi.fn();
+    const onClick = vi.fn();
+    render(
+      <AppTopbar
+        title="Home"
+        profile={{
+          name: "Ada Lovelace",
+          onClick,
+          menuItems: [
+            { id: "edit", label: "Edit profile", onClick: onEdit },
+            { id: "logout", label: "Sign out", destructive: true },
+          ],
+        }}
+      />
+    );
+    const trigger = screen.getByRole("button", { name: /account menu for ada lovelace/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await user.click(screen.getByRole("menuitem", { name: "Edit profile" }));
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
 });

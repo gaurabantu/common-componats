@@ -425,7 +425,7 @@
 }
 
 .app-sidebar__footer-profile {
-  flex: 1 1 50%;
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -445,10 +445,9 @@
   min-width: 0;
 }
 
-/* Utility column: half of footer row; compact actions (nav icons stay 24px). */
+/* Utility column: only as wide as its actions, so the profile name gets the rest of the row. */
 .app-sidebar__footer-utilities {
-  flex: 0 0 50%;
-  max-width: 50%;
+  flex: 0 0 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -496,9 +495,9 @@
 .app-sidebar__profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-height: 56px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
@@ -542,7 +541,7 @@
 
 .app-sidebar__profile-name {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--text-secondary-size, 0.8125rem);
   font-weight: 500;
   color: var(--sidebar-text);
   overflow: hidden;
@@ -552,7 +551,7 @@
 
 .app-sidebar__profile-role {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: var(--text-small-size, 0.75rem);
   font-weight: 400;
   color: var(--sidebar-text-muted);
   overflow: hidden;

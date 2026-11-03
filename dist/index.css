@@ -1658,9 +1658,9 @@
 /* src/components/molecules/Popover/Popover.css */
 .ds-popover__content {
   box-sizing: border-box;
-  min-width: 180px;
+  min-width: 140px;
   max-width: min(360px, calc(100vw - 16px));
-  padding: var(--space-1, 8px);
+  padding: 0.25rem;
   border-radius: var(--radius-md, 6px);
   border: 1px solid var(--color-border-default);
   background-color: var(--color-bg-elevated);
@@ -1743,9 +1743,9 @@
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 44px;
+  min-height: var(--button-height-md, 2.125rem);
   margin: 0;
-  padding: var(--space-1, 8px) var(--space-2, 16px);
+  padding: 0.375rem 0.75rem;
   border: none;
   border-radius: var(--radius-sm, 3px);
   background: transparent;
@@ -1762,6 +1762,15 @@
   align-items: center;
   flex: 1 1 auto;
   min-width: 0;
+  gap: 0.5rem;
+}
+.ds-dropdown-menu__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+.ds-dropdown-menu__item--danger .ds-dropdown-menu__icon {
+  color: inherit;
 }
 .ds-dropdown-menu__item:hover:not(:disabled) {
   background-color: var(--color-theme-surface-hover, var(--color-mist-20));
@@ -2635,7 +2644,7 @@
   gap: var(--space-1, 8px);
   width: 100%;
   min-width: 0;
-  min-height: var(--combobox-min-h, 44px);
+  min-height: var(--combobox-min-h, var(--button-height-lg));
   padding: 0 var(--space-2, 16px);
   text-align: left;
   border-radius: var(--radius-md, 6px);
@@ -3972,7 +3981,7 @@
   flex-direction: row-reverse;
 }
 .app-sidebar__footer-profile {
-  flex: 1 1 50%;
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -3990,8 +3999,7 @@
   min-width: 0;
 }
 .app-sidebar__footer-utilities {
-  flex: 0 0 50%;
-  max-width: 50%;
+  flex: 0 0 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -4031,9 +4039,9 @@
 .app-sidebar__profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-height: 56px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
@@ -4070,7 +4078,7 @@
 }
 .app-sidebar__profile-name {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--text-secondary-size, 0.8125rem);
   font-weight: 500;
   color: var(--sidebar-text);
   overflow: hidden;
@@ -4079,7 +4087,7 @@
 }
 .app-sidebar__profile-role {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: var(--text-small-size, 0.75rem);
   font-weight: 400;
   color: var(--sidebar-text-muted);
   overflow: hidden;

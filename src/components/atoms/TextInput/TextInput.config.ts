@@ -6,7 +6,10 @@ export type TextInputSizeKey = "sm" | "md" | "lg";
 export const HEADER_SEARCH_LAYOUT: Record<
   TextInputSizeKey,
   {
+    /** Nominal rail height in px (used for icon proportions). */
     shellMinHeight: number;
+    /** Rendered rail min-height — a token, so tokens.css resizes search with Select/Button. */
+    shellMinHeightToken: string;
     horizontalPadding: number;
     prefixAddonPadding: number;
     suffixPadLeft: number;
@@ -22,11 +25,12 @@ export const HEADER_SEARCH_LAYOUT: Record<
   }
 > = {
   /**
-   * Tier heights mirror `Select` sm/md/lg `minHeight` (36 / 44 / 48) so filter rows align in Storybook
+   * Tier heights mirror `Select` sm/md/lg `minHeight` (--button-height-sm / --button-height-lg / 3rem) so filter rows align in Storybook
    * and apps without ad-hoc pixel tweaks.
    */
   sm: {
-    shellMinHeight: 36,
+    shellMinHeight: 32,
+    shellMinHeightToken: "var(--button-height-sm)",
     horizontalPadding: 9,
     prefixAddonPadding: 7,
     suffixPadLeft: 7,
@@ -35,11 +39,12 @@ export const HEADER_SEARCH_LAYOUT: Record<
     decorativeTrailingSearchIcon: 14,
     clearIconSize: 11,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 28,
+    searchActionInsetHeight: 24,
     integratedIconPadX: 9,
   },
   md: {
-    shellMinHeight: 44,
+    shellMinHeight: 40,
+    shellMinHeightToken: "var(--button-height-lg)",
     horizontalPadding: 12,
     prefixAddonPadding: 9,
     suffixPadLeft: 10,
@@ -48,11 +53,12 @@ export const HEADER_SEARCH_LAYOUT: Record<
     decorativeTrailingSearchIcon: 16,
     clearIconSize: 12,
     clearHitPaddingX: 4,
-    searchActionInsetHeight: 36,
+    searchActionInsetHeight: 32,
     integratedIconPadX: 11,
   },
   lg: {
     shellMinHeight: 48,
+    shellMinHeightToken: "3rem",
     horizontalPadding: 12,
     prefixAddonPadding: 9,
     suffixPadLeft: 10,

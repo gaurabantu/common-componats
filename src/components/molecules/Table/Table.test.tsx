@@ -86,7 +86,7 @@ describe("Table", () => {
 
   it("uses small page-size selector in pagination controls by default", () => {
     render(<Table columns={columns} data={data} searchable={false} pagination={{ pageSize: 1 }} />);
-    expect(screen.getByRole("combobox")).toHaveStyle({ minHeight: "36px" });
+    expect(screen.getByRole("combobox")).toHaveStyle({ minHeight: "var(--button-height-sm)" });
   });
 
   it("sorts numeric string values numerically in asc and desc order", async () => {

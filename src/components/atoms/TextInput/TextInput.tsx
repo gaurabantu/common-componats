@@ -559,13 +559,13 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   const resolvedStatus = statusProp ?? (error ? "error" : verified ? "success" : undefined);
   const baseSizeTokens = {
     sm: {
-      minHeight: "2rem",
+      minHeight: "var(--button-height-sm)",
       horizontalPadding: "0.625rem",
       addonPadding: "0.5rem",
       fontSize: "var(--text-small-size)",
     },
     md: {
-      minHeight: "2.5rem",
+      minHeight: "var(--button-height-lg)",
       horizontalPadding: "0.75rem",
       addonPadding: "0.625rem",
       fontSize: "var(--text-body-size)",
@@ -597,7 +597,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   };
   const fieldMetrics: FieldRailMetrics = hdr
     ? {
-        minHeight: pxToRem(hdr.shellMinHeight),
+        minHeight: hdr.shellMinHeightToken,
         horizontalPadding: pxToRem(hdr.horizontalPadding),
         addonPadding: baseSizeTokens[size].addonPadding,
         fontSize: baseSizeTokens[size].fontSize,

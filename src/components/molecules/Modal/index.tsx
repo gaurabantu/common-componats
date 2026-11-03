@@ -21,6 +21,7 @@ export default function Modal({
   cancelText = "Cancel",
   showCancel = true,
   hideFooter = false,
+  footer,
   size = defaultModalOptions.size,
   id = "dynamicModal",
   showCloseButton = defaultModalOptions.showCloseButton,
@@ -280,7 +281,7 @@ export default function Modal({
               {children}
             </div>
 
-            {!hideFooter && onConfirm && (
+            {!hideFooter && (footer != null || onConfirm) && (
               <div
                 className="modal-footer"
                 style={{
@@ -293,29 +294,35 @@ export default function Modal({
                   borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))",
                 }}
               >
-                {showCancel && (
-                  <Button
-                    variant={cancelButtonVariant}
-                    size="md"
-                    onClick={handleClose}
-                    textColor={cancelButtonColor}
-                    backgroundColor={cancelButtonBackground}
-                    borderColor={cancelButtonBorder}
-                  >
-                    {cancelText}
-                  </Button>
+                {footer != null ? (
+                  footer
+                ) : (
+                  <>
+                    {showCancel && (
+                      <Button
+                        variant={cancelButtonVariant}
+                        size="md"
+                        onClick={handleClose}
+                        textColor={cancelButtonColor}
+                        backgroundColor={cancelButtonBackground}
+                        borderColor={cancelButtonBorder}
+                      >
+                        {cancelText}
+                      </Button>
+                    )}
+                    <Button
+                      variant={confirmButtonVariant}
+                      size={confirmButtonVariant === "primary" ? "lg" : "md"}
+                      onClick={onConfirm}
+                      disabled={confirmDisabled}
+                      textColor={confirmButtonColor}
+                      backgroundColor={confirmButtonBackground}
+                      borderColor={confirmButtonBorder}
+                    >
+                      {confirmText}
+                    </Button>
+                  </>
                 )}
-                <Button
-                  variant={confirmButtonVariant}
-                  size={confirmButtonVariant === "primary" ? "lg" : "md"}
-                  onClick={onConfirm}
-                  disabled={confirmDisabled}
-                  textColor={confirmButtonColor}
-                  backgroundColor={confirmButtonBackground}
-                  borderColor={confirmButtonBorder}
-                >
-                  {confirmText}
-                </Button>
               </div>
             )}
           </div>

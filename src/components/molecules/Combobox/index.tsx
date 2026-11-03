@@ -156,9 +156,9 @@ export const Combobox = React.memo(function Combobox({
 
   const sizeStyles = useMemo(() => {
     const map = {
-      sm: { minH: 36, font: "var(--text-small-size, 12px)" },
-      md: { minH: 44, font: "var(--text-body-size, 16px)" },
-      lg: { minH: 48, font: "var(--text-body-size, 16px)" },
+      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)" },
+      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)" },
+      lg: { minH: "3rem", font: "var(--text-body-size, 16px)" },
     } as const;
     return map[size];
   }, [size]);
@@ -232,7 +232,7 @@ export const Combobox = React.memo(function Combobox({
           aria-controls={listboxId}
           style={
             {
-              "--combobox-min-h": `${sizeStyles.minH}px`,
+              "--combobox-min-h": sizeStyles.minH,
               "--combobox-font-size": sizeStyles.font,
               "--combobox-border": borderColor,
             } as React.CSSProperties

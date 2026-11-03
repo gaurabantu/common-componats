@@ -59,20 +59,20 @@
   /* TYPOGRAPHY — default UI font: Inter (see Google Fonts @import). Host app: `:root { --font-family: … }` */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-sans: var(--font-family);
-  --text-h1-size: 2rem;
+  --text-h1-size: 1.5rem;
   --text-h1-weight: 800;
   --text-h1-line-height: 1.5;
-  --text-h2-size: 1.5625rem;
+  --text-h2-size: 1.25rem;
   --text-h2-weight: 800;
   --text-h2-line-height: 1.5;
-  --text-h3-size: 1.125rem;
+  --text-h3-size: 1rem;
   --text-h3-weight: 500;
-  --text-h4-size: 1rem;
+  --text-h4-size: 0.875rem;
   --text-h4-weight: 500;
-  --text-body-size: 1rem;
+  --text-body-size: 0.875rem;
   --text-body-weight: 400;
   --text-body-line-height: 1.5;
-  --text-secondary-size: 0.875rem;
+  --text-secondary-size: 0.8125rem;
   --text-small-size: 0.75rem;
   --text-micro-size: 0.625rem;
   --text-micro-weight: 600;
@@ -159,11 +159,11 @@
   --z-tooltip-top: 600;
 
   /* §20 Button height tiers (semantic names — maps to .btn-size-*) · rem based, 2px vertical pad */
-  --button-height-xxs: 1.5rem;
-  --button-height-xs: 1.75rem;
-  --button-height-sm: 2rem;
-  --button-height-md: 2.25rem;
-  --button-height-lg: 2.5rem;
+  --button-height-xxs: 1.375rem;
+  --button-height-xs: 1.625rem;
+  --button-height-sm: 1.875rem;
+  --button-height-md: 2.125rem;
+  --button-height-lg: 2.375rem;
   /** Horizontal inset per tier — rem based so host font scaling and mobile overrides keep variants compact */
   --button-padding-x-xxs: 0.75rem;
   --button-padding-x-xs: 1rem;
@@ -1112,16 +1112,43 @@ select {
   }
 }
 
-/* Size: icon only — fixed square footprint + WCAG touch minimum; glyphs sized in Button (`defaultIconOnlySizeBySize`). */
-:is(button, a).btn-icon-only-xxs,
-:is(button, a).btn-icon-only-xs,
-:is(button, a).btn-icon-only-sm,
+/* Size: icon only — square footprint = the tier's --button-height-* token, so an icon button lines up with text buttons of the same size; glyphs sized in Button (`defaultIconOnlySizeBySize`). */
+:is(button, a).btn-icon-only-xxs {
+  box-sizing: border-box;
+  width: var(--button-height-xxs);
+  height: var(--button-height-xxs);
+  min-width: var(--button-height-xxs);
+  min-height: var(--button-height-xxs);
+  padding: 0;
+  flex-shrink: 0;
+  justify-content: center;
+}
+:is(button, a).btn-icon-only-xs {
+  box-sizing: border-box;
+  width: var(--button-height-xs);
+  height: var(--button-height-xs);
+  min-width: var(--button-height-xs);
+  min-height: var(--button-height-xs);
+  padding: 0;
+  flex-shrink: 0;
+  justify-content: center;
+}
+:is(button, a).btn-icon-only-sm {
+  box-sizing: border-box;
+  width: var(--button-height-sm);
+  height: var(--button-height-sm);
+  min-width: var(--button-height-sm);
+  min-height: var(--button-height-sm);
+  padding: 0;
+  flex-shrink: 0;
+  justify-content: center;
+}
 :is(button, a).btn-icon-only-md {
   box-sizing: border-box;
-  width: var(--layout-touch-target-min);
-  height: var(--layout-touch-target-min);
-  min-width: var(--layout-touch-target-min);
-  min-height: var(--layout-touch-target-min);
+  width: var(--button-height-md);
+  height: var(--button-height-md);
+  min-width: var(--button-height-md);
+  min-height: var(--button-height-md);
   padding: 0;
   flex-shrink: 0;
   justify-content: center;
@@ -1310,7 +1337,6 @@ a.ucs-ripple-parent:not([aria-disabled="true"]),
   justify-content: inherit;
   gap: inherit;
   flex: inherit;
-  min-height: inherit;
   width: inherit;
 }
 

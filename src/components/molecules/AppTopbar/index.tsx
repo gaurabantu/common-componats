@@ -8,6 +8,8 @@ import type { AppTopbarAction, AppTopbarProps } from "./AppTopbar.types";
 import { mergeTopbarTokensStyle } from "./AppTopbar.chrome";
 import { useBelowWidth } from "../AppSidebar/AppSidebar.responsive";
 import { AppTopbarMenu } from "./AppTopbarMenu";
+import Icon from "../../atoms/Icon";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../Popover";
 import "./AppTopbar.css";
 
 /** Inline icon — avoids `search.svg` nested masks failing as CSS `mask-image` in some engines. */
@@ -77,6 +79,8 @@ const AppTopbar: React.FC<AppTopbarProps> = ({
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuTriggerWrapRef = useRef<HTMLDivElement>(null);
+  const hasProfileMenu = Boolean(profile?.menuItems && profile.menuItems.length > 0);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!isNarrow) {
@@ -168,6 +172,7 @@ const AppTopbar: React.FC<AppTopbarProps> = ({
 
   const handleHamburgerClick = () => {
     setMobileSearchOpen(false);
+    setProfileMenuOpen(false);
     if (hasMenuItems) {
       setMenuOpen((o) => !o);
       return;
@@ -274,7 +279,41 @@ const AppTopbar: React.FC<AppTopbarProps> = ({
                 </span>
               );
             })}
-            {profile ? (
+            {profile && hasProfileMenu ? (
+              <DropdownMenu open={profileMenuOpen} onOpenChange={setProfileMenuOpen} placement="bottom-end">
+                <DropdownMenuTrigger
+                  className="app-topbar__profile"
+                  aria-label={
+                    profile.menuLabel ?? (profile.name ? `Account menu for ${profile.name}` : "Account menu")
+                  }
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {profile.avatar ?? (
+                    <Avtar size={32} shape="circle" name={profile.name ?? "User"} {...profile.avatarProps} />
+                  )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent showPointer className="app-topbar__profile-menu">
+                  {profile.menuItems!.map((item) => (
+                    <DropdownMenuItem
+                      key={item.id}
+                      variant={item.destructive ? "danger" : "default"}
+                      disabled={item.disabled}
+                      onSelect={() => {
+                        if (item.href && typeof window !== "undefined") window.location.assign(item.href);
+                        else item.onClick?.();
+                      }}
+                    >
+                      {item.icon ? (
+                        <span className="ds-dropdown-menu__icon" aria-hidden>
+                          <Icon src={item.icon} width={16} height={16} color="currentColor" decorative />
+                        </span>
+                      ) : null}
+                      {item.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : profile ? (
               profile.onClick ? (
                 <button
                   type="button"
