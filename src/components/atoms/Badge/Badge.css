@@ -126,8 +126,8 @@
 }
 
 .ds-badge[data-variant="danger"][data-tone="soft"] {
-  --badge-bg: var(--color-accent-rose-10);
-  --badge-fg: var(--color-state-error);
+  --badge-bg: var(--color-danger-fill, var(--color-accent-rose-10));
+  --badge-fg: var(--color-danger-strong, var(--color-state-error));
   --badge-border: transparent;
   --badge-dot: var(--color-state-error);
 }

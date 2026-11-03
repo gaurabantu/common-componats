@@ -27,8 +27,18 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "t
   variant?: CardVariantName;
   /** Shadow tier when elevated / withIndicator */
   elevation?: "none" | "sm" | "md" | "lg";
-  /** Left bar — only when `variant` resolves to `withIndicator` and `selected` is true (§26) */
+  /**
+   * Selected state. `withIndicator` → left bar (§26). `bordered` → strong 2px outline
+   * (option tiles). When `interactive`, also exposed as `aria-pressed`.
+   */
   selected?: boolean;
+  /**
+   * Clickable tile: hover border, pointer cursor, visible focus ring. With `onClick` and no
+   * explicit `role`, the card becomes `role="button"` + `tabIndex=0` and activates on Enter/Space.
+   * Without `onClick` it is visual only (hover + pointer) — use when the card sits inside a link.
+   * Do not nest other interactive controls inside an interactive card.
+   */
+  interactive?: boolean;
   /** Padding — token string or number (px); overrides `size` default padding */
   padding?: number | string;
   /** Radius token string or number (px) */

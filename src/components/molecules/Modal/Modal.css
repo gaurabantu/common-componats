@@ -11,13 +11,52 @@
   max-width: 100%;
 }
 
+.modal-description {
+  margin: var(--space-0) 0 0;
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* scrollBehavior="outside": the overlay scrolls; the body never clips */
+.modal.modal--scroll-outside .modal-body {
+  overflow-y: visible !important;
+}
+
 @media (max-width: 480px) {
   .modal {
     padding: 0.75rem !important;
   }
 
-  .modal-dialog {
+  .modal:not(.modal--scroll-outside) .modal-dialog {
     max-height: calc(100dvh - 1.5rem) !important;
+  }
+
+  /* fullscreenOnMobile — edge to edge, no radius */
+  .modal.modal--fullscreen-mobile {
+    padding: 0 !important;
+  }
+
+  .modal.modal--fullscreen-mobile .modal-dialog {
+    max-width: 100% !important;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .modal.modal--fullscreen-mobile:not(.modal--scroll-outside) .modal-dialog {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh !important;
+  }
+
+  .modal.modal--fullscreen-mobile .modal-content {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .modal.modal--fullscreen-mobile .modal-footer {
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom)) !important;
   }
 
   .modal-header,

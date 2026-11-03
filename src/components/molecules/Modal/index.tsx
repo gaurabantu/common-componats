@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Button from "../../atoms/Button";
 import CloseIcon from "../../../assets/close.svg";
@@ -6,18 +6,31 @@ import Icon from "../../atoms/Icon";
 import { ModalProps } from "./Modal.types";
 import { defaultModalOptions, modalSizeMap, modalSizeWidths } from "./Modal.config";
 import { acquireBodyScrollLock, releaseBodyScrollLock } from "./bodyScrollLock";
+import { OverlayLayerContext, isTopLayer, popLayer, pushLayer } from "./overlayStack";
 import "./Modal.css";
 
-export type { ModalProps } from "./Modal.types";
+export type {
+  ModalProps,
+  ModalSize,
+  ModalAnimation,
+  ModalScrollBehavior,
+  ModalAutoFocusEvent,
+} from "./Modal.types";
+
+function createAutoFocusEvent(type: string): Event {
+  return new Event(type, { cancelable: true });
+}
 
 export default function Modal({
   isOpen,
   onClose,
   title,
+  description,
   children,
   onConfirm,
   confirmText = "Confirm",
   confirmDisabled = false,
+  confirmLoading = false,
   cancelText = "Cancel",
   showCancel = true,
   hideFooter = false,
@@ -36,6 +49,11 @@ export default function Modal({
   closeOnEscape = defaultModalOptions.closeOnEscape,
   className = "",
   hideHeader = false,
+  initialFocusRef,
+  scrollBehavior = defaultModalOptions.scrollBehavior,
+  fullscreenOnMobile = false,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   confirmButtonVariant = "primary",
   confirmButtonColor,
   confirmButtonBackground,
@@ -48,6 +66,16 @@ export default function Modal({
   const [isExiting, setIsExiting] = useState(false);
   const exitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  // Shared overlay stack: only the top layer handles Escape / backdrop dismissal.
+  const layerId = useId();
+  const parentLayerId = useContext(OverlayLayerContext);
+  // Latest-value refs so the focus effect only re-runs on open/close.
+  const initialFocusRefRef = useRef(initialFocusRef);
+  initialFocusRefRef.current = initialFocusRef;
+  const onOpenAutoFocusRef = useRef(onOpenAutoFocus);
+  onOpenAutoFocusRef.current = onOpenAutoFocus;
+  const onCloseAutoFocusRef = useRef(onCloseAutoFocus);
+  onCloseAutoFocusRef.current = onCloseAutoFocus;
 
   const sizeClass = modalSizeMap[size] ?? "";
   const animClass = animation !== "none" ? `modal-dialog--${animation}` : "";
@@ -72,7 +100,17 @@ export default function Modal({
     return () => releaseBodyScrollLock();
   }, [isOpen]);
 
+  // Register in the overlay stack while open. Declared before the focus effect so the layer is
+  // popped before focus returns on close.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    pushLayer(layerId, parentLayerId);
+    return () => popLayer(layerId);
+  }, [isOpen, layerId, parentLayerId]);
+
   const handleClose = useCallback(() => {
+    // Ignore repeat requests while the exit animation is pending (no double onClose).
+    if (exitTimeoutRef.current) return;
     if (closeAfterTransition && animation !== "none") {
       setIsExiting(true);
       exitTimeoutRef.current = setTimeout(() => {
@@ -92,13 +130,15 @@ export default function Modal({
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen && closeOnEscape) {
-        handleClose();
-      }
+      if (e.key !== "Escape" || !isOpen || e.defaultPrevented || !isTopLayer(layerId)) return;
+      // Top layer consumes Escape (even with closeOnEscape=false) so layers below never see it.
+      e.preventDefault();
+      e.stopPropagation();
+      if (closeOnEscape) handleClose();
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, handleClose, closeOnEscape]);
+  }, [isOpen, handleClose, closeOnEscape, layerId]);
 
   // Focus trap + initial focus on first focusable control (AlertDialog has no title bar close)
   useEffect(() => {
@@ -113,13 +153,24 @@ export default function Modal({
         (el) => el.getAttribute("aria-hidden") !== "true" && el.offsetParent !== null,
       );
 
+    // Element focused before opening — focus returns here on close (unless onCloseAutoFocus prevents it).
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
     const focusInitial = () => {
+      const openEvent = createAutoFocusEvent("modal.openAutoFocus");
+      onOpenAutoFocusRef.current?.(openEvent);
+      if (openEvent.defaultPrevented) return;
+      const preferred = initialFocusRefRef.current?.current;
+      if (preferred) {
+        preferred.focus();
+        return;
+      }
       const focusable = getFocusable();
       const first = focusable[0];
       if (first) first.focus();
       else dialog.focus();
     };
-    requestAnimationFrame(focusInitial);
+    const frame = requestAnimationFrame(focusInitial);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;
@@ -143,7 +194,21 @@ export default function Modal({
     };
 
     dialog.addEventListener("keydown", handleKeyDown);
-    return () => dialog.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      cancelAnimationFrame(frame);
+      dialog.removeEventListener("keydown", handleKeyDown);
+      const closeEvent = createAutoFocusEvent("modal.closeAutoFocus");
+      onCloseAutoFocusRef.current?.(closeEvent);
+      if (
+        !closeEvent.defaultPrevented &&
+        previouslyFocused &&
+        previouslyFocused !== document.body &&
+        previouslyFocused.isConnected &&
+        typeof previouslyFocused.focus === "function"
+      ) {
+        previouslyFocused.focus();
+      }
+    };
   }, [isOpen]);
 
   // Portal and backdrop unmount as soon as `isOpen` is false — no stale `isExiting`-only render.
@@ -152,183 +217,222 @@ export default function Modal({
   const backdropZIndex = isStackedBackground ? zIndex - 2 : zIndex;
   const dialogZIndex = isStackedBackground ? zIndex - 1 : zIndex + 1;
 
-  const handleBackdropClick = closeOnBackdropClick ? handleClose : undefined;
+  const handleBackdropClick = closeOnBackdropClick
+    ? () => {
+        if (isTopLayer(layerId)) handleClose();
+      }
+    : undefined;
+
+  const scrollOutside = scrollBehavior === "outside";
+  const hasDescription = !hideHeader && description != null && description !== false;
+  const descriptionId = `${id}Description`;
+
+  // Confirm is ignored while loading or disabled — blocks double submits.
+  const handleConfirm = () => {
+    if (confirmLoading || confirmDisabled) return;
+    onConfirm?.();
+  };
+
+  const rootClassName = [
+    "modal",
+    scrollOutside ? "modal--scroll-outside" : "",
+    fullscreenOnMobile ? "modal--fullscreen-mobile" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const modalContent = (
-    <div className="modal-root">
-      {!isStackedBackground && (
+    <OverlayLayerContext.Provider value={layerId}>
+      <div className="modal-root">
+        {!isStackedBackground && (
+          <div
+            className={`modal-backdrop ${isExiting ? "modal-backdrop--exiting" : "modal-backdrop--entering"}`}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "var(--color-bg-overlay, rgba(0, 0, 0, 0.5))",
+              zIndex: backdropZIndex,
+              pointerEvents: "auto",
+            }}
+            onClick={handleBackdropClick}
+            aria-hidden="true"
+          />
+        )}
+
         <div
-          className={`modal-backdrop ${isExiting ? "modal-backdrop--exiting" : "modal-backdrop--entering"}`}
+          ref={dialogRef}
+          className={rootClassName}
+          id={id}
+          tabIndex={-1}
+          aria-labelledby={!hideHeader ? `${id}Label` : undefined}
+          aria-describedby={hasDescription ? descriptionId : undefined}
+          data-scroll-behavior={scrollBehavior}
+          aria-modal="true"
+          role="dialog"
           style={{
+            boxSizing: "border-box",
+            display: "flex",
+            // "outside": top-align + auto margins so tall dialogs scroll from their top edge instead of clipping.
+            alignItems: scrollOutside ? "flex-start" : "center",
+            justifyContent: "center",
             position: "fixed",
             top: 0,
             left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "var(--color-bg-overlay, rgba(0, 0, 0, 0.5))",
-            zIndex: backdropZIndex,
+            width: "100dvw",
+            height: "100dvh",
+            zIndex: dialogZIndex,
+            padding: "1rem",
+            overflowX: "hidden",
+            overflowY: scrollOutside ? "auto" : "hidden",
             pointerEvents: "auto",
           }}
-          onClick={handleBackdropClick}
-          aria-hidden="true"
-        />
-      )}
-
-      <div
-        ref={dialogRef}
-        className="modal"
-        id={id}
-        tabIndex={-1}
-        aria-labelledby={!hideHeader ? `${id}Label` : undefined}
-        aria-modal="true"
-        role="dialog"
-        style={{
-          boxSizing: "border-box",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100dvw",
-          height: "100dvh",
-          zIndex: dialogZIndex,
-          padding: "1rem",
-          overflow: "hidden",
-          pointerEvents: "auto",
-        }}
-        onClick={!isStackedBackground ? handleBackdropClick : undefined}
-      >
-        <div
-          className={`modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`}
-          style={{
-            boxSizing: "border-box",
-            margin: 0,
-            maxHeight: "calc(100dvh - 2rem)",
-            width: "100%",
-            maxWidth: modalSizeWidths[size] ?? "480px",
-            minWidth: 0,
-            display: "flex",
-            flexDirection: "column",
-            pointerEvents: "auto",
-            animationDuration: `${animationDuration}ms`,
-          }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={!isStackedBackground ? handleBackdropClick : undefined}
         >
           <div
-            className={`modal-content ${className}`.trim()}
+            className={`modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`}
             style={{
+              boxSizing: "border-box",
+              margin: scrollOutside ? "auto" : 0,
+              maxHeight: scrollOutside ? "none" : "calc(100dvh - 2rem)",
+              width: "100%",
+              maxWidth: modalSizeWidths[size] ?? "480px",
+              minWidth: 0,
               display: "flex",
               flexDirection: "column",
-              maxHeight: "100%",
-              overflow: "hidden",
-              background: "var(--color-bg-surface)",
-              borderRadius: "var(--radius-lg, 8px)",
-              boxShadow: "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))",
+              pointerEvents: "auto",
+              animationDuration: `${animationDuration}ms`,
             }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {!hideHeader && (
-              <div
-                className="modal-header"
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "1rem",
-                  flexShrink: 0,
-                  padding: "1rem 1.25rem",
-                  borderBottom: "1px solid var(--color-border-subtle, var(--color-mist-60))",
-                }}
-              >
-                <span
-                  id={`${id}Label`}
-                  className="modal-title fw-semibold"
-                  style={{ flex: 1, fontSize: "1.125rem", color: "var(--color-text-primary)" }}
-                >
-                  {titleIcon && (
-                    <Icon
-                      src={titleIcon}
-                      width={titleIconSize ?? 24}
-                      height={titleIconSize ?? 24}
-                      className="me-2"
-                      preserveColors
-                    />
-                  )}
-                  {title}
-                </span>
-                {showCloseButton && (
-                  <Button
-                    variant="link"
-                    onClick={handleClose}
-                    icon={CloseIcon}
-                    size="sm"
-                    style={{ flexShrink: 0, marginTop: "-0.25rem" }}
-                    aria-label="Close dialog"
-                  />
-                )}
-              </div>
-            )}
-
             <div
-              className="modal-body"
+              className={`modal-content ${className}`.trim()}
               style={{
-                overflowY: "auto",
-                overflowX: "hidden",
-                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                flex: "1 1 auto",
                 minHeight: 0,
-                padding: "1rem 1.25rem",
+                maxHeight: scrollOutside ? "none" : "100%",
+                overflow: "hidden",
+                background: "var(--color-bg-surface)",
+                borderRadius: "var(--radius-lg, 8px)",
+                boxShadow: "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))",
               }}
             >
-              {children}
-            </div>
+              {!hideHeader && (
+                <div
+                  className="modal-header"
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "1rem",
+                    flexShrink: 0,
+                    padding: "1rem 1.25rem",
+                    borderBottom: "1px solid var(--color-border-subtle, var(--color-mist-60))",
+                  }}
+                >
+                  <div className="modal-heading" style={{ flex: 1, minWidth: 0 }}>
+                    <span
+                      id={`${id}Label`}
+                      className="modal-title fw-semibold"
+                      style={{ display: "block", fontSize: "1.125rem", color: "var(--color-text-primary)" }}
+                    >
+                      {titleIcon && (
+                        <Icon
+                          src={titleIcon}
+                          width={titleIconSize ?? 24}
+                          height={titleIconSize ?? 24}
+                          className="me-2"
+                          preserveColors
+                        />
+                      )}
+                      {title}
+                    </span>
+                    {hasDescription && (
+                      <p id={descriptionId} className="modal-description">
+                        {description}
+                      </p>
+                    )}
+                  </div>
+                  {showCloseButton && (
+                    <Button
+                      variant="link"
+                      onClick={handleClose}
+                      icon={CloseIcon}
+                      size="sm"
+                      style={{ flexShrink: 0, marginTop: "-0.25rem" }}
+                      aria-label="Close dialog"
+                    />
+                  )}
+                </div>
+              )}
 
-            {!hideFooter && (footer != null || onConfirm) && (
               <div
-                className="modal-footer"
+                className="modal-body"
                 style={{
-                  flexShrink: 0,
-                  display: "flex",
-                  gap: "0.75rem",
-                  justifyContent: "flex-end",
-                  flexWrap: "wrap",
+                  overflowY: scrollOutside ? "visible" : "auto",
+                  overflowX: "hidden",
+                  flex: 1,
+                  minHeight: 0,
                   padding: "1rem 1.25rem",
-                  borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))",
                 }}
               >
-                {footer != null ? (
-                  footer
-                ) : (
-                  <>
-                    {showCancel && (
-                      <Button
-                        variant={cancelButtonVariant}
-                        size="md"
-                        onClick={handleClose}
-                        textColor={cancelButtonColor}
-                        backgroundColor={cancelButtonBackground}
-                        borderColor={cancelButtonBorder}
-                      >
-                        {cancelText}
-                      </Button>
-                    )}
-                    <Button
-                      variant={confirmButtonVariant}
-                      size={confirmButtonVariant === "primary" ? "lg" : "md"}
-                      onClick={onConfirm}
-                      disabled={confirmDisabled}
-                      textColor={confirmButtonColor}
-                      backgroundColor={confirmButtonBackground}
-                      borderColor={confirmButtonBorder}
-                    >
-                      {confirmText}
-                    </Button>
-                  </>
-                )}
+                {children}
               </div>
-            )}
+
+              {!hideFooter && (footer != null || onConfirm) && (
+                <div
+                  className="modal-footer"
+                  style={{
+                    flexShrink: 0,
+                    display: "flex",
+                    gap: "0.75rem",
+                    justifyContent: "flex-end",
+                    flexWrap: "wrap",
+                    padding: "1rem 1.25rem",
+                    borderTop: "1px solid var(--color-border-subtle, var(--color-mist-60))",
+                  }}
+                >
+                  {footer != null ? (
+                    footer
+                  ) : (
+                    <>
+                      {showCancel && (
+                        <Button
+                          variant={cancelButtonVariant}
+                          size="md"
+                          onClick={handleClose}
+                          textColor={cancelButtonColor}
+                          backgroundColor={cancelButtonBackground}
+                          borderColor={cancelButtonBorder}
+                        >
+                          {cancelText}
+                        </Button>
+                      )}
+                      <Button
+                        variant={confirmButtonVariant}
+                        size={confirmButtonVariant === "primary" ? "lg" : "md"}
+                        onClick={handleConfirm}
+                        disabled={confirmDisabled}
+                        loading={confirmLoading}
+                        aria-busy={confirmLoading || undefined}
+                        textColor={confirmButtonColor}
+                        backgroundColor={confirmButtonBackground}
+                        borderColor={confirmButtonBorder}
+                      >
+                        {confirmText}
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </OverlayLayerContext.Provider>
   );
 
   return typeof document !== "undefined" ? createPortal(modalContent, document.body) : null;

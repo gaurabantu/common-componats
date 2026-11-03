@@ -43,10 +43,10 @@ __export(table_exports, {
 module.exports = __toCommonJS(table_exports);
 
 // src/components/molecules/Table/Table.tsx
-var import_react9 = require("react");
+var import_react10 = require("react");
 
 // src/components/atoms/Select/index.tsx
-var import_react = require("react");
+var import_react2 = require("react");
 
 // src/components/atoms/Select/Select.config.ts
 var defaultSelectOptions = {
@@ -56,9 +56,197 @@ var defaultSelectOptions = {
   showIcons: true
   // NEW: default to show icons
 };
+var selectHeightTokens = {
+  sm: "var(--button-height-sm)",
+  md: "var(--button-height-lg)",
+  lg: "3rem"
+};
+function isPickerOpenKey(event) {
+  if (event.key === " " || event.key === "Spacebar" || event.key === "F4")
+    return true;
+  return event.altKey && (event.key === "ArrowDown" || event.key === "ArrowUp");
+}
+var selectStatusTokens = {
+  error: "var(--color-danger-strong)",
+  warning: "var(--color-warning-strong)",
+  success: "var(--color-success-strong)"
+};
+
+// src/components/molecules/FormField/index.tsx
+var import_react = __toESM(require("react"));
+
+// src/components/molecules/FormField/FormField.config.ts
+var FORM_FIELD_DEFAULTS = {
+  layout: "vertical",
+  optionalLabel: "(optional)"
+};
+var FORM_FIELD_REQUIRED_SR_TEXT = "required";
+var FORM_FIELD_CONSUMER_KEY = "__dsFormFieldConsumer";
+var FORM_FIELD_LABELABLE_SELECTOR = 'input:not([type="hidden"]), select, textarea, button, meter, output, progress';
+
+// src/components/molecules/FormField/index.tsx
+var import_jsx_runtime = require("react/jsx-runtime");
+function cls(...parts) {
+  return parts.filter(Boolean).join(" ");
+}
+function hasContent(node) {
+  return node !== void 0 && node !== null && node !== false && node !== "";
+}
+var FormFieldContext = (0, import_react.createContext)(null);
+function useFormField() {
+  return (0, import_react.useContext)(FormFieldContext);
+}
+function useAnnounceOnChange(value) {
+  const initial = (0, import_react.useRef)(value);
+  const changed = (0, import_react.useRef)(false);
+  if (!changed.current && value !== initial.current)
+    changed.current = true;
+  return changed.current;
+}
+function isDev() {
+  var _a;
+  const env = (_a = globalThis.process) == null ? void 0 : _a.env;
+  return (env == null ? void 0 : env.NODE_ENV) !== "production";
+}
+function isFormFieldConsumer(type) {
+  return Boolean(type && (typeof type === "object" || typeof type === "function") && type[FORM_FIELD_CONSUMER_KEY]);
+}
+var FormField = import_react.default.forwardRef(function FormField2({
+  label,
+  htmlFor,
+  hint,
+  error,
+  required = false,
+  optional = false,
+  counter,
+  layout = FORM_FIELD_DEFAULTS.layout,
+  children,
+  className,
+  ...rest
+}, ref) {
+  var _a, _b;
+  const reactId = (0, import_react.useId)().replace(/[^a-zA-Z0-9_-]/g, "");
+  const child = import_react.default.isValidElement(children) && children.type !== import_react.default.Fragment ? children : null;
+  const childProps = (_a = child == null ? void 0 : child.props) != null ? _a : {};
+  const childId = typeof childProps.id === "string" && childProps.id ? childProps.id : void 0;
+  const controlId = (_b = htmlFor != null ? htmlFor : childId) != null ? _b : `form-field-${reactId}`;
+  const labelId = `${controlId}-label`;
+  const showHint = hasContent(hint);
+  const showError = hasContent(error);
+  const hintId = showHint ? `${controlId}-hint` : void 0;
+  const errorId = showError ? `${controlId}-error` : void 0;
+  const counterId = counter ? `${controlId}-counter` : void 0;
+  const describedBy = [hintId, errorId, counterId].filter(Boolean).join(" ") || void 0;
+  const invalid = showError;
+  const overLimit = counter ? counter.value > counter.max : false;
+  const announceError = useAnnounceOnChange(error);
+  const ctx = (0, import_react.useMemo)(
+    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required }),
+    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required]
+  );
+  const controlRef = (0, import_react.useRef)(null);
+  (0, import_react.useEffect)(() => {
+    var _a2;
+    if (!isDev())
+      return;
+    const root = controlRef.current;
+    if (!root)
+      return;
+    const target = Array.from(root.querySelectorAll("[id]")).find((el) => el.id === controlId);
+    const labelled = (_a2 = target == null ? void 0 : target.matches(FORM_FIELD_LABELABLE_SELECTOR)) != null ? _a2 : false;
+    const byLabelledBy = Array.from(root.querySelectorAll("[aria-labelledby]")).some(
+      (el) => {
+        var _a3;
+        return ((_a3 = el.getAttribute("aria-labelledby")) != null ? _a3 : "").split(/\s+/).includes(labelId);
+      }
+    );
+    if (!labelled && !byLabelledBy) {
+      console.warn(
+        `[FormField] No labelable focusable element with id="${controlId}" (and no aria-labelledby="${labelId}") was found inside the field, so the label is not associated with the control. Use Input / TextArea / Select / Combobox / a native control, or wire a custom control with useFormField().`
+      );
+    }
+  }, [controlId, labelId]);
+  let control = children;
+  if (child && !isFormFieldConsumer(child.type)) {
+    const inject = {};
+    if (childProps.id === void 0)
+      inject.id = controlId;
+    if (childProps["aria-describedby"] === void 0 && describedBy)
+      inject["aria-describedby"] = describedBy;
+    if (childProps["aria-invalid"] === void 0 && invalid)
+      inject["aria-invalid"] = true;
+    if (childProps["aria-required"] === void 0 && required)
+      inject["aria-required"] = true;
+    control = Object.keys(inject).length > 0 ? import_react.default.cloneElement(child, inject) : child;
+  }
+  const optionalText = !required && optional ? typeof optional === "string" ? optional : FORM_FIELD_DEFAULTS.optionalLabel : null;
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormFieldContext.Provider, { value: ctx, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+    "div",
+    {
+      ref,
+      className: cls("ds-form-field", className),
+      "data-layout": layout,
+      "data-invalid": invalid ? "true" : void 0,
+      ...rest,
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ds-form-field__label-col", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { id: labelId, htmlFor: controlId, className: "ds-form-field__label", children: [
+          label,
+          required ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "ds-form-field__required", "aria-hidden": "true", children: "*" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "sr-only", children: [
+              " ",
+              FORM_FIELD_REQUIRED_SR_TEXT
+            ] })
+          ] }) : null,
+          optionalText ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "ds-form-field__optional", children: optionalText }) : null
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ds-form-field__control-col", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref: controlRef, className: "ds-form-field__control", children: control }),
+          showHint || showError || counter ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ds-form-field__messages", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ds-form-field__texts", children: [
+              showHint ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { id: hintId, className: "ds-form-field__hint", children: hint }) : null,
+              showError ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { id: errorId, className: "ds-form-field__error", role: announceError ? "alert" : void 0, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                  "svg",
+                  {
+                    className: "ds-form-field__error-icon",
+                    viewBox: "0 0 16 16",
+                    "aria-hidden": "true",
+                    focusable: "false",
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "8", cy: "8", r: "6.25", fill: "none", stroke: "currentColor", strokeWidth: "1.5" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M8 4.75v3.75", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "8", cy: "11", r: "0.9", fill: "currentColor" })
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: error })
+              ] }) : null
+            ] }),
+            counter ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { id: counterId, className: "ds-form-field__counter", "data-over": overLimit ? "true" : void 0, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { "aria-hidden": "true", children: [
+                counter.value,
+                "/",
+                counter.max
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "sr-only", children: [
+                counter.value,
+                " of ",
+                counter.max,
+                overLimit ? `, ${counter.value - counter.max} over the limit` : ""
+              ] })
+            ] }) : null
+          ] }) : null,
+          counter ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sr-only", "aria-live": "polite", children: overLimit ? `Limit of ${counter.max} exceeded` : "" }) : null
+        ] })
+      ]
+    }
+  ) });
+});
+FormField.displayName = "FormField";
 
 // src/components/atoms/Select/index.tsx
-var import_jsx_runtime = require("react/jsx-runtime");
+var import_jsx_runtime2 = require("react/jsx-runtime");
 var getOptionDataAttributes = (option) => {
   const dataAttrs = {};
   if (option.icon) {
@@ -75,13 +263,13 @@ var renderOptionContent = (option, showIcons = true) => {
   }
   const iconElement = typeof option.icon === "string" ? option.icon + " " : option.icon;
   if (option.iconPosition === "right") {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
       option.label,
       " ",
       iconElement
     ] });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
     iconElement,
     " ",
     option.label
@@ -98,7 +286,7 @@ function findOptionInSelect(value, options, groups) {
   }
   return options == null ? void 0 : options.find((opt) => opt.value === value);
 }
-var Select = (0, import_react.forwardRef)((props, ref) => {
+var Select = (0, import_react2.forwardRef)((props, ref) => {
   const {
     label,
     options = [],
@@ -119,29 +307,70 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
     status,
     allowPlaceholderSelection = true,
     animatedChevron = true,
+    required,
+    style,
+    onMouseDown,
+    onKeyDown,
+    onBlur,
+    "aria-describedby": ariaDescribedByProp,
+    "aria-invalid": ariaInvalidProp,
+    "aria-required": ariaRequiredProp,
+    liveSearch: _liveSearch,
     ...rest
   } = props;
-  const generatedId = (0, import_react.useId)();
-  const selectId = id || generatedId;
+  const field = useFormField();
+  const generatedId = (0, import_react2.useId)();
+  const selectId = id || (field == null ? void 0 : field.id) || generatedId;
+  const messageId = `${selectId}-message`;
   const useGroups = Boolean(groups && groups.length > 0);
+  const [pickerOpen, setPickerOpen] = (0, import_react2.useState)(false);
+  const pickerOpenRef = (0, import_react2.useRef)(false);
+  const setOpen = (next) => {
+    if (pickerOpenRef.current === next)
+      return;
+    pickerOpenRef.current = next;
+    setPickerOpen(next);
+  };
   const handleChange = (event) => {
     const selectedValue = event.target.value;
     const selectedOption = findOptionInSelect(selectedValue, options, groups);
+    setOpen(false);
     onChange == null ? void 0 : onChange(event);
     onValueChange == null ? void 0 : onValueChange(selectedValue, selectedOption);
-    if (animatedChevron !== false) {
-      event.currentTarget.blur();
-    }
+  };
+  const handleMouseDown = (event) => {
+    onMouseDown == null ? void 0 : onMouseDown(event);
+    if (!event.defaultPrevented && event.button === 0 && !event.currentTarget.disabled)
+      setOpen(true);
+  };
+  const handleKeyDown = (event) => {
+    onKeyDown == null ? void 0 : onKeyDown(event);
+    setOpen(!event.defaultPrevented && isPickerOpenKey(event));
+  };
+  const handleBlur = (event) => {
+    setOpen(false);
+    onBlur == null ? void 0 : onBlur(event);
   };
   const isDisabled = rest.disabled;
-  const resolvedStatus = status != null ? status : error ? "error" : void 0;
+  const resolvedStatus = error ? "error" : status;
   const helperMessage = error || helperText;
-  const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
-  const footerColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-text-secondary)";
+  const errorShown = Boolean(error);
+  const initialError = (0, import_react2.useRef)(error);
+  const errorChanged = (0, import_react2.useRef)(false);
+  if (!errorChanged.current && error !== initialError.current)
+    errorChanged.current = true;
+  const describedBy = [ariaDescribedByProp != null ? ariaDescribedByProp : field == null ? void 0 : field.describedBy, helperMessage ? messageId : void 0].filter(Boolean).join(" ") || void 0;
+  const ariaInvalid = ariaInvalidProp != null ? ariaInvalidProp : errorShown || resolvedStatus === "error" || Boolean(field == null ? void 0 : field.invalid);
+  const ariaRequired = ariaRequiredProp != null ? ariaRequiredProp : (field == null ? void 0 : field.required) && !required ? true : void 0;
+  const isInvalid = ariaInvalid === true || ariaInvalid === "true" || resolvedStatus === "error";
+  const visualStatus = isInvalid ? "error" : resolvedStatus;
+  const statusToken = visualStatus ? selectStatusTokens[visualStatus] : void 0;
+  const borderColor = statusToken != null ? statusToken : "var(--color-border-default)";
+  const footerColor = resolvedStatus ? selectStatusTokens[resolvedStatus] : "var(--color-text-secondary)";
   const sizeConfig = {
-    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
-    lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
+    sm: { minHeight: selectHeightTokens.sm, paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
+    md: { minHeight: selectHeightTokens.md, paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
+    lg: { minHeight: selectHeightTokens.lg, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
   };
   const currentSize = sizeConfig[size];
   const radiusValue = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
@@ -169,7 +398,6 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
     border: `1.5px solid ${borderColor}`,
     backgroundColor: isDisabled ? "var(--color-bg-page)" : "var(--color-bg-surface)",
     color: isDisabled ? "var(--color-text-secondary)" : "var(--color-text-primary)",
-    outline: "none",
     appearance: "none",
     WebkitAppearance: "none",
     MozAppearance: "none",
@@ -178,11 +406,6 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
     cursor: isDisabled ? "not-allowed" : "pointer",
     transition: "border-color 150ms, background-color 150ms"
   };
-  if (!animatedChevron) {
-    selectStyle.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23757575' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`;
-    selectStyle.backgroundRepeat = "no-repeat";
-    selectStyle.backgroundPosition = `right ${currentSize.paddingX}px center`;
-  }
   const helperStyle = {
     marginTop: 8,
     marginBottom: 0,
@@ -190,29 +413,42 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: customClass, style: wrapperStyle, children: [
-    label && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { htmlFor: selectId, style: labelStyle, children: label }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: customClass, style: wrapperStyle, children: [
+    label && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("label", { htmlFor: selectId, style: labelStyle, children: [
+      label,
+      required ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-select__required", "aria-hidden": "true", children: "*" }) : null
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
       "div",
       {
-        className: `ucs-select-shell${animatedChevron !== false ? " ucs-select-shell--chevron-animated" : ""}`,
-        children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        className: `ucs-select-shell${animatedChevron !== false ? " ucs-select-shell--chevron-animated" : " ds-select-shell--chevron-static"}`,
+        "data-open": animatedChevron !== false && pickerOpen ? "true" : void 0,
+        children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
           "select",
           {
             ref,
             id: selectId,
-            className,
-            style: selectStyle,
-            "aria-invalid": !!error || resolvedStatus === "error",
+            className: className ? `ds-select ${className}` : "ds-select",
+            "data-size": size,
+            "data-invalid": isInvalid ? "true" : void 0,
+            "data-status": visualStatus,
+            style: style ? { ...selectStyle, ...style } : selectStyle,
+            "aria-invalid": ariaInvalid,
+            "aria-describedby": describedBy,
+            "aria-required": ariaRequired,
+            required,
             value,
-            onChange: handleChange,
             ...rest,
+            onChange: handleChange,
+            onMouseDown: handleMouseDown,
+            onKeyDown: handleKeyDown,
+            onBlur: handleBlur,
             children: [
-              placeholder && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", disabled: !allowPlaceholderSelection, children: placeholder }),
-              useGroups ? groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("optgroup", { label: group.label, children: group.options.map((opt, index) => {
+              placeholder && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("option", { value: "", disabled: !allowPlaceholderSelection, children: placeholder }),
+              useGroups ? groups.map((group) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("optgroup", { label: group.label, children: group.options.map((opt, index) => {
                 var _a;
                 const dataAttributes = getOptionDataAttributes(opt);
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                   "option",
                   {
                     value: opt.value,
@@ -225,7 +461,7 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
               }) }, group.label)) : options.map((opt, index) => {
                 var _a;
                 const dataAttributes = getOptionDataAttributes(opt);
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                   "option",
                   {
                     value: opt.value,
@@ -241,14 +477,25 @@ var Select = (0, import_react.forwardRef)((props, ref) => {
         )
       }
     ),
-    helperMessage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: helperStyle, children: helperMessage })
+    helperMessage && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+      "p",
+      {
+        id: messageId,
+        className: "ds-select__message",
+        "data-status": resolvedStatus,
+        role: errorShown && errorChanged.current ? "alert" : void 0,
+        style: helperStyle,
+        children: helperMessage
+      }
+    )
   ] });
 });
 Select.displayName = "Select";
+Select[FORM_FIELD_CONSUMER_KEY] = true;
 var Select_default = Select;
 
 // src/components/atoms/TextView/index.tsx
-var import_react2 = __toESM(require("react"));
+var import_react3 = __toESM(require("react"));
 
 // src/components/atoms/TextView/TextView.config.ts
 var variantClassMap = {
@@ -333,7 +580,7 @@ var decorationClassMap = {
 };
 
 // src/components/atoms/TextView/TextView.utils.ts
-var cls = (...classes) => classes.filter(Boolean).join(" ");
+var cls2 = (...classes) => classes.filter(Boolean).join(" ");
 
 // src/components/atoms/TextView/index.tsx
 var SEMANTIC_COLORS = [
@@ -355,7 +602,7 @@ function isTokenFontSize(v) {
 function isTokenFontWeight(v) {
   return typeof v === "string" && v in fontWeightClassMap;
 }
-var TextView = import_react2.default.memo(function TextView2({
+var TextView = import_react3.default.memo(function TextView2({
   as,
   children,
   variant = "body",
@@ -381,7 +628,7 @@ var TextView = import_react2.default.memo(function TextView2({
   const weightClass = isTokenFontWeight(fontWeight) ? fontWeightClassMap[fontWeight] : "";
   const useColorStyle = typeof color === "string" && color.length > 0 && !isSemanticColor(color);
   const colorClass = !useColorStyle && color ? colorClassMap[color] : "";
-  const finalClassName = cls(
+  const finalClassName = cls2(
     "font-sans",
     sizeClass,
     weightClass,
@@ -400,7 +647,7 @@ var TextView = import_react2.default.memo(function TextView2({
     ...useFontSizeStyle ? { fontSize } : null,
     ...useFontWeightStyle ? { fontWeight } : null
   } : style;
-  return import_react2.default.createElement(
+  return import_react3.default.createElement(
     Component,
     { className: finalClassName, style: finalStyle, ...restProps },
     children
@@ -409,12 +656,12 @@ var TextView = import_react2.default.memo(function TextView2({
 var TextView_default = TextView;
 
 // src/components/atoms/Icon/index.tsx
-var import_react3 = __toESM(require("react"));
-var import_jsx_runtime2 = require("react/jsx-runtime");
+var import_react4 = __toESM(require("react"));
+var import_jsx_runtime3 = require("react/jsx-runtime");
 function resolveSrc(src) {
   if (typeof src === "string")
     return src;
-  if (import_react3.default.isValidElement(src))
+  if (import_react4.default.isValidElement(src))
     return null;
   if (typeof src === "object" && src !== null) {
     if ("src" in src && typeof src.src === "string")
@@ -431,7 +678,7 @@ function isSvgSource(url) {
 function cssUrl(href) {
   return `url(${JSON.stringify(href)})`;
 }
-var Icon = import_react3.default.memo(function Icon2({
+var Icon = import_react4.default.memo(function Icon2({
   src,
   alt = "",
   color = "currentColor",
@@ -466,7 +713,7 @@ var Icon = import_react3.default.memo(function Icon2({
     title: typeof title === "string" ? title : alt || void 0,
     ...rest
   };
-  if (import_react3.default.isValidElement(src)) {
+  if (import_react4.default.isValidElement(src)) {
     const size = width;
     const sizeHeight = height != null ? height : width;
     const childProps = src.props;
@@ -477,20 +724,20 @@ var Icon = import_react3.default.memo(function Icon2({
       color: !preserveColors ? color : void 0,
       ...childStyle
     };
-    const child = import_react3.default.cloneElement(src, {
+    const child = import_react4.default.cloneElement(src, {
       width: size,
       height: sizeHeight,
       style: mergedStyle
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { ...wrapperProps, children: child });
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { ...wrapperProps, children: child });
   }
   if (!resolvedSrc) {
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { ...wrapperProps });
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { ...wrapperProps });
   }
   const isSvg = isSvgSource(resolvedSrc);
   if (isSvg && !preserveColors) {
     const maskRef = cssUrl(resolvedSrc);
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
       "span",
       {
         ...wrapperProps,
@@ -510,7 +757,7 @@ var Icon = import_react3.default.memo(function Icon2({
       }
     );
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { ...wrapperProps, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { ...wrapperProps, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
     "img",
     {
       src: resolvedSrc,
@@ -526,7 +773,7 @@ var Icon = import_react3.default.memo(function Icon2({
 var Icon_default = Icon;
 
 // src/components/atoms/TextInput/TextInput.tsx
-var import_react4 = require("react");
+var import_react5 = require("react");
 
 // src/utils/uiPanValidators.ts
 var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
@@ -700,9 +947,9 @@ var close_default = 'data:image/svg+xml,<svg width="13" height="13" viewBox="0 0
 var search_default = 'data:image/svg+xml,<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">%0A<mask id="mask0_7433_74974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="18" height="18">%0A<rect width="18" height="18" fill="%23D9D9D9"/>%0A</mask>%0A<g mask="url(%23mask0_7433_74974)">%0A<path d="M7.14894 11.7119C5.86819 11.7119 4.78356 11.2677 3.89506 10.3794C3.00669 9.49087 2.5625 8.40625 2.5625 7.1255C2.5625 5.84475 3.00669 4.76012 3.89506 3.87162C4.78356 2.98325 5.86819 2.53906 7.14894 2.53906C8.42969 2.53906 9.51431 2.98325 10.4028 3.87162C11.2912 4.76012 11.7354 5.84475 11.7354 7.1255C11.7354 7.66112 11.6455 8.17269 11.4657 8.66019C11.2859 9.14769 11.0459 9.57169 10.7459 9.93219L15.0614 14.2477C15.1653 14.3514 15.2184 14.4819 15.2208 14.6392C15.2232 14.7964 15.1701 14.9294 15.0614 15.038C14.9528 15.1466 14.8211 15.2009 14.6662 15.2009C14.5114 15.2009 14.3797 15.1466 14.2711 15.038L9.95563 10.7225C9.58063 11.0321 9.14937 11.2744 8.66187 11.4494C8.17437 11.6244 7.67006 11.7119 7.14894 11.7119ZM7.14894 10.5871C8.11531 10.5871 8.93381 10.2517 9.60444 9.581C10.2752 8.91037 10.6106 8.09187 10.6106 7.1255C10.6106 6.15912 10.2752 5.34062 9.60444 4.67C8.93381 3.99925 8.11531 3.66387 7.14894 3.66387C6.18256 3.66387 5.36406 3.99925 4.69344 4.67C4.02269 5.34062 3.68731 6.15912 3.68731 7.1255C3.68731 8.09187 4.02269 8.91037 4.69344 9.581C5.36406 10.2517 6.18256 10.5871 7.14894 10.5871Z" fill="%23212121"/>%0A</g>%0A</svg>%0A';
 
 // src/components/atoms/TextInput/TextInput.tsx
-var import_jsx_runtime3 = require("react/jsx-runtime");
+var import_jsx_runtime4 = require("react/jsx-runtime");
 var pxToRem = (px) => `${px / 16}rem`;
-var TextInput = (0, import_react4.forwardRef)(({
+var TextInput = (0, import_react5.forwardRef)(({
   id: idProp,
   label = "",
   type = "text",
@@ -752,14 +999,14 @@ var TextInput = (0, import_react4.forwardRef)(({
   ...rest
 }, ref) => {
   var _a, _b;
-  const [error, setError] = (0, import_react4.useState)(null);
-  const [verified, setVerified] = (0, import_react4.useState)(isVerified);
-  const [showValue, setShowValue] = (0, import_react4.useState)(false);
-  const [displayValue, setDisplayValue] = (0, import_react4.useState)(value || "");
-  const [isFocused, setIsFocused] = (0, import_react4.useState)(false);
-  const actualValueRef = (0, import_react4.useRef)(value || "");
-  const inputRef = (0, import_react4.useRef)(null);
-  (0, import_react4.useImperativeHandle)(ref, () => inputRef.current, []);
+  const [error, setError] = (0, import_react5.useState)(null);
+  const [verified, setVerified] = (0, import_react5.useState)(isVerified);
+  const [showValue, setShowValue] = (0, import_react5.useState)(false);
+  const [displayValue, setDisplayValue] = (0, import_react5.useState)(value || "");
+  const [isFocused, setIsFocused] = (0, import_react5.useState)(false);
+  const actualValueRef = (0, import_react5.useRef)(value || "");
+  const inputRef = (0, import_react5.useRef)(null);
+  (0, import_react5.useImperativeHandle)(ref, () => inputRef.current, []);
   const validationFunctions = {
     name: isAlphabetic,
     email: isValidEmail,
@@ -777,23 +1024,23 @@ var TextInput = (0, import_react4.forwardRef)(({
     pincode: isPincode,
     entityName: isEntityName
   };
-  const reactId = (0, import_react4.useId)();
+  const reactId = (0, import_react5.useId)();
   const inputId = (idProp == null ? void 0 : idProp.trim()) ? idProp : `text-input-${reactId}`;
-  (0, import_react4.useEffect)(() => {
+  (0, import_react5.useEffect)(() => {
     actualValueRef.current = value || "";
     updateDisplayValue(value || "");
   }, [value]);
-  (0, import_react4.useEffect)(() => {
+  (0, import_react5.useEffect)(() => {
     setVerified(isVerified);
   }, [isVerified]);
-  (0, import_react4.useEffect)(() => {
+  (0, import_react5.useEffect)(() => {
     if (errorMessage && actualValueRef.current) {
       setError(errorMessage);
     } else if (!errorMessage) {
       setError(null);
     }
   }, [errorMessage]);
-  const resolvedMaxLength = (0, import_react4.useMemo)(() => {
+  const resolvedMaxLength = (0, import_react5.useMemo)(() => {
     if (maxLength !== void 0)
       return maxLength;
     switch (validation) {
@@ -1267,7 +1514,7 @@ var TextInput = (0, import_react4.forwardRef)(({
     backgroundColor: colors.bgSurface,
     border: `1.5px solid ${resolvedBorderColor}`
   };
-  const resolvedSuffix = suffix !== void 0 ? suffix : type === "search" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+  const resolvedSuffix = suffix !== void 0 ? suffix : type === "search" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
     Icon_default,
     {
       src: search_default,
@@ -1318,8 +1565,8 @@ var TextInput = (0, import_react4.forwardRef)(({
     paddingLeft: prefix ? 0 : fieldMetrics.horizontalPadding,
     paddingRight: hasRightAddons ? 0 : fieldMetrics.horizontalPadding
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: `${fullWidth ? "w-full" : "inline-block"} ${className}`, children: [
-    label && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: `${fullWidth ? "w-full" : "inline-block"} ${className}`, children: [
+    label && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
       "label",
       {
         htmlFor: inputId,
@@ -1330,11 +1577,11 @@ var TextInput = (0, import_react4.forwardRef)(({
         },
         children: [
           label,
-          required && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-[var(--color-state-error)] ml-0.5", children: "*" })
+          required && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "text-[var(--color-state-error)] ml-0.5", children: "*" })
         ]
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
       "div",
       {
         className: [
@@ -1344,7 +1591,7 @@ var TextInput = (0, import_react4.forwardRef)(({
         ].filter(Boolean).join(" "),
         style: fieldWrapperStyle,
         children: [
-          prefix && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          prefix && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             "div",
             {
               style: {
@@ -1360,7 +1607,7 @@ var TextInput = (0, import_react4.forwardRef)(({
               children: prefix
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             "input",
             {
               ref: inputRef,
@@ -1392,7 +1639,7 @@ var TextInput = (0, import_react4.forwardRef)(({
               autoCapitalize: autoCapitalizeProp != null ? autoCapitalizeProp : autoCorrection ? void 0 : "none"
             }
           ),
-          hasRightAddons && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          hasRightAddons && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             "div",
             {
               style: {
@@ -1404,7 +1651,7 @@ var TextInput = (0, import_react4.forwardRef)(({
                 ...isIntegratedRail ? { minHeight: fieldMetrics.minHeight } : {}
               },
               children: (() => {
-                const suffixJsx = resolvedSuffix ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                const suffixJsx = resolvedSuffix ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                   "div",
                   {
                     style: {
@@ -1420,7 +1667,7 @@ var TextInput = (0, import_react4.forwardRef)(({
                     children: resolvedSuffix
                   }
                 ) : null;
-                const clearJsx = allowClear && hasValue && !disabled ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                const clearJsx = allowClear && hasValue && !disabled ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                   "button",
                   {
                     type: "button",
@@ -1441,10 +1688,10 @@ var TextInput = (0, import_react4.forwardRef)(({
                       flexShrink: 0
                     },
                     "aria-label": "Clear",
-                    children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon_default, { src: close_default, alt: "", height: fieldMetrics.clearIconPx, width: fieldMetrics.clearIconPx, "aria-hidden": true })
+                    children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon_default, { src: close_default, alt: "", height: fieldMetrics.clearIconPx, width: fieldMetrics.clearIconPx, "aria-hidden": true })
                   }
                 ) : null;
-                const toggleJsx = shouldShowToggle ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                const toggleJsx = shouldShowToggle ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                   "button",
                   {
                     type: "button",
@@ -1467,7 +1714,7 @@ var TextInput = (0, import_react4.forwardRef)(({
                     "aria-label": showValue ? "Hide value" : "Show value",
                     tabIndex: disabled ? -1 : 0,
                     disabled,
-                    children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                    children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                       Icon_default,
                       {
                         src: showValue ? toggleOffIcon : toggleIcon,
@@ -1479,13 +1726,13 @@ var TextInput = (0, import_react4.forwardRef)(({
                   }
                 ) : null;
                 if (isIntegratedRail) {
-                  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+                  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                     clearJsx,
                     suffixJsx,
                     toggleJsx
                   ] });
                 }
-                return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+                return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
                   suffixJsx,
                   clearJsx,
                   toggleJsx
@@ -1496,7 +1743,7 @@ var TextInput = (0, import_react4.forwardRef)(({
         ]
       }
     ),
-    (showCount || showVerifiedStatus || error) && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+    (showCount || showVerifiedStatus || error) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
       "div",
       {
         style: {
@@ -1508,7 +1755,7 @@ var TextInput = (0, import_react4.forwardRef)(({
           flexWrap: "wrap"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
             "div",
             {
               style: {
@@ -1518,7 +1765,7 @@ var TextInput = (0, import_react4.forwardRef)(({
                 minWidth: 0
               },
               children: [
-                showVerifiedStatus && verified && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+                showVerifiedStatus && verified && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
                   "div",
                   {
                     style: {
@@ -1529,12 +1776,12 @@ var TextInput = (0, import_react4.forwardRef)(({
                       color: colors.stateSuccess
                     },
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon_default, { src: verifiedIcon, alt: "", height: statusIconSize, width: statusIconSize, "aria-hidden": true }),
-                      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Verified" })
+                      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon_default, { src: verifiedIcon, alt: "", height: statusIconSize, width: statusIconSize, "aria-hidden": true }),
+                      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Verified" })
                     ]
                   }
                 ),
-                error && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+                error && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
                   "div",
                   {
                     style: {
@@ -1545,15 +1792,15 @@ var TextInput = (0, import_react4.forwardRef)(({
                       color: colors.stateError
                     },
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon_default, { src: errorIcon, alt: "", height: statusIconSize, width: statusIconSize, "aria-hidden": true }),
-                      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: error })
+                      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon_default, { src: errorIcon, alt: "", height: statusIconSize, width: statusIconSize, "aria-hidden": true }),
+                      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: error })
                     ]
                   }
                 )
               ]
             }
           ),
-          showCount && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+          showCount && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
             "span",
             {
               style: {
@@ -1576,20 +1823,20 @@ var TextInput = (0, import_react4.forwardRef)(({
 var TextInput_default = TextInput;
 
 // src/components/atoms/Button/index.tsx
-var import_react6 = __toESM(require("react"));
+var import_react7 = __toESM(require("react"));
 
 // src/components/common/useRipple.tsx
-var import_react5 = require("react");
-var import_jsx_runtime4 = require("react/jsx-runtime");
+var import_react6 = require("react");
+var import_jsx_runtime5 = require("react/jsx-runtime");
 function useRipple(enabled) {
-  const [bursts, setBursts] = (0, import_react5.useState)([]);
-  const seq = (0, import_react5.useRef)(0);
-  const timersRef = (0, import_react5.useRef)([]);
-  (0, import_react5.useEffect)(() => {
+  const [bursts, setBursts] = (0, import_react6.useState)([]);
+  const seq = (0, import_react6.useRef)(0);
+  const timersRef = (0, import_react6.useRef)([]);
+  (0, import_react6.useEffect)(() => {
     const timers = timersRef.current;
     return () => timers.forEach(clearTimeout);
   }, []);
-  const onPointerDown = (0, import_react5.useCallback)(
+  const onPointerDown = (0, import_react6.useCallback)(
     (e) => {
       if (!enabled)
         return;
@@ -1607,7 +1854,7 @@ function useRipple(enabled) {
     },
     [enabled]
   );
-  const RippleOverlay = bursts.length === 0 ? null : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "ucs-ripple-layer", "aria-hidden": "true", children: bursts.map((b) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "ucs-ripple-wave", style: { left: b.x, top: b.y } }, b.id)) });
+  const RippleOverlay = bursts.length === 0 ? null : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "ucs-ripple-layer", "aria-hidden": "true", children: bursts.map((b) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "ucs-ripple-wave", style: { left: b.x, top: b.y } }, b.id)) });
   return { onPointerDown, RippleOverlay };
 }
 
@@ -1664,8 +1911,25 @@ var defaultIconConfig = {
   color: "currentColor"
 };
 
+// src/utils/safeHref.ts
+var SAFE_PROTOCOLS = /* @__PURE__ */ new Set(["http:", "https:", "mailto:", "tel:"]);
+function isSafeHref(href) {
+  try {
+    const url = new URL(href, "https://relative.invalid/");
+    return SAFE_PROTOCOLS.has(url.protocol);
+  } catch (e) {
+    return false;
+  }
+}
+
 // src/components/atoms/Button/index.tsx
-var import_jsx_runtime5 = require("react/jsx-runtime");
+var import_jsx_runtime6 = require("react/jsx-runtime");
+function isDev2() {
+  var _a;
+  const env = (_a = globalThis.process) == null ? void 0 : _a.env;
+  return (env == null ? void 0 : env.NODE_ENV) !== "production";
+}
+var ANCHOR_ONLY_ATTRS = ["target", "rel", "download", "hrefLang", "ping", "referrerPolicy", "media"];
 var VALID_VARIANTS = [
   "default",
   "primary",
@@ -1685,7 +1949,7 @@ function getVariantClass(v) {
     return variantClasses[v];
   return variantClasses.primary;
 }
-var Button = import_react6.default.memo(function Button2({
+var ButtonImpl = import_react7.default.forwardRef(function Button({
   children,
   variant = "primary",
   variantClass,
@@ -1714,19 +1978,43 @@ var Button = import_react6.default.memo(function Button2({
   ariaLabel,
   preserveIconColor = false,
   ripple = true,
+  expandOnHover = false,
+  loadingText = "Loading",
   href,
   ...rest
-}) {
-  var _a, _b, _c;
-  const hasText = !!children && (typeof children === "string" ? children.trim().length > 0 : import_react6.default.Children.count(children) > 0);
+}, ref) {
+  var _a, _b, _c, _d;
+  const hasText = !!children && (typeof children === "string" ? children.trim().length > 0 : import_react7.default.Children.count(children) > 0);
   const isIconOnly = !!icon && !hasText;
+  const isExpandable = expandOnHover && !!icon && hasText;
   const variantClassNames = getVariantClass(variant);
   const resolvedVariant = variant == null || variant === "" ? "primary" : variant;
   const dsVariant = VALID_VARIANTS.includes(resolvedVariant) ? resolvedVariant : "primary";
   const sizeKey = (size != null ? size : "lg") in sizeClasses ? size : "lg";
   const sizeClassNames = isIconOnly ? (_a = iconOnlySizeClasses[sizeKey]) != null ? _a : iconOnlySizeClasses.lg : (_b = sizeClasses[sizeKey]) != null ? _b : sizeClasses.lg;
   const textSizeClassNames = textSize && textSize in textSizeClasses ? textSizeClasses[textSize] : "";
-  const computedAriaLabel = ariaLabel != null ? ariaLabel : isIconOnly ? "Button" : void 0;
+  const restAria = rest;
+  const hasExplicitName = !!(ariaLabel || restAria["aria-label"] || restAria["aria-labelledby"]);
+  const computedAriaLabel = (_c = ariaLabel != null ? ariaLabel : restAria["aria-label"]) != null ? _c : isIconOnly && !restAria["aria-labelledby"] ? "Button" : void 0;
+  const unsafeHref = href != null && !isSafeHref(href);
+  const linkHref = href != null && !unsafeHref ? href : void 0;
+  import_react7.default.useEffect(() => {
+    if (!isDev2())
+      return;
+    if (isIconOnly && !hasExplicitName) {
+      console.warn(
+        '[Button] Icon-only button has no accessible name. Pass `ariaLabel` (e.g. ariaLabel="Close"); falling back to "Button".'
+      );
+    }
+  }, [isIconOnly, hasExplicitName]);
+  import_react7.default.useEffect(() => {
+    if (!isDev2() || !unsafeHref)
+      return;
+    console.warn(
+      `[Button] Refused unsafe href ${JSON.stringify(href)} (only http, https, mailto, tel, relative and # links are allowed). Rendering a <button> instead.`
+    );
+  }, [unsafeHref, href]);
+  const loadingId = import_react7.default.useId();
   const styleOverrides = {};
   if (backgroundColor)
     styleOverrides.backgroundColor = backgroundColor;
@@ -1743,7 +2031,6 @@ var Button = import_react6.default.memo(function Button2({
     styleOverrides["--button-gradient-hover-bg"] = gradientHover || gradient;
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
-  const hasOverrides = Object.keys(styleOverrides).length > 0;
   const baseClass = [
     "btn-base",
     variantClassNames,
@@ -1752,17 +2039,23 @@ var Button = import_react6.default.memo(function Button2({
     loading ? "btn-loading" : "",
     gradient ? "btn-gradient" : "",
     variantClass != null ? variantClass : "",
-    (_c = classOverrides.variant) != null ? _c : "",
+    (_d = classOverrides.variant) != null ? _d : "",
     rounded !== void 0 ? `btn-rounded-${rounded}` : radiusClass,
     fullWidth || block ? "btn-full-width" : "",
+    isExpandable ? "btn-expand-on-hover" : "",
     className
   ].filter(Boolean).join(" ");
   const iconSizeDefaults = isIconOnly ? defaultIconOnlySizeBySize[sizeKey] : defaultIconWithLabelSizeBySize[sizeKey];
   const finalIconWidth = iconWidth != null ? iconWidth : iconSizeDefaults.width;
   const finalIconHeight = iconHeight != null ? iconHeight : iconSizeDefaults.height;
+  if (isExpandable) {
+    const iconW = typeof finalIconWidth === "number" ? `${finalIconWidth}px` : finalIconWidth;
+    styleOverrides["--btn-expand-pad"] = `calc((var(--button-height-${sizeKey}) - ${iconW}) / 2 - 1.5px)`;
+    styleOverrides["--btn-expand-pad-open"] = `var(--button-padding-x-${sizeKey})`;
+  }
   const gapPx = Math.min(16, Math.max(0, iconGap));
   const gapSnap = [0, 4, 8, 12, 16].reduce((a, b) => Math.abs(b - gapPx) < Math.abs(a - gapPx) ? b : a);
-  const iconGapClass = !hasText || gapSnap === 8 ? "" : iconPosition === "left" ? `btn-icon-gap-right-${gapSnap}` : `btn-icon-gap-left-${gapSnap}`;
+  const iconGapClass = !hasText || isExpandable || gapSnap === 8 ? "" : iconPosition === "left" ? `btn-icon-gap-right-${gapSnap}` : `btn-icon-gap-left-${gapSnap}`;
   const renderIcon = () => {
     if (!icon)
       return null;
@@ -1771,7 +2064,19 @@ var Button = import_react6.default.memo(function Button2({
       hasText && iconPosition === "right" && "btn-icon-right",
       iconGapClass
     ].filter(Boolean).join(" ");
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: wrapperClass || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    if (loading) {
+      const dim = (v) => typeof v === "number" ? `${v}px` : v;
+      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "span",
+        {
+          className: ["btn-spinner-slot", wrapperClass].filter(Boolean).join(" "),
+          style: { width: dim(finalIconWidth), height: dim(finalIconHeight) },
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "btn-spinner", "aria-hidden": "true" })
+        }
+      );
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: wrapperClass || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       Icon_default,
       {
         src: icon,
@@ -1783,15 +2088,21 @@ var Button = import_react6.default.memo(function Button2({
       }
     ) });
   };
+  const hasOverrides = Object.keys(styleOverrides).length > 0;
   const { style: restStyle, onPointerDown: restOnPointerDown, ...restWithoutStyle } = rest;
   const mergedStyle = hasOverrides ? { ...restStyle, ...styleOverrides } : restStyle;
-  const content = /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
-    loading && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "btn-spinner", "aria-hidden": "true" }),
+  const content = /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
+    loading && !icon && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "btn-spinner", "aria-hidden": "true" }),
     icon && iconPosition === "left" && renderIcon(),
-    children,
-    icon && iconPosition === "right" && renderIcon()
+    isExpandable ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "btn-expand-label", children }) : children,
+    icon && iconPosition === "right" && renderIcon(),
+    loading && // Referenced by aria-describedby: the name stays the label ("Save"), the state is described ("Loading").
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { id: loadingId, className: "sr-only", "aria-hidden": "true", children: loadingText })
   ] });
-  const isDisabled = Boolean(rest.disabled) || loading;
+  const nativeDisabled = Boolean(rest.disabled);
+  const isDisabled = nativeDisabled || loading;
+  const ariaBusy = loading ? true : restAria["aria-busy"];
+  const describedBy = [restAria["aria-describedby"], loading ? loadingId : void 0].filter(Boolean).join(" ") || void 0;
   const rippleEnabled = ripple !== false && !isDisabled;
   const rippleApi = useRipple(rippleEnabled);
   const pointerDown = (e) => {
@@ -1803,21 +2114,26 @@ var Button = import_react6.default.memo(function Button2({
     fullWidth || block ? "btn-ripple-inner--full" : ""
   ].filter(Boolean).join(" ");
   const surfaceClass = rippleEnabled ? `${baseClass} ucs-ripple-parent`.trim() : baseClass;
-  const body = rippleEnabled ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+  const body = rippleEnabled ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
     rippleApi.RippleOverlay,
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: innerClass, children: content })
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: innerClass, children: content })
   ] }) : content;
-  if (href) {
-    const { onClick, ...linkRest } = restWithoutStyle;
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+  if (linkHref !== void 0) {
+    const { onClick, rel, ...linkRest } = restWithoutStyle;
+    const finalRel = rel != null ? rel : linkRest.target === "_blank" ? "noopener noreferrer" : void 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "a",
       {
         ...linkRest,
-        href: isDisabled ? void 0 : href,
+        ref,
+        href: nativeDisabled ? void 0 : linkHref,
+        rel: finalRel,
         className: surfaceClass,
         style: mergedStyle,
         "aria-label": computedAriaLabel != null ? computedAriaLabel : void 0,
         "aria-disabled": isDisabled || void 0,
+        "aria-busy": ariaBusy,
+        "aria-describedby": describedBy,
         "data-variant": dsVariant,
         "data-raw-variant": variant,
         onPointerDown: rippleEnabled ? pointerDown : restOnPointerDown,
@@ -1833,23 +2149,43 @@ var Button = import_react6.default.memo(function Button2({
       }
     );
   }
-  const buttonRest = restWithoutStyle;
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+  const buttonRest = { ...restWithoutStyle };
+  if (unsafeHref)
+    for (const attr of ANCHOR_ONLY_ATTRS)
+      delete buttonRest[attr];
+  const { onClick: buttonOnClick, ...buttonAttrs } = buttonRest;
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
     "button",
     {
-      ...buttonRest,
+      ...unsafeHref ? { type: "button" } : null,
+      ...buttonAttrs,
+      ref,
       className: surfaceClass,
       style: mergedStyle,
-      disabled: isDisabled,
+      disabled: nativeDisabled,
       "aria-label": computedAriaLabel != null ? computedAriaLabel : void 0,
+      "aria-disabled": loading && !nativeDisabled ? true : buttonAttrs["aria-disabled"],
+      "aria-busy": ariaBusy,
+      "aria-describedby": describedBy,
       "data-variant": dsVariant,
       "data-raw-variant": variant,
       onPointerDown: rippleEnabled ? pointerDown : restOnPointerDown,
+      onClick: (e) => {
+        if (loading) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        buttonOnClick == null ? void 0 : buttonOnClick(e);
+      },
       children: body
     }
   );
 });
-var Button_default = Button;
+var Button2 = import_react7.default.memo(ButtonImpl);
+Button2.displayName = "Button";
+ButtonImpl.displayName = "Button";
+var Button_default = Button2;
 
 // src/components/atoms/TextInputSearch/TextInputSearch.utils.ts
 function railButtonSize(inputSize) {
@@ -1864,7 +2200,7 @@ function railButtonSize(inputSize) {
 }
 
 // src/components/atoms/TextInputSearch/index.tsx
-var import_jsx_runtime6 = require("react/jsx-runtime");
+var import_jsx_runtime7 = require("react/jsx-runtime");
 var pxToRem2 = (px) => `${px / 16}rem`;
 function railKey(inputSize) {
   if (inputSize === "lg")
@@ -1968,11 +2304,11 @@ var TextInputSearch = ({
   if (searchButtonDisplay === "icon") {
     mergedActionStyle.minWidth = 0;
   }
-  const suffixForInput = suffix !== void 0 ? suffix : showSearchButton ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+  const suffixForInput = suffix !== void 0 ? suffix : showSearchButton ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
     "span",
     {
       className: useIntegratedRail ? "ucs-search-input__integrated-action-slot inline-flex h-full min-h-0 shrink-0 items-stretch self-stretch" : "ucs-search-input__integrated-action-slot inline-flex shrink-0 items-center",
-      children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         Button_default,
         {
           ...restSearchActionBtn,
@@ -1995,7 +2331,7 @@ var TextInputSearch = ({
       )
     }
   ) : null;
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
     "div",
     {
       className: containerClassName.trim(),
@@ -2006,8 +2342,8 @@ var TextInputSearch = ({
       role: "search",
       "aria-labelledby": labelId,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("label", { id: labelId, htmlFor: id, className: "visually-hidden", children: ariaLabel }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("label", { id: labelId, htmlFor: id, className: "visually-hidden", children: ariaLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           TextInput_default,
           {
             id,
@@ -2025,7 +2361,7 @@ var TextInputSearch = ({
             variant: "outlined",
             rounded: SEARCH_SHELL_ROUNDED,
             allowClear: allowClearResolved,
-            prefix: leftIcon ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            prefix: leftIcon ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
               Icon_default,
               {
                 src: leftIcon,
@@ -2044,7 +2380,7 @@ var TextInputSearch = ({
             trailingRail: trailingRailResolved
           }
         ),
-        errorMessage && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { id: errorId, role: "alert", className: "visually-hidden", children: errorMessage })
+        errorMessage && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { id: errorId, role: "alert", className: "visually-hidden", children: errorMessage })
       ]
     }
   );
@@ -2077,33 +2413,44 @@ var tableConfig = {
 };
 
 // src/components/molecules/Table/Table.utils.ts
-var cls2 = (...classes) => {
+var cls3 = (...classes) => {
   return classes.filter(Boolean).join(" ");
 };
 
 // src/components/atoms/Checkbox/index.tsx
-var import_react7 = __toESM(require("react"));
+var import_react8 = __toESM(require("react"));
 
 // src/components/atoms/Checkbox/Checkbox.config.ts
 var defaultCheckboxColorClass = "";
 var defaultLabelColorClass = "text-body text-text-primary cursor-pointer";
 var defaultCheckboxInputLabelSpacing = "";
+var CHECKBOX_DEFAULTS = {
+  size: "md"
+};
 
 // src/components/atoms/Checkbox/Checkbox.utils.ts
-function cls3(...classes) {
+function cls4(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 // src/components/atoms/Checkbox/index.tsx
-var import_jsx_runtime7 = require("react/jsx-runtime");
-var CheckboxGlyph = () => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("svg", { className: "ucs-cc-checkbox-check", "aria-hidden": true, viewBox: "0 0 12 12", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("path", { className: "ucs-cc-checkbox-checkpath", d: "M2.75 6.05 L5.15 9.05 L9.95 3.25" }) });
-var Checkbox = import_react7.default.memo(function Checkbox2({
+var import_jsx_runtime8 = require("react/jsx-runtime");
+var useIsomorphicLayoutEffect = typeof window !== "undefined" ? import_react8.useLayoutEffect : import_react8.useEffect;
+var CheckboxGlyph = () => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("svg", { className: "ucs-cc-checkbox-check", "aria-hidden": true, viewBox: "0 0 12 12", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { className: "ucs-cc-checkbox-checkpath", d: "M2.75 6.05 L5.15 9.05 L9.95 3.25" }) });
+var DashGlyph = () => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("svg", { className: "ucs-cc-checkbox-dash", "aria-hidden": true, viewBox: "0 0 12 12", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { className: "ucs-cc-checkbox-dashpath", d: "M3 6 H9" }) });
+var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
   label,
   name,
   value,
   checked = false,
   disabled = false,
   onChange,
+  indeterminate = false,
+  description,
+  size = CHECKBOX_DEFAULTS.size,
+  error,
+  required = false,
+  id,
   checkboxColorClass = defaultCheckboxColorClass,
   labelColorClass = defaultLabelColorClass,
   inputLabelSpacingClass = defaultCheckboxInputLabelSpacing,
@@ -2113,9 +2460,29 @@ var Checkbox = import_react7.default.memo(function Checkbox2({
   withShadow = false,
   ariaLabel,
   ariaLabelledBy
-}) {
-  const checkboxId = `${name}-${value}`;
+}, forwardedRef) {
+  const generatedId = (0, import_react8.useId)();
+  const checkboxId = id != null ? id : `ucs-cb-${generatedId}`;
+  const labelId = `${checkboxId}-label`;
+  const descriptionId = description ? `${checkboxId}-description` : void 0;
+  const errorId = error ? `${checkboxId}-error` : void 0;
+  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || void 0;
   const hasVisibleLabel = label.trim().length > 0;
+  const inputRef = (0, import_react8.useRef)(null);
+  const setRefs = (0, import_react8.useCallback)(
+    (node) => {
+      inputRef.current = node;
+      if (typeof forwardedRef === "function")
+        forwardedRef(node);
+      else if (forwardedRef)
+        forwardedRef.current = node;
+    },
+    [forwardedRef]
+  );
+  useIsomorphicLayoutEffect(() => {
+    if (inputRef.current)
+      inputRef.current.indeterminate = indeterminate;
+  });
   const colors = {
     brand: "var(--color-brand-primary)",
     textPrimary: "var(--color-text-primary)",
@@ -2125,16 +2492,17 @@ var Checkbox = import_react7.default.memo(function Checkbox2({
     accentLavender: "var(--color-accent-lavender-10)",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
+  const isOn = checked || indeterminate;
   const roundedStyle = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
   const wrapperStyle = {
     display: "flex",
     alignItems: "flex-start",
-    gap: 8,
+    gap: "var(--space-1, 8px)",
     width: shape === "box" ? "100%" : "auto",
     padding: shape === "box" ? "12px" : 0,
-    border: shape === "box" ? `1.5px solid ${checked ? colors.brand : colors.borderDefault}` : "none",
+    border: shape === "box" ? `1.5px solid ${error ? "var(--color-danger-strong)" : isOn ? colors.brand : colors.borderDefault}` : "none",
     borderRadius: shape === "box" ? roundedStyle : void 0,
-    backgroundColor: shape === "box" ? checked ? colors.accentLavender : colors.bgSurface : "transparent",
+    backgroundColor: shape === "box" ? isOn ? colors.accentLavender : colors.bgSurface : "transparent",
     boxShadow: shape === "box" && withShadow && !disabled ? colors.shadow : "none",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.6 : 1,
@@ -2149,59 +2517,82 @@ var Checkbox = import_react7.default.memo(function Checkbox2({
     lineHeight: 1.5,
     cursor: disabled ? "not-allowed" : "pointer"
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+  const labelNode = /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    "span",
+    {
+      id: labelId,
+      className: cls4("ucs-cc-checkbox-label", labelColorClass),
+      style: labelStyle,
+      "aria-hidden": !hasVisibleLabel ? true : void 0,
+      children: [
+        label,
+        required && hasVisibleLabel ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "ucs-cc-checkbox-required", "aria-hidden": "true", children: "*" }) : null
+      ]
+    }
+  );
+  const control = /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
     "label",
     {
       htmlFor: checkboxId,
-      className: cls3("ucs-cc-checkbox-root", className),
+      className: cls4("ucs-cc-checkbox-root", className),
       style: wrapperStyle,
+      "data-size": size,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "input",
           {
+            ref: setRefs,
             type: "checkbox",
             id: checkboxId,
             name,
             value,
             checked,
             disabled,
+            required: required || void 0,
             onChange,
             readOnly: onChange ? void 0 : true,
             "aria-label": !hasVisibleLabel && ariaLabel ? ariaLabel : void 0,
-            "aria-labelledby": hasVisibleLabel ? `${checkboxId}-label` : !ariaLabel && ariaLabelledBy ? ariaLabelledBy : void 0,
+            "aria-labelledby": hasVisibleLabel ? labelId : !ariaLabel && ariaLabelledBy ? ariaLabelledBy : void 0,
+            "aria-describedby": describedBy,
+            "aria-invalid": error ? true : void 0,
+            "data-indeterminate": indeterminate ? "true" : void 0,
             className: "peer ucs-cc-checkbox-native"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
           "span",
           {
             "aria-hidden": "true",
-            className: cls3(
+            className: cls4(
               "ucs-cc-checkbox-face",
               shape === "default" ? checkboxColorClass : "",
               inputLabelSpacingClass
             ),
-            children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(CheckboxGlyph, {})
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(CheckboxGlyph, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(DashGlyph, {})
+            ]
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-          "span",
-          {
-            id: `${checkboxId}-label`,
-            className: cls3(labelColorClass),
-            style: labelStyle,
-            "aria-hidden": !hasVisibleLabel ? true : void 0,
-            children: label
-          }
-        )
+        description ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("span", { className: "ucs-cc-checkbox-text", children: [
+          labelNode,
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { id: descriptionId, className: "ucs-cc-checkbox-description", children: description })
+        ] }) : labelNode
       ]
     }
   );
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "ucs-cc-checkbox-field", "data-size": size, "data-shape": shape, children: [
+    control,
+    error ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { id: errorId, className: "ucs-cc-checkbox-error", role: "alert", children: error }) : null
+  ] });
 });
-var Checkbox_default = Checkbox;
+CheckboxBase.displayName = "Checkbox";
+var Checkbox2 = import_react8.default.memo(CheckboxBase);
+Checkbox2.displayName = "Checkbox";
+var Checkbox_default = Checkbox2;
 
 // src/components/molecules/Table/parts/TableHeader.tsx
-var import_jsx_runtime8 = require("react/jsx-runtime");
+var import_jsx_runtime9 = require("react/jsx-runtime");
 function TableHeader({
   expandable,
   selectionMode,
@@ -2212,9 +2603,9 @@ function TableHeader({
   onSelectAll,
   className
 }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("thead", { className, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tr", { children: [
-    expandable && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { scope: "col", style: { width: 40 }, "aria-label": "Expand" }),
-    selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select all", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("thead", { className, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("tr", { children: [
+    expandable && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { scope: "col", style: { width: 40 }, "aria-label": "Expand" }),
+    selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select all", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
       Checkbox_default,
       {
         name: "table-select-all",
@@ -2225,12 +2616,12 @@ function TableHeader({
         onChange: (e) => onSelectAll(e.target.checked)
       }
     ) }),
-    selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select" }),
-    visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { scope: "col", style: { width: 48 }, "aria-label": "Select" }),
+    visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
       "th",
       {
         scope: "col",
-        className: cls2(
+        className: cls3(
           col.align === "center" && "text-center",
           col.align === "right" && "text-end",
           col.sortable && "table-sortable"
@@ -2252,7 +2643,7 @@ function TableHeader({
         "aria-sort": col.sortable && sortState.key === col.key ? sortState.dir === "asc" ? "ascending" : sortState.dir === "desc" ? "descending" : "none" : void 0,
         children: [
           col.headerRender ? col.headerRender(col) : col.header,
-          col.sortable && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "table-sort-icon", "aria-hidden": true, children: sortState.key !== col.key || !sortState.dir ? " \u2195" : sortState.dir === "asc" ? " \u25B2" : " \u25BC" })
+          col.sortable && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "table-sort-icon", "aria-hidden": true, children: sortState.key !== col.key || !sortState.dir ? " \u2195" : sortState.dir === "asc" ? " \u25B2" : " \u25BC" })
         ]
       },
       col.key
@@ -2261,15 +2652,15 @@ function TableHeader({
 }
 
 // src/components/molecules/Table/parts/TableRow.tsx
-var import_react8 = __toESM(require("react"));
+var import_react9 = __toESM(require("react"));
 
 // src/components/molecules/Table/parts/TableCell.tsx
-var import_jsx_runtime9 = require("react/jsx-runtime");
+var import_jsx_runtime10 = require("react/jsx-runtime");
 function TableCell({ align = "left", children }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
     "td",
     {
-      className: cls2(
+      className: cls3(
         align === "center" && "text-center",
         align === "right" && "text-end"
       ),
@@ -2279,7 +2670,7 @@ function TableCell({ align = "left", children }) {
 }
 
 // src/components/molecules/Table/parts/TableRow.tsx
-var import_jsx_runtime10 = require("react/jsx-runtime");
+var import_jsx_runtime11 = require("react/jsx-runtime");
 function TableRow({
   row,
   rowIndex,
@@ -2296,11 +2687,11 @@ function TableRow({
   renderCell
 }) {
   var _a, _b, _c, _d;
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_react8.default.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_react9.default.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "tr",
       {
-        className: cls2(selected && "table-row-selected"),
+        className: cls3(selected && "table-row-selected"),
         onClick: () => {
           onRowClick == null ? void 0 : onRowClick(row, rowIndex);
           if (selectionMode === "single")
@@ -2308,21 +2699,21 @@ function TableRow({
         },
         style: { cursor: hover || onRowClick ? "pointer" : void 0 },
         children: [
-          expandable && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { style: { width: 40 }, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          expandable && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { style: { width: 40 }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             "button",
             {
               type: "button",
-              className: cls2("table-expand-btn", isExpanded && "table-expand-btn-expanded"),
+              className: cls3("table-expand-btn", isExpanded && "table-expand-btn-expanded"),
               "aria-expanded": isExpanded,
               "aria-label": isExpanded ? "Collapse row details" : "Expand row details",
               onClick: (e) => {
                 e.stopPropagation();
                 onToggleExpand(rowKeyValue);
               },
-              children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "table-expand-btn-icon", "aria-hidden": true, children: "\u25B6" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "table-expand-btn-icon", "aria-hidden": true, children: "\u25B6" })
             }
           ) }),
-          selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          selectionMode === "multiple" && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             Checkbox_default,
             {
               name: "table-row",
@@ -2333,7 +2724,7 @@ function TableRow({
               onChange: () => onToggleSelect(rowKeyValue, row)
             }
           ) }),
-          selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { className: "text-center", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          selectionMode === "single" && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { className: "text-center", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             "input",
             {
               type: "radio",
@@ -2344,11 +2735,11 @@ function TableRow({
               "aria-label": `Select row ${String((_d = row[(_c = visibleColumns[0]) == null ? void 0 : _c.key]) != null ? _d : rowKeyValue)}`
             }
           ) }),
-          visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(TableCell, { align: col.align, children: renderCell(col, row, rowIndex) }, col.key))
+          visibleColumns.map((col) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TableCell, { align: col.align, children: renderCell(col, row, rowIndex) }, col.key))
         ]
       }
     ),
-    expandable && isExpanded && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("tr", { className: "table-expanded-row", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    expandable && isExpanded && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tr", { className: "table-expanded-row", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       "td",
       {
         colSpan: visibleColumns.length + (selectionMode !== "none" ? 1 : 0) + (expandable ? 1 : 0),
@@ -2359,7 +2750,7 @@ function TableRow({
 }
 
 // src/components/molecules/Table/Table.tsx
-var import_jsx_runtime11 = require("react/jsx-runtime");
+var import_jsx_runtime12 = require("react/jsx-runtime");
 function getRowKey(row, index, rowKey) {
   var _a, _b;
   if (typeof rowKey === "function")
@@ -2440,26 +2831,26 @@ function TableInner({
 }) {
   var _a, _b, _c, _d;
   const config = tableConfig.default;
-  const [searchValue, setSearchValue] = (0, import_react9.useState)("");
-  const [sortState, setSortState] = (0, import_react9.useState)({ key: "", dir: null });
-  const [currentPage, setCurrentPage] = (0, import_react9.useState)(1);
+  const [searchValue, setSearchValue] = (0, import_react10.useState)("");
+  const [sortState, setSortState] = (0, import_react10.useState)({ key: "", dir: null });
+  const [currentPage, setCurrentPage] = (0, import_react10.useState)(1);
   const paginationConfig = typeof pagination === "object" ? pagination : {};
   const pageSizeOptions = (_a = paginationConfig.pageSizeOptions) != null ? _a : [5, 10, 15, 25, 50];
-  const [itemsPerPage, setItemsPerPage] = (0, import_react9.useState)((_b = paginationConfig.pageSize) != null ? _b : 10);
-  const selectedSet = (0, import_react9.useMemo)(() => {
+  const [itemsPerPage, setItemsPerPage] = (0, import_react10.useState)((_b = paginationConfig.pageSize) != null ? _b : 10);
+  const selectedSet = (0, import_react10.useMemo)(() => {
     const keys = selectedRowKeys != null ? selectedRowKeys : selectedRow;
     if (!keys)
       return /* @__PURE__ */ new Set();
     const arr = Array.isArray(keys) ? keys : [keys];
     return new Set(arr);
   }, [selectedRowKeys, selectedRow]);
-  const expandedSet = (0, import_react9.useMemo)(() => {
+  const expandedSet = (0, import_react10.useMemo)(() => {
     if (!(expandable == null ? void 0 : expandable.expandedRowKeys))
       return /* @__PURE__ */ new Set();
     return new Set(expandable.expandedRowKeys);
   }, [expandable == null ? void 0 : expandable.expandedRowKeys]);
-  const visibleColumns = (0, import_react9.useMemo)(() => columns.filter((c) => !c.hidden), [columns]);
-  const filteredData = (0, import_react9.useMemo)(() => {
+  const visibleColumns = (0, import_react10.useMemo)(() => columns.filter((c) => !c.hidden), [columns]);
+  const filteredData = (0, import_react10.useMemo)(() => {
     if (!searchValue.trim())
       return data;
     const lower = searchValue.toLowerCase();
@@ -2471,7 +2862,7 @@ function TableInner({
       })
     );
   }, [data, searchValue, searchColumns, visibleColumns]);
-  const sortedData = (0, import_react9.useMemo)(() => {
+  const sortedData = (0, import_react10.useMemo)(() => {
     var _a2;
     if (!sortState.key || !sortState.dir)
       return filteredData;
@@ -2496,10 +2887,10 @@ function TableInner({
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = pagination ? sortedData.slice(startIndex, startIndex + itemsPerPage) : sortedData;
-  (0, import_react9.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     setCurrentPage((p) => p > totalPages ? totalPages : p < 1 ? 1 : p);
   }, [totalPages]);
-  const handleSort = (0, import_react9.useCallback)(
+  const handleSort = (0, import_react10.useCallback)(
     (key) => {
       const col = visibleColumns.find((c) => c.key === key);
       if (!(col == null ? void 0 : col.sortable))
@@ -2511,7 +2902,7 @@ function TableInner({
     },
     [visibleColumns]
   );
-  const handleSelectRow = (0, import_react9.useCallback)(
+  const handleSelectRow = (0, import_react10.useCallback)(
     (key, row) => {
       if (selectionMode === "single") {
         const keys = [key];
@@ -2530,7 +2921,7 @@ function TableInner({
     },
     [selectionMode, selectedSet, data, rowKey, onSelectionChange, onRowSelect]
   );
-  const handleSelectAll = (0, import_react9.useCallback)(
+  const handleSelectAll = (0, import_react10.useCallback)(
     (checked) => {
       if (selectionMode !== "multiple")
         return;
@@ -2541,7 +2932,7 @@ function TableInner({
     [selectionMode, paginatedData, startIndex, rowKey, onSelectionChange]
   );
   const allSelected = selectionMode === "multiple" && paginatedData.length > 0 && paginatedData.every((r, i) => selectedSet.has(getRowKey(r, startIndex + i, rowKey)));
-  const handleExpand = (0, import_react9.useCallback)(
+  const handleExpand = (0, import_react10.useCallback)(
     (key) => {
       if (!(expandable == null ? void 0 : expandable.onExpandedRowsChange))
         return;
@@ -2561,7 +2952,7 @@ function TableInner({
       return column.render(val2, row, rowIndex);
     }
     const val = row[column.key];
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TextView_default, { as: "span", children: val != null ? String(val) : "" });
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TextView_default, { as: "span", children: val != null ? String(val) : "" });
   };
   const renderPageNumbers = () => {
     const pages = [];
@@ -2593,10 +2984,10 @@ function TableInner({
   const showLoadingOverlay = loading && loadingVariant !== "skeleton";
   const extraColumnsCount = (expandable ? 1 : 0) + (selectionMode !== "none" ? 1 : 0);
   const tableInlineStyle = (scroll == null ? void 0 : scroll.x) ? { minWidth: typeof scroll.x === "number" ? `${scroll.x}px` : scroll.x } : void 0;
-  const tableContent = /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+  const tableContent = /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
     "table",
     {
-      className: cls2(
+      className: cls3(
         config.table,
         tableLayout === "fixed" && "table-layout-fixed",
         variant === "minimal" && "table-variant-minimal",
@@ -2612,7 +3003,7 @@ function TableInner({
       ),
       style: tableInlineStyle,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           TableHeader,
           {
             expandable: Boolean(expandable),
@@ -2625,9 +3016,9 @@ function TableInner({
             className: getHeaderClass()
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tbody", { className: "table-tbody", children: shouldUseSkeleton ? Array.from({ length: Math.max(1, loadingRows) }).map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tr", { className: "table-skeleton-row", "aria-hidden": "true", children: Array.from({ length: visibleColumns.length + extraColumnsCount }).map((__, cellIdx) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-skeleton-line" }) }, `table-skeleton-cell-${idx}-${cellIdx}`)) }, `table-skeleton-row-${idx}`)) : paginatedData.map((row, idx) => {
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tbody", { className: "table-tbody", children: shouldUseSkeleton ? Array.from({ length: Math.max(1, loadingRows) }).map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tr", { className: "table-skeleton-row", "aria-hidden": "true", children: Array.from({ length: visibleColumns.length + extraColumnsCount }).map((__, cellIdx) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "table-skeleton-line" }) }, `table-skeleton-cell-${idx}-${cellIdx}`)) }, `table-skeleton-row-${idx}`)) : paginatedData.map((row, idx) => {
           const rk = getRowKey(row, startIndex + idx, rowKey);
-          return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             TableRow,
             {
               row,
@@ -2647,7 +3038,7 @@ function TableInner({
             rk
           );
         }) }),
-        footer && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tfoot", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tr", { children: footer }) })
+        footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tfoot", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tr", { children: footer }) })
       ]
     }
   );
@@ -2655,7 +3046,7 @@ function TableInner({
   const showPagination = Boolean(pagination) && totalItems > 0;
   const searchMaxWidth = (_c = searchProps == null ? void 0 : searchProps.maxWidth) != null ? _c : 280;
   const searchSize = (_d = searchProps == null ? void 0 : searchProps.size) != null ? _d : "sm";
-  const searchBar = showSearchBar && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { marginBottom: 0, maxWidth: typeof searchMaxWidth === "number" ? `${searchMaxWidth}px` : searchMaxWidth, flex: toolbarRight ? "0 1 auto" : "1 1 auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+  const searchBar = showSearchBar && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { marginBottom: 0, maxWidth: typeof searchMaxWidth === "number" ? `${searchMaxWidth}px` : searchMaxWidth, flex: toolbarRight ? "0 1 auto" : "1 1 auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
     TextInputSearch_default,
     {
       leftIcon: search_default,
@@ -2674,41 +3065,41 @@ function TableInner({
   ) });
   const leftContent = toolbarLeft != null ? toolbarLeft : showSearchBar ? searchBar : null;
   const hasToolbar = toolbar || leftContent || toolbarRight;
-  const toolbarContent = toolbar != null ? toolbar : hasToolbar ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "table-toolbar", children: [
-    leftContent && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-toolbar-left", children: leftContent }),
-    toolbarRight && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-toolbar-right", children: toolbarRight })
+  const toolbarContent = toolbar != null ? toolbar : hasToolbar ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "table-toolbar", children: [
+    leftContent && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "table-toolbar-left", children: leftContent }),
+    toolbarRight && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "table-toolbar-right", children: toolbarRight })
   ] }) : null;
-  const wrapperClass = cls2("table-wrapper", theme === "dark" && "table-theme-dark");
+  const wrapperClass = cls3("table-wrapper", theme === "dark" && "table-theme-dark");
   const scrollWrapperStyle = (scroll == null ? void 0 : scroll.y) ? {
     maxHeight: typeof scroll.y === "number" ? `${scroll.y}px` : scroll.y,
     overflowY: "auto",
     overflowX: "auto"
   } : { overflowX: "auto" };
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: wrapperClass, style: { position: "relative" }, "aria-busy": loading, children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: wrapperClass, style: { position: "relative" }, "aria-busy": loading, children: [
     toolbarContent,
-    showLoadingOverlay && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    showLoadingOverlay && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       "div",
       {
         className: "table-loading-overlay",
         role: "status",
         "aria-live": "polite",
         "aria-busy": "true",
-        children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TextView_default, { children: "Loading..." })
+        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TextView_default, { children: "Loading..." })
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       "div",
       {
-        className: cls2(stickyHeader && "table-scroll-body", "table-scroll-wrapper"),
+        className: cls3(stickyHeader && "table-scroll-body", "table-scroll-wrapper"),
         style: scrollWrapperStyle,
         role: "region",
         "aria-label": "Data table",
-        children: sortedData.length === 0 && !loading ? emptyComponent != null ? emptyComponent : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-empty", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TextView_default, { as: "p", children: emptyText }) }) : tableContent
+        children: sortedData.length === 0 && !loading ? emptyComponent != null ? emptyComponent : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "table-empty", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TextView_default, { as: "p", children: emptyText }) }) : tableContent
       }
     ),
-    showPagination && totalPages > 1 && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "table-pagination", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "table-pagination-nav", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    showPagination && totalPages > 1 && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "table-pagination", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "table-pagination-nav", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "button",
           {
             type: "button",
@@ -2720,11 +3111,11 @@ function TableInner({
           }
         ),
         renderPageNumbers().map(
-          (page, i) => page === "..." ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "table-pagination-ellipsis", children: "\u2026" }, `ellipsis-${i}`) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          (page, i) => page === "..." ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "table-pagination-ellipsis", children: "\u2026" }, `ellipsis-${i}`) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             "button",
             {
               type: "button",
-              className: cls2(
+              className: cls3(
                 "table-pagination-page",
                 currentPage === page && "active"
               ),
@@ -2734,7 +3125,7 @@ function TableInner({
             page
           )
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "button",
           {
             type: "button",
@@ -2746,9 +3137,9 @@ function TableInner({
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: "Show" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { minWidth: 70 }, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: "Show" }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { minWidth: 70 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           Select_default,
           {
             options: pageSizeOptions.map((n) => ({ label: String(n), value: String(n) })),
@@ -2760,7 +3151,7 @@ function TableInner({
             }
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(TextView_default, { as: "small", style: { color: "var(--color-text-secondary)" }, children: [
           "of ",
           totalItems,
           " ",
@@ -2771,48 +3162,48 @@ function TableInner({
   ] });
 }
 function Table(props) {
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TableInner, { ...props });
+  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(TableInner, { ...props });
 }
 
 // src/components/molecules/Table/TablePrimitives.tsx
-var import_react10 = require("react");
-var import_jsx_runtime12 = require("react/jsx-runtime");
-var TableRoot = (0, import_react10.forwardRef)(function TableRoot2({ className, containerClassName, children, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: cls2("table-ui-wrap", containerClassName), children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("table", { ref, className: cls2("table-ui", className), ...rest, children }) });
+var import_react11 = require("react");
+var import_jsx_runtime13 = require("react/jsx-runtime");
+var TableRoot = (0, import_react11.forwardRef)(function TableRoot2({ className, containerClassName, children, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cls3("table-ui-wrap", containerClassName), children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("table", { ref, className: cls3("table-ui", className), ...rest, children }) });
 });
 TableRoot.displayName = "TableRoot";
-var TableCaption = (0, import_react10.forwardRef)(
+var TableCaption = (0, import_react11.forwardRef)(
   function TableCaption2({ className, ...rest }, ref) {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("caption", { ref, className: cls2("table-ui-caption", className), ...rest });
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("caption", { ref, className: cls3("table-ui-caption", className), ...rest });
   }
 );
 TableCaption.displayName = "TableCaption";
-var TableHeader2 = (0, import_react10.forwardRef)(
+var TableHeader2 = (0, import_react11.forwardRef)(
   function TableHeader3({ className, ...rest }, ref) {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("thead", { ref, className: cls2("table-ui-thead", className), ...rest });
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("thead", { ref, className: cls3("table-ui-thead", className), ...rest });
   }
 );
 TableHeader2.displayName = "TableHeader";
-var TableBody = (0, import_react10.forwardRef)(function TableBody2({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tbody", { ref, className: cls2("table-ui-tbody", className), ...rest });
+var TableBody = (0, import_react11.forwardRef)(function TableBody2({ className, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tbody", { ref, className: cls3("table-ui-tbody", className), ...rest });
 });
 TableBody.displayName = "TableBody";
-var TableFooter = (0, import_react10.forwardRef)(
+var TableFooter = (0, import_react11.forwardRef)(
   function TableFooter2({ className, ...rest }, ref) {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tfoot", { ref, className: cls2("table-ui-tfoot", className), ...rest });
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tfoot", { ref, className: cls3("table-ui-tfoot", className), ...rest });
   }
 );
 TableFooter.displayName = "TableFooter";
-var TableRow2 = (0, import_react10.forwardRef)(function TableRow3({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("tr", { ref, className: cls2("table-ui-tr", className), ...rest });
+var TableRow2 = (0, import_react11.forwardRef)(function TableRow3({ className, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tr", { ref, className: cls3("table-ui-tr", className), ...rest });
 });
 TableRow2.displayName = "TableRow";
-var TableHead = (0, import_react10.forwardRef)(function TableHead2({ className, scope = "col", ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("th", { ref, className: cls2("table-ui-th", className), scope, ...rest });
+var TableHead = (0, import_react11.forwardRef)(function TableHead2({ className, scope = "col", ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { ref, className: cls3("table-ui-th", className), scope, ...rest });
 });
 TableHead.displayName = "TableHead";
-var TableCell2 = (0, import_react10.forwardRef)(function TableCell3({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("td", { ref, className: cls2("table-ui-td", className), ...rest });
+var TableCell2 = (0, import_react11.forwardRef)(function TableCell3({ className, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { ref, className: cls3("table-ui-td", className), ...rest });
 });
 TableCell2.displayName = "TableCell";
 

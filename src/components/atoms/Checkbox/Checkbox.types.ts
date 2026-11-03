@@ -1,3 +1,8 @@
+import type { ReactNode } from "react";
+
+/** Control + label scale — `sm` 16px box · `md` 18px box (default) · `lg` 22px box. */
+export type CheckboxSize = "sm" | "md" | "lg";
+
 export interface CheckboxProps {
   label: string;
   name: string;
@@ -6,9 +11,32 @@ export interface CheckboxProps {
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
-  /** Optional classes on the custom checkbox shell (supports Tailwind `peer-checked:` alongside the visually hidden input marked `peer`). */
+  /**
+   * "Some but not all" state (e.g. a select-all header). Sets the DOM `indeterminate`
+   * property (exposed natively to assistive tech as "mixed") and shows a dash.
+   * Takes visual precedence over `checked`.
+   * @default false
+   */
+  indeterminate?: boolean;
+  /** Helper text under the label, linked with `aria-describedby`. */
+  description?: ReactNode;
+  /** @default "md" */
+  size?: CheckboxSize;
+  /** Error message under the control — sets `aria-invalid` and is linked with `aria-describedby`. */
+  error?: string;
+  /** Native `required` plus a visible "*" after the label. @default false */
+  required?: boolean;
+  /** Input id. Generated with `useId` when omitted. */
+  id?: string;
+
+  /**
+   * Optional classes on the custom checkbox shell (supports Tailwind `peer-checked:` alongside the visually hidden input marked `peer`).
+   * @deprecated Style through design tokens / `size` instead; kept for backward compatibility.
+   */
   checkboxColorClass?: string;
+  /** @deprecated Style through design tokens / `size` instead; kept for backward compatibility. */
   labelColorClass?: string;
+  /** @deprecated Use layout on the parent instead; kept for backward compatibility. */
   inputLabelSpacingClass?: string;
   className?: string;
   ariaLabelledBy?: string;
@@ -18,13 +46,12 @@ export interface CheckboxProps {
    */
   ariaLabel?: string;
 
-  /** NEW — controls design (default or boxed) */
+  /** Controls design (default or boxed) */
   shape?: "default" | "box";
 
-  /** NEW — rounded size for box mode */
+  /** Rounded size for box mode */
   rounded?: "0" | "1" | "2" | "3" | "4" | "5" | "pill" | "circle";
 
-  /** NEW — optional shadow for box mode */
+  /** Optional shadow for box mode */
   withShadow?: boolean;
 }
-

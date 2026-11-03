@@ -1,0 +1,194 @@
+/* NumberInput — text field with spinbutton semantics, affix slots and − / + steppers. Tokens only. */
+
+.ds-number-input {
+  --ds-number-input-h: var(--button-height-lg);
+  --ds-number-input-font: var(--text-body-size);
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+}
+
+.ds-number-input[data-size="sm"] {
+  --ds-number-input-h: var(--button-height-sm);
+  --ds-number-input-font: var(--text-secondary-size);
+}
+
+.ds-number-input[data-size="lg"] {
+  --ds-number-input-h: var(--space-6);
+}
+
+.ds-number-input__label {
+  display: block;
+  margin-bottom: var(--space-0);
+  color: var(--color-text-primary);
+  font-size: var(--text-secondary-size);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.ds-number-input__field {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--ds-number-input-h);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  cursor: text;
+  transition: border-color var(--duration-instant) var(--easing-default);
+}
+
+.ds-number-input__field:hover {
+  border-color: var(--color-text-secondary);
+}
+
+/* The ring sits on the field so it wraps affixes and steppers; the input itself is the focused element. */
+.ds-number-input__field:has(.ds-number-input__input:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-number-input[data-invalid="true"] .ds-number-input__field {
+  border-color: var(--color-state-error);
+}
+
+.ds-number-input[data-disabled="true"] .ds-number-input__field {
+  background: var(--color-bg-page);
+  cursor: not-allowed;
+}
+
+.ds-number-input[data-readonly="true"] .ds-number-input__field {
+  background: var(--color-fill-muted);
+}
+
+.ds-number-input__input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--ds-number-input-font);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  text-align: end;
+}
+
+.ds-number-input__input:focus {
+  outline: none;
+}
+
+/* Fallback for engines without :has() — ring on the input itself. */
+@supports not selector(:has(*)) {
+  .ds-number-input__input:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.ds-number-input__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.ds-number-input__input:disabled {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+.ds-number-input__affix {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-inline: var(--space-1) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--ds-number-input-font);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ds-number-input__affix[data-slot="suffix"] {
+  padding-inline: 0 var(--space-1);
+}
+
+.ds-number-input__steppers {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-inline-start: var(--border-width-thin) solid var(--color-border-default);
+}
+
+.ds-number-input__stepper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-number-input-h);
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.ds-number-input__stepper + .ds-number-input__stepper {
+  border-inline-start: var(--border-width-thin) solid var(--color-border-default);
+}
+
+.ds-number-input__stepper:last-child {
+  border-start-end-radius: var(--radius-control);
+  border-end-end-radius: var(--radius-control);
+}
+
+.ds-number-input__stepper:hover:not(:disabled) {
+  background: var(--color-fill-muted);
+}
+
+.ds-number-input__stepper:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-number-input__error {
+  margin: var(--space-0) 0 0;
+  color: var(--color-danger-strong);
+  font-size: var(--text-small-size);
+  line-height: 1.5;
+}
+
+@media (pointer: coarse) {
+  .ds-number-input,
+  .ds-number-input[data-size="sm"] {
+    --ds-number-input-h: var(--size-touch-target);
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-number-input__field {
+    border-color: CanvasText;
+  }
+
+  .ds-number-input__field:has(.ds-number-input__input:focus-visible) {
+    outline-color: Highlight;
+  }
+
+  .ds-number-input__stepper:disabled {
+    color: GrayText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-number-input__field {
+    transition: none;
+  }
+}

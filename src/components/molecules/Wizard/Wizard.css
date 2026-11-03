@@ -1,0 +1,163 @@
+/* Wizard — Stepper + step panel + footer. Tokens only; composed parts (Stepper, Alert, Button) keep their own styles.
+   Contrast (tokens.css): counter / description / summary --color-text-secondary on --color-bg-surface
+   classic 6.48, mist 6.21, dark 6.71; on --color-bg-page classic 4.91, mist 5.54, dark 8.10. Title --color-text-primary
+   >= 13.34. Heading focus ring --color-focus-ring >= 4.22 on page / surface in every theme. */
+
+.ds-wizard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  width: 100%;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+}
+
+.ds-wizard__stepper {
+  min-width: 0;
+}
+
+.ds-wizard__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ds-wizard__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  margin: 0;
+  font-size: var(--text-h2-size);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-base);
+  scroll-margin-top: var(--space-6);
+}
+
+.ds-wizard__heading:focus {
+  outline: none;
+}
+
+.ds-wizard__heading:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: var(--space-0);
+}
+
+.ds-wizard__counter {
+  font-size: var(--text-secondary-size);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.ds-wizard__title {
+  overflow-wrap: anywhere;
+}
+
+.ds-wizard__description {
+  margin: 0;
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.ds-wizard__optional {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+.ds-wizard__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ds-wizard__content[hidden] {
+  display: none;
+}
+
+.ds-wizard__review {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.ds-wizard__review-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-2);
+  padding: var(--space-2);
+}
+
+.ds-wizard__review-item + .ds-wizard__review-item {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ds-wizard__review-text {
+  display: flex;
+  flex: 1 1 12rem;
+  flex-direction: column;
+  gap: var(--space-0);
+  min-width: 0;
+}
+
+.ds-wizard__review-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ds-wizard__review-summary {
+  font-size: var(--text-secondary-size);
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ds-wizard__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ds-wizard__footer-end {
+  display: flex;
+  gap: var(--space-1);
+  margin-inline-start: auto;
+}
+
+/* ≤ 480px: actions share the row equally so both stay ≥ 44px wide targets and never overflow. */
+@media (max-width: 480px) {
+  .ds-wizard__footer > *,
+  .ds-wizard__footer-end > * {
+    flex: 1 1 0;
+  }
+
+  .ds-wizard__footer-end {
+    flex: 1 1 0;
+    margin-inline-start: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-wizard__heading:focus-visible {
+    outline-color: Highlight;
+  }
+
+  .ds-wizard__review,
+  .ds-wizard__review-item + .ds-wizard__review-item,
+  .ds-wizard__footer {
+    border-color: CanvasText;
+  }
+}

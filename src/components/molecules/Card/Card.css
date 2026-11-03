@@ -128,3 +128,25 @@
       box-shadow var(--duration-instant, 100ms) var(--easing-default) !important;
   }
 }
+
+/* Interactive tile (`interactive`) — hover + focus ring; selected outline is set inline. */
+[data-card-interactive="true"] {
+  cursor: pointer;
+}
+
+[data-card-interactive="true"][data-card-variant="bordered"]:not([data-card-selected="true"]):hover {
+  border-color: var(--color-border-strong) !important;
+}
+
+[data-card-interactive="true"]:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Windows High Contrast / forced colours: selection must not rely on box-shadow alone. */
+@media (forced-colors: active) {
+  [data-card-selected="true"] {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
+  }
+}

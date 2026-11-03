@@ -2,13 +2,39 @@ export type ModalAnimation = "none" | "fade" | "slide" | "scale";
 
 export type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl";
 
+/**
+ * - `"inside"` (default): the dialog is capped to the viewport and only the body scrolls; header and footer stay fixed.
+ * - `"outside"`: the dialog grows with its content and the whole dialog scrolls inside the viewport.
+ */
+export type ModalScrollBehavior = "inside" | "outside";
+
+/**
+ * Cancelable event passed to `onOpenAutoFocus` / `onCloseAutoFocus`.
+ * Call `event.preventDefault()` to stop the Modal's built-in focus move.
+ */
+export type ModalAutoFocusEvent = Event;
+
+/**
+ * Focus behaviour: on open, focus moves to `initialFocusRef`, else the first focusable element,
+ * else the dialog. Tab is trapped inside. **On close, focus returns to the element that was focused
+ * when the modal opened** (added in Sprint 1; earlier versions left focus on `<body>`). Opt out per
+ * instance with `onCloseAutoFocus={(e) => e.preventDefault()}`.
+ *
+ * Stacking: Modal and Drawer share an overlay stack (`overlayStack.ts`). Only the top-most layer
+ * handles Escape and backdrop clicks, so one Escape closes one layer.
+ */
 export interface ModalProps {
   /** Whether the modal is open */
   isOpen: boolean;
   /** Called when modal should close (backdrop click, escape, close button) */
   onClose: () => void;
-  /** Modal title */
+  /** Modal title — the dialog's accessible name (`aria-labelledby`). Rendered as text. */
   title: string;
+  /**
+   * Supporting text rendered under the title and wired to the dialog's `aria-describedby`.
+   * Not rendered when `hideHeader` is set.
+   */
+  description?: React.ReactNode;
   /** Modal body content */
   children: React.ReactNode;
   /** Called when confirm button is clicked */
@@ -17,6 +43,11 @@ export interface ModalProps {
   confirmText?: string;
   /** Disable confirm button */
   confirmDisabled?: boolean;
+  /**
+   * Show the confirm Button's loading state (spinner, `aria-busy`) and ignore further confirm clicks
+   * until it is cleared — set it while `onConfirm`'s async work runs. @default false
+   */
+  confirmLoading?: boolean;
   /** Cancel button text */
   cancelText?: string;
   /** Show cancel button */
@@ -53,20 +84,55 @@ export interface ModalProps {
   className?: string;
   /** Hide header (title + close button) - for custom layouts like AlertDialog */
   hideHeader?: boolean;
+  /** Element to focus when the modal opens. Defaults to the first focusable element, then the dialog. */
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
+  /** Where overflow scrolls — see `ModalScrollBehavior`. @default "inside" */
+  scrollBehavior?: ModalScrollBehavior;
+  /** Fill the whole viewport (no margin, no radius) at ≤ 480px. @default false */
+  fullscreenOnMobile?: boolean;
+  /**
+   * Called when the modal is about to move focus inside on open. `event.preventDefault()` skips the move
+   * (you then own focus placement).
+   */
+  onOpenAutoFocus?: (event: ModalAutoFocusEvent) => void;
+  /**
+   * Called when the modal closes, before focus returns to the element that was focused when it opened.
+   * Returning focus is the default since Sprint 1 (previously focus was dropped to `<body>`);
+   * call `event.preventDefault()` to opt out (e.g. to focus something else, or keep the old behaviour).
+   */
+  onCloseAutoFocus?: (event: ModalAutoFocusEvent) => void;
   /** Confirm button variant: primary, link, ghost, outlinePrimary, danger, etc. */
   confirmButtonVariant?: "primary" | "link" | "ghost" | "outlinePrimary" | "outlineSecondary" | "danger";
-  /** Confirm button text color */
+  /**
+   * Confirm button text color.
+   * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `confirmButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+   */
   confirmButtonColor?: string;
-  /** Confirm button background (use "transparent" for no background) */
+  /**
+   * Confirm button background (use "transparent" for no background).
+   * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `confirmButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+   */
   confirmButtonBackground?: string;
-  /** Confirm button border color */
+  /**
+   * Confirm button border color.
+   * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `confirmButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+   */
   confirmButtonBorder?: string;
   /** Cancel button variant */
   cancelButtonVariant?: "primary" | "link" | "ghost" | "outlinePrimary" | "outlineSecondary";
-  /** Cancel button text color */
+  /**
+   * Cancel button text color.
+   * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+   */
   cancelButtonColor?: string;
-  /** Cancel button background */
+  /**
+   * Cancel button background.
+   * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+   */
   cancelButtonBackground?: string;
-  /** Cancel button border color */
+  /**
+   * Cancel button border color.
+   * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+   */
   cancelButtonBorder?: string;
 }

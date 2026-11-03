@@ -1,7 +1,7 @@
 import * as React$1 from 'react';
-import React__default, { HTMLAttributes, ReactNode, LiHTMLAttributes, AnchorHTMLAttributes, ButtonHTMLAttributes, TextareaHTMLAttributes, ChangeEvent } from 'react';
-import { B as ButtonProps } from './table-c7bb157a.js';
-export { i as InputSearch, j as InputSearchProps, k as SearchActionButtonProps, S as SearchButtonDisplay, T as Table, d as TableBody, u as TableBodyProps, b as TableCaption, s as TableCaptionProps, h as TableCell, y as TableCellProps, l as TableColumn, e as TableFooter, v as TableFooterProps, g as TableHead, x as TableHeadProps, c as TableHeader, t as TableHeaderProps, o as TableLayout, m as TableProps, a as TableRoot, r as TableRootProps, f as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-c7bb157a.js';
+import React__default, { ReactNode, HTMLAttributes, LiHTMLAttributes, AnchorHTMLAttributes, ButtonHTMLAttributes, TextareaHTMLAttributes, ChangeEvent, RefObject, MouseEvent, ReactElement, InputHTMLAttributes } from 'react';
+import { B as ButtonProps, T as TableColumn, a as TableProps } from './table-baec8534.js';
+export { k as InputSearch, l as InputSearchProps, m as SearchActionButtonProps, S as SearchButtonDisplay, b as Table, f as TableBody, u as TableBodyProps, d as TableCaption, s as TableCaptionProps, j as TableCell, y as TableCellProps, g as TableFooter, v as TableFooterProps, i as TableHead, x as TableHeadProps, e as TableHeader, t as TableHeaderProps, o as TableLayout, c as TableRoot, r as TableRootProps, h as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-baec8534.js';
 import { I as IconSource } from './index-8a491a10.js';
 export { a as Icon, b as IconProps } from './index-8a491a10.js';
 import * as react_jsx_runtime from 'react/jsx-runtime';
@@ -9,7 +9,10 @@ import { A as AvatarProps } from './shell-81b82aed.js';
 export { b as AppShell, e as AppShellProps, a as AppSidebar, p as AppSidebarClassNames, m as AppSidebarFooterAction, q as AppSidebarFooterLayout, k as AppSidebarHeader, g as AppSidebarNavItem, E as AppSidebarPersistPayload, f as AppSidebarProps, h as AppSidebarSection, j as AppSidebarSectionGrouping, i as AppSidebarTier, o as AppSidebarTokens, n as AppSidebarTrailingPreset, l as AppSidebarUser, c as AppTopbar, u as AppTopbarAction, x as AppTopbarClassNames, y as AppTopbarMenuItem, v as AppTopbarProfile, r as AppTopbarProps, t as AppTopbarSearchConfig, s as AppTopbarTheme, w as AppTopbarTokens, D as DashboardShell, d as DashboardShellProps, z as mergeSidebarTokensStyle, F as mergeTopbarTokensStyle, B as readAppSidebarPersist, C as writeAppSidebarPersist } from './shell-81b82aed.js';
 export { AreaChart, AreaChartProps, BarChart, BarChartProps, ChartDataPoint, ChartDataSeries, ChartLayoutProps, ChartTheme, ChartTooltip, ChartTooltipItem, ChartTooltipProps, LineChart, LineChartProps, PieChart, PieChartDataPoint, PieChartProps } from './charts.js';
 
-declare const Button: React__default.NamedExoticComponent<ButtonProps>;
+/** Element a Button ref resolves to: `<button>`, or `<a>` when `href` is safe. */
+type ButtonElement = HTMLButtonElement | HTMLAnchorElement;
+/** Memoised + ref-forwarding: refs reach the rendered `<button>` / `<a>`. */
+declare const Button: React__default.NamedExoticComponent<ButtonProps & React__default.RefAttributes<ButtonElement>>;
 
 type TextTag = "h1" | "h2" | "h3" | "h4" | "p" | "span" | "small" | "strong" | "em" | "label" | "div" | string;
 type TextVariant = "h1" | "h2" | "h3" | "h4" | "body" | "secondary" | "small" | "micro";
@@ -137,6 +140,8 @@ interface TextInputProps extends NativeInputProps {
 
 declare const TextInput: React__default.ForwardRefExoticComponent<TextInputProps & React__default.RefAttributes<HTMLInputElement>>;
 
+/** Control + label scale — `sm` 16px box · `md` 18px box (default) · `lg` 22px box. */
+type CheckboxSize = "sm" | "md" | "lg";
 interface CheckboxProps {
     label: string;
     name: string;
@@ -144,9 +149,31 @@ interface CheckboxProps {
     checked?: boolean;
     disabled?: boolean;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    /** Optional classes on the custom checkbox shell (supports Tailwind `peer-checked:` alongside the visually hidden input marked `peer`). */
+    /**
+     * "Some but not all" state (e.g. a select-all header). Sets the DOM `indeterminate`
+     * property (exposed natively to assistive tech as "mixed") and shows a dash.
+     * Takes visual precedence over `checked`.
+     * @default false
+     */
+    indeterminate?: boolean;
+    /** Helper text under the label, linked with `aria-describedby`. */
+    description?: ReactNode;
+    /** @default "md" */
+    size?: CheckboxSize;
+    /** Error message under the control — sets `aria-invalid` and is linked with `aria-describedby`. */
+    error?: string;
+    /** Native `required` plus a visible "*" after the label. @default false */
+    required?: boolean;
+    /** Input id. Generated with `useId` when omitted. */
+    id?: string;
+    /**
+     * Optional classes on the custom checkbox shell (supports Tailwind `peer-checked:` alongside the visually hidden input marked `peer`).
+     * @deprecated Style through design tokens / `size` instead; kept for backward compatibility.
+     */
     checkboxColorClass?: string;
+    /** @deprecated Style through design tokens / `size` instead; kept for backward compatibility. */
     labelColorClass?: string;
+    /** @deprecated Use layout on the parent instead; kept for backward compatibility. */
     inputLabelSpacingClass?: string;
     className?: string;
     ariaLabelledBy?: string;
@@ -155,15 +182,15 @@ interface CheckboxProps {
      * Sets `aria-label` on the input instead of relying on an empty visible label.
      */
     ariaLabel?: string;
-    /** NEW — controls design (default or boxed) */
+    /** Controls design (default or boxed) */
     shape?: "default" | "box";
-    /** NEW — rounded size for box mode */
+    /** Rounded size for box mode */
     rounded?: "0" | "1" | "2" | "3" | "4" | "5" | "pill" | "circle";
-    /** NEW — optional shadow for box mode */
+    /** Optional shadow for box mode */
     withShadow?: boolean;
 }
 
-declare const Checkbox: React__default.NamedExoticComponent<CheckboxProps>;
+declare const Checkbox: React__default.NamedExoticComponent<CheckboxProps & React__default.RefAttributes<HTMLInputElement>>;
 
 type SwitchSize = "sm" | "md";
 interface SwitchProps {
@@ -943,8 +970,18 @@ interface CardProps extends Omit<React__default.HTMLAttributes<HTMLDivElement>, 
     variant?: CardVariantName;
     /** Shadow tier when elevated / withIndicator */
     elevation?: "none" | "sm" | "md" | "lg";
-    /** Left bar — only when `variant` resolves to `withIndicator` and `selected` is true (§26) */
+    /**
+     * Selected state. `withIndicator` → left bar (§26). `bordered` → strong 2px outline
+     * (option tiles). When `interactive`, also exposed as `aria-pressed`.
+     */
     selected?: boolean;
+    /**
+     * Clickable tile: hover border, pointer cursor, visible focus ring. With `onClick` and no
+     * explicit `role`, the card becomes `role="button"` + `tabIndex=0` and activates on Enter/Space.
+     * Without `onClick` it is visual only (hover + pointer) — use when the card sits inside a link.
+     * Do not nest other interactive controls inside an interactive card.
+     */
+    interactive?: boolean;
     /** Padding — token string or number (px); overrides `size` default padding */
     padding?: number | string;
     /** Radius token string or number (px) */
@@ -1382,6 +1419,7 @@ interface SelectOptionGroup {
     label: string;
     options: SelectOption[];
 }
+type SelectSize = "sm" | "md" | "lg";
 interface SelectProps extends Omit<React__default.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
     label?: string;
     /**
@@ -1399,20 +1437,35 @@ interface SelectProps extends Omit<React__default.SelectHTMLAttributes<HTMLSelec
      */
     liveSearch?: boolean;
     customClass?: string;
+    /**
+     * Error message. Sets `aria-invalid`, forces the error status (wins over `status`) and is linked
+     * to the control with `aria-describedby`. Replaces `helperText` while set.
+     */
     error?: string;
     helperText?: string;
     showIcons?: boolean;
     onValueChange?: (value: string, option?: SelectOption) => void;
     fullWidth?: boolean;
-    size?: "sm" | "md" | "lg";
+    /**
+     * Control-height tier — matches `Input` sm/md/lg (`--button-height-sm` / `--button-height-lg` / `3rem`).
+     * Rendered as `data-size` on the `<select>`.
+     * @default "md"
+     */
+    size?: SelectSize;
     rounded?: "0" | "1" | "2" | "3" | "4" | "5" | "pill";
     status?: "error" | "warning" | "success";
     allowPlaceholderSelection?: boolean;
     /**
-     * When true, chevron rotates on `:focus-within` (native select must not use duplicate background arrows).
+     * When true, an overlay chevron rotates while the native picker is open (tracked from pointer /
+     * opener keys, reset on change, blur and other keys). Focus stays on the control after a pick.
      * @default true
      */
     animatedChevron?: boolean;
+    /**
+     * Native `required`. When Select renders its own `label`, a visible `*` marker is added
+     * (the native attribute already announces "required").
+     */
+    required?: boolean;
 }
 
 declare const Select: React__default.ForwardRefExoticComponent<SelectProps & React__default.RefAttributes<HTMLSelectElement>>;
@@ -1458,13 +1511,37 @@ declare const Combobox: React__default.NamedExoticComponent<ComboboxProps>;
 
 type ModalAnimation = "none" | "fade" | "slide" | "scale";
 type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl";
+/**
+ * - `"inside"` (default): the dialog is capped to the viewport and only the body scrolls; header and footer stay fixed.
+ * - `"outside"`: the dialog grows with its content and the whole dialog scrolls inside the viewport.
+ */
+type ModalScrollBehavior = "inside" | "outside";
+/**
+ * Cancelable event passed to `onOpenAutoFocus` / `onCloseAutoFocus`.
+ * Call `event.preventDefault()` to stop the Modal's built-in focus move.
+ */
+type ModalAutoFocusEvent = Event;
+/**
+ * Focus behaviour: on open, focus moves to `initialFocusRef`, else the first focusable element,
+ * else the dialog. Tab is trapped inside. **On close, focus returns to the element that was focused
+ * when the modal opened** (added in Sprint 1; earlier versions left focus on `<body>`). Opt out per
+ * instance with `onCloseAutoFocus={(e) => e.preventDefault()}`.
+ *
+ * Stacking: Modal and Drawer share an overlay stack (`overlayStack.ts`). Only the top-most layer
+ * handles Escape and backdrop clicks, so one Escape closes one layer.
+ */
 interface ModalProps {
     /** Whether the modal is open */
     isOpen: boolean;
     /** Called when modal should close (backdrop click, escape, close button) */
     onClose: () => void;
-    /** Modal title */
+    /** Modal title — the dialog's accessible name (`aria-labelledby`). Rendered as text. */
     title: string;
+    /**
+     * Supporting text rendered under the title and wired to the dialog's `aria-describedby`.
+     * Not rendered when `hideHeader` is set.
+     */
+    description?: React.ReactNode;
     /** Modal body content */
     children: React.ReactNode;
     /** Called when confirm button is clicked */
@@ -1473,6 +1550,11 @@ interface ModalProps {
     confirmText?: string;
     /** Disable confirm button */
     confirmDisabled?: boolean;
+    /**
+     * Show the confirm Button's loading state (spinner, `aria-busy`) and ignore further confirm clicks
+     * until it is cleared — set it while `onConfirm`'s async work runs. @default false
+     */
+    confirmLoading?: boolean;
     /** Cancel button text */
     cancelText?: string;
     /** Show cancel button */
@@ -1513,25 +1595,60 @@ interface ModalProps {
     className?: string;
     /** Hide header (title + close button) - for custom layouts like AlertDialog */
     hideHeader?: boolean;
+    /** Element to focus when the modal opens. Defaults to the first focusable element, then the dialog. */
+    initialFocusRef?: React.RefObject<HTMLElement | null>;
+    /** Where overflow scrolls — see `ModalScrollBehavior`. @default "inside" */
+    scrollBehavior?: ModalScrollBehavior;
+    /** Fill the whole viewport (no margin, no radius) at ≤ 480px. @default false */
+    fullscreenOnMobile?: boolean;
+    /**
+     * Called when the modal is about to move focus inside on open. `event.preventDefault()` skips the move
+     * (you then own focus placement).
+     */
+    onOpenAutoFocus?: (event: ModalAutoFocusEvent) => void;
+    /**
+     * Called when the modal closes, before focus returns to the element that was focused when it opened.
+     * Returning focus is the default since Sprint 1 (previously focus was dropped to `<body>`);
+     * call `event.preventDefault()` to opt out (e.g. to focus something else, or keep the old behaviour).
+     */
+    onCloseAutoFocus?: (event: ModalAutoFocusEvent) => void;
     /** Confirm button variant: primary, link, ghost, outlinePrimary, danger, etc. */
     confirmButtonVariant?: "primary" | "link" | "ghost" | "outlinePrimary" | "outlineSecondary" | "danger";
-    /** Confirm button text color */
+    /**
+     * Confirm button text color.
+     * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `confirmButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+     */
     confirmButtonColor?: string;
-    /** Confirm button background (use "transparent" for no background) */
+    /**
+     * Confirm button background (use "transparent" for no background).
+     * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `confirmButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+     */
     confirmButtonBackground?: string;
-    /** Confirm button border color */
+    /**
+     * Confirm button border color.
+     * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `confirmButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+     */
     confirmButtonBorder?: string;
     /** Cancel button variant */
     cancelButtonVariant?: "primary" | "link" | "ghost" | "outlinePrimary" | "outlineSecondary";
-    /** Cancel button text color */
+    /**
+     * Cancel button text color.
+     * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+     */
     cancelButtonColor?: string;
-    /** Cancel button background */
+    /**
+     * Cancel button background.
+     * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+     */
     cancelButtonBackground?: string;
-    /** Cancel button border color */
+    /**
+     * Cancel button border color.
+     * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
+     */
     cancelButtonBorder?: string;
 }
 
-declare function Modal({ isOpen, onClose, title, children, onConfirm, confirmText, confirmDisabled, cancelText, showCancel, hideFooter, footer, size, id, showCloseButton, isStackedBackground, zIndex, titleIcon, titleIconSize, animation, animationDuration, closeAfterTransition, closeOnBackdropClick, closeOnEscape, className, hideHeader, confirmButtonVariant, confirmButtonColor, confirmButtonBackground, confirmButtonBorder, cancelButtonVariant, cancelButtonColor, cancelButtonBackground, cancelButtonBorder, }: ModalProps): React__default.ReactPortal | null;
+declare function Modal({ isOpen, onClose, title, description, children, onConfirm, confirmText, confirmDisabled, confirmLoading, cancelText, showCancel, hideFooter, footer, size, id, showCloseButton, isStackedBackground, zIndex, titleIcon, titleIconSize, animation, animationDuration, closeAfterTransition, closeOnBackdropClick, closeOnEscape, className, hideHeader, initialFocusRef, scrollBehavior, fullscreenOnMobile, onOpenAutoFocus, onCloseAutoFocus, confirmButtonVariant, confirmButtonColor, confirmButtonBackground, confirmButtonBorder, cancelButtonVariant, cancelButtonColor, cancelButtonBackground, cancelButtonBorder, }: ModalProps): React__default.ReactPortal | null;
 
 type AlertDialogVariant = "info" | "success" | "warning" | "error";
 interface AlertDialogProps {
@@ -1601,4 +1718,1394 @@ interface HyperlinkProps {
 
 declare const Hyperlink: React__default.FC<HyperlinkProps>;
 
-export { Accordion, AccordionContent, AccordionContentProps, AccordionContextValue, AccordionDensity, AccordionItem, AccordionItemProps, AccordionMotion, AccordionProps, AccordionTrigger, AccordionTriggerProps, AccordionType, AccordionVariant, AlertDialog, AlertDialogProps, AlertDialogVariant, AvatarProps, Avatar as Avtar, Badge, BadgeProps, BadgeShape, BadgeSize, BadgeTone, BadgeVariant, Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupContextValue, ButtonGroupOrientation, ButtonGroupProps, ButtonGroupSeparator, ButtonGroupSeparatorProps, ButtonGroupText, ButtonGroupTextProps, ButtonProps, Calendar, CalendarAnimation, CalendarCaptionLayout, CalendarElevation, CalendarProps, CalendarSize, CalendarTheme, CalendarVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps, CardSize, CardTitle, CardTitleProps, CardVariantName, Checkbox as CheckBox, CheckboxProps, Chip, ChipProps, Combobox, ComboboxGroup, ComboboxOption, ComboboxProps, DatePicker, DatePickerProps, DetectedKind, Divider, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuItemProps, DropdownMenuTrigger, Dropzone, DropzoneProps, EmptyState, EmptyStateProps, ErrorAnimation, ErrorState, ErrorStateProps, FEEDBACK_ANIMATIONS, FeedbackAnimationName, FeedbackSize, FeedbackState, FeedbackStateProps, FeedbackStateVariant, FeedbackVisualTone, FileUpload, FileUploadProps, FileUploadSecurityOptions, FileUploadSize, Form, FormProps, GradientText, GradientTextProps, Grid, GridItem, GridItemProps, GridProps, Hyperlink, HyperlinkProps, IconSource, InfoAnimation, TextInput as Input, TextInputProps as InputProps, Modal, ModalProps, NoDataAnimation, NoSearchResultsAnimation, OfflineAnimation, OfflineBanner, OfflineBannerProps, OtpBox, OtpBoxProps, OtpBoxSize, OtpBoxVariant, Popover, PopoverContent, PopoverContentProps, PopoverPlacement, PopoverProps, PopoverTrigger, PopoverTriggerProps, ProgressBar, ProgressBarProps, RadioButtonProps, RadioGroup, Select, SelectOptionGroup, SelectProps, Stepper, StepperAppearance, StepperContextValue, StepperProps, StepperSize, StepperStep, StepperStepProps, StepperTrackMode, SuccessAnimation, Switch, SwitchProps, SwitchSize, Tabs, TabsActivationMode, TabsContent, TabsContentAnimation, TabsContentProps, TabsContextValue, TabsList, TabsListLayout, TabsListProps, TabsOrientation, TabsProps, TabsSize, TabsTrigger, TabsTriggerAlign, TabsTriggerLayout, TabsTriggerProps, TabsVariant, Tag, TagProps, TextArea, TextAreaProps, TextView, TextViewProps, TooltipIcon as ToolTip, TooltipIconProps, detectFileKindFromBuffer, parseAcceptString, validateFileSecurity, validateFilename, validateFilesSecurity };
+/**
+ * Visual weight of the box.
+ * - `neutral` — muted fill, primary icon (default; list rows, secondary tiles)
+ * - `strong` — follows the primary filled CTA (Noir on classic, theme colour on green/custom)
+ * - `outline` — surface fill with a structural border
+ * - semantic tones tint the box with the matching accent family
+ */
+type IconBoxTone = "neutral" | "strong" | "outline" | "primary" | "success" | "warning" | "danger" | "info";
+/** `sm` 28px · `md` 36px · `lg` 44px · `xl` 56px */
+type IconBoxSize = "sm" | "md" | "lg" | "xl";
+type IconBoxShape = "rounded" | "circle" | "square";
+interface IconBoxProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children"> {
+    /** Icon element (inline SVG, `<Icon />`, emoji, or initials). */
+    children: ReactNode;
+    tone?: IconBoxTone;
+    size?: IconBoxSize;
+    shape?: IconBoxShape;
+    /**
+     * Accessible name. When set the box is announced as an image (`role="img"`);
+     * when omitted it is decorative (`aria-hidden`) — pair with visible text.
+     */
+    label?: string;
+}
+
+/**
+ * IconBox — fixed-size container that gives a leading icon a consistent footprint
+ * (list rows, option tiles, stat cards, empty states). Decorative unless `label` is set.
+ */
+declare const IconBox: React__default.NamedExoticComponent<IconBoxProps>;
+
+/** Row density — `sm` 8px · `md` 16px (default) · `lg` 24px vertical rhythm */
+type ListSize = "sm" | "md" | "lg";
+interface ListProps extends HTMLAttributes<HTMLUListElement> {
+    children: ReactNode;
+    /** Hairline (`--color-border-subtle`) between rows. @default true */
+    divided?: boolean;
+    /** Outer structural border + radius (stand-alone list). @default false */
+    bordered?: boolean;
+    /** Row density. @default "md" */
+    size?: ListSize;
+    /** Ordered list semantics (`<ol>`) for sequential steps. @default false */
+    ordered?: boolean;
+}
+interface ListItemProps extends Omit<HTMLAttributes<HTMLLIElement>, "title"> {
+    /** Leading visual — usually `<IconBox>`, `<Avtar>`, or a step number. */
+    leading?: ReactNode;
+    /** Primary label. */
+    title: ReactNode;
+    /** When set, the title renders as a link (`<a href>`). Unsafe schemes (`javascript:`, `data:`) render plain text. */
+    href?: string;
+    /** Anchor target for `href` — `_blank` automatically adds `rel="noopener noreferrer"`. */
+    target?: string;
+    /** Inline element(s) after the title — status `<Badge>`, version, tag. */
+    badge?: ReactNode;
+    /** Secondary line under the title. */
+    description?: ReactNode;
+    /** Muted right-side metadata shown before `action` (size, date, owner). */
+    meta?: ReactNode;
+    /** Trailing control(s) — usually an outlined `<Button size="sm">`. */
+    action?: ReactNode;
+    /** Highlight as the current item (`aria-current="true"`). */
+    selected?: boolean;
+    /** Dim the row; links lose their href. */
+    disabled?: boolean;
+}
+
+/**
+ * List — vertical collection of settings-style rows. Pair with `ListItem`.
+ * Use `bordered` for a stand-alone list; leave it off inside a `Card`.
+ */
+declare const List: React__default.ForwardRefExoticComponent<ListProps & React__default.RefAttributes<HTMLUListElement>>;
+/**
+ * ListItem — leading visual · title (+ badge) · description · meta · trailing action.
+ * Title becomes a link when `href` is provided; the trailing action stays an independent control.
+ */
+declare const ListItem: React__default.ForwardRefExoticComponent<ListItemProps & React__default.RefAttributes<HTMLLIElement>>;
+
+type StatTrend = "up" | "down" | "neutral";
+interface StatDelta {
+    /** Change value as displayed, e.g. `"+12%"` or `"3 new"`. */
+    value: ReactNode;
+    /** Direction — drives the arrow and tone. Meaning is also carried by text, never colour alone. */
+    trend?: StatTrend;
+    /** Context after the value, e.g. `"vs last release"`. */
+    label?: ReactNode;
+    /** Set when "down" is good (e.g. bundle size, error rate). Swaps success/danger tones. */
+    invert?: boolean;
+}
+interface StatCardProps extends Omit<CardProps, "title" | "subtitle" | "extra" | "children"> {
+    /** Metric name, e.g. "Components". */
+    label: ReactNode;
+    /** Headline value, e.g. `36` or `"270+"`. */
+    value: ReactNode;
+    /** Optional unit rendered beside the value in a lighter weight (e.g. `"KB"`). */
+    unit?: ReactNode;
+    /** Leading icon element; wrapped in an `IconBox`. */
+    icon?: ReactNode;
+    /** `IconBox` tone for the icon. @default "neutral" */
+    iconTone?: "neutral" | "strong" | "primary" | "success" | "warning" | "danger" | "info";
+    /** Trend / change line. */
+    delta?: StatDelta;
+    /** Supporting sentence under the value. */
+    description?: ReactNode;
+    /** Optional trailing area (link, sparkline, action). */
+    footer?: ReactNode;
+}
+
+/**
+ * StatCard — KPI tile for dashboards and overview pages. Wraps `Card`, so `variant`,
+ * `elevation`, `size`, and `hoverable` behave exactly as on Card.
+ */
+declare const StatCard: React__default.ForwardRefExoticComponent<StatCardProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** `dark` — Noir panel (default; reads as "code" on any theme) · `light` — muted surface */
+type CodeBlockTone = "dark" | "light";
+interface CodeBlockProps extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "title" | "onCopy"> {
+    /** Source text. Rendered as text only (never parsed as HTML). */
+    code: string;
+    /** Language chip in the header, e.g. `"bash"`, `"tsx"`, `"css"`. */
+    language?: string;
+    /** Optional header title (file name, step name). */
+    title?: ReactNode;
+    tone?: CodeBlockTone;
+    /** Copy-to-clipboard button. @default true */
+    showCopy?: boolean;
+    /** Accessible label for the copy button. @default "Copy code" */
+    copyLabel?: string;
+    /** Status announced after copying. @default "Copied" */
+    copiedLabel?: string;
+    /** Fired after a successful copy. */
+    onCopy?: (code: string) => void;
+    /** Number each line. @default false */
+    showLineNumbers?: boolean;
+    /** Soft-wrap long lines instead of scrolling horizontally. @default false */
+    wrap?: boolean;
+    /** Max height before vertical scroll, e.g. `320` or `"20rem"`. */
+    maxHeight?: number | string;
+}
+
+/**
+ * CodeBlock — read-only source panel with copy-to-clipboard. Content is rendered as text
+ * (no syntax-highlighting HTML), so it is safe for user-provided snippets.
+ */
+declare const CodeBlock: React__default.ForwardRefExoticComponent<CodeBlockProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/**
+ * Semantic tone shared by `Alert` and `Toast`.
+ * - `info` — neutral information (default)
+ * - `success` — completed / saved
+ * - `warning` — needs attention, not blocking
+ * - `danger` — error / failure
+ * - `neutral` — muted note with no status meaning
+ */
+type AlertVariant = "info" | "success" | "warning" | "danger" | "neutral";
+/**
+ * Surface treatment.
+ * - `soft` — tinted fill (`--color-{tone}-fill`) (default)
+ * - `outline` — page surface with a tone-coloured border
+ * - `solid-accent` — page surface with a 4px tone-coloured left bar
+ */
+type AlertAppearance = "soft" | "outline" | "solid-accent";
+/**
+ * Live-region politeness.
+ * - `off` — static alert, nothing announced on mount (default; no live role rendered)
+ * - `polite` — `role="status"`
+ * - `assertive` — `role="alert"` for `danger` / `warning`; `role="status"` + `aria-live="assertive"` otherwise
+ */
+type AlertLive = "off" | "polite" | "assertive";
+interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+    /** Semantic tone. @default "info" */
+    variant?: AlertVariant;
+    /** Surface treatment. @default "soft" */
+    appearance?: AlertAppearance;
+    /** Bold first line. */
+    title?: ReactNode;
+    /** Description / body copy. */
+    children?: ReactNode;
+    /** Replace the default per-variant icon (rendered decoratively). */
+    icon?: ReactNode;
+    /** Hide the leading icon. The visually-hidden `srPrefix` still carries meaning. */
+    hideIcon?: boolean;
+    /** Trailing action slot, e.g. a `Button`. */
+    action?: ReactNode;
+    /** When set, renders a dismiss (close) button that calls this handler. */
+    onDismiss?: () => void;
+    /** Accessible name of the dismiss button. @default "Dismiss" */
+    dismissLabel?: string;
+    /** Tighter padding and a single-row layout. */
+    compact?: boolean;
+    /** Live-region behaviour. @default "off" */
+    live?: AlertLive;
+    /** Prepend a visually-hidden variant word ("Error:", "Warning:", ...) so meaning never relies on colour. @default true */
+    srPrefix?: boolean;
+}
+
+/**
+ * Alert — inline, persistent message for pages and forms. Static by default (`live="off"`):
+ * set `live` only when the alert appears in response to a user action and must be announced.
+ */
+declare const Alert: React__default.ForwardRefExoticComponent<AlertProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** Same tone set as `Alert` — icon, colours and SR prefix come from `Alert.config.ts`. */
+type ToastVariant = AlertVariant;
+type ToastPosition = "top-right" | "top-center" | "top-left" | "bottom-right" | "bottom-center" | "bottom-left";
+interface ToastAction {
+    /** Visible button label. */
+    label: string;
+    /** Called on click; the toast is dismissed afterwards. */
+    onClick: () => void;
+}
+interface ToastOptions {
+    /** Stable id. Calling `toast()` again with an existing id updates that toast and restarts its timer. */
+    id?: string;
+    title: ReactNode;
+    description?: ReactNode;
+    /** @default "info" */
+    variant?: ToastVariant;
+    /**
+     * Single inline action. Keep it non-essential. A toast with an action is **sticky by default**
+     * (WCAG 2.2.1 Timing Adjustable) — pass `duration` explicitly to opt back into auto-dismiss.
+     */
+    action?: ToastAction;
+    /**
+     * Auto-dismiss delay in ms. `Infinity` = sticky.
+     * @default `Infinity` when `action` is set, otherwise provider `duration` (5000)
+     */
+    duration?: number;
+    /** Show a close button and allow Escape to dismiss. @default true */
+    dismissible?: boolean;
+}
+interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+    title: ReactNode;
+    description?: ReactNode;
+    /** @default "info" */
+    variant?: ToastVariant;
+    action?: ToastAction;
+    /** Renders the close button (requires `onDismiss`). @default true */
+    dismissible?: boolean;
+    /** Close-button handler. */
+    onDismiss?: () => void;
+    /** Accessible name of the close button. @default "Dismiss" */
+    dismissLabel?: string;
+    /** Visually-hidden variant word before the title ("Error:", ...). @default true */
+    srPrefix?: boolean;
+}
+interface ToastProviderProps {
+    children?: ReactNode;
+    /** Screen corner / edge for the stack. @default "bottom-right" */
+    position?: ToastPosition;
+    /** Maximum toasts visible at once; extra toasts queue (FIFO) until a slot frees. @default 3 */
+    max?: number;
+    /** Default auto-dismiss delay in ms. @default 5000 */
+    duration?: number;
+    /** Accessible name of the notifications region. @default "Notifications" */
+    label?: string;
+    /** Accessible name of each toast's close button. @default "Dismiss" */
+    dismissLabel?: string;
+}
+interface ToastContextValue {
+    /** Show (or update, when `id` matches) a toast. Returns its id. */
+    toast: (options: ToastOptions) => string;
+    /** Dismiss one toast (plays the exit animation). */
+    dismiss: (id: string) => void;
+    /** Dismiss every visible and queued toast. */
+    dismissAll: () => void;
+}
+
+/**
+ * Toast — a single transient notification card. Usually rendered by `ToastProvider` via
+ * `useToast().toast(...)`; exported for static previews and custom stacks.
+ * Announcement: non-danger toasts carry no live role — they are announced by the always-mounted
+ * polite region in `ToastProvider` (a live region must exist before content is inserted into it).
+ * `danger` toasts are `role="alert"`: alert insertion is announced reliably on its own and, being its
+ * own (assertive) live root, it is not re-announced by the polite ancestor.
+ * A standalone `Toast` outside the provider is therefore silent unless it is `danger`.
+ */
+declare const Toast: React__default.ForwardRefExoticComponent<ToastProps & React__default.RefAttributes<HTMLDivElement>>;
+/** Access `toast`, `dismiss`, `dismissAll`. Must be called under `ToastProvider`. */
+declare function useToast(): ToastContextValue;
+/**
+ * ToastProvider — owns the toast queue and renders the notifications region through a portal
+ * to `document.body` (after mount, so it is SSR-safe). Toasts never take focus; press F8 to
+ * move focus to the region, Tab between toasts, Escape to dismiss the focused one.
+ */
+declare function ToastProvider({ children, position, max, duration, label, dismissLabel, }: ToastProviderProps): react_jsx_runtime.JSX.Element;
+declare namespace ToastProvider {
+    var displayName: string;
+}
+
+/** Edge the panel slides in from. */
+type DrawerSide = "right" | "left" | "top" | "bottom";
+/** Panel extent — width for `left`/`right`, height for `top`/`bottom`. Values live in `Drawer.config.ts`. */
+type DrawerSize = "sm" | "md" | "lg" | "xl" | "full";
+interface DrawerProps {
+    /** Controlled open state. */
+    open: boolean;
+    /** Called with `false` when the drawer asks to close (close button, backdrop click, Escape). */
+    onOpenChange: (open: boolean) => void;
+    /** Edge the panel is attached to. @default "right" */
+    side?: DrawerSide;
+    /** Panel width (left/right) or height (top/bottom). At ≤ 480px left/right drawers are always full width. @default "md" */
+    size?: DrawerSize;
+    /** Heading rendered as the dialog's accessible name (`aria-labelledby`). Rendered as text, never parsed as HTML. */
+    title: ReactNode;
+    /** Supporting text under the title, wired to `aria-describedby`. */
+    description?: ReactNode;
+    /** Scrollable body content. The header and footer stay fixed while this scrolls. */
+    children?: ReactNode;
+    /** Sticky footer area (actions). */
+    footer?: ReactNode;
+    /** Show the close (X) button in the header. @default true */
+    showCloseButton?: boolean;
+    /** Accessible name for the close button. @default "Close" */
+    closeLabel?: string;
+    /** Close when the backdrop is clicked (modal only). @default true */
+    closeOnBackdropClick?: boolean;
+    /** Close when Escape is pressed. @default true */
+    closeOnEscape?: boolean;
+    /**
+     * Modal drawer: backdrop, body scroll lock, focus trap, `aria-modal`.
+     * `false` renders a side panel with none of those that can still be closed with Escape. @default true
+     */
+    modal?: boolean;
+    /** Element focused when the drawer opens. Defaults to the first focusable element, then the panel itself. */
+    initialFocusRef?: RefObject<HTMLElement | null>;
+    /** Return focus to the element that was focused before opening, once the drawer closes. @default true */
+    returnFocus?: boolean;
+    /** Extra class on the panel (consumer escape hatch). */
+    className?: string;
+    /** DOM id for the panel. Title / description ids derive from it. Auto-generated when omitted. */
+    id?: string;
+}
+/** `Sheet` is an alias of `Drawer` with the same props. */
+type SheetProps = DrawerProps;
+
+/**
+ * Drawer (alias `Sheet`) — a dialog panel attached to a viewport edge. Modal by default
+ * (backdrop, scroll lock, focus trap); `modal={false}` gives a non-blocking side panel.
+ * Header and sticky footer stay fixed while the body scrolls.
+ */
+declare const Drawer: React__default.ForwardRefExoticComponent<DrawerProps & React__default.RefAttributes<HTMLDivElement>>;
+/** Alias of `Drawer` — same component, for teams that call this pattern a "sheet". */
+declare const Sheet: React__default.ForwardRefExoticComponent<DrawerProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** `xs` 16px · `sm` 20px · `md` 24px · `lg` 32px */
+type SpinnerSize = "xs" | "sm" | "md" | "lg";
+/**
+ * Ring colour.
+ * - `current` — inherits `currentColor` (inside text, links, outline buttons)
+ * - `primary` — `--color-brand-primary` on `--color-border-subtle` track
+ * - `muted` — `--color-text-secondary` on `--color-border-subtle` track
+ * - `inverse` — `--color-text-on-primary`, for solid brand / dark surfaces (primary Button)
+ */
+type SpinnerTone = "current" | "primary" | "muted" | "inverse";
+interface SpinnerProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children"> {
+    /** @default "md" */
+    size?: SpinnerSize;
+    /** @default "current" */
+    tone?: SpinnerTone;
+    /**
+     * Announced text (rendered visually hidden inside a `role="status"` region).
+     * Ignored when `decorative`.
+     * @default "Loading"
+     */
+    label?: string;
+    /**
+     * Hide from assistive tech (`aria-hidden`, no role, no label) — use when the
+     * surrounding control already announces the busy state (e.g. a loading `Button`).
+     * @default false
+     */
+    decorative?: boolean;
+}
+
+/**
+ * Spinner — indeterminate loading indicator.
+ * Announces `label` through a `role="status"` region; pass `decorative` when the
+ * surrounding control already exposes the busy state (e.g. inside a loading Button).
+ */
+declare const Spinner: React__default.ForwardRefExoticComponent<SpinnerProps & React__default.RefAttributes<HTMLSpanElement>>;
+
+/**
+ * - `text` — one or more line bars (use `lines`; the last line is 60% wide)
+ * - `rect` — block placeholder (media, cards, charts)
+ * - `circle` — avatar / icon placeholder
+ */
+type SkeletonShape = "text" | "rect" | "circle";
+/** A number is treated as px; a string is used as-is (`"50%"`, `"12rem"`, `"var(--space-8)"`). */
+type SkeletonDimension = number | string;
+interface SkeletonProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children"> {
+    /** @default "text" */
+    shape?: SkeletonShape;
+    /** Number of line bars (only for `shape="text"`). The last one renders at 60% width. @default 1 */
+    lines?: number;
+    /** Width of the block (or of every full line). Defaults: text/rect `100%`, circle `40px`. */
+    width?: SkeletonDimension;
+    /** Height of the block (or of each line). Defaults: text `0.875em`, rect `var(--space-8)`, circle = width. */
+    height?: SkeletonDimension;
+    /** Corner radius override. Defaults: text `--radius-sm`, rect `--radius-md`, circle 50%. */
+    radius?: SkeletonDimension;
+    /** Shimmer animation (always off under `prefers-reduced-motion`). @default true */
+    animated?: boolean;
+}
+/**
+ * `role="status"` wrapper. Does not set `aria-busy` itself — put `aria-busy="true"` on the
+ * container whose content is loading.
+ */
+interface SkeletonGroupProps extends HTMLAttributes<HTMLDivElement> {
+    /** Announced once for the whole loading region (visually hidden). @default "Loading content" */
+    label?: string;
+    children?: ReactNode;
+}
+
+/**
+ * Skeleton — placeholder shape shown while content loads. Always `aria-hidden`;
+ * wrap a set of skeletons in `SkeletonGroup` so assistive tech hears one "Loading content".
+ */
+declare const Skeleton: React__default.ForwardRefExoticComponent<SkeletonProps & React__default.RefAttributes<HTMLSpanElement>>;
+/**
+ * SkeletonGroup — a `role="status"` region that announces `label` around one or more
+ * `Skeleton` blocks. It deliberately does NOT set `aria-busy` on itself (that would silence
+ * the announcement). Consumers set `aria-busy="true"` on the content container being loaded,
+ * e.g. `<section aria-busy={loading}>{loading ? <SkeletonGroup /> : content}</section>`.
+ */
+declare const SkeletonGroup: React__default.ForwardRefExoticComponent<SkeletonGroupProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** `sm` ≥ 36px targets · `md` ≥ 40px targets (both grow to 44px on coarse pointers). */
+type PaginationSize = "sm" | "md";
+/** Item range shown on the current page (1-based, inclusive). `from`/`to` are 0 when `total` is 0. */
+interface PaginationRange {
+    from: number;
+    to: number;
+    total: number;
+}
+/** One entry of the computed page strip. */
+type PaginationItem = {
+    type: "page";
+    page: number;
+} | {
+    type: "ellipsis";
+    key: "start-ellipsis" | "end-ellipsis";
+    from: number;
+    to: number;
+};
+/** Overridable strings (i18n). */
+interface PaginationLabels {
+    previous: string;
+    next: string;
+    first: string;
+    last: string;
+    /** Accessible name of a page control, e.g. "Page 3". */
+    page: (page: number) => string;
+    /** Accessible text for an ellipsis covering pages `from`…`to`. */
+    ellipsis: (from: number, to: number) => string;
+    /** Compact status, e.g. "Page 3 of 12". */
+    status: (page: number, pageCount: number) => string;
+    /** Default `showTotal` text. */
+    total: (range: PaginationRange) => string;
+    /** Label of the page-size select. */
+    pageSize: string;
+}
+interface PaginationProps extends Omit<HTMLAttributes<HTMLElement>, "onChange"> {
+    /** Current page, 1-based (controlled). */
+    page: number;
+    /** Total pages. Takes precedence over `totalItems` / `pageSize`. */
+    pageCount?: number;
+    /** Total item count — with `pageSize` derives `pageCount` and enables `showTotal`. */
+    totalItems?: number;
+    /** Items per page (also the selected value of the page-size select). */
+    pageSize?: number;
+    /**
+     * Called with the requested page. The second argument is the click event — call
+     * `event.preventDefault()` to keep client-side routing when using `getPageHref`.
+     */
+    onPageChange?: (page: number, event: MouseEvent<HTMLElement>) => void;
+    /** Pages shown either side of the current page. @default 1 */
+    siblingCount?: number;
+    /** Pages always shown at each end. @default 1 */
+    boundaryCount?: number;
+    /** First / last page buttons. @default false */
+    showFirstLast?: boolean;
+    /** Previous / next buttons. @default true */
+    showPrevNext?: boolean;
+    /** Options for the page-size select (rendered only with `onPageSizeChange`). */
+    pageSizeOptions?: number[];
+    onPageSizeChange?: (pageSize: number) => void;
+    /** `true` → "Showing 21–30 of 120"; a function receives the range and returns custom content. Needs `totalItems`. */
+    showTotal?: boolean | ((range: PaginationRange) => ReactNode);
+    /** @default "md" */
+    size?: PaginationSize;
+    /** Force the "Page 3 of 12" + prev/next layout (it is also used automatically at ≤ 480px). @default false */
+    compact?: boolean;
+    /** Disable every control. @default false */
+    disabled?: boolean;
+    /** Name of the `<nav>` landmark. @default "Pagination" */
+    ariaLabel?: string;
+    /** Render page controls as links (SEO / route paging). Unsafe schemes fall back to buttons. */
+    getPageHref?: (page: number) => string;
+    /** Override any user-facing string. */
+    labels?: Partial<PaginationLabels>;
+}
+
+/** Pages needed for `totalItems` at `pageSize` (0 when there are no items). */
+declare function getPageCount(totalItems: number | undefined, pageSize: number | undefined): number;
+/** 1-based inclusive item range shown on `page`. */
+declare function getItemRange(page: number, pageSize: number, totalItems: number): PaginationRange;
+interface PaginationRangeOptions {
+    page: number;
+    pageCount: number;
+    /** @default 1 */
+    siblingCount?: number;
+    /** @default 1 */
+    boundaryCount?: number;
+}
+/**
+ * Compute the page strip: boundary pages at both ends, `siblingCount` pages around the
+ * current page, and ellipses for the gaps. The strip has a constant length
+ * (`2*boundary + 2*sibling + 3`) once `pageCount` is large enough, so controls do not
+ * jump as the user pages. An ellipsis is only used when it hides at least two pages —
+ * a single hidden page is shown as a page instead.
+ */
+declare function getPaginationRange({ page, pageCount, siblingCount, boundaryCount, }: PaginationRangeOptions): PaginationItem[];
+
+/**
+ * Pagination — controlled page navigation (`<nav>` landmark + list of page controls).
+ * Pass `pageCount`, or `totalItems` + `pageSize`. Switches to a "Page 3 of 12" layout
+ * with prev/next only when `compact` is set or the viewport is ≤ 480px.
+ */
+declare const Pagination: React__default.ForwardRefExoticComponent<PaginationProps & React__default.RefAttributes<HTMLElement>>;
+
+/** Preferred side of the trigger. Flips to the opposite side when it would overflow the viewport. */
+type TooltipSide = "top" | "right" | "bottom" | "left";
+/** Alignment along the trigger edge. */
+type TooltipAlign = "start" | "center" | "end";
+/** `dark` = inverted (text-primary fill) · `light` = elevated surface + border. */
+type TooltipVariant = "dark" | "light";
+interface TooltipProps extends Omit<HTMLAttributes<HTMLDivElement>, "content" | "children" | "role"> {
+    /**
+     * Exactly one focusable element (Button, link, input…). It is cloned to add hover/focus
+     * handlers, a ref and `aria-describedby` — existing handlers and `aria-describedby` are preserved.
+     */
+    children: ReactElement;
+    /** Tooltip body. Short supplementary text — never the only accessible name of the trigger. */
+    content: ReactNode;
+    /** @default "top" */
+    side?: TooltipSide;
+    /** @default "center" */
+    align?: TooltipAlign;
+    /** Hover open delay in ms (keyboard focus opens immediately). @default 300 */
+    delay?: number;
+    /** Close delay in ms after the pointer leaves trigger + content (lets the pointer cross onto the tooltip). @default 100 */
+    closeDelay?: number;
+    /** Controlled open state. */
+    open?: boolean;
+    /** Uncontrolled initial open state. @default false */
+    defaultOpen?: boolean;
+    /** Called whenever the tooltip wants to open/close (hover, focus, blur, Escape). */
+    onOpenChange?: (open: boolean) => void;
+    /** Never open and drop `aria-describedby`. @default false */
+    disabled?: boolean;
+    /** Max inline size of the bubble (number = px). Always capped to the viewport width. @default 240 */
+    maxWidth?: number | string;
+    /** @default "dark" */
+    variant?: TooltipVariant;
+}
+
+/**
+ * Tooltip — supplementary description for any focusable trigger.
+ *
+ * WCAG 1.4.13: opens on hover **and** keyboard focus; Escape dismisses without moving focus or
+ * pointer; the bubble itself is hoverable (pointer can move onto it); it stays open until hover and
+ * focus have both left or the user dismisses it. `role="tooltip"` + `aria-describedby` on the trigger.
+ * Not for interactive content — use `Popover` for links/buttons inside the overlay.
+ */
+declare const Tooltip: React__default.ForwardRefExoticComponent<TooltipProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** Label placement — `vertical` stacks label over control; `horizontal` puts the label in a column (collapses to vertical at ≤ 640px). */
+type FormFieldLayout = "vertical" | "horizontal";
+/** Character / item counter shown under the control (`value / max`). Over the limit it switches to the danger tone. */
+interface FormFieldCounter {
+    value: number;
+    max: number;
+}
+interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+    /** Visible label text (rendered in a `<label>`). Required — every control needs an accessible name. */
+    label: ReactNode;
+    /**
+     * Id of the control the label points at. When omitted, the child's own `id` is used,
+     * otherwise an id is generated with `useId` and injected into the child.
+     */
+    htmlFor?: string;
+    /** Helper text under the control; linked via `aria-describedby`. */
+    hint?: ReactNode;
+    /** Error message. Sets `aria-invalid` on the child and is linked via `aria-describedby`. Announced (`role="alert"`) only when it changes after mount. */
+    error?: ReactNode;
+    /** Shows a visible `*` + screen-reader "required" and sets `aria-required` on the child. */
+    required?: boolean;
+    /** Shows a muted "(optional)" marker next to the label. Pass a string to change the wording. Ignored when `required`. */
+    optional?: boolean | string;
+    /** `{ value, max }` counter under the control. */
+    counter?: FormFieldCounter;
+    /** @default "vertical" */
+    layout?: FormFieldLayout;
+    /** Exactly one form control. It receives `id`, `aria-describedby`, `aria-invalid`, `aria-required` unless it already sets them. */
+    children: ReactElement | ReactNode;
+}
+/** Value exposed by `useFormField()` so custom controls can wire themselves up. */
+interface FormFieldContextValue {
+    /** Id the `<label htmlFor>` points at — put it on your focusable element. */
+    id: string;
+    /** Id of the `<label>` element — use with `aria-labelledby` for non-labelable widgets. */
+    labelId: string;
+    hintId?: string;
+    errorId?: string;
+    counterId?: string;
+    /** Space-separated ids for `aria-describedby` (hint, error, counter — whichever are rendered), or `undefined`. */
+    describedBy?: string;
+    invalid: boolean;
+    required: boolean;
+}
+
+/**
+ * Read the ids / state of the enclosing `FormField` so a custom control can wire
+ * `id`, `aria-labelledby`, `aria-describedby`, `aria-invalid` and `aria-required` itself.
+ * Returns `null` outside a `FormField` (controls stay usable stand-alone).
+ */
+declare function useFormField(): FormFieldContextValue | null;
+/**
+ * FormField — label · control · hint · error · counter, with the ARIA wiring done for you.
+ * Pass exactly one control as `children`; it receives `id`, `aria-describedby`, `aria-invalid`
+ * and `aria-required` unless it already sets them. Custom controls can read the ids via `useFormField()`.
+ *
+ * Supported children: `Input`, `TextArea`, `Select`, `Combobox` (wires itself from `useFormField()`),
+ * native `input` / `select` / `textarea`, and custom controls that read `useFormField()`.
+ * In development a `console.warn` fires when, after mount, neither a labelable element carries the
+ * field id nor a descendant references the label via `aria-labelledby`.
+ *
+ * Intentional, beyond the Sprint 2 brief: when `counter` is set its id is added to `aria-describedby`
+ * (after hint and error) so "12 of 100" is read on focus; going over the limit is announced once
+ * through a separate polite live region.
+ */
+declare const FormField: React__default.ForwardRefExoticComponent<FormFieldProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** Heading level for the title. `h1` by default — one per page. */
+type PageHeaderTitleAs = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+/** A secondary page action — rendered as an outlined `Button`, or as a menu item when it overflows. */
+interface PageHeaderAction {
+    /** Visible label (also the menu item text). */
+    label: string;
+    onClick?: (event: MouseEvent<HTMLElement>) => void;
+    /** Renders a link. Unsafe schemes (`javascript:`, `data:` …) are dropped. */
+    href?: string;
+    /** Leading icon (inline buttons and menu items). Decorative — the label is the accessible name. */
+    icon?: IconSource;
+    disabled?: boolean;
+}
+interface PageHeaderProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+    /** Page title. */
+    title: ReactNode;
+    /** @default "h1" */
+    titleAs?: PageHeaderTitleAs;
+    /** One-line summary under the title. */
+    description?: ReactNode;
+    /** Usually `<Breadcrumb>` — rendered above the title. */
+    breadcrumb?: ReactNode;
+    /** Inline status next to the title — usually a `<Badge>`. */
+    status?: ReactNode;
+    /** Muted metadata row under the description (owner, updated at, ids). */
+    meta?: ReactNode;
+    /** The single primary CTA — usually `<Button variant="primary" size="md">`. Exactly one per page header. */
+    primaryAction?: ReactNode;
+    /** Secondary actions. The first `maxVisibleActions` render as outlined buttons; the rest go into a "More actions" menu. At ≤ 640px all of them move into the menu. */
+    secondaryActions?: PageHeaderAction[];
+    /** How many secondary actions stay inline on wider screens. @default 2 */
+    maxVisibleActions?: number;
+    /** Accessible label + text of the overflow trigger. @default "More actions" */
+    moreActionsLabel?: string;
+    /** Rendered under the header — usually `<Tabs>` / `<TabsList>`. */
+    tabs?: ReactNode;
+}
+
+/**
+ * PageHeader — Zone 3 of the 5-zone layout: breadcrumb · title (+ status) · description · meta ·
+ * actions (secondaries + exactly one primary) · tabs.
+ * Secondary actions beyond `maxVisibleActions` overflow into a "More actions" menu; at ≤ 640px all do.
+ */
+declare const PageHeader: React__default.ForwardRefExoticComponent<PageHeaderProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** `select` → one value (native `Select`) · `multi` → many values (`Combobox multiple`). */
+type FilterBarFilterType = "select" | "multi";
+interface FilterBarOption {
+    label: string;
+    value: string;
+    disabled?: boolean;
+}
+interface FilterBarFilter {
+    /** Key in `value.filters`. In `DataTable` client mode it is also the row field that is matched. */
+    id: string;
+    /** Accessible name of the control and the chip prefix ("Status: Active"). */
+    label: string;
+    type: FilterBarFilterType;
+    options: FilterBarOption[];
+    /** Placeholder / "nothing selected" text. Defaults: select `"{label}: All"`, multi `"{label}"`. */
+    placeholder?: string;
+    /** `multi` only — adds a search box to the option list. */
+    searchable?: boolean;
+}
+type FilterBarFilterValue = string | string[];
+interface FilterBarValue {
+    search?: string;
+    /** Empty string / empty array (or a missing key) means "not filtered". */
+    filters: Record<string, FilterBarFilterValue>;
+}
+/** Overridable strings (i18n). */
+interface FilterBarLabels {
+    /** Name of the whole group. */
+    group: string;
+    /** Accessible name of the search field. */
+    search: string;
+    clearAll: string;
+    /** Overflow trigger when some filters stay inline. */
+    moreFilters: string;
+    /** Overflow trigger when every filter is collapsed (narrow screens). */
+    filters: string;
+    /** Visually hidden suffix on the overflow trigger, e.g. ", 2 active". */
+    activeInOverflow: (count: number) => string;
+    /** Name of the active-chip list. */
+    activeFilters: string;
+    /** Accessible name of a chip's dismiss button. */
+    removeFilter: (filterLabel: string, optionLabel: string) => string;
+    /** Live-region text for `resultCount`. */
+    resultCount: (count: number) => string;
+    /** Close button inside the overflow panel. */
+    done: string;
+}
+interface FilterBarProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue"> {
+    /** Controlled value. */
+    value: FilterBarValue;
+    /** Called with the next full value (search is debounced, filters are immediate). */
+    onChange: (next: FilterBarValue) => void;
+    filters?: FilterBarFilter[];
+    /** Render the search field. @default true */
+    searchable?: boolean;
+    /** @default "Search…" */
+    searchPlaceholder?: string;
+    /** Debounce for `value.search` updates; clearing and Enter commit immediately. @default 250 */
+    searchDebounceMs?: number;
+    /** Announced in a polite live region ("24 results"). */
+    resultCount?: number;
+    /** Right-aligned slot (view toggle, export, column menu…). */
+    extra?: ReactNode;
+    /** Filters shown inline before the rest move into the "More filters" popover. @default 3 */
+    maxInlineFilters?: number;
+    /** Collapse overflow (and every filter at ≤ 768px) into a popover. `false` keeps all inline and wraps. @default true */
+    moreFilters?: boolean;
+    /** Show visible labels above inline controls (otherwise the label is the accessible name + placeholder). @default false */
+    showLabels?: boolean;
+    /** Override any user-facing string. */
+    labels?: Partial<FilterBarLabels>;
+}
+
+/**
+ * FilterBar — search + filter controls + active-filter chips for list and table pages.
+ * Fully controlled (`value` / `onChange`); search is debounced locally.
+ */
+declare const FilterBar: React__default.ForwardRefExoticComponent<FilterBarProps & React__default.RefAttributes<HTMLDivElement>>;
+
+type DataTableRow = Record<string, unknown>;
+interface DataTableColumn<T = DataTableRow> extends TableColumn<T> {
+    /** Can be turned off in the column-visibility menu. @default true */
+    hideable?: boolean;
+    /** Included in CSV export (when visible). @default true */
+    exportable?: boolean;
+    /** CSV header text. Defaults to `header` when it is a string/number, otherwise the column `key`. */
+    csvHeader?: string;
+    /** CSV cell value. Defaults to `row[key]` (dates → ISO, arrays → "a; b", objects → JSON). */
+    csvValue?: (row: T) => unknown;
+}
+/** Server-side paging: `data` is already the current page. */
+interface DataTableServerPagination {
+    page: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
+    pageSizeOptions?: number[];
+}
+type DataTableSortDirection = "asc" | "desc" | null;
+interface DataTableSort {
+    key: string;
+    direction: DataTableSortDirection;
+}
+interface DataTableBulkActionHelpers {
+    clearSelection: () => void;
+}
+interface DataTableBulkAction<T = DataTableRow> {
+    label: string;
+    onClick: (selectedRows: T[], helpers: DataTableBulkActionHelpers) => void;
+    /** Button variant. Keep at most one `primary` per bar. @default "outlineSecondary" */
+    variant?: ButtonProps["variant"];
+    disabled?: boolean;
+}
+interface DataTableError {
+    /** @default "Couldn't load data" */
+    title?: ReactNode;
+    description?: ReactNode;
+    /** Renders a retry button in the error state. */
+    onRetry?: () => void;
+}
+interface DataTableExportOptions {
+    /** Download name; `.csv` is appended when missing and unsafe characters are replaced. */
+    filename?: string;
+    /** Button label. @default "Export CSV" */
+    label?: string;
+    /** Receive the CSV instead of triggering a browser download. */
+    onExport?: (csv: string, filename: string) => void;
+}
+/** `FilterBar` props; `value` / `onChange` are optional — `DataTable` keeps the state when omitted. */
+type DataTableFilterBarProps = Omit<FilterBarProps, "value" | "onChange"> & {
+    value?: FilterBarValue;
+    onChange?: (next: FilterBarValue) => void;
+    /** Initial value when uncontrolled. */
+    defaultValue?: FilterBarValue;
+};
+/** Overridable strings (i18n). */
+interface DataTableLabels {
+    /** Visible bulk-bar count, e.g. "3 selected". */
+    selectedCount: (count: number) => string;
+    /** Live-region text when the selection changes, e.g. "3 rows selected". */
+    selectionStatus: (count: number) => string;
+    clearSelection: string;
+    clearSelectionAria: string;
+    bulkActions: string;
+    /** Shown in the reserved bulk-bar slot while nothing is selected. */
+    bulkHint: string;
+    exportCsv: string;
+    columns: string;
+    columnsLegend: string;
+    loading: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    noResultsTitle: string;
+    noResultsDescription: string;
+    clearFilters: string;
+    errorTitle: string;
+    errorDescription: string;
+    pagination: string;
+}
+/** `Table` props that `DataTable` owns (it wires them itself). Everything else passes through. */
+type DataTableManagedTableProps = "columns" | "data" | "rowKey" | "selectionMode" | "selectedRowKeys" | "selectedRow" | "onSelectionChange" | "onRowSelect" | "searchable" | "searchPlaceholder" | "searchProps" | "searchColumns" | "showSearch" | "toolbar" | "toolbarLeft" | "toolbarRight" | "pagination" | "loading" | "loadingVariant" | "emptyText" | "emptyComponent" | "className";
+interface DataTableProps<T extends DataTableRow = DataTableRow> extends Omit<TableProps<T>, DataTableManagedTableProps> {
+    /** Names the table (and its scroll region). Required for accessibility. */
+    caption: ReactNode;
+    /** Keep the caption for assistive tech only. @default false */
+    hideCaption?: boolean;
+    columns: DataTableColumn<T>[];
+    data: T[];
+    /** Stable row id — a field name or a function. */
+    rowKey: keyof T | ((row: T) => string);
+    /** Skeleton rows; pagination is disabled while loading. */
+    loading?: boolean;
+    /** Replaces the table with an `ErrorState`. */
+    error?: DataTableError | null;
+    /** Shown when there is no data and no active search/filter. Defaults to an `EmptyState`. */
+    emptyState?: ReactNode;
+    /** Shown when search/filters match nothing. Defaults to an `EmptyState` with "Clear filters". */
+    noResultsState?: ReactNode;
+    /** Renders a `FilterBar` above the table. Client mode filters `data` with it. */
+    filterBar?: DataTableFilterBarProps;
+    /** Client mode: custom row predicate (default: search over visible columns, filters match `row[filter.id]`). */
+    filterFn?: (row: T, value: FilterBarValue) => boolean;
+    /**
+     * Server-side paging object, `false` for no paging, or omit for client paging.
+     * In server mode `data` is used as-is (no client filtering/sorting across pages; listen to `onSortChange`).
+     */
+    pagination?: DataTableServerPagination | false;
+    /** Client paging. @default 10 */
+    defaultPageSize?: number;
+    /** Client paging. @default [10, 25, 50] */
+    pageSizeOptions?: number[];
+    /** Name of the pagination landmark. Defaults to "{caption} pagination" when caption is a string. */
+    paginationAriaLabel?: string;
+    /** Checkbox column + bulk action bar. */
+    selectable?: boolean;
+    /** Controlled selection (all pages). */
+    selectedRowKeys?: string[];
+    onSelectionChange?: (keys: string[], rows: T[]) => void;
+    /** Keep the selection when search / filters change. Default clears it (and announces "Selection cleared"), because filtered-out rows would stay selected out of view. @default false */
+    preserveSelectionOnFilter?: boolean;
+    bulkActions?: DataTableBulkAction<T>[];
+    /**
+     * `true` → column menu with internal state (seeded from `column.hidden`).
+     * A record (`{ [columnKey]: visible }`) → controlled; persist it from `onColumnVisibilityChange`.
+     */
+    columnVisibility?: boolean | Record<string, boolean>;
+    onColumnVisibilityChange?: (visibility: Record<string, boolean>) => void;
+    /** Client-side CSV of the visible, exportable columns (client: every filtered row; server: `data`). */
+    exportCsv?: boolean | DataTableExportOptions;
+    /** Extra toolbar content (right side). */
+    toolbarRight?: ReactNode;
+    /** Sort changes from header clicks. Client mode sorts across all pages; server mode should re-fetch. */
+    onSortChange?: (sort: DataTableSort) => void;
+    /** Class on the DataTable root. */
+    className?: string;
+    /** Class on the inner `<table>` (Table's `className`). */
+    tableClassName?: string;
+    labels?: Partial<DataTableLabels>;
+}
+
+/**
+ * One RFC 4180 cell, formula-guarded for both comma and semicolon locales:
+ * 1. leading trigger → prefix the cell with `'` (comma locales, and the first field in `;` locales);
+ * 2. every `;`/`；` followed by a trigger gets a `'` after it (later fields in `;` locales, where the
+ *    quoting below is not at field start and therefore does not protect the cell);
+ * 3. quote when it contains `"`, `,`, `;`, CR or LF (inner quotes doubled).
+ * Real numbers are never changed — `-5` cannot carry a formula.
+ */
+declare function escapeCsvCell(value: unknown): string;
+/** Header row + one line per row, CRLF line endings. Headers are guarded too. */
+declare function toCsv<T extends DataTableRow>(columns: DataTableColumn<T>[], rows: T[]): string;
+
+/**
+ * DataTable — page-level data grid: `Table` + `FilterBar` + `Pagination` + empty / error states,
+ * selection with a bulk action bar, column visibility and CSV export.
+ */
+declare const DataTable: (<T extends DataTableRow = DataTableRow>(props: DataTableProps<T> & {
+    ref?: React__default.Ref<HTMLDivElement>;
+}) => React__default.ReactElement | null) & {
+    displayName?: string;
+};
+
+/** Control height tier. `sm` = 36px segments, `md` = 40px segments (44px on coarse pointers). */
+type SegmentedControlSize = "sm" | "md";
+interface SegmentedControlOption {
+    /** Unique value reported by `onValueChange`. */
+    value: string;
+    /**
+     * Visible label — the radio's accessible name when it is a string / number.
+     * For icon-only options pass the icon here (or `null` with `icon`) and set `ariaLabel`.
+     */
+    label: ReactNode;
+    /**
+     * Accessible name of the radio. **Required** when `label` is not a string or number
+     * (icon-only option); a development warning fires when it is missing. Overrides the label when set.
+     */
+    ariaLabel?: string;
+    /** Optional leading icon — rendered decoratively (`aria-hidden`). */
+    icon?: ReactNode;
+    /** Skipped by arrow keys and not selectable. */
+    disabled?: boolean;
+}
+interface SegmentedControlProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue" | "role" | "aria-label"> {
+    /** The choices, in visual order. */
+    options: SegmentedControlOption[];
+    /** Selected value (controlled). */
+    value?: string;
+    /** Initial value when uncontrolled. When omitted nothing is selected until the user picks. */
+    defaultValue?: string;
+    /** Fires with the newly selected value (never for a re-click on the current value). */
+    onValueChange?: (value: string) => void;
+    /** @default "md" */
+    size?: SegmentedControlSize;
+    /** Stretch to the container width; every segment gets an equal share. */
+    fullWidth?: boolean;
+    /** Accessible name of the radiogroup — required (there is no visible group label). */
+    ariaLabel: string;
+    /** Disable the whole control. */
+    disabled?: boolean;
+}
+
+declare const SEGMENTED_CONTROL_DEFAULTS: {
+    size: SegmentedControlSize;
+    fullWidth: boolean;
+};
+declare const SEGMENTED_CONTROL_SIZES: readonly SegmentedControlSize[];
+
+/**
+ * SegmentedControl — single-choice toggle group (APG radio group).
+ * `role="radiogroup"` + `role="radio"` / `aria-checked`, roving tabindex; arrow keys move focus
+ * **and** select, Home / End jump to the first / last enabled option. A sliding indicator marks the
+ * selection (no animation under `prefers-reduced-motion`; `Highlight` fill + outline in forced colours).
+ */
+declare const SegmentedControl: React__default.ForwardRefExoticComponent<SegmentedControlProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/**
+ * Result of a step validator.
+ * - `true` — valid, the wizard may continue
+ * - `false` — invalid, shows the default `validationMessage`
+ * - `string` — invalid, the string is shown as the error message (empty string → default message)
+ */
+type WizardValidationResult = boolean | string;
+interface WizardStep {
+    /** Stable id (React key + DOM id suffix). */
+    id: string;
+    /** Step title — Stepper label and the step's focusable heading. */
+    title: ReactNode;
+    /** Supporting text under the title (Stepper + panel). */
+    description?: ReactNode;
+    /** Marks the step "Optional" in the Stepper and review list. */
+    optional?: boolean;
+    /** The step body (usually `FormField`s). */
+    content: ReactNode;
+    /** Runs before leaving the step forward (Next, forward Stepper jump, Finish). May be async. */
+    validate?: () => WizardValidationResult | Promise<WizardValidationResult>;
+    /** Optional summary shown under the title on the review step. */
+    summary?: ReactNode;
+}
+type WizardHeadingLevel = 2 | 3 | 4;
+interface WizardProps extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "onChange"> {
+    steps: WizardStep[];
+    /** Active step index (controlled). The review step, when shown, is index `steps.length`. */
+    activeStep?: number;
+    /** Initial step when uncontrolled. @default 0 */
+    defaultActiveStep?: number;
+    /** Fires with the index the wizard wants to move to. */
+    onStepChange?: (index: number) => void;
+    /**
+     * Fires after every step validated on Finish. If it returns a Promise and `loading` is not
+     * passed, the wizard manages the busy state itself until the Promise settles (a rejection
+     * clears it too — handle errors inside `onComplete`, e.g. by showing an `Alert`).
+     */
+    onComplete?: () => void | Promise<unknown>;
+    /** When true, steps ahead of the furthest reached step are not navigable from the Stepper. @default true */
+    linear?: boolean;
+    /** Append an automatic review step listing every step title with an "Edit" link. */
+    showReview?: boolean;
+    /** @default "Review" */
+    reviewTitle?: ReactNode;
+    /** Intro copy on the review step. */
+    reviewDescription?: ReactNode;
+    /** @default "Back" */
+    backLabel?: ReactNode;
+    /** @default "Next" */
+    nextLabel?: ReactNode;
+    /** @default "Finish" */
+    finishLabel?: ReactNode;
+    /** Visible text of the review "Edit" links (the step title is appended for screen readers). @default "Edit" */
+    editLabel?: ReactNode;
+    /** @default "Optional" */
+    optionalLabel?: ReactNode;
+    /**
+     * Finish is busy (spinner + disabled). Focus moves to the step heading so it is not lost.
+     * Controlled — when set (even `false`) it takes precedence over the internal Promise-driven state.
+     */
+    loading?: boolean;
+    /** Announced politely while `loading`. @default "Submitting…" */
+    loadingLabel?: string;
+    /** Title of the validation-error Alert. @default "Check this step" */
+    validationTitle?: ReactNode;
+    /** Message when a validator returns `false` (or throws). @default "Some information on this step is missing or invalid." */
+    validationMessage?: ReactNode;
+    /** Visible "Step x of y" eyebrow above the heading (also read with it). */
+    formatStepCounter?: (current: number, total: number) => ReactNode;
+    /** Heading level of the step title. @default 2 */
+    headingLevel?: WizardHeadingLevel;
+    /** Accessible name of the Stepper nav landmark. @default "Progress" */
+    stepperAriaLabel?: string;
+}
+
+declare const WIZARD_DEFAULTS: {
+    readonly defaultActiveStep: 0;
+    readonly linear: true;
+    readonly showReview: false;
+    readonly reviewTitle: "Review";
+    readonly backLabel: "Back";
+    readonly nextLabel: "Next";
+    readonly finishLabel: "Finish";
+    readonly editLabel: "Edit";
+    readonly optionalLabel: "Optional";
+    readonly loadingLabel: "Submitting…";
+    readonly validationTitle: "Check this step";
+    readonly validationMessage: "Some information on this step is missing or invalid.";
+    readonly headingLevel: WizardHeadingLevel;
+    readonly stepperAriaLabel: "Progress";
+};
+
+/**
+ * Wizard — multi-step flow: `Stepper` (progress) + step panel + footer actions.
+ * Moving to a step focuses its heading; a validation failure shows an assertive danger `Alert`
+ * and focuses the heading. Exactly one primary action (Next or Finish) per footer.
+ */
+declare const Wizard: React__default.ForwardRefExoticComponent<WizardProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** `sm` for inline hints inside rows / menus · `md` for prose and documentation. */
+type KbdSize = "sm" | "md";
+/**
+ * Platform used to resolve `mod` (⌘ on macOS, Ctrl elsewhere) and the modifier glyphs.
+ * `auto` detects on the client after hydration; the server and first client render use `other`.
+ */
+type KbdPlatform = "auto" | "mac" | "other";
+/** One resolved key: what is drawn and what a screen reader hears. */
+interface KbdKeyLabel {
+    /** Visible text (may be a glyph such as ⌘ or ↵). */
+    display: string;
+    /** Spoken name (e.g. "Command", "Enter"). */
+    spoken: string;
+    /** Token for `aria-keyshortcuts` (e.g. "Meta", "Control", "K"). */
+    aria: string;
+}
+interface KbdProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+    /**
+     * Key combo, one entry per key: `["mod", "k"]`, `["shift", "enter"]`.
+     * Recognised names: mod, cmd/meta, ctrl, alt/option, shift, enter, esc, tab, space,
+     * backspace, delete, up/down/left/right (or arrowup…), home, end, pageup, pagedown.
+     * Anything else is shown as typed (single letters upper-cased).
+     */
+    keys?: string[];
+    /** Free content when `keys` is not used (e.g. `<Kbd>Esc</Kbd>`). Ignored when `keys` is set. */
+    children?: ReactNode;
+    /** Drawn between keys of a combo. Default `"+"`. Hidden from assistive tech. */
+    separator?: ReactNode;
+    size?: KbdSize;
+    /** Default `auto` (SSR-safe detection). Force `mac` / `other` for docs or tests. */
+    platform?: KbdPlatform;
+}
+
+/**
+ * True on Apple platforms (macOS, iPadOS, iOS). Returns false when `navigator` is unavailable
+ * (SSR, workers) so server output is deterministic.
+ */
+declare function detectIsMac(): boolean;
+/** Plain-text label for a combo: `⌘K` on macOS, `Ctrl+K` elsewhere. */
+declare function formatShortcut(keys: string[], isMac: boolean): string;
+/** Value for `aria-keyshortcuts` (e.g. `Meta+K` / `Control+K`). */
+declare function toAriaKeyShortcuts(keys: string[], isMac: boolean): string;
+
+/**
+ * Kbd — keyboard key / shortcut chip rendered as semantic `<kbd>`. With `keys`, each key is a
+ * nested `<kbd>` (HTML spec for key combinations) joined by a decorative separator; glyphs such
+ * as ⌘ carry a visually-hidden spoken name ("Command"). `mod` resolves to ⌘ on macOS and Ctrl
+ * elsewhere — SSR-safe: server + hydration render use Ctrl, the client then corrects it.
+ */
+declare const Kbd: React__default.ForwardRefExoticComponent<KbdProps & React__default.RefAttributes<HTMLElement>>;
+
+interface CommandItem {
+    /** Unique within its group. */
+    id: string;
+    label: string;
+    /** Secondary line under the label (also searched, lowest weight). */
+    description?: string;
+    /** Decorative leading icon (hidden from assistive tech). */
+    icon?: ReactNode;
+    /** Shortcut hint drawn with `Kbd`, e.g. `["mod", "shift", "p"]`. Display only — the app owns the binding. */
+    shortcut?: string[];
+    /** Extra search terms (synonyms, ids). Matched after the label. */
+    keywords?: string[];
+    /** Runs on Enter / click. The palette closes first when `closeOnSelect` (default). */
+    onSelect: (item: CommandItem) => void;
+    /** Shown (with `aria-disabled`) but skipped by arrow keys and not selectable. */
+    disabled?: boolean;
+}
+interface CommandGroup {
+    /** Unique across groups. */
+    id: string;
+    label: string;
+    items: CommandItem[];
+}
+interface CommandSearchContext {
+    /** Aborted when a newer query supersedes this one or the palette closes. */
+    signal: AbortSignal;
+}
+interface CommandPaletteProps {
+    /** Controlled open state. Omit for uncontrolled (hotkey-driven) use. */
+    open?: boolean;
+    defaultOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    /** Local commands, ranked client-side against the query. */
+    groups: CommandGroup[];
+    /** Shown first while the query is empty (hidden once the user types). */
+    recent?: CommandGroup;
+    /** Default `"Type a command or search…"`. */
+    placeholder?: string;
+    /** Shown when the query matches nothing (and nothing is loading). Default `"No results found."`. */
+    emptyState?: ReactNode;
+    /**
+     * Remote search, debounced by `searchDebounceMs`. Return groups (sync or via a Promise) to append
+     * them after the local results — they are shown as returned, not re-ranked. Stale responses are
+     * ignored and `signal` is aborted. Return nothing if you feed results through `groups` instead.
+     */
+    onSearch?: (query: string, context: CommandSearchContext) => void | CommandGroup[] | Promise<void | CommandGroup[]>;
+    /** Default 200 ms. */
+    searchDebounceMs?: number;
+    /** External loading flag (e.g. when results arrive through `groups`). OR-ed with the internal one. */
+    loading?: boolean;
+    /** Rank/filter `groups` locally. Default true. */
+    shouldFilter?: boolean;
+    /** Default `["mod", "k"]` (⌘K on macOS, Ctrl+K elsewhere). */
+    hotkey?: string[];
+    /** Default true. Registers a document listener that toggles the palette. */
+    enableHotkey?: boolean;
+    /** Let the hotkey fire while focus is in an input / textarea / select / contenteditable. Default false. */
+    allowInInputs?: boolean;
+    /** Default true. */
+    closeOnSelect?: boolean;
+    /** Return focus to the element focused before opening. Default true. */
+    returnFocus?: boolean;
+    /** Dialog accessible name. Default `"Command palette"`. */
+    ariaLabel?: string;
+    /** Search input accessible name. Default `"Search commands"`. */
+    inputLabel?: string;
+    /** Listbox accessible name. Default `"Commands"`. */
+    listLabel?: string;
+    /** Close button accessible name. Default `"Close"`. */
+    closeLabel?: string;
+    /** Live-region text while loading. Default `"Loading results…"`. */
+    loadingLabel?: string;
+    /** Live-region text for the result count. Default `n === 0 ? "No results" : "n result(s)"`. */
+    resultsLabel?: (count: number) => string;
+    /** Delay before the result count is announced (avoids one announcement per keystroke). Default 500 ms. */
+    announceDelayMs?: number;
+    /** Show the ↑↓ / ↵ / Esc hint footer. Default true. */
+    showFooter?: boolean;
+    className?: string;
+    id?: string;
+}
+
+/**
+ * CommandPalette — modal command menu (⌘K / Ctrl+K). Combobox pattern: DOM focus stays in the
+ * search input (`role="combobox"`), the highlighted option is exposed via `aria-activedescendant`,
+ * and the result count is announced through a debounced polite live region. Portal, shared overlay
+ * stack (one Escape closes one layer), ownership-based focus guard, Tab trap, shared body scroll
+ * lock, focus restored to the opener on close. Full-screen at ≤ 480px.
+ */
+declare const CommandPalette: React__default.ForwardRefExoticComponent<CommandPaletteProps & React__default.RefAttributes<HTMLDivElement>>;
+
+type NumberInputSize = "sm" | "md" | "lg";
+interface NumberInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "defaultValue" | "onChange" | "size" | "type" | "min" | "max" | "step" | "prefix" | "inputMode"> {
+    /** Controlled value; `null` = empty. `undefined` makes the field uncontrolled. */
+    value?: number | null;
+    /** Initial value when uncontrolled. */
+    defaultValue?: number | null;
+    /** Fires with the parsed number (or `null` when emptied) as the user types, steps, or on blur after clamping. Invalid text never fires. */
+    onChange?: (value: number | null) => void;
+    min?: number;
+    max?: number;
+    /** Arrow / stepper increment. Shift+Arrow and PageUp / PageDown use 10×. @default 1 */
+    step?: number;
+    /** Fixed fraction digits for display and rounding (e.g. 2 for money). */
+    precision?: number;
+    /** BCP 47 locale for parsing and formatting (grouping / decimal separators, digits). */
+    locale?: string;
+    /**
+     * `Intl.NumberFormat` options for the blurred display — currency, percent (`value` is a fraction:
+     * 0.25 shows "25%"; use `step={0.01}`), unit, or `notation: "compact"` ("1.2K"; parsed back too).
+     */
+    formatOptions?: Intl.NumberFormatOptions;
+    /** Leading slot (e.g. "$" or an icon). Strings are included in `aria-valuetext`; the slot itself is hidden from AT. */
+    prefix?: ReactNode;
+    /** Trailing slot (e.g. "kg"). Strings are included in `aria-valuetext`; the slot itself is hidden from AT. */
+    suffix?: ReactNode;
+    /** − / + buttons (press and hold repeats). @default true */
+    showSteppers?: boolean;
+    /** When false, minus signs are ignored and the lower bound is at least 0. @default true */
+    allowNegative?: boolean;
+    /** Clamp to `[min, max]` and round to `precision` on blur / Enter. @default true */
+    clampOnBlur?: boolean;
+    /** Visible label (outside a `FormField`; inside one, the field label is used). */
+    label?: ReactNode;
+    /**
+     * Error state. A string / node is rendered under the field (outside a `FormField`) and linked via
+     * `aria-describedby`; `true` only sets `aria-invalid`. Inside a `FormField`, use the field's `error`.
+     */
+    error?: ReactNode;
+    /** @default "md" */
+    size?: NumberInputSize;
+    disabled?: boolean;
+    readOnly?: boolean;
+    /** Accessible name of the + button. @default "Increase" */
+    incrementLabel?: string;
+    /** Accessible name of the − button. @default "Decrease" */
+    decrementLabel?: string;
+    /** Class on the root wrapper. */
+    className?: string;
+}
+
+/**
+ * Parses user text in `locale`: grouping and decimal separators (with group positions validated),
+ * native digits, one minus sign in a leading or trailing position (any minus variant) or accounting
+ * parentheses, currency / percent / unit affixes and compact suffixes ("1.2K").
+ *
+ * Rejected with `NaN`: misplaced groups ("1,2345", "1,234,5", "12,3,456"), separators in the fraction,
+ * interior or repeated signs ("1-2", "--5", "-(5)"), exponents / hex / words.
+ *
+ * Decimal heuristic: a **single** group-separator char followed by **1–2 digits** and no decimal
+ * separator is read as a decimal typed with the other convention ("1,5" / "10,25" in en-US → 1.5 /
+ * 10.25; "1.5" in de-DE → 1.5). Three digits after it is grouping ("1,234" → 1234); four or more is
+ * rejected.
+ */
+declare function parseLocaleNumber(text: string, locale?: string, options?: Intl.NumberFormatOptions): number | null;
+/** Display format (blurred field). `precision` fixes the fraction digits. Never throws. */
+declare function formatLocaleNumber(value: number, locale?: string, options?: Intl.NumberFormatOptions, precision?: number): string;
+
+/**
+ * NumberInput — locale-aware numeric field with `role="spinbutton"` semantics. A text input
+ * (`inputMode="decimal"`) shows the formatted value when blurred and a plain editable number when
+ * focused. ArrowUp/Down ±step (Shift ×10), PageUp/Down ×10, Home/End → min/max, Enter commits.
+ * Optional − / + steppers (press and hold repeats). Works inside `FormField`.
+ */
+declare const NumberInput: React__default.ForwardRefExoticComponent<NumberInputProps & React__default.RefAttributes<HTMLInputElement>>;
+
+/** A (possibly partial) date range. Dates are calendar days (local midnight). */
+interface DateRange {
+    from?: Date;
+    to?: Date;
+}
+/** A complete range returned by a preset. */
+interface CompleteDateRange {
+    from: Date;
+    to: Date;
+}
+/** Quick-pick shortcut shown beside the calendar. `range` is evaluated lazily (on render / click). */
+interface DateRangePreset {
+    label: string;
+    range: () => CompleteDateRange;
+}
+/** First day of the week in the calendar grid: 0 = Sunday, 1 = Monday. */
+type DateRangeWeekStart = 0 | 1;
+interface DateRangePickerProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue" | "placeholder"> {
+    /** Controlled range. Pass `{}` for "no range"; `undefined` makes the picker uncontrolled. */
+    value?: DateRange;
+    /** Initial range when uncontrolled. */
+    defaultValue?: DateRange;
+    /**
+     * Fires with a **complete** range (`{ from, to }`) when the second day is picked or a preset is chosen,
+     * and with `{}` when the range is cleared. The in-progress first click is kept internally.
+     */
+    onChange?: (range: DateRange) => void;
+    /** Quick picks (e.g. `DEFAULT_RANGE_PRESETS`). Presets are clamped to `min` / `max`; fully out-of-range ones are disabled. */
+    presets?: DateRangePreset[];
+    /** Earliest selectable day. */
+    min?: Date;
+    /** Latest selectable day. */
+    max?: Date;
+    /** Months shown side by side. Always 1 at ≤ 640px. @default 2 */
+    numberOfMonths?: number;
+    /** Visible label (outside a `FormField`; inside one, the field label is used). */
+    label?: ReactNode;
+    /** Accessible name when there is no visible label (and no enclosing `FormField`). */
+    ariaLabel?: string;
+    /** Trigger text when no range is selected. @default "Select date range" */
+    placeholder?: string;
+    /** Formats one day for the trigger and announcements. Default: `Intl.DateTimeFormat(locale, { dateStyle: "medium" })`. */
+    format?: (date: Date) => string;
+    /** BCP 47 locale for the default formatter, calendar captions, weekday names and day labels. */
+    locale?: string;
+    /** @default 0 (Sunday) */
+    weekStartsOn?: DateRangeWeekStart;
+    /** Shows a "Clear dates" button when a range is selected. @default false */
+    clearable?: boolean;
+    /** @default false */
+    disabled?: boolean;
+    /**
+     * Error state. A string / node is rendered under the trigger (outside a `FormField`) and linked via
+     * `aria-describedby`; `true` only sets `aria-invalid`. Inside a `FormField`, use the field's `error`.
+     */
+    error?: ReactNode;
+    /** Accessible name of the popover dialog. @default "Choose date range" */
+    dialogLabel?: string;
+    /** Accessible name of the clear button. @default "Clear dates" */
+    clearLabel?: string;
+    /**
+     * Marks the picker required in its own label (visible `*` + screen-reader "required"). Inside a
+     * `FormField`, use the field's `required` instead. `aria-required` is never set: it is not allowed
+     * on the trigger `<button>`.
+     */
+    required?: boolean;
+    /** Id of the trigger button. Inside a `FormField` the field id is used unless this is set. */
+    id?: string;
+}
+
+/**
+ * Standard dashboard presets, relative to "now" at the moment `range()` is called.
+ * "This month" / "This quarter" / "Year to date" run from the start of the period **to today**
+ * (period-to-date), so they never select future days.
+ */
+declare function createDefaultRangePresets(now?: () => Date): DateRangePreset[];
+/** Today, Last 7 days, Last 30 days, This month, This quarter, Year to date. */
+declare const DEFAULT_RANGE_PRESETS: DateRangePreset[];
+
+/**
+ * DateRangePicker — button trigger showing the formatted range, opening a popover dialog with
+ * optional presets and a react-day-picker range grid (APG date-grid keyboard: arrows, Home/End,
+ * PageUp/PageDown, Shift+PageUp/PageDown). First click sets the start, second click completes the
+ * range, fires `onChange` and closes; focus always returns to the trigger. Works inside `FormField`.
+ *
+ * Layout: on desktop the popover renders in-tree under the trigger — avoid `overflow: hidden` ancestors,
+ * which clip it (portalling on desktop is a follow-up). At ≤ 640px it is portalled to `<body>` and docked
+ * to the viewport bottom, so transformed ancestors (Drawer / Sheet panels) do not reposition it.
+ */
+declare const DateRangePicker: React__default.ForwardRefExoticComponent<DateRangePickerProps & React__default.RefAttributes<HTMLDivElement>>;
+
+export { Accordion, AccordionContent, AccordionContentProps, AccordionContextValue, AccordionDensity, AccordionItem, AccordionItemProps, AccordionMotion, AccordionProps, AccordionTrigger, AccordionTriggerProps, AccordionType, AccordionVariant, Alert, AlertAppearance, AlertDialog, AlertDialogProps, AlertDialogVariant, AlertLive, AlertProps, AlertVariant, AvatarProps, Avatar as Avtar, Badge, BadgeProps, BadgeShape, BadgeSize, BadgeTone, BadgeVariant, Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps, BreadcrumbSeparator, Button, ButtonElement, ButtonGroup, ButtonGroupContextValue, ButtonGroupOrientation, ButtonGroupProps, ButtonGroupSeparator, ButtonGroupSeparatorProps, ButtonGroupText, ButtonGroupTextProps, ButtonProps, Calendar, CalendarAnimation, CalendarCaptionLayout, CalendarElevation, CalendarProps, CalendarSize, CalendarTheme, CalendarVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps, CardSize, CardTitle, CardTitleProps, CardVariantName, Checkbox as CheckBox, CheckboxProps, CheckboxSize, Chip, ChipProps, CodeBlock, CodeBlockProps, CodeBlockTone, Combobox, ComboboxGroup, ComboboxOption, ComboboxProps, CommandGroup, CommandItem, CommandPalette, CommandPaletteProps, CommandSearchContext, CompleteDateRange, DEFAULT_RANGE_PRESETS, DataTable, DataTableBulkAction, DataTableBulkActionHelpers, DataTableColumn, DataTableError, DataTableExportOptions, DataTableFilterBarProps, DataTableLabels, DataTableProps, DataTableRow, DataTableServerPagination, DataTableSort, DataTableSortDirection, DatePicker, DatePickerProps, DateRange, DateRangePicker, DateRangePickerProps, DateRangePreset, DateRangeWeekStart, DetectedKind, Divider, Drawer, DrawerProps, DrawerSide, DrawerSize, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuItemProps, DropdownMenuTrigger, Dropzone, DropzoneProps, EmptyState, EmptyStateProps, ErrorAnimation, ErrorState, ErrorStateProps, FEEDBACK_ANIMATIONS, FeedbackAnimationName, FeedbackSize, FeedbackState, FeedbackStateProps, FeedbackStateVariant, FeedbackVisualTone, FileUpload, FileUploadProps, FileUploadSecurityOptions, FileUploadSize, FilterBar, FilterBarFilter, FilterBarFilterType, FilterBarFilterValue, FilterBarLabels, FilterBarOption, FilterBarProps, FilterBarValue, Form, FormField, FormFieldContextValue, FormFieldCounter, FormFieldLayout, FormFieldProps, FormProps, GradientText, GradientTextProps, Grid, GridItem, GridItemProps, GridProps, Hyperlink, HyperlinkProps, IconBox, IconBoxProps, IconBoxShape, IconBoxSize, IconBoxTone, IconSource, InfoAnimation, TextInput as Input, TextInputProps as InputProps, Kbd, KbdKeyLabel, KbdPlatform, KbdProps, KbdSize, List, ListItem, ListItemProps, ListProps, ListSize, Modal, ModalAnimation, ModalAutoFocusEvent, ModalProps, ModalScrollBehavior, ModalSize, NoDataAnimation, NoSearchResultsAnimation, NumberInput, NumberInputProps, NumberInputSize, OfflineAnimation, OfflineBanner, OfflineBannerProps, OtpBox, OtpBoxProps, OtpBoxSize, OtpBoxVariant, PageHeader, PageHeaderAction, PageHeaderProps, PageHeaderTitleAs, Pagination, PaginationItem, PaginationLabels, PaginationProps, PaginationRange, PaginationSize, Popover, PopoverContent, PopoverContentProps, PopoverPlacement, PopoverProps, PopoverTrigger, PopoverTriggerProps, ProgressBar, ProgressBarProps, RadioButtonProps, RadioGroup, SEGMENTED_CONTROL_DEFAULTS, SEGMENTED_CONTROL_SIZES, SegmentedControl, SegmentedControlOption, SegmentedControlProps, SegmentedControlSize, Select, SelectOptionGroup, SelectProps, SelectSize, Sheet, SheetProps, Skeleton, SkeletonDimension, SkeletonGroup, SkeletonGroupProps, SkeletonProps, SkeletonShape, Spinner, SpinnerProps, SpinnerSize, SpinnerTone, StatCard, StatCardProps, StatDelta, StatTrend, Stepper, StepperAppearance, StepperContextValue, StepperProps, StepperSize, StepperStep, StepperStepProps, StepperTrackMode, SuccessAnimation, Switch, SwitchProps, SwitchSize, TableColumn, TableProps, Tabs, TabsActivationMode, TabsContent, TabsContentAnimation, TabsContentProps, TabsContextValue, TabsList, TabsListLayout, TabsListProps, TabsOrientation, TabsProps, TabsSize, TabsTrigger, TabsTriggerAlign, TabsTriggerLayout, TabsTriggerProps, TabsVariant, Tag, TagProps, TextArea, TextAreaProps, TextView, TextViewProps, Toast, ToastAction, ToastContextValue, ToastOptions, ToastPosition, ToastProps, ToastProvider, ToastProviderProps, ToastVariant, TooltipIcon as ToolTip, Tooltip, TooltipAlign, TooltipIconProps, TooltipProps, TooltipSide, TooltipVariant, WIZARD_DEFAULTS, Wizard, WizardHeadingLevel, WizardProps, WizardStep, WizardValidationResult, createDefaultRangePresets, detectFileKindFromBuffer, detectIsMac, escapeCsvCell, formatLocaleNumber, formatShortcut, getItemRange, getPageCount, getPaginationRange, parseAcceptString, parseLocaleNumber, toAriaKeyShortcuts, toCsv, useFormField, useToast, validateFileSecurity, validateFilename, validateFilesSecurity };

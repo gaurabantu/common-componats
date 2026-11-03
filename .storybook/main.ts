@@ -12,6 +12,11 @@ const config: StorybookConfig = {
   staticDirs: [
     path.join(process.cwd(), ".storybook", "brand"),
     { from: path.join(process.cwd(), "src", "design-system"), to: "/design-system" },
+    /**
+     * Portal downloads (tarballs, preset, compiled CSS + manifest.json). Populated by
+     * `scripts/prepare-storybook-downloads.mjs` (runs before `storybook` / `build-storybook`).
+     */
+    { from: path.join(process.cwd(), ".storybook", "downloads"), to: "/downloads" },
   ],
   addons: [
     "@storybook/addon-essentials",
@@ -69,6 +74,17 @@ const config: StorybookConfig = {
       ],
       exclude: /node_modules/,
     });
+
+    /**
+     * `import text from "…/tokens.css?raw"` → file contents as a string (portal token pages parse
+     * the shipped tokens.css, so docs can never drift from the file). Existing CSS rules skip `?raw`.
+     */
+    for (const rule of cfg.module.rules) {
+      if (rule && typeof rule === "object" && rule.test instanceof RegExp && rule.test.test("x.css")) {
+        rule.resourceQuery = { not: [/raw/] };
+      }
+    }
+    cfg.module.rules.push({ test: /\.(css|md)$/, resourceQuery: /raw/, type: "asset/source" });
 
     cfg.cache = { type: "filesystem" };
 

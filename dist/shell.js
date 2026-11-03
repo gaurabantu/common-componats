@@ -1236,8 +1236,25 @@ var defaultIconConfig = {
   color: "currentColor"
 };
 
+// src/utils/safeHref.ts
+var SAFE_PROTOCOLS = /* @__PURE__ */ new Set(["http:", "https:", "mailto:", "tel:"]);
+function isSafeHref(href) {
+  try {
+    const url = new URL(href, "https://relative.invalid/");
+    return SAFE_PROTOCOLS.has(url.protocol);
+  } catch (e) {
+    return false;
+  }
+}
+
 // src/components/atoms/Button/index.tsx
 var import_jsx_runtime7 = require("react/jsx-runtime");
+function isDev() {
+  var _a;
+  const env = (_a = globalThis.process) == null ? void 0 : _a.env;
+  return (env == null ? void 0 : env.NODE_ENV) !== "production";
+}
+var ANCHOR_ONLY_ATTRS = ["target", "rel", "download", "hrefLang", "ping", "referrerPolicy", "media"];
 var VALID_VARIANTS = [
   "default",
   "primary",
@@ -1257,7 +1274,7 @@ function getVariantClass(v) {
     return variantClasses[v];
   return variantClasses.primary;
 }
-var Button = import_react8.default.memo(function Button2({
+var ButtonImpl = import_react8.default.forwardRef(function Button({
   children,
   variant = "primary",
   variantClass,
@@ -1286,19 +1303,43 @@ var Button = import_react8.default.memo(function Button2({
   ariaLabel,
   preserveIconColor = false,
   ripple = true,
+  expandOnHover = false,
+  loadingText = "Loading",
   href,
   ...rest
-}) {
-  var _a, _b, _c;
+}, ref) {
+  var _a, _b, _c, _d;
   const hasText = !!children && (typeof children === "string" ? children.trim().length > 0 : import_react8.default.Children.count(children) > 0);
   const isIconOnly = !!icon && !hasText;
+  const isExpandable = expandOnHover && !!icon && hasText;
   const variantClassNames = getVariantClass(variant);
   const resolvedVariant = variant == null || variant === "" ? "primary" : variant;
   const dsVariant = VALID_VARIANTS.includes(resolvedVariant) ? resolvedVariant : "primary";
   const sizeKey = (size != null ? size : "lg") in sizeClasses ? size : "lg";
   const sizeClassNames = isIconOnly ? (_a = iconOnlySizeClasses[sizeKey]) != null ? _a : iconOnlySizeClasses.lg : (_b = sizeClasses[sizeKey]) != null ? _b : sizeClasses.lg;
   const textSizeClassNames = textSize && textSize in textSizeClasses ? textSizeClasses[textSize] : "";
-  const computedAriaLabel = ariaLabel != null ? ariaLabel : isIconOnly ? "Button" : void 0;
+  const restAria = rest;
+  const hasExplicitName = !!(ariaLabel || restAria["aria-label"] || restAria["aria-labelledby"]);
+  const computedAriaLabel = (_c = ariaLabel != null ? ariaLabel : restAria["aria-label"]) != null ? _c : isIconOnly && !restAria["aria-labelledby"] ? "Button" : void 0;
+  const unsafeHref = href != null && !isSafeHref(href);
+  const linkHref = href != null && !unsafeHref ? href : void 0;
+  import_react8.default.useEffect(() => {
+    if (!isDev())
+      return;
+    if (isIconOnly && !hasExplicitName) {
+      console.warn(
+        '[Button] Icon-only button has no accessible name. Pass `ariaLabel` (e.g. ariaLabel="Close"); falling back to "Button".'
+      );
+    }
+  }, [isIconOnly, hasExplicitName]);
+  import_react8.default.useEffect(() => {
+    if (!isDev() || !unsafeHref)
+      return;
+    console.warn(
+      `[Button] Refused unsafe href ${JSON.stringify(href)} (only http, https, mailto, tel, relative and # links are allowed). Rendering a <button> instead.`
+    );
+  }, [unsafeHref, href]);
+  const loadingId = import_react8.default.useId();
   const styleOverrides = {};
   if (backgroundColor)
     styleOverrides.backgroundColor = backgroundColor;
@@ -1315,7 +1356,6 @@ var Button = import_react8.default.memo(function Button2({
     styleOverrides["--button-gradient-hover-bg"] = gradientHover || gradient;
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
-  const hasOverrides = Object.keys(styleOverrides).length > 0;
   const baseClass = [
     "btn-base",
     variantClassNames,
@@ -1324,17 +1364,23 @@ var Button = import_react8.default.memo(function Button2({
     loading ? "btn-loading" : "",
     gradient ? "btn-gradient" : "",
     variantClass != null ? variantClass : "",
-    (_c = classOverrides.variant) != null ? _c : "",
+    (_d = classOverrides.variant) != null ? _d : "",
     rounded !== void 0 ? `btn-rounded-${rounded}` : radiusClass,
     fullWidth || block ? "btn-full-width" : "",
+    isExpandable ? "btn-expand-on-hover" : "",
     className
   ].filter(Boolean).join(" ");
   const iconSizeDefaults = isIconOnly ? defaultIconOnlySizeBySize[sizeKey] : defaultIconWithLabelSizeBySize[sizeKey];
   const finalIconWidth = iconWidth != null ? iconWidth : iconSizeDefaults.width;
   const finalIconHeight = iconHeight != null ? iconHeight : iconSizeDefaults.height;
+  if (isExpandable) {
+    const iconW = typeof finalIconWidth === "number" ? `${finalIconWidth}px` : finalIconWidth;
+    styleOverrides["--btn-expand-pad"] = `calc((var(--button-height-${sizeKey}) - ${iconW}) / 2 - 1.5px)`;
+    styleOverrides["--btn-expand-pad-open"] = `var(--button-padding-x-${sizeKey})`;
+  }
   const gapPx = Math.min(16, Math.max(0, iconGap));
   const gapSnap = [0, 4, 8, 12, 16].reduce((a, b) => Math.abs(b - gapPx) < Math.abs(a - gapPx) ? b : a);
-  const iconGapClass = !hasText || gapSnap === 8 ? "" : iconPosition === "left" ? `btn-icon-gap-right-${gapSnap}` : `btn-icon-gap-left-${gapSnap}`;
+  const iconGapClass = !hasText || isExpandable || gapSnap === 8 ? "" : iconPosition === "left" ? `btn-icon-gap-right-${gapSnap}` : `btn-icon-gap-left-${gapSnap}`;
   const renderIcon = () => {
     if (!icon)
       return null;
@@ -1343,6 +1389,18 @@ var Button = import_react8.default.memo(function Button2({
       hasText && iconPosition === "right" && "btn-icon-right",
       iconGapClass
     ].filter(Boolean).join(" ");
+    if (loading) {
+      const dim = (v) => typeof v === "number" ? `${v}px` : v;
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        "span",
+        {
+          className: ["btn-spinner-slot", wrapperClass].filter(Boolean).join(" "),
+          style: { width: dim(finalIconWidth), height: dim(finalIconHeight) },
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "btn-spinner", "aria-hidden": "true" })
+        }
+      );
+    }
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: wrapperClass || void 0, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       Icon_default,
       {
@@ -1355,15 +1413,21 @@ var Button = import_react8.default.memo(function Button2({
       }
     ) });
   };
+  const hasOverrides = Object.keys(styleOverrides).length > 0;
   const { style: restStyle, onPointerDown: restOnPointerDown, ...restWithoutStyle } = rest;
   const mergedStyle = hasOverrides ? { ...restStyle, ...styleOverrides } : restStyle;
   const content = /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
-    loading && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "btn-spinner", "aria-hidden": "true" }),
+    loading && !icon && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "btn-spinner", "aria-hidden": "true" }),
     icon && iconPosition === "left" && renderIcon(),
-    children,
-    icon && iconPosition === "right" && renderIcon()
+    isExpandable ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "btn-expand-label", children }) : children,
+    icon && iconPosition === "right" && renderIcon(),
+    loading && // Referenced by aria-describedby: the name stays the label ("Save"), the state is described ("Loading").
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { id: loadingId, className: "sr-only", "aria-hidden": "true", children: loadingText })
   ] });
-  const isDisabled = Boolean(rest.disabled) || loading;
+  const nativeDisabled = Boolean(rest.disabled);
+  const isDisabled = nativeDisabled || loading;
+  const ariaBusy = loading ? true : restAria["aria-busy"];
+  const describedBy = [restAria["aria-describedby"], loading ? loadingId : void 0].filter(Boolean).join(" ") || void 0;
   const rippleEnabled = ripple !== false && !isDisabled;
   const rippleApi = useRipple(rippleEnabled);
   const pointerDown = (e) => {
@@ -1379,17 +1443,22 @@ var Button = import_react8.default.memo(function Button2({
     rippleApi.RippleOverlay,
     /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: innerClass, children: content })
   ] }) : content;
-  if (href) {
-    const { onClick, ...linkRest } = restWithoutStyle;
+  if (linkHref !== void 0) {
+    const { onClick, rel, ...linkRest } = restWithoutStyle;
+    const finalRel = rel != null ? rel : linkRest.target === "_blank" ? "noopener noreferrer" : void 0;
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       "a",
       {
         ...linkRest,
-        href: isDisabled ? void 0 : href,
+        ref,
+        href: nativeDisabled ? void 0 : linkHref,
+        rel: finalRel,
         className: surfaceClass,
         style: mergedStyle,
         "aria-label": computedAriaLabel != null ? computedAriaLabel : void 0,
         "aria-disabled": isDisabled || void 0,
+        "aria-busy": ariaBusy,
+        "aria-describedby": describedBy,
         "data-variant": dsVariant,
         "data-raw-variant": variant,
         onPointerDown: rippleEnabled ? pointerDown : restOnPointerDown,
@@ -1405,23 +1474,43 @@ var Button = import_react8.default.memo(function Button2({
       }
     );
   }
-  const buttonRest = restWithoutStyle;
+  const buttonRest = { ...restWithoutStyle };
+  if (unsafeHref)
+    for (const attr of ANCHOR_ONLY_ATTRS)
+      delete buttonRest[attr];
+  const { onClick: buttonOnClick, ...buttonAttrs } = buttonRest;
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
     "button",
     {
-      ...buttonRest,
+      ...unsafeHref ? { type: "button" } : null,
+      ...buttonAttrs,
+      ref,
       className: surfaceClass,
       style: mergedStyle,
-      disabled: isDisabled,
+      disabled: nativeDisabled,
       "aria-label": computedAriaLabel != null ? computedAriaLabel : void 0,
+      "aria-disabled": loading && !nativeDisabled ? true : buttonAttrs["aria-disabled"],
+      "aria-busy": ariaBusy,
+      "aria-describedby": describedBy,
       "data-variant": dsVariant,
       "data-raw-variant": variant,
       onPointerDown: rippleEnabled ? pointerDown : restOnPointerDown,
+      onClick: (e) => {
+        if (loading) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        buttonOnClick == null ? void 0 : buttonOnClick(e);
+      },
       children: body
     }
   );
 });
-var Button_default = Button;
+var Button2 = import_react8.default.memo(ButtonImpl);
+Button2.displayName = "Button";
+ButtonImpl.displayName = "Button";
+var Button_default = Button2;
 
 // src/components/atoms/TextInput/TextInput.tsx
 var import_react9 = require("react");

@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
+import { useFormField } from "../FormField";
+import { FORM_FIELD_CONSUMER_KEY } from "../FormField/FormField.config";
 import type { ComboboxGroup, ComboboxOption, ComboboxProps } from "./Combobox.types";
 import "./Combobox.css";
 
@@ -42,8 +44,38 @@ export const Combobox = React.memo(function Combobox({
   id: idProp,
   listMinWidth,
   style,
-  ...rest
+  ...restProps
 }: ComboboxProps) {
+  /*
+   * Inside a FormField: the field id, label, description and state go on the focusable
+   * role="combobox" trigger instead of the wrapper. Explicit props still win. Outside a field,
+   * nothing changes (aria-* in `rest` keep landing on the wrapper as before).
+   */
+  const field = useFormField();
+  const {
+    "aria-describedby": ariaDescribedByProp,
+    "aria-invalid": ariaInvalidProp,
+    "aria-required": ariaRequiredProp,
+    ...restWithoutAria
+  } = restProps as typeof restProps & {
+    "aria-describedby"?: string;
+    "aria-invalid"?: React.AriaAttributes["aria-invalid"];
+    "aria-required"?: React.AriaAttributes["aria-required"];
+  };
+  const rest = field ? restWithoutAria : restProps;
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const fieldControlId = field?.id;
+  useLayoutEffect(() => {
+    // PopoverTrigger owns its `id` prop (it is the popover's anchor id), so the field id is applied
+    // to the DOM node directly; React leaves it alone because the prop value never changes.
+    const el = triggerRef.current;
+    if (!el || !fieldControlId) return;
+    const original = el.id;
+    el.id = fieldControlId;
+    return () => {
+      el.id = original;
+    };
+  }, [fieldControlId]);
   const reactId = useId();
   const base = reactId.replace(/:/g, "");
   const listboxId = `ds-combobox-lb-${base}`;
@@ -203,7 +235,7 @@ export const Combobox = React.memo(function Combobox({
   return (
     <div
       {...rest}
-      id={idProp}
+      id={field && idProp === field.id ? undefined : idProp}
       className={cls("ds-combobox", className)}
       style={{
         width: fullWidth ? "100%" : "auto",
@@ -225,8 +257,16 @@ export const Combobox = React.memo(function Combobox({
           role="combobox"
           disabled={disabled}
           className="ds-combobox__trigger"
-          aria-labelledby={label ? labelId : undefined}
-          aria-label={label ? undefined : placeholder ?? "Select option"}
+          ref={triggerRef}
+          aria-labelledby={label ? labelId : field?.labelId}
+          aria-label={label || field ? undefined : placeholder ?? "Select option"}
+          {...(field
+            ? {
+                "aria-describedby": ariaDescribedByProp ?? field.describedBy,
+                "aria-invalid": ariaInvalidProp ?? (field.invalid || error ? true : undefined),
+                "aria-required": ariaRequiredProp ?? (field.required || undefined),
+              }
+            : {})}
           hasPopup="listbox"
           aria-expanded={open}
           aria-controls={listboxId}
@@ -322,5 +362,7 @@ export const Combobox = React.memo(function Combobox({
 });
 
 Combobox.displayName = "Combobox";
+/** Tells FormField this control wires itself via `useFormField()` (no cloneElement injection). */
+(Combobox as unknown as Record<string, unknown>)[FORM_FIELD_CONSUMER_KEY] = true;
 
 export default Combobox;

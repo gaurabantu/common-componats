@@ -6,7 +6,21 @@ import type { Preview } from "@storybook/react";
  */
 import "../app/globals.css";
 import "./preview.css";
-import { applyDataTheme } from "./theme-bridge";
+import { addons } from "@storybook/preview-api";
+import { GLOBALS_UPDATED, SET_GLOBALS } from "@storybook/core/core-events";
+import { applyDataTheme, readToolbarTheme } from "./theme-bridge";
+
+/**
+ * Docs-only (MDX) pages have no story decorator, so the Theme toolbar would not reach them.
+ * Listen on the preview channel and apply `data-theme` for every page type.
+ */
+const previewChannel = addons.getChannel();
+const syncThemeFromGlobals = (payload: unknown) => {
+  const globals = (payload as { globals?: Record<string, unknown> } | undefined)?.globals;
+  applyDataTheme(readToolbarTheme(globals));
+};
+previewChannel.on(SET_GLOBALS, syncThemeFromGlobals);
+previewChannel.on(GLOBALS_UPDATED, syncThemeFromGlobals);
 
 /** Same `data-theme` bridge as consumer apps — see `docs/design-system/THEMES.md`. */
 function withTheme(Story: React.ComponentType, context: { globals: { theme?: string } }) {
@@ -115,8 +129,14 @@ const preview: Preview = {
       storySort: {
         method: "alphabetical",
         order: [
+          "Overview",
+          ["Welcome", "Getting Started", "Downloads", "Component Inventory", "Roadmap", "Release Notes"],
+          "Foundations",
+          ["Colors", "Typography", "Spacing & Layout", "Shape & Elevation", "Motion & Layers", "Themes", "All Tokens"],
+          "Governance",
+          ["Accessibility", "Composition Rules", "Quality Checklist"],
           "Design System",
-          ["Introduction", "Theme showcase", ["Dashboard", "*"], ["Atoms", "*"], ["Molecules", "*"]],
+          ["Theme showcase", ["Dashboard", "*"], ["Atoms", "*"], ["Molecules", "*"]],
         ],
         locales: "en-US",
       },

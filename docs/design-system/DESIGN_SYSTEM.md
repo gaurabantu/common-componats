@@ -238,8 +238,9 @@ All spacing must be multiples of 8px. No arbitrary values. No exceptions.
 | `--border-thick` | `3px` | High-emphasis keyboard focus, critical errors | SC 2.4.13 |
 
 **Contrast Rule:**
-- `#999999` on `#FFFFFF` = 2.85:1 → decorative dividers only
-- `#757575` on `#FFFFFF` = 4.6:1 → interactive component boundaries
+- `#8a8a8a` (`--color-border-default`) on `#FFFFFF` = 3.45:1 → standard UI / control boundaries (≥ 3:1, SC 1.4.11)
+- `#757575` (`--color-border-interactive`) on `#FFFFFF` = 4.6:1 → emphasised interactive boundaries
+- Purely decorative hairlines use `--color-border-subtle` (exempt from 1.4.11)
 - `#0D0D0D` on `#FFFFFF` = 18.9:1 → high-contrast borders
 
 ---
@@ -248,7 +249,7 @@ All spacing must be multiples of 8px. No arbitrary values. No exceptions.
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--color-border-default` | `#999999` | Standard UI borders and dividers (Noir-40) |
+| `--color-border-default` | `#8a8a8a` | Standard UI borders and control boundaries (≥ 3:1 on surfaces) |
 | `--color-border-interactive` | `#757575` | Interactive component borders (≥3:1 on white) |
 | `--color-border-strong` | `#0D0D0D` | High-contrast interactive borders |
 | `--color-border-focus` | `#0066CC` (default); `#0D0D0D` on `green` | Primary focus ring (keyboard/mouse) |
@@ -310,7 +311,7 @@ Shadow colour is **always** `#000000` at varying opacity. Never tint shadows. Ne
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `--color-text-primary` | `#0D0D0D` | Main body text and primary content |
-| `--color-text-secondary` | `#757575` | Sub-headers, labels, secondary text |
+| `--color-text-secondary` | `#5e5e5e` | Sub-headers, labels, secondary text (≥ 4.5:1 on page, surface and muted fills) |
 | `--color-text-on-accent` | `#0D0D0D` | Text on accent-10 backgrounds (avatars, badges) |
 | `--color-text-disabled` | `#B3B3B3` | Disabled button/form text |
 | `--color-text-on-primary` | `#FFFFFF` | Text on primary (dark) button backgrounds |

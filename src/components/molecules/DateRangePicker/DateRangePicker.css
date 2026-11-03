@@ -1,0 +1,466 @@
+/*
+ * DateRangePicker — trigger + popover dialog + react-day-picker grid (rdp-* default class names, scoped). Tokens only.
+ * Layout note: on desktop the popover is absolutely positioned inside the component — avoid `overflow: hidden`
+ * ancestors (they clip it). At ≤ 640px it is portalled to <body> and docked to the viewport bottom.
+ */
+
+.ds-date-range-picker,
+.ds-date-range-picker__popover {
+  --ds-drp-cell: var(--button-height-lg);
+  --ds-drp-control-h: var(--button-height-lg);
+}
+
+.ds-date-range-picker {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+}
+
+.ds-date-range-picker__label {
+  display: block;
+  margin-bottom: var(--space-0);
+  color: var(--color-text-primary);
+  font-size: var(--text-secondary-size);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.ds-date-range-picker__required {
+  margin-inline-start: var(--space-0);
+  color: var(--color-danger-strong);
+}
+
+.ds-date-range-picker__field {
+  position: relative;
+  min-width: 0;
+}
+
+.ds-date-range-picker__trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--ds-drp-control-h);
+  margin: 0;
+  padding: 0 var(--space-2) 0 var(--space-1);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color var(--duration-instant) var(--easing-default);
+}
+
+.ds-date-range-picker__field[data-clearable="true"] .ds-date-range-picker__trigger {
+  padding-inline-end: calc(var(--ds-drp-control-h) + var(--space-0));
+}
+
+.ds-date-range-picker__trigger:hover:not(:disabled) {
+  border-color: var(--color-text-secondary);
+}
+
+.ds-date-range-picker__trigger:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-date-range-picker__trigger:disabled {
+  cursor: not-allowed;
+  background: var(--color-bg-page);
+  color: var(--color-text-secondary);
+}
+
+.ds-date-range-picker[data-invalid="true"] .ds-date-range-picker__trigger {
+  border-color: var(--color-state-error);
+}
+
+.ds-date-range-picker__icon {
+  flex-shrink: 0;
+  width: var(--button-icon-lg);
+  height: var(--button-icon-lg);
+  color: var(--color-text-secondary);
+}
+
+.ds-date-range-picker__value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-date-range-picker__value[data-placeholder="true"] {
+  color: var(--color-text-secondary);
+}
+
+.ds-date-range-picker__clear {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-drp-control-h);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.ds-date-range-picker__clear:hover {
+  color: var(--color-text-primary);
+}
+
+.ds-date-range-picker__clear:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+.ds-date-range-picker__error {
+  margin: var(--space-0) 0 0;
+  color: var(--color-danger-strong);
+  font-size: var(--text-small-size);
+  line-height: 1.5;
+}
+
+.ds-date-range-picker__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Popover ---- */
+
+.ds-date-range-picker__popover {
+  position: absolute;
+  top: calc(100% + var(--space-0));
+  inset-inline-start: 0;
+  z-index: var(--z-dropdown);
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: max-content;
+  max-width: calc(100vw - var(--space-2));
+  padding: var(--space-2);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text-primary);
+  overflow: auto;
+  font-family: var(--font-family);
+}
+
+.ds-date-range-picker__popover[data-align="end"] {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
+.ds-date-range-picker__popover:focus {
+  outline: none;
+}
+
+.ds-date-range-picker__popover:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-date-range-picker__presets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  min-width: max-content;
+  padding-inline-end: var(--space-2);
+  border-inline-end: var(--border-width-thin) solid var(--color-border-subtle);
+}
+
+.ds-date-range-picker__preset {
+  box-sizing: border-box;
+  min-height: var(--ds-drp-cell);
+  margin: 0;
+  padding: 0 var(--space-1);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--text-body-size);
+  text-align: start;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ds-date-range-picker__preset:hover:not(:disabled) {
+  background: var(--color-fill-muted);
+}
+
+.ds-date-range-picker__preset[aria-pressed="true"] {
+  border-color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.ds-date-range-picker__preset:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-date-range-picker__preset:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+}
+
+/* ---- react-day-picker grid ---- */
+
+.ds-date-range-picker__calendar {
+  position: relative;
+  font-size: var(--text-body-size);
+}
+
+.ds-date-range-picker__calendar .rdp-months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.ds-date-range-picker__calendar .rdp-month_caption {
+  display: flex;
+  align-items: center;
+  min-height: var(--ds-drp-cell);
+  padding-inline-start: var(--space-1);
+}
+
+.ds-date-range-picker__calendar .rdp-caption_label {
+  font-size: var(--text-body-size);
+  font-weight: 600;
+}
+
+.ds-date-range-picker__calendar .rdp-nav {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  z-index: var(--z-raised);
+  display: flex;
+  gap: var(--space-0);
+}
+
+.ds-date-range-picker__calendar .rdp-button_previous,
+.ds-date-range-picker__calendar .rdp-button_next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-drp-cell);
+  height: var(--ds-drp-cell);
+  margin: 0;
+  padding: 0;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.ds-date-range-picker__calendar .rdp-button_previous[aria-disabled="true"],
+.ds-date-range-picker__calendar .rdp-button_next[aria-disabled="true"] {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-date-range-picker__calendar .rdp-chevron {
+  width: var(--button-icon-sm);
+  height: var(--button-icon-sm);
+  fill: currentColor;
+}
+
+[dir="rtl"] .ds-date-range-picker__calendar .rdp-chevron {
+  transform: scaleX(-1);
+}
+
+.ds-date-range-picker__calendar .rdp-month_grid {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.ds-date-range-picker__calendar .rdp-weekday {
+  width: var(--ds-drp-cell);
+  height: var(--ds-drp-cell);
+  padding: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-small-size);
+  font-weight: 500;
+  text-align: center;
+}
+
+.ds-date-range-picker__calendar .rdp-day {
+  width: var(--ds-drp-cell);
+  height: var(--ds-drp-cell);
+  padding: 0;
+  text-align: center;
+}
+
+.ds-date-range-picker__calendar .rdp-day_button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-drp-cell);
+  height: var(--ds-drp-cell);
+  margin: 0;
+  padding: 0;
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ds-date-range-picker__calendar .rdp-day_button:hover:not(:disabled) {
+  border-color: var(--color-border-default);
+}
+
+
+/* Today: weight + underline, never colour alone */
+.ds-date-range-picker__calendar .rdp-today .rdp-day_button {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* In-range band: muted fill + top/bottom edges in border-default (≥ 3:1 against the surface) */
+.ds-date-range-picker__calendar .rdp-range_middle .rdp-day_button,
+.ds-date-range-picker__calendar .ds-date-range-picker__day--preview .rdp-day_button {
+  border-radius: 0;
+  border-color: var(--color-border-default) transparent;
+  background: var(--color-fill-muted);
+  color: var(--color-text-primary);
+}
+
+.ds-date-range-picker__calendar .ds-date-range-picker__day--preview .rdp-day_button {
+  border-style: dashed;
+}
+
+/* Endpoints: inverse fill (text-primary on surface colours) — high contrast in every theme */
+.ds-date-range-picker__calendar .rdp-range_start .rdp-day_button,
+.ds-date-range-picker__calendar .rdp-range_end .rdp-day_button,
+.ds-date-range-picker__calendar .rdp-selected:not(.rdp-range_middle) .rdp-day_button {
+  border-color: var(--color-text-primary);
+  border-style: solid;
+  background: var(--color-text-primary);
+  color: var(--color-bg-elevated);
+  font-weight: 600;
+}
+
+/*
+ * Focus: two-tone — focus-ring outline + a surface-coloured inner border, so the ring stays visible next to
+ * a selected (text-primary) fill even in themes where the ring colour equals that fill (green: #0d0d0d).
+ */
+.ds-date-range-picker__calendar .rdp-day_button:focus-visible {
+  position: relative;
+  z-index: var(--z-raised);
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 0;
+  border-color: var(--color-bg-elevated);
+  border-style: solid;
+}
+
+.ds-date-range-picker__calendar .rdp-disabled .rdp-day_button {
+  color: var(--color-text-disabled);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.ds-date-range-picker__calendar .rdp-hidden {
+  visibility: hidden;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 900px) {
+  .ds-date-range-picker__popover {
+    flex-direction: column;
+  }
+
+  .ds-date-range-picker__presets {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: 0;
+    padding-inline-end: 0;
+    padding-block-end: var(--space-1);
+    border-inline-end: 0;
+    border-block-end: var(--border-width-thin) solid var(--color-border-subtle);
+  }
+}
+
+@media (max-width: 640px) {
+  .ds-date-range-picker__popover {
+    position: fixed;
+    top: auto;
+    inset-inline: var(--space-1);
+    bottom: var(--space-1);
+    z-index: var(--z-modal);
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - var(--space-4));
+    align-items: stretch;
+  }
+
+  .ds-date-range-picker__calendar {
+    align-self: center;
+  }
+}
+
+@media (pointer: coarse) {
+  .ds-date-range-picker,
+  .ds-date-range-picker__popover {
+    --ds-drp-cell: var(--size-touch-target);
+    --ds-drp-control-h: var(--size-touch-target);
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-date-range-picker__calendar .rdp-range_start .rdp-day_button,
+  .ds-date-range-picker__calendar .rdp-range_end .rdp-day_button,
+  .ds-date-range-picker__calendar .rdp-selected:not(.rdp-range_middle) .rdp-day_button {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+  }
+
+  .ds-date-range-picker__calendar .rdp-range_middle .rdp-day_button {
+    border-color: Highlight transparent;
+  }
+
+  .ds-date-range-picker__preset[aria-pressed="true"] {
+    border-color: Highlight;
+  }
+
+  .ds-date-range-picker__popover {
+    border-color: CanvasText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-date-range-picker__trigger {
+    transition: none;
+  }
+}

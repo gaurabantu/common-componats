@@ -1,0 +1,146 @@
+/* FormField — label · control · hint · error · counter. Tokens only.
+   Contrast (computed from tokens.css, see handoff 06d): label/text-primary, hint+counter/text-secondary and
+   error/danger-strong are all ≥ 4.5:1 on bg-page and bg-surface in classic, mist and dark. */
+
+.ds-form-field {
+  box-sizing: border-box;
+  /* Fill the container even inside a flex column with align-items:flex-start (e.g. .sb-stack);
+     otherwise each field shrink-wraps to its own content and control widths differ row to row. */
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-0);
+  min-width: 0;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+}
+
+/* Horizontal: fixed label column (3 × space-8 = 12rem-ish) + flexible control column. */
+.ds-form-field[data-layout="horizontal"] {
+  grid-template-columns: minmax(0, calc(var(--space-8) * 3)) minmax(0, 1fr);
+  column-gap: var(--space-2);
+  align-items: start;
+}
+
+/* Horizontal: every control spans the full control column, so widths match across rows. */
+.ds-form-field[data-layout="horizontal"] .ds-form-field__control > * {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.ds-form-field[data-layout="horizontal"] .ds-form-field__label-col {
+  /* Align label baseline with a md control: (control height − line) / 2 ≈ space-1. */
+  padding-top: var(--space-1);
+}
+
+@media (max-width: 640px) {
+  .ds-form-field[data-layout="horizontal"] {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-0);
+  }
+  .ds-form-field[data-layout="horizontal"] .ds-form-field__label-col {
+    padding-top: 0;
+  }
+}
+
+.ds-form-field__label-col,
+.ds-form-field__control-col {
+  min-width: 0;
+}
+
+.ds-form-field__label {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-0);
+  font-size: var(--text-secondary-size);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ds-form-field__required {
+  color: var(--color-danger-strong);
+  font-weight: 700;
+}
+
+.ds-form-field__optional {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+.ds-form-field__control {
+  min-width: 0;
+}
+
+/* Controls fill the column so fields stack cleanly on mobile. */
+.ds-form-field__control > :is(input, select, textarea) {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.ds-form-field__messages {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-1);
+  margin-top: var(--space-0);
+  min-width: 0;
+}
+
+.ds-form-field__texts {
+  display: grid;
+  gap: var(--space-0);
+  min-width: 0;
+}
+
+.ds-form-field__hint,
+.ds-form-field__error {
+  margin: 0;
+  font-size: var(--text-small-size);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.ds-form-field__hint {
+  color: var(--color-text-secondary);
+}
+
+.ds-form-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-0);
+  color: var(--color-danger-strong);
+  font-weight: 500;
+}
+
+.ds-form-field__error-icon {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.2em;
+}
+
+.ds-form-field__counter {
+  flex: none;
+  margin-left: auto;
+  font-size: var(--text-small-size);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-form-field__counter[data-over="true"] {
+  color: var(--color-danger-strong);
+  font-weight: 600;
+}
+
+@media (forced-colors: active) {
+  .ds-form-field__required,
+  .ds-form-field__error,
+  .ds-form-field__counter[data-over="true"] {
+    color: CanvasText;
+  }
+}

@@ -191,7 +191,7 @@
   --border-width-medium: 2px;
   --border-width-thick: 3px;
 
-  /* v2.0.0 — default focus border/outline (blue; contrast on --color-border-default #999) */
+  /* v2.0.0 — default focus border/outline (blue; contrast on --color-border-default #8a8a8a) */
   --color-border-focus: #0066cc;
 
   /* v2.0.0 — text roles */
@@ -229,7 +229,7 @@
   --switch-track-off: #e0e0e0;
   --switch-thumb: #ffffff;
   --switch-border-on: #0d0d0d;
-  --switch-border-off: #999999;
+  --switch-border-off: #8a8a8a; /* off-state track boundary ≥ 3:1 (was #999999 = 2.85:1) */
   --switch-focus-ring: var(--color-border-focus);
 
   /* v2.0.0 — radii */
@@ -324,7 +324,8 @@ select {
   --color-brand-link: #002475;
 
   --color-text-primary: #0d0d0d;
-  --color-text-secondary: #757575;
+  /* ≥ 4.5:1 on every light page / surface / muted fill (4.91:1 on #e0e0e0 page; was #757575 = 3.49:1). */
+  --color-text-secondary: #5e5e5e;
   --color-text-on-accent: #0d0d0d;
 
   --color-bg-page: #e0e0e0;
@@ -333,7 +334,8 @@ select {
   --color-bg-elevated: #ffffff;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
-  --color-border-default: #999999;
+  /* ≥ 3:1 on surfaces and muted fills — WCAG 1.4.11 control boundaries (was #999999 = 2.85:1 on white). */
+  --color-border-default: #8a8a8a;
   /* Decorative / softer hairlines — modals, dividers, tabs baseline (see DESIGN_SYSTEM.md) */
   --color-border-subtle: var(--color-mist-60);
 
@@ -361,7 +363,8 @@ select {
    */
   --color-fill-muted: var(--color-mist-40);
   --color-fill-surface: var(--color-bg-surface);
-  --color-danger-strong: var(--color-state-error);
+  /* Light: accent *-fg like success/info/warning — #dc3545 on rose-10 is 3.9:1 (fails AA text). */
+  --color-danger-strong: var(--color-accent-rose-fg);
   --color-danger-fill: var(--color-accent-rose-10);
   --color-success-strong: var(--color-accent-mint-fg);
   --color-success-fill: var(--color-accent-mint-10);
@@ -470,13 +473,15 @@ select {
   --color-brand-link: #60A5FA;
 
   --color-text-primary: #F3F4F6;
-  --color-text-secondary: #9CA3AF;
+  /* ≥ 4.5:1 incl. on --color-fill-muted #374151 (was #9CA3AF = 4.06:1 there). */
+  --color-text-secondary: #a8b0bb;
   --color-text-on-accent: #0D0D0D;
 
   --color-bg-page: #111827;
   --color-bg-surface: #1F2937;
 
-  --color-border-default: #4B5563;
+  /* ≥ 3:1 on dark surface #1F2937 (was #4B5563 = 1.94:1). */
+  --color-border-default: #717a86;
 
   --color-state-success: #34D399;
   --color-state-warning: #FBBF24;
@@ -488,7 +493,8 @@ select {
 
   --color-fill-muted: var(--color-surface-mist);
   --color-fill-surface: var(--color-bg-surface);
-  --color-danger-strong: var(--color-state-error);
+  /* #F87171 on the dark danger fill is 3.96:1 — lighter red-300 reaches 5.8:1 (AA text). */
+  --color-danger-strong: #fca5a5;
   /* Dark fills: blend state colour into surface — avoids light accent-10 washes on slate */
   --color-danger-fill: color-mix(in srgb, var(--color-state-error) 20%, var(--color-bg-surface));
   --color-success-strong: var(--color-state-success);
@@ -512,16 +518,18 @@ select {
   --color-theme-disabled: #1e3a8a;
   --color-theme-text: #ffffff;
   --color-theme-surface-hover: rgba(255, 255, 255, 0.08);
-  --color-border-focus: #0066cc;
-  --color-focus-ring: #0066cc;
+  /* #0066cc was 2.64:1 on #1F2937 (WCAG 1.4.11 needs 3:1) — blue-400 is 5.77:1 surface / 6.98:1 page. */
+  --color-border-focus: #60a5fa;
+  --color-focus-ring: #60a5fa;
 
   --color-bg-elevated: #1f2937;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
-  --button-primary-default-bg: var(--color-theme-primary);
+  /* White label needs 4.5:1 — #3b82f6 was 3.68:1. Button fills only; --color-theme-* (links, accents) unchanged. */
+  --button-primary-default-bg: #2563eb; /* 5.17:1 */
   --button-primary-default-text: var(--color-theme-text);
-  --button-primary-hover-bg: var(--color-theme-hover);
-  --button-primary-active-bg: var(--color-theme-active);
+  --button-primary-hover-bg: #1d4ed8; /* 6.70:1 */
+  --button-primary-active-bg: #1e40af; /* 8.72:1 */
   --button-primary-disabled-bg: var(--color-theme-disabled);
   --button-primary-disabled-text: var(--color-theme-text);
   --button-primary-focus-ring: var(--color-border-focus);
@@ -653,7 +661,8 @@ select {
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
   --color-fill-muted: var(--color-mist-80);
-  --color-focus-ring: #06b6d4;
+  /* #06b6d4 was 1.8–2.4:1 on mist surfaces — cyan-700 keeps the teal hue at ≥ 4.06:1. */
+  --color-focus-ring: #0e7490;
   --color-border-focus: #0d0d0d;
 
   /* Same §42 mapping as `data-theme="green"` so CTAs are not stuck on `:root` Noir */
@@ -825,6 +834,11 @@ select {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+}
+/* `<Button href>` renders an anchor — never inherit the UA / host link underline (link variant handles its own). */
+a.btn-base:not(.btn-link),
+a.btn-base:not(.btn-link):hover {
+  text-decoration: none;
 }
 :is(button, a).btn-base:focus-visible {
   outline: 2px solid var(--button-primary-focus-ring);
@@ -1179,6 +1193,51 @@ select {
 }
 .btn-icon-right {
   margin-left: 8px;
+}
+/* Expand on hover (`expandOnHover`): icon-only square at rest; icon + label on
+   hover / keyboard focus. Padding vars are set per size by Button. */
+:is(button, a).btn-expand-on-hover {
+  padding-left: var(--btn-expand-pad);
+  padding-right: var(--btn-expand-pad);
+  transition:
+    background-color var(--duration-fast, 200ms) var(--easing-default),
+    border-color var(--duration-fast, 200ms) var(--easing-default),
+    color var(--duration-fast, 200ms) var(--easing-default),
+    padding var(--duration-fast, 200ms) var(--easing-default);
+}
+.btn-expand-on-hover .btn-expand-label {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  transition:
+    max-width var(--duration-fast, 200ms) var(--easing-default),
+    opacity var(--duration-fast, 200ms) var(--easing-default);
+}
+.btn-expand-on-hover .btn-icon-left,
+.btn-expand-on-hover .btn-icon-right {
+  margin: 0;
+  transition: margin var(--duration-fast, 200ms) var(--easing-default);
+}
+:is(button, a).btn-expand-on-hover:is(:hover, :focus-visible) {
+  padding-left: var(--btn-expand-pad-open);
+  padding-right: var(--btn-expand-pad-open);
+}
+.btn-expand-on-hover:is(:hover, :focus-visible) .btn-expand-label {
+  max-width: 16rem;
+  opacity: 1;
+}
+.btn-expand-on-hover:is(:hover, :focus-visible) .btn-icon-left { margin-right: 8px; }
+.btn-expand-on-hover:is(:hover, :focus-visible) .btn-icon-right { margin-left: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  :is(button, a).btn-expand-on-hover,
+  .btn-expand-on-hover .btn-expand-label,
+  .btn-expand-on-hover .btn-icon-left,
+  .btn-expand-on-hover .btn-icon-right {
+    transition: none;
+  }
 }
 .btn-icon-gap-right-0 { margin-right: 0 !important; }
 .btn-icon-gap-right-4 { margin-right: 4px !important; }

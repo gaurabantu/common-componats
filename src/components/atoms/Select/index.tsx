@@ -1,7 +1,10 @@
 "use client";
-import React, { forwardRef, useId } from "react";
+import React, { forwardRef, useId, useRef, useState } from "react";
 import type { SelectOption, SelectOptionGroup, SelectProps } from "./Select.types";
-import { defaultSelectOptions } from "./Select.config";
+import { defaultSelectOptions, isPickerOpenKey, selectHeightTokens, selectStatusTokens } from "./Select.config";
+import { useFormField } from "../../molecules/FormField";
+import { FORM_FIELD_CONSUMER_KEY } from "../../molecules/FormField/FormField.config";
+import "./Select.css";
 
 // Helper function to get data attributes for options
 const getOptionDataAttributes = (option: SelectOption) => {
@@ -76,52 +79,101 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     status,
     allowPlaceholderSelection = true,
     animatedChevron = true,
+    required,
+    style,
+    onMouseDown,
+    onKeyDown,
+    onBlur,
+    "aria-describedby": ariaDescribedByProp,
+    "aria-invalid": ariaInvalidProp,
+    "aria-required": ariaRequiredProp,
+    liveSearch: _liveSearch,
     ...rest
   } = props;
 
+  /*
+   * Inside a FormField the field id / description / state are read from context (FormField skips
+   * cloneElement for consumers, see FORM_FIELD_CONSUMER_KEY below). Explicit props always win.
+   */
+  const field = useFormField();
   const generatedId = useId();
-  const selectId = id || generatedId;
+  const selectId = id || field?.id || generatedId;
+  const messageId = `${selectId}-message`;
 
   const useGroups = Boolean(groups && groups.length > 0);
+
+  /*
+   * Picker state for the animated chevron. Root cause of the old blur-on-change: the chevron was
+   * keyed on `:focus-within` (focus is not "open"), so the component called `blur()` after every
+   * change to reset it — dropping keyboard focus. The open state is now tracked explicitly and the
+   * control is never blurred.
+   */
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const pickerOpenRef = useRef(false);
+  const setOpen = (next: boolean) => {
+    if (pickerOpenRef.current === next) return;
+    pickerOpenRef.current = next;
+    setPickerOpen(next);
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     const selectedOption = findOptionInSelect(selectedValue, options, groups);
+    setOpen(false);
     onChange?.(event);
     onValueChange?.(selectedValue, selectedOption);
-    // Native select keeps focus after picking an option, so :focus-within stays true and the
-    // chevron stays rotated; blur restores the default (down) state for the animated chevron.
-    if (animatedChevron !== false) {
-      event.currentTarget.blur();
-    }
+  };
+
+  const handleMouseDown = (event: React.MouseEvent<HTMLSelectElement>) => {
+    onMouseDown?.(event);
+    if (!event.defaultPrevented && event.button === 0 && !event.currentTarget.disabled) setOpen(true);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLSelectElement>) => {
+    onKeyDown?.(event);
+    setOpen(!event.defaultPrevented && isPickerOpenKey(event));
+  };
+
+  const handleBlur = (event: React.FocusEvent<HTMLSelectElement>) => {
+    setOpen(false);
+    onBlur?.(event);
   };
 
   const isDisabled = rest.disabled;
-  const resolvedStatus = status ?? (error ? "error" : undefined);
+  // An error message always means the error status (status alone can still be set without a message).
+  const resolvedStatus = error ? "error" : status;
   const helperMessage = error || helperText;
+  const errorShown = Boolean(error);
 
-  const borderColor =
-    resolvedStatus === "error"
-      ? "var(--color-state-error)"
-      : resolvedStatus === "warning"
-        ? "var(--color-state-warning)"
-        : resolvedStatus === "success"
-          ? "var(--color-state-success)"
-          : "var(--color-border-default)";
+  // Announce an error only when it changes after the first render (same latch as FormField).
+  const initialError = useRef(error);
+  const errorChanged = useRef(false);
+  if (!errorChanged.current && error !== initialError.current) errorChanged.current = true;
 
-  const footerColor =
-    resolvedStatus === "error"
-      ? "var(--color-state-error)"
-      : resolvedStatus === "warning"
-        ? "var(--color-state-warning)"
-        : resolvedStatus === "success"
-          ? "var(--color-state-success)"
-          : "var(--color-text-secondary)";
+  const describedBy =
+    [ariaDescribedByProp ?? field?.describedBy, helperMessage ? messageId : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined;
+  const ariaInvalid =
+    ariaInvalidProp ?? (errorShown || resolvedStatus === "error" || Boolean(field?.invalid));
+  const ariaRequired = ariaRequiredProp ?? (field?.required && !required ? true : undefined);
+
+  // Any invalid Select (own `error`, `status="error"`, FormField error, explicit aria-invalid) gets the
+  // error border; `--color-danger-strong` keeps >= 3:1 on the surface (state-error is the bright accent).
+  const isInvalid = ariaInvalid === true || ariaInvalid === "true" || resolvedStatus === "error";
+
+  // Status colours use the `-strong` semantic tokens (text >= 4.5:1, borders >= 3:1 on the surface in
+  // every theme); the raw `--color-state-*` accents fail (warning 1.63:1 on white).
+  const visualStatus: "error" | "warning" | "success" | undefined = isInvalid ? "error" : resolvedStatus;
+  const statusToken = visualStatus ? selectStatusTokens[visualStatus] : undefined;
+  const borderColor = statusToken ?? "var(--color-border-default)";
+  // The message follows the Select's own status/error (a FormField error is rendered by FormField itself).
+  const footerColor = resolvedStatus ? selectStatusTokens[resolvedStatus] : "var(--color-text-secondary)";
 
   const sizeConfig = {
-    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
-    lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" },
+    sm: { minHeight: selectHeightTokens.sm, paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
+    md: { minHeight: selectHeightTokens.md, paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
+    lg: { minHeight: selectHeightTokens.lg, paddingX: 16, fontSize: "var(--text-body-size, 16px)" },
   } as const;
 
   const currentSize = sizeConfig[size];
@@ -173,7 +225,6 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     color: isDisabled
       ? "var(--color-text-secondary)"
       : "var(--color-text-primary)",
-    outline: "none",
     appearance: "none",
     WebkitAppearance: "none",
     MozAppearance: "none",
@@ -183,12 +234,6 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     transition: "border-color 150ms, background-color 150ms",
   };
 
-  if (!animatedChevron) {
-    selectStyle.backgroundImage =
-      'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 20 20\' fill=\'none\'%3E%3Cpath d=\'M5 7.5L10 12.5L15 7.5\' stroke=\'%23757575\' stroke-width=\'1.8\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")';
-    selectStyle.backgroundRepeat = "no-repeat";
-    selectStyle.backgroundPosition = `right ${currentSize.paddingX}px center`;
-  }
 
   const helperStyle: React.CSSProperties = {
     marginTop: 8,
@@ -203,21 +248,36 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
       {label && (
         <label htmlFor={selectId} style={labelStyle}>
           {label}
+          {required ? (
+            <span className="ds-select__required" aria-hidden="true">
+              *
+            </span>
+          ) : null}
         </label>
       )}
 
       <div
-        className={`ucs-select-shell${animatedChevron !== false ? " ucs-select-shell--chevron-animated" : ""}`}
+        className={`ucs-select-shell${animatedChevron !== false ? " ucs-select-shell--chevron-animated" : " ds-select-shell--chevron-static"}`}
+        data-open={animatedChevron !== false && pickerOpen ? "true" : undefined}
       >
         <select
           ref={ref}
           id={selectId}
-          className={className}
-          style={selectStyle}
-          aria-invalid={!!error || resolvedStatus === "error"}
+          className={className ? `ds-select ${className}` : "ds-select"}
+          data-size={size}
+          data-invalid={isInvalid ? "true" : undefined}
+          data-status={visualStatus}
+          style={style ? { ...selectStyle, ...style } : selectStyle}
+          aria-invalid={ariaInvalid}
+          aria-describedby={describedBy}
+          aria-required={ariaRequired}
+          required={required}
           value={value}
-          onChange={handleChange}
           {...rest}
+          onChange={handleChange}
+          onMouseDown={handleMouseDown}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
         >
         {placeholder && (
           <option value="" disabled={!allowPlaceholderSelection}>
@@ -257,11 +317,24 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             })}
         </select>
       </div>
-      {helperMessage && <p style={helperStyle}>{helperMessage}</p>}
+      {helperMessage && (
+        <p
+          id={messageId}
+          className="ds-select__message"
+          data-status={resolvedStatus}
+          role={errorShown && errorChanged.current ? "alert" : undefined}
+          style={helperStyle}
+        >
+          {helperMessage}
+        </p>
+      )}
     </div>
   );
 });
 
 Select.displayName = "Select";
+
+/** Tells FormField this control wires itself via `useFormField()` (no cloneElement injection). */
+(Select as unknown as Record<string, unknown>)[FORM_FIELD_CONSUMER_KEY] = true;
 
 export default Select;

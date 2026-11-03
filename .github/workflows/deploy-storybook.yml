@@ -35,7 +35,7 @@ jobs:
         run: npm ci
 
       - name: Build Storybook
-        run: npx storybook build -o storybook-static
+        run: npm run build-storybook  # also runs prebuild-storybook → portal downloads
 
       - uses: actions/upload-pages-artifact@v3
         with:

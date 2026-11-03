@@ -1,0 +1,11 @@
+{
+  "skill": "component-authoring",
+  "description": "Use when building, extending, or migrating a React component in ui-common-components (atoms/molecules/charts), writing its Storybook stories, or adding a hook to ui-common-hooks. Triggers on requests to \"build component\", \"add story\", \"create hook\", \"migrate AppShell/Avatar/Tooltip/TextInput\", or \"add variant\".\n",
+  "should_trigger": [
+    "TODO: a request that must invoke component-authoring"
+  ],
+  "should_not_trigger": [
+    "TODO: a nearby request that must NOT invoke component-authoring (e.g. one belonging to another componant-ui-harness skill)"
+  ],
+  "cases": []
+}

@@ -1,0 +1,175 @@
+/* Alert — inline page/form message. Tone colours arrive as --ds-feedback-strong / --ds-feedback-fill
+   (set from Alert.config.ts → getToneStyle); this file never names a tone directly.
+   .ds-feedback-* rules are shared with Toast. */
+
+.ds-alert {
+  /* Title text: strong mixed 80% toward text-primary — ≥ 5.02:1 on every fill/surface in classic, mist, dark
+     (raw --color-info-strong on the dark info fill is 4.21:1). */
+  --ds-feedback-fg: color-mix(in srgb, var(--ds-feedback-strong) 80%, var(--color-text-primary));
+  /* Focus ring: the token itself is ≥ 3:1 on every surface and tone fill in every theme (dark #60a5fa). */
+  --ds-feedback-ring: var(--color-focus-ring);
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  background: var(--ds-feedback-fill);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+}
+
+.ds-alert[data-appearance="outline"] {
+  background: var(--color-bg-surface);
+  border-color: var(--ds-feedback-strong);
+}
+
+.ds-alert[data-appearance="solid-accent"] {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border-subtle);
+  border-left: var(--space-0) solid var(--ds-feedback-strong);
+}
+
+.ds-alert[data-variant="neutral"][data-appearance="outline"] {
+  border-color: var(--color-border-default);
+}
+
+.ds-alert[data-compact="true"] {
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-secondary-size);
+}
+
+.ds-alert__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  /* optical alignment with the first text line */
+  padding-top: 1px;
+  color: var(--ds-feedback-strong);
+}
+
+.ds-alert[data-compact="true"] .ds-alert__icon {
+  padding-top: 0;
+}
+
+.ds-alert__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ds-alert__body {
+  /* Wraps the actions onto their own row when the alert is narrower than ~ 14rem of copy (375px phones). */
+  flex: 1 1 14rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  overflow-wrap: anywhere;
+}
+
+.ds-alert[data-compact="true"] .ds-alert__body {
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: var(--space-1);
+  row-gap: 0;
+}
+
+.ds-alert__title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ds-feedback-fg);
+}
+
+.ds-alert__description {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.ds-alert__description > p {
+  margin: 0;
+}
+
+.ds-alert__actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--space-1);
+  margin-left: auto;
+  margin-block: calc(-1 * var(--space-0));
+}
+
+.ds-alert__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Dismiss — shared by Alert and Toast. 32px visual on fine pointers (≥ 24px WCAG 2.5.8), 44px on touch. */
+.ds-alert__dismiss,
+.ds-toast__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--space-4);
+  height: var(--space-4);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--easing-default);
+}
+
+.ds-alert__dismiss:hover,
+.ds-toast__dismiss:hover {
+  background: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+}
+
+.ds-alert__dismiss:focus-visible,
+.ds-toast__dismiss:focus-visible {
+  outline: 2px solid var(--ds-feedback-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .ds-alert__dismiss,
+  .ds-toast__dismiss {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-alert__dismiss,
+  .ds-toast__dismiss {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-alert {
+    border-color: CanvasText;
+  }
+
+  .ds-alert__icon {
+    color: CanvasText;
+  }
+
+  .ds-alert__dismiss:focus-visible,
+  .ds-toast__dismiss:focus-visible {
+    outline-color: Highlight;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "skill": "screen-composition",
+  "description": "Use when composing a Next.js screen or page from ui-common-components library pieces — dashboard, list, form, or detail pages. Triggers on requests to \"build screen\", \"compose page\", \"create dashboard\", \"layout a page\", or \"wire FeedbackStates\".\n",
+  "should_trigger": [
+    "TODO: a request that must invoke screen-composition"
+  ],
+  "should_not_trigger": [
+    "TODO: a nearby request that must NOT invoke screen-composition (e.g. one belonging to another componant-ui-harness skill)"
+  ],
+  "cases": []
+}

@@ -94,7 +94,7 @@ Ratios are **target** WCAG 2.2 AA checks for common pairs. Verify in Storybook w
 | **blue-mist** | Page `#EDEDED` | Surface `#FAFAFA` | `#7C3AED` on page — verify **≥ 3:1** | On `#FAFAFA` — verify |
 | **green-mist** | Page `#EDEDED` | Surface `#FAFAFA` | `#0D0D0D` focus (green interaction) | Same |
 
-**Secondary text:** `--color-text-secondary` (`#757575` light / `#9CA3AF` dark) must stay ≥ 4.5:1 on `--color-bg-surface` for body-sized captions.
+**Secondary text:** `--color-text-secondary` (`#5e5e5e` light / `#a8b0bb` dark) must stay ≥ 4.5:1 on `--color-bg-surface`, `--color-bg-page` and `--color-fill-muted` for body-sized captions.
 
 **Primary button text:** `--color-text-on-primary` / `--color-theme-text` on `--button-primary-default-bg` — required **≥ 4.5:1**.
 

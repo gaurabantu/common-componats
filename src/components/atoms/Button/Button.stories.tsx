@@ -1,3 +1,4 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import Button from "./index";
 import CloseIcon from "../../../assets/close.svg";
@@ -46,7 +47,12 @@ const meta: Meta<typeof Button> = {
     fullWidth: { control: "boolean" },
     block: { control: "boolean", description: "Alias of fullWidth" },
     disabled: { control: "boolean" },
-    loading: { control: "boolean", description: "Shows spinner and disables interaction" },
+    loading: {
+      control: "boolean",
+      description:
+        "Shows a spinner (in the icon slot when there is an icon) and blocks activation. Stays focusable: aria-disabled + aria-busy, not native disabled.",
+    },
+    loadingText: { control: "text", description: 'Announced while loading (aria-describedby). Default "Loading".' },
     rounded: {
       control: "select",
       options: [...roundedOptions],
@@ -209,18 +215,73 @@ export const GradientButton: Story = {
   ),
 };
 
+type ButtonVariantArg = React.ComponentProps<typeof Button>["variant"];
+type ButtonSizeArg = React.ComponentProps<typeof Button>["size"];
+
+/** Save button whose loading state toggles from its own click — focus stays on it throughout. */
+function LoadingFocusDemo({ variant, size }: { variant?: ButtonVariantArg; size?: ButtonSizeArg }) {
+  const [busy, setBusy] = React.useState(false);
+  const [log, setLog] = React.useState("Focus the button and press Enter or Space.");
+  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  React.useEffect(() => () => clearTimeout(timer.current), []);
+  const ref = React.useRef<HTMLButtonElement>(null);
+  const run = () => {
+    setBusy(true);
+    setLog("Saving… (activation is ignored; focus stays on the button)");
+    timer.current = setTimeout(() => {
+      setBusy(false);
+      setLog(
+        ref.current === document.activeElement ? "Saved. Focus is still on the button." : "Saved.",
+      );
+    }, 2000);
+  };
+  return (
+    <div className="sb-stack">
+      <div className="sb-inline">
+        <Button variant={variant} size={size} ref={ref} loading={busy} loadingText="Saving" onClick={run}>
+          Save
+        </Button>
+        <Button size={size} variant="outlineSecondary" icon={CloseIcon} loading={busy} onClick={run}>
+          Discard
+        </Button>
+        <Button size={size} variant="ghost" icon={CloseIcon} ariaLabel="Close" loading={busy} onClick={run} />
+      </div>
+      <p className="sb-section-subtitle" aria-live="polite">{log}</p>
+    </div>
+  );
+}
+
 export const Loading: Story = {
-  args: { children: "Loading...", variant: "primary", size: "md", loading: true },
+  args: { variant: "primary", size: "md" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`loading` keeps the element focusable (`aria-disabled` + `aria-busy` instead of native `disabled`), swallows click / Enter / Space, and describes the state with `loadingText`. With an `icon`, the spinner replaces the icon in the same slot, so the width does not jump (left, right, icon-only and `expandOnHover`).",
+      },
+    },
+  },
   render: (args) => (
     <div className="sb-page">
       <h3 className="sb-section-title">Loading</h3>
-      <p className="sb-section-subtitle">Spinner + disables click.</p>
+      <p className="sb-section-subtitle">Spinner, activation blocked, focus kept.</p>
       <div className="sb-card">
+        <div className="sb-card-header"><span className="sb-card-title">Static</span></div>
         <div className="sb-inline">
-          <Button {...args} />
-          <Button {...args} variant="outlinePrimary" />
-          <Button {...args} variant="link" />
+          <Button {...args} loading>Loading...</Button>
+          <Button {...args} variant="outlinePrimary" loading>Loading...</Button>
+          <Button {...args} variant="link" loading>Loading...</Button>
+          <Button {...args} icon={CloseIcon} loading>Icon left</Button>
+          <Button {...args} icon={CloseIcon} iconPosition="right" loading>Icon right</Button>
+          <Button {...args} icon={CloseIcon} ariaLabel="Close" loading />
+          <Button {...args} variant="outlineSecondary" size="xs" icon={CloseIcon} expandOnHover loading>
+            Expand
+          </Button>
         </div>
+      </div>
+      <div className="sb-card">
+        <div className="sb-card-header"><span className="sb-card-title">Focus stays on the button</span></div>
+        <LoadingFocusDemo variant={args.variant} size={args.size} />
       </div>
     </div>
   ),
@@ -231,12 +292,49 @@ export const AsLink: Story = {
   render: (args) => (
     <div className="sb-page">
       <h3 className="sb-section-title">Link button (href)</h3>
-      <p className="sb-section-subtitle">When href is provided, Button renders an anchor.</p>
+      <p className="sb-section-subtitle">
+        When href is provided, Button renders an anchor. <code>target="_blank"</code> adds{" "}
+        <code>rel="noopener noreferrer"</code> unless you pass <code>rel</code>.
+      </p>
       <div className="sb-card">
         <div className="sb-inline">
           <Button {...args} />
           <Button {...args} variant="primary" />
           <Button {...args} variant="outlinePrimary" />
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const LinkSafety: Story = {
+  args: { variant: "outlinePrimary", size: "md" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`href` is parsed with the WHATWG URL parser (shared `isSafeHref`). Only http, https, mailto, tel, relative and `#` links render as `<a>`. Anything else (`javascript:`, `java\\tscript:`, `data:`, `vbscript:` …) renders a plain `<button>` with no href and logs a dev warning.",
+      },
+    },
+  },
+  render: (args) => (
+    <div className="sb-page">
+      <h3 className="sb-section-title">Link safety</h3>
+      <p className="sb-section-subtitle">Safe schemes render links; unsafe schemes fall back to a button.</p>
+      <div className="sb-card">
+        <div className="sb-card-header"><span className="sb-card-title">Rendered as links</span></div>
+        <div className="sb-inline">
+          <Button variant={args.variant} size={args.size} href="https://example.com" target="_blank">https (new tab)</Button>
+          <Button variant={args.variant} size={args.size} href="/docs">Relative</Button>
+          <Button variant={args.variant} size={args.size} href="mailto:support@example.com">mailto</Button>
+        </div>
+      </div>
+      <div className="sb-card">
+        <div className="sb-card-header"><span className="sb-card-title">Refused: rendered as buttons</span></div>
+        <div className="sb-inline">
+          <Button variant={args.variant} size={args.size} href="javascript:alert(1)">javascript:</Button>
+          <Button variant={args.variant} size={args.size} href={"java\tscript:alert(1)"}>java\tscript:</Button>
+          <Button variant={args.variant} size={args.size} href="data:text/html,<b>x</b>">data:</Button>
         </div>
       </div>
     </div>
@@ -477,4 +575,30 @@ export const IconOnly: Story = {
       </div>
     );
   },
+};
+
+export const ExpandOnHover: Story = {
+  args: {
+    variant: "outlineSecondary",
+    size: "xs",
+    icon: CloseIcon,
+    children: "Close panel",
+    expandOnHover: true,
+  },
+  render: (args) => (
+    <div className="sb-page">
+      <h3 className="sb-section-title">Expand on hover</h3>
+      <p className="sb-section-subtitle">
+        <code>expandOnHover</code> shows only the icon; hover or keyboard focus expands it to icon + label.
+        Keeps dense toolbars on one line without hiding what each action does.
+      </p>
+      <div className="sb-card">
+        <div className="sb-inline">
+          <Button {...args} size="xs" />
+          <Button {...args} size="sm" />
+          <Button {...args} size="md" />
+        </div>
+      </div>
+    </div>
+  ),
 };

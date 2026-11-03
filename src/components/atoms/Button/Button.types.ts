@@ -52,14 +52,30 @@ type ButtonBaseProps = {
   disabled?: boolean;
   /** Alias of fullWidth (common API) */
   block?: boolean;
-  /** Shows spinner + disables interaction */
+  /**
+   * Shows a spinner (in the icon slot when there is an icon) and blocks activation.
+   * The element stays focusable: `aria-disabled="true"` + `aria-busy="true"` instead of native
+   * `disabled`, so keyboard focus is not lost. Pass `disabled` too for a native disabled control.
+   */
   loading?: boolean;
+  /**
+   * Text announced while `loading` (visually hidden, linked by `aria-describedby`, so the
+   * accessible name stays the label). @default "Loading"
+   */
+  loadingText?: string;
   ariaLabel?: string;
   className?: string;
   enableWhen?: any;
   preserveIconColor?: boolean;
   /** Press ripple on pointer down. Off when loading or disabled. @default true */
   ripple?: boolean;
+  /**
+   * Show only the icon (square, tier height) and expand to icon + label on hover
+   * or keyboard focus; collapses again when the pointer / focus leaves.
+   * Needs both `icon` and a text label (children). The label stays in the DOM,
+   * so screen readers always announce it. @default false
+   */
+  expandOnHover?: boolean;
 
   /** 
    * 🔹 Rounded prop for UX4G-style border radius classes

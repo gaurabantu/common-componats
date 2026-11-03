@@ -1,0 +1,85 @@
+/* Spinner — indeterminate loading ring. Token-driven; follows data-theme. */
+
+.ds-spinner {
+  --spinner-size: var(--size-icon-primary);
+  --spinner-stroke: var(--border-width-medium);
+  --spinner-ring: currentColor;
+  /* currentColor at 20% over whatever surface it sits on keeps ring:track >= 3:1
+     whenever the inherited text colour itself meets 4.5:1 on that surface. */
+  --spinner-track: color-mix(in srgb, currentColor 20%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  width: var(--spinner-size);
+  height: var(--spinner-size);
+  vertical-align: middle;
+}
+
+.ds-spinner__ring {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-circle);
+  border: var(--spinner-stroke) solid var(--spinner-track);
+  border-top-color: var(--spinner-ring);
+  animation: ds-spinner-rotate calc(var(--duration-slow) + var(--duration-normal)) linear infinite;
+}
+
+.ds-spinner__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ds-spinner[data-size="xs"] { --spinner-size: var(--size-icon-dense); --spinner-stroke: var(--border-width-medium); }
+.ds-spinner[data-size="sm"] { --spinner-size: var(--size-icon-ui); --spinner-stroke: var(--border-width-medium); }
+.ds-spinner[data-size="md"] { --spinner-size: var(--size-icon-primary); --spinner-stroke: var(--border-width-medium); }
+.ds-spinner[data-size="lg"] { --spinner-size: var(--size-icon-large); --spinner-stroke: var(--border-width-thick); }
+
+.ds-spinner[data-tone="primary"] {
+  --spinner-ring: var(--color-brand-primary);
+  --spinner-track: var(--color-border-subtle);
+}
+
+.ds-spinner[data-tone="muted"] {
+  --spinner-ring: var(--color-text-secondary);
+  --spinner-track: var(--color-border-subtle);
+}
+
+.ds-spinner[data-tone="inverse"] {
+  --spinner-ring: var(--color-text-on-primary);
+  /* 12% keeps ring:track >= 3:1 on noir, green and blue primary fills. */
+  --spinner-track: color-mix(in srgb, var(--color-text-on-primary) 12%, transparent);
+}
+
+@keyframes ds-spinner-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ds-spinner-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* Reduced motion — no rotation; a slow opacity pulse keeps "busy" perceivable. */
+@media (prefers-reduced-motion: reduce) {
+  .ds-spinner__ring {
+    animation: ds-spinner-pulse calc(var(--duration-slow) * 4) ease-in-out infinite;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-spinner {
+    --spinner-ring: CanvasText;
+    --spinner-track: GrayText;
+  }
+}

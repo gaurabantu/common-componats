@@ -1,0 +1,11 @@
+{
+  "skill": "compliance-review",
+  "description": "Use when auditing a ui-common-components component against the design system, or reviewing a PR/diff for compliance. Triggers on \"audit component\", \"review PR\", \"check accessibility\", \"check security\", \"check responsiveness\", \"WCAG check\", or \"compliance review\".\n",
+  "should_trigger": [
+    "TODO: a request that must invoke compliance-review"
+  ],
+  "should_not_trigger": [
+    "TODO: a nearby request that must NOT invoke compliance-review (e.g. one belonging to another componant-ui-harness skill)"
+  ],
+  "cases": []
+}

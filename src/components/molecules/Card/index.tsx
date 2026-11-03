@@ -113,7 +113,8 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     hoverable = false,
     variant = "bordered",
     elevation,
-    selected = false,
+    selected: selectedProp,
+    interactive = false,
     padding: paddingProp,
     radius = "var(--radius-lg)",
     size = "default",
@@ -122,10 +123,15 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     className,
     onMouseEnter,
     onMouseLeave,
+    onClick,
+    onKeyDown,
+    role: roleProp,
+    tabIndex: tabIndexProp,
     ...rest
   },
   ref,
 ) {
+  const selected = selectedProp ?? false;
   const [isHovered, setIsHovered] = React.useState(false);
   const resolvedVariant = normalizeVariant(variant);
   const isIndicatorCard = resolvedVariant === "withIndicator";
@@ -144,6 +150,8 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     elevation ?? (isElevated ? "sm" : "none");
 
   const showBorder = resolvedVariant === "bordered";
+  const showSelectedOutline = showBorder && selected;
+  const actsAsButton = interactive && Boolean(onClick) && roleProp === undefined;
 
   const boxShadowResolved = showBorder
     ? "var(--shadow-none)"
@@ -151,9 +159,11 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
       ? getShadow(resolvedElevation, isHovered, Boolean(hoverable) && isElevated)
       : "var(--shadow-none)";
 
-  const borderSpec: React.CSSProperties["border"] = showBorder
-    ? "1px solid var(--color-border-default)"
-    : "1px solid transparent";
+  const borderSpec: React.CSSProperties["border"] = showSelectedOutline
+    ? "1px solid var(--color-text-primary)"
+    : showBorder
+      ? "1px solid var(--color-border-default)"
+      : "1px solid transparent";
 
   const compound = hasCompoundStructure(children);
 
@@ -175,7 +185,9 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     borderRadius: resolvedRadius,
     border: borderSpec,
     background: "var(--color-bg-surface)",
-    boxShadow: boxShadowResolved,
+    boxShadow: showSelectedOutline
+      ? "inset 0 0 0 1px var(--color-text-primary)"
+      : boxShadowResolved,
     transition:
       "box-shadow var(--duration-fast) var(--easing-default), transform var(--duration-fast) var(--easing-default)",
     transform: hoverable && isHovered && isElevated ? "translateY(-1px)" : "translateY(0)",
@@ -311,6 +323,21 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
       data-card-size={compound ? size : undefined}
       data-selected={showIndicator ? "true" : undefined}
       data-card-hoverable={Boolean(hoverable && isElevated) ? "true" : undefined}
+      data-card-interactive={interactive ? "true" : undefined}
+      data-card-selected={selected ? "true" : undefined}
+      role={actsAsButton ? "button" : roleProp}
+      tabIndex={actsAsButton ? (tabIndexProp ?? 0) : tabIndexProp}
+      aria-pressed={actsAsButton && selectedProp !== undefined ? selectedProp : rest["aria-pressed"]}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || !actsAsButton) return;
+        if (event.target !== event.currentTarget) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          (event.currentTarget as HTMLDivElement).click();
+        }
+      }}
       onMouseEnter={(event) => {
         setIsHovered(true);
         onMouseEnter?.(event);

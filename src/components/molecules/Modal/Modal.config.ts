@@ -8,6 +8,8 @@ export const defaultModalOptions = {
   closeOnEscape: true,
   showCloseButton: true,
   showCancel: true,
+  /** Body scrolls; header + footer fixed (the original behaviour) */
+  scrollBehavior: "inside" as const,
   /** Matches `tokens.css` `--z-modal` */
   zIndex: 400,
 };

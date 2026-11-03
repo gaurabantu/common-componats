@@ -350,7 +350,9 @@ export const TabsTrigger = React.memo(function TabsTrigger({
       data-trigger-layout={triggerLayout}
       data-trigger-align={triggerAlign}
       aria-selected={selected}
-      aria-controls={panelId}
+      // Inactive panels are not mounted (unless forceMount), so only the selected tab references its
+      // panel — an IDREF to a missing element is an invalid aria-controls value (axe critical).
+      aria-controls={selected ? panelId : undefined}
       tabIndex={selected ? 0 : -1}
       data-state={selected ? "active" : "inactive"}
       data-tab-value={value}

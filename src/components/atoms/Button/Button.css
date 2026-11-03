@@ -1,0 +1,15 @@
+/* Button — loading spinner in the icon slot.
+   While `loading`, the spinner replaces the icon at the icon's size (slot width/height set inline
+   from the icon dimensions), so the button keeps its width and `expandOnHover` keeps its square. */
+.btn-spinner-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+:is(button, a).btn-base.btn-loading .btn-spinner-slot > .btn-spinner {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}

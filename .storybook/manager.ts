@@ -10,7 +10,7 @@ import {
 } from "./theme-bridge";
 
 const BRAND = {
-  brandTitle: "Infinia StoryBook",
+  brandTitle: "Infinia Design System",
   brandImage: "/infinia-icon.png",
   brandTarget: "_self",
 } as const;

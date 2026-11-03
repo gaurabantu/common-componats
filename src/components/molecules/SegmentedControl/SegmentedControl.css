@@ -1,0 +1,188 @@
+/* SegmentedControl — single-choice toggle group. Tokens only.
+   Contrast (computed from tokens.css, WCAG relative luminance):
+   - unselected label --color-text-secondary on track --color-fill-muted: classic 5.95, mist 4.91, dark 4.71
+   - selected label --color-text-primary on --color-bg-surface: classic 19.44, mist 18.62, dark 13.34
+   - selected indicator edge --color-text-secondary vs track --color-fill-muted (1.4.11): ≥ 4.71 every theme
+   - focus ring --color-focus-ring vs track / surface / page: min 4.05 (dark on fill-muted) */
+
+.ds-segmented {
+  --ds-seg-height: calc(var(--space-5) - var(--space-0)); /* sm: 36px */
+  --ds-seg-pad: calc(var(--space-0) / 2);
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  min-width: 0;
+  padding: var(--ds-seg-pad);
+  gap: var(--ds-seg-pad);
+  border-radius: var(--radius-lg);
+  background: var(--color-fill-muted);
+  font-family: var(--font-family);
+  isolation: isolate;
+}
+
+.ds-segmented[data-size="md"] {
+  --ds-seg-height: var(--space-5); /* md: 40px */
+}
+
+@media (pointer: coarse) {
+  .ds-segmented,
+  .ds-segmented[data-size="md"] {
+    --ds-seg-height: calc(var(--space-5) + var(--space-0)); /* 44px touch target */
+  }
+}
+
+.ds-segmented[data-full-width="true"] {
+  display: flex;
+  width: 100%;
+}
+
+.ds-segmented__item {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+  min-height: var(--ds-seg-height);
+  margin: 0;
+  padding: var(--space-0) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: var(--text-secondary-size);
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--easing-default);
+}
+
+.ds-segmented[data-size="md"] .ds-segmented__item {
+  font-size: var(--text-body-size);
+}
+
+.ds-segmented[data-full-width="true"] .ds-segmented__item {
+  flex: 1 1 0;
+}
+
+.ds-segmented__item:hover:not(:disabled):not([aria-checked="true"]) {
+  color: var(--color-text-primary);
+}
+
+.ds-segmented__item[aria-checked="true"] {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.ds-segmented__item:focus {
+  outline: none;
+}
+
+.ds-segmented__item:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+.ds-segmented__item:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Icon-only segment: square footprint (min width = segment height). */
+.ds-segmented__item[data-icon-only="true"] {
+  min-width: var(--ds-seg-height);
+  padding-inline: var(--space-1);
+}
+
+.ds-segmented__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.ds-segmented__icon svg {
+  width: 1em;
+  height: 1em;
+}
+
+.ds-segmented__label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Sliding indicator (positioned from JS measurement of the selected segment). */
+.ds-segmented__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  box-sizing: border-box;
+  width: var(--ds-seg-w, 0);
+  height: var(--ds-seg-h, 0);
+  transform: translate(var(--ds-seg-x, 0), var(--ds-seg-y, 0));
+  border: 1px solid var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-xs);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--duration-fast) var(--easing-default),
+    width var(--duration-fast) var(--easing-default),
+    height var(--duration-fast) var(--easing-default);
+}
+
+.ds-segmented[data-indicator-ready="true"] .ds-segmented__indicator {
+  opacity: 1;
+}
+
+/* Before measurement (SSR / first paint / hidden containers) the selected segment draws its own surface. */
+.ds-segmented:not([data-indicator-ready="true"]) .ds-segmented__item[aria-checked="true"] {
+  background: var(--color-bg-surface);
+  box-shadow: inset 0 0 0 1px var(--color-text-secondary);
+}
+
+.ds-segmented[aria-disabled="true"] .ds-segmented__indicator {
+  border-color: var(--color-border-default);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-segmented__indicator,
+  .ds-segmented__item {
+    transition: none;
+  }
+}
+
+/* Forced colours: fills and shadows are dropped, so the selection is drawn with system colours. */
+@media (forced-colors: active) {
+  .ds-segmented {
+    border: 1px solid CanvasText;
+  }
+
+  .ds-segmented__indicator {
+    display: none;
+  }
+
+  .ds-segmented__item[aria-checked="true"] {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .ds-segmented__item:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+
+  .ds-segmented__item:disabled {
+    color: GrayText;
+  }
+}

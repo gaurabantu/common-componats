@@ -100,6 +100,27 @@ export { default as DashboardShell, AppShell } from "./components/molecules/Dash
 export { default as AppTopbar } from "./components/molecules/AppTopbar";
 export { default as Hyperlink } from "./components/atoms/Hyperlink"
 export { default as InputSearch } from "./components/atoms/TextInputSearch"
+export { default as IconBox } from "./components/atoms/IconBox";
+export { List, ListItem } from "./components/molecules/List";
+export { default as StatCard } from "./components/molecules/StatCard";
+export { default as CodeBlock } from "./components/molecules/CodeBlock";
+export { default as Alert } from "./components/molecules/Alert";
+export { default as Toast, ToastProvider, useToast } from "./components/molecules/Toast";
+export { default as Drawer, Sheet } from "./components/molecules/Drawer";
+export { default as Spinner } from "./components/atoms/Spinner";
+export { default as Skeleton, SkeletonGroup } from "./components/atoms/Skeleton";
+export { default as Pagination, getPaginationRange, getPageCount, getItemRange } from "./components/molecules/Pagination";
+export { Tooltip } from "./components/molecules/Tooltip";
+export { FormField, useFormField } from "./components/molecules/FormField";
+export { PageHeader } from "./components/molecules/PageHeader";
+export { default as FilterBar } from "./components/molecules/FilterBar";
+export { default as DataTable, toCsv, escapeCsvCell } from "./components/molecules/DataTable";
+export { default as SegmentedControl, SEGMENTED_CONTROL_DEFAULTS, SEGMENTED_CONTROL_SIZES } from "./components/molecules/SegmentedControl";
+export { default as Wizard, WIZARD_DEFAULTS } from "./components/molecules/Wizard";
+export { default as Kbd, formatShortcut, toAriaKeyShortcuts, detectIsMac } from "./components/atoms/Kbd";
+export { default as CommandPalette } from "./components/molecules/CommandPalette";
+export { default as NumberInput, parseLocaleNumber, formatLocaleNumber } from "./components/atoms/NumberInput";
+export { default as DateRangePicker, DEFAULT_RANGE_PRESETS, createDefaultRangePresets } from "./components/molecules/DateRangePicker";
 
 // Charts (native SVG, no external libs)
 export {
@@ -112,6 +133,7 @@ export {
 
 // Optionally export prop types
 export type { ButtonProps } from "./components/atoms/Button/Button.types";
+export type { ButtonElement } from "./components/atoms/Button";
 export type { FormProps } from "./components/molecules/Form";
 export type { BreadcrumbProps, BreadcrumbItemProps, BreadcrumbSeparator } from "./components/molecules/Breadcrumb/Breadcrumb.types";
 export type { FileUploadProps, FileUploadSize, DropzoneProps } from "./components/molecules/FileUpload/FileUpload.types";
@@ -210,7 +232,7 @@ export type {
   CalendarVariant,
   CalendarCaptionLayout,
 } from "./components/molecules/Calendar/Calendar.types";
-export type { SelectProps, SelectOptionGroup } from "./components/atoms/Select/Select.types";
+export type { SelectProps, SelectOptionGroup, SelectSize } from "./components/atoms/Select/Select.types";
 export type { ComboboxProps, ComboboxOption, ComboboxGroup } from "./components/molecules/Combobox/Combobox.types";
 export type {
   TableColumn,
@@ -270,7 +292,8 @@ export type {
   FeedbackSize,
   FeedbackAnimationName,
 } from "./components/molecules/FeedbackStates";
-export type { ModalProps } from "./components/molecules/Modal";
+export type { ModalProps, ModalSize, ModalAnimation, ModalScrollBehavior, ModalAutoFocusEvent } from "./components/molecules/Modal";
+export type { DrawerProps, DrawerSide, DrawerSize, SheetProps } from "./components/molecules/Drawer";
 export type { AlertDialogProps, AlertDialogVariant } from "./components/molecules/AlertDialog";
 export type { ProgressBarProps } from "./components/atoms/ProgressBar/ProgresBar.types";
 export type { HyperlinkProps } from "./components/atoms/Hyperlink/Hyperlink.types";
@@ -288,5 +311,24 @@ export type {
   ChartTooltipItem,
   ChartTooltipProps,
 } from "./components/charts";
-
-
+export type { IconBoxProps, IconBoxTone, IconBoxSize, IconBoxShape } from "./components/atoms/IconBox";
+export type { ListProps, ListItemProps, ListSize } from "./components/molecules/List";
+export type { StatCardProps, StatDelta, StatTrend } from "./components/molecules/StatCard";
+export type { CodeBlockProps, CodeBlockTone } from "./components/molecules/CodeBlock";
+export type { AlertProps, AlertVariant, AlertAppearance, AlertLive } from "./components/molecules/Alert";
+export type { ToastProps, ToastOptions, ToastAction, ToastPosition, ToastVariant, ToastProviderProps, ToastContextValue } from "./components/molecules/Toast";
+export type { SpinnerProps, SpinnerSize, SpinnerTone } from "./components/atoms/Spinner";
+export type { SkeletonProps, SkeletonGroupProps, SkeletonShape, SkeletonDimension } from "./components/atoms/Skeleton";
+export type { PaginationProps, PaginationSize, PaginationRange, PaginationItem, PaginationLabels } from "./components/molecules/Pagination";
+export type { CheckboxSize } from "./components/atoms/Checkbox/Checkbox.types";
+export type { TooltipProps, TooltipSide, TooltipAlign, TooltipVariant } from "./components/molecules/Tooltip";
+export type { FormFieldProps, FormFieldLayout, FormFieldCounter, FormFieldContextValue } from "./components/molecules/FormField";
+export type { PageHeaderProps, PageHeaderAction, PageHeaderTitleAs } from "./components/molecules/PageHeader";
+export type { FilterBarProps, FilterBarFilter, FilterBarFilterType, FilterBarFilterValue, FilterBarOption, FilterBarValue, FilterBarLabels } from "./components/molecules/FilterBar";
+export type { DataTableProps, DataTableColumn, DataTableRow, DataTableServerPagination, DataTableSort, DataTableSortDirection, DataTableBulkAction, DataTableBulkActionHelpers, DataTableError, DataTableExportOptions, DataTableFilterBarProps, DataTableLabels } from "./components/molecules/DataTable";
+export type { SegmentedControlProps, SegmentedControlOption, SegmentedControlSize } from "./components/molecules/SegmentedControl";
+export type { WizardProps, WizardStep, WizardValidationResult, WizardHeadingLevel } from "./components/molecules/Wizard";
+export type { KbdProps, KbdSize, KbdPlatform, KbdKeyLabel } from "./components/atoms/Kbd";
+export type { CommandPaletteProps, CommandGroup, CommandItem, CommandSearchContext } from "./components/molecules/CommandPalette";
+export type { NumberInputProps, NumberInputSize } from "./components/atoms/NumberInput";
+export type { DateRange, CompleteDateRange, DateRangePreset, DateRangePickerProps, DateRangeWeekStart } from "./components/molecules/DateRangePicker";

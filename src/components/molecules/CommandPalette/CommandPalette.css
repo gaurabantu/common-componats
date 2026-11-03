@@ -1,0 +1,339 @@
+/* CommandPalette — modal command menu. Token-only; z-index from --z-modal. */
+
+.ds-command-palette-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh var(--space-2) var(--space-2);
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+.ds-command-palette__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg-overlay);
+  animation: ds-command-palette-fade-in var(--duration-fast) var(--easing-enter) both;
+}
+
+.ds-command-palette {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: min(40rem, 100%);
+  min-width: 0;
+  max-height: min(32rem, 76vh);
+  max-height: min(32rem, 76dvh);
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-xl);
+  animation: ds-command-palette-in var(--duration-fast) var(--easing-enter) both;
+}
+
+.ds-command-palette:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.ds-command-palette:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+/* Search row — the input keeps DOM focus; the whole row shows the focus ring */
+.ds-command-palette__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 0 0 auto;
+  min-height: var(--space-7);
+  padding: 0 var(--space-1) 0 var(--space-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.ds-command-palette__search:has(.ds-command-palette__input:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+@supports not selector(:has(*)) {
+  .ds-command-palette__search:focus-within {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: -2px;
+  }
+}
+
+.ds-command-palette__search-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
+}
+
+.ds-command-palette__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: var(--space-6);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+}
+
+.ds-command-palette__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.ds-command-palette__input:focus {
+  outline: none;
+}
+
+.ds-command-palette__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--space-5);
+  height: var(--space-5);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--easing-default),
+    color var(--duration-fast) var(--easing-default);
+}
+
+.ds-command-palette__close:hover {
+  background: var(--color-fill-muted);
+  color: var(--color-text-primary);
+}
+
+.ds-command-palette__close:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+/* Body — the only scroll region */
+.ds-command-palette__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-1);
+}
+
+.ds-command-palette__group + .ds-command-palette__group {
+  margin-top: var(--space-1);
+}
+
+.ds-command-palette__group-label {
+  padding: var(--space-0) var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--text-small-size);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ds-command-palette__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--text-body-size);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Active option = the visual focus (DOM focus stays in the input) → full focus-ring outline */
+.ds-command-palette__option[data-active="true"] {
+  background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-surface));
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+.ds-command-palette__option[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ds-command-palette__option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--space-3);
+  height: var(--space-3);
+  color: var(--color-text-secondary);
+}
+
+.ds-command-palette__option-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ds-command-palette__option-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ds-command-palette__option-label,
+.ds-command-palette__option-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-command-palette__option-description {
+  color: var(--color-text-secondary);
+  font-size: var(--text-small-size);
+}
+
+.ds-command-palette__option-kbd {
+  flex: 0 0 auto;
+}
+
+.ds-command-palette__loading,
+.ds-command-palette__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--text-body-size);
+  text-align: center;
+}
+
+.ds-command-palette__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  flex: 0 0 auto;
+  padding: var(--space-1) var(--space-2);
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-size: var(--text-small-size);
+}
+
+.ds-command-palette__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0);
+}
+
+.ds-command-palette__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (pointer: coarse) {
+  .ds-command-palette__close {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+/* Small screens: full-screen sheet */
+@media (max-width: 480px) {
+  .ds-command-palette-root {
+    padding: 0;
+  }
+
+  .ds-command-palette {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .ds-command-palette__close {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .ds-command-palette__footer {
+    display: none;
+  }
+
+  .ds-command-palette__body {
+    padding-bottom: max(var(--space-1), env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-command-palette,
+  .ds-command-palette__backdrop {
+    animation: none;
+  }
+
+  .ds-command-palette__close {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-command-palette {
+    outline: 1px solid CanvasText;
+  }
+
+  .ds-command-palette__option[data-active="true"] {
+    outline-color: Highlight;
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .ds-command-palette__option[data-active="true"] .ds-command-palette__option-description,
+  .ds-command-palette__option[data-active="true"] .ds-command-palette__option-icon {
+    color: HighlightText;
+  }
+
+  .ds-command-palette__search:focus-within {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .ds-command-palette__close:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+@keyframes ds-command-palette-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ds-command-palette-in {
+  from { opacity: 0; transform: translateY(calc(var(--space-1) * -1)) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}

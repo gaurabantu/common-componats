@@ -1,0 +1,115 @@
+/* Checkbox extensions — sizes, indeterminate, description, error, required.
+   Base visuals live in ../ucs-choice-controls.css (shared with RadioGroup). */
+
+.ucs-cc-checkbox-root {
+  --ucs-cb-face: 18px;
+  --ucs-cb-glyph: 12px;
+  /* WCAG 2.5.8 minimum target height for the clickable label row. */
+  min-height: var(--space-3);
+}
+
+.ucs-cc-checkbox-root[data-size="sm"] { --ucs-cb-face: 16px; --ucs-cb-glyph: 10px; }
+.ucs-cc-checkbox-root[data-size="lg"] { --ucs-cb-face: 22px; --ucs-cb-glyph: 14px; }
+
+.ucs-cc-checkbox-root .ucs-cc-checkbox-face {
+  width: var(--ucs-cb-face);
+  height: var(--ucs-cb-face);
+}
+
+.ucs-cc-checkbox-root .ucs-cc-checkbox-check,
+.ucs-cc-checkbox-root .ucs-cc-checkbox-dash {
+  width: var(--ucs-cb-glyph);
+  height: var(--ucs-cb-glyph);
+}
+
+.ucs-cc-checkbox-root[data-size="sm"] .ucs-cc-checkbox-label { font-size: var(--text-secondary-size); }
+.ucs-cc-checkbox-root[data-size="lg"] .ucs-cc-checkbox-label { font-size: var(--text-h3-size); }
+
+/* Text column (label + description) */
+.ucs-cc-checkbox-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  min-width: 0;
+}
+
+.ucs-cc-checkbox-description {
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary-size);
+  line-height: var(--text-body-line-height);
+}
+
+.ucs-cc-checkbox-root[data-size="sm"] .ucs-cc-checkbox-description { font-size: var(--text-small-size); }
+
+/* Required marker — a glyph, so not colour-only. */
+.ucs-cc-checkbox-required {
+  margin-inline-start: var(--space-0);
+  color: var(--color-danger-strong);
+  font-weight: 600;
+}
+
+/* Error message — aligned with the label text. */
+.ucs-cc-checkbox-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  min-width: 0;
+}
+
+.ucs-cc-checkbox-error {
+  margin: 0;
+  padding-inline-start: calc(var(--ucs-cb-face, 18px) + var(--space-1));
+  color: var(--color-danger-strong);
+  font-size: var(--text-small-size);
+  line-height: var(--text-body-line-height);
+}
+
+.ucs-cc-checkbox-field[data-size="sm"] { --ucs-cb-face: 16px; }
+.ucs-cc-checkbox-field[data-size="lg"] { --ucs-cb-face: 22px; }
+.ucs-cc-checkbox-field[data-shape="box"] .ucs-cc-checkbox-error { padding-inline-start: 0; }
+
+.ucs-cc-checkbox-root .ucs-cc-checkbox-native[aria-invalid="true"]:not(:checked):not([data-indeterminate="true"]) + .ucs-cc-checkbox-face {
+  border-color: var(--color-danger-strong);
+}
+
+/* Indeterminate — dash glyph on the brand fill. */
+.ucs-cc-checkbox-dash {
+  position: absolute;
+  pointer-events: none;
+  display: none;
+}
+
+.ucs-cc-checkbox-dashpath {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+}
+
+.ucs-cc-checkbox-root .ucs-cc-checkbox-native[data-indeterminate="true"] + .ucs-cc-checkbox-face,
+.ucs-cc-checkbox-root:hover .ucs-cc-checkbox-native[data-indeterminate="true"]:enabled ~ .ucs-cc-checkbox-face {
+  border-color: var(--color-brand-primary);
+  background-color: var(--color-brand-primary);
+  color: var(--color-bg-surface);
+  box-shadow: none;
+}
+
+.ucs-cc-checkbox-root .ucs-cc-checkbox-native[data-indeterminate="true"] + .ucs-cc-checkbox-face .ucs-cc-checkbox-check {
+  display: none;
+}
+
+.ucs-cc-checkbox-root .ucs-cc-checkbox-native[data-indeterminate="true"] + .ucs-cc-checkbox-face .ucs-cc-checkbox-dash {
+  display: block;
+}
+
+@media (forced-colors: active) {
+  .ucs-cc-checkbox-root .ucs-cc-checkbox-native[data-indeterminate="true"] + .ucs-cc-checkbox-face {
+    border-color: Highlight;
+    background-color: Field;
+    color: Highlight;
+  }
+
+  .ucs-cc-checkbox-root .ucs-cc-checkbox-native[aria-invalid="true"] + .ucs-cc-checkbox-face {
+    border-style: dashed;
+  }
+}

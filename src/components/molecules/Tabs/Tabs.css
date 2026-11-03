@@ -4,8 +4,10 @@
   /* List baseline: soft rule (DESIGN_SYSTEM — subtle separator). Active tab line + label stay stronger. */
   --tabs-divider-color: var(--color-border-subtle, var(--color-mist-60));
   --tabs-divider-width: 1px;
-  --tabs-indicator-color: var(--color-border-default);
-  --tabs-indicator-width: var(--tabs-divider-width);
+  /* Selected tab: strongest text + 2px rule. (Was --color-border-default — #999 label at 2.9:1, dimmer than
+     inactive tabs and below WCAG AA for text.) Override per instance with `indicatorColor` / `indicatorWidth`. */
+  --tabs-indicator-color: var(--color-text-primary);
+  --tabs-indicator-width: 2px;
   --tabs-text-inactive: var(--color-text-secondary);
   --tabs-text-active: var(--tabs-indicator-color);
   --tabs-font-size: unset;
@@ -340,6 +342,25 @@
 
 .ds-tabs[data-size="md"] .ds-tabs__trigger {
   font-size: var(--tabs-font-size, var(--text-secondary-size, 14px));
+}
+
+/* Segmented, size sm: compact inline control for toolbars — sizes to its tabs
+   and matches the small control height (--button-height-xs) instead of a
+   full-width 56px track. Equal-width and vertical layouts keep the full track. */
+.ds-tabs[data-variant="segmented"][data-size="sm"]:not([data-orientation="vertical"]):not([data-list-layout="equal"]) {
+  display: inline-block;
+  width: auto;
+  vertical-align: middle;
+}
+
+.ds-tabs[data-variant="segmented"][data-size="sm"] .ds-tabs__list {
+  padding: 2px;
+  gap: 2px;
+}
+
+.ds-tabs[data-variant="segmented"][data-size="sm"] .ds-tabs__trigger {
+  min-height: calc(var(--button-height-xs, 1.625rem) - 4px);
+  padding: 0 0.75rem;
 }
 
 .ds-tabs[data-variant="minimal"] .ds-tabs__trigger {

@@ -151,8 +151,6 @@ export const Stepper = React.memo(function Stepper({
                     {React.cloneElement(step, {
                       stepIndex: index,
                       stepPart: "marker",
-                      "aria-posinset": index + 1,
-                      "aria-setsize": stepCount,
                     })}
                   </div>
                   <div className="ds-stepper__cell ds-stepper__cell--label" style={{ gridColumn: colMarker, gridRow: 2 }}>
@@ -259,13 +257,17 @@ export const StepperStep = React.memo(function StepperStep({
     <button
       {...rest}
       type="button"
-      aria-labelledby={labelId}
+      // Position is announced via hidden text — aria-posinset/setsize are not allowed on <button>.
+      aria-labelledby={`${labelId}-pos ${labelId}`}
       disabled={isDisabled}
       className={cls("ds-stepper__marker-btn", className)}
       data-state={state}
       aria-current={state === "current" ? "step" : undefined}
       onClick={handleMarkerClick}
     >
+      <span id={`${labelId}-pos`} className="ds-stepper__sr">
+        {`Step ${index + 1} of ${ctx.stepCount}${state === "complete" ? ", completed" : ""}:`}
+      </span>
       <span className="ds-stepper__marker" aria-hidden="true">
         {markerContent}
       </span>

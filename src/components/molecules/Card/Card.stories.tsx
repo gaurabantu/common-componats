@@ -1,3 +1,4 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import Button from "../../atoms/Button";
 import Badge from "../../atoms/Badge";
@@ -296,4 +297,38 @@ export const ComposedStaticNamespace: Story = {
       </Card.Content>
     </Card>
   ),
+};
+
+/** `interactive` + `selected` on `bordered` — option tiles (e.g. process type / theme pickers). */
+export const SelectableTiles: Story = {
+  render: () => {
+    const options = [
+      { id: "local", title: "Local Currency", desc: "Processing of all un-translated entity-level data." },
+      { id: "translated", title: "Translated", desc: "Processing of all translated (parent currency) data." },
+      { id: "consolidated", title: "Consolidated", desc: "Parent-related, consolidated and elimination data." },
+    ];
+    const Tiles = () => {
+      const [value, setValue] = React.useState("local");
+      return (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(14rem, 1fr))", gap: "var(--space-2)" }}>
+          {options.map((o) => (
+            <Card
+              key={o.id}
+              interactive
+              selected={value === o.id}
+              onClick={() => setValue(o.id)}
+              size="sm"
+              aria-label={o.title}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-0)" }}>
+                <strong style={{ fontSize: "var(--text-body-size)" }}>{o.title}</strong>
+                <span style={{ fontSize: "var(--text-small-size)", color: "var(--color-text-secondary)" }}>{o.desc}</span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      );
+    };
+    return <Tiles />;
+  },
 };

@@ -46,13 +46,13 @@ This file holds **tables and CSS dumps only**. Narrative rules, component behavi
 | color/brand/secondary | `--color-brand-secondary` | `#FF4D00` | Accent, emphasis, secondary interactive highlights (not the default **keyboard** focus — use `--color-border-focus` / `--color-focus-ring`) |
 | color/brand/link | `--color-brand-link` | `#002475` | Linked text, navigational links |
 | color/text/primary | `--color-text-primary` | `#0D0D0D` | Main body text |
-| color/text/secondary | `--color-text-secondary` | `#757575` | Sub-headers, labels, secondary text |
+| color/text/secondary | `--color-text-secondary` | `#5e5e5e` | Sub-headers, labels, secondary text (≥ 4.5:1 on page, surface and muted fills) |
 | color/text/on-accent | `--color-text-on-accent` | `#0D0D0D` | Text on accent-10 backgrounds |
 | color/bg/page | `--color-bg-page` | `#E0E0E0` | Default application background |
 | color/bg/surface | `--color-bg-surface` | `#FFFFFF` | Cards, modals, workspaces |
 | color/surface/mist | `--color-surface-mist` | `var(--color-mist-60)` (light) | Subtle neutral fills: badges, chips, muted status — **not** `--color-bg-page` |
 | color/interactive/row-hover | `--color-interactive-row-hover` | `var(--color-mist-20)` (light) | List/table row hover on `--color-bg-surface`; dark themes override in `tokens.css` |
-| color/border/default | `--color-border-default` | `#999999` | Standard UI borders (inputs, cards, tables, popovers) |
+| color/border/default | `--color-border-default` | `#8a8a8a` | Standard UI borders (inputs, cards, tables, popovers) |
 | color/border/subtle | `--color-border-subtle` | `var(--color-mist-60)` (light) | Decorative separators: modal header/footer rules, card footer, tabs underline, button-group hairline, default `Divider`; softer than `--color-border-default` (see Modal §) |
 | color/state/success | `--color-state-success` | `#28A745` | Positive status, success feedback |
 | color/state/warning | `--color-state-warning` | `#FFC107` | Alerts, non-critical warnings |

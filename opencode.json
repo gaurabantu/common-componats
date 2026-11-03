@@ -1,0 +1,8 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "run-componant-ui-harness",
+  "subagent_depth": 2,
+  "instructions": [
+    "AGENTS.md"
+  ]
+}
