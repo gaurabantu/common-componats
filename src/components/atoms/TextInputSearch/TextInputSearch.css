@@ -51,3 +51,14 @@
     font-size: var(--text-small-size, 0.75rem);
   }
 }
+
+/* Full-width wrapper (default). Directly inside a wrapping flex row (filter bar) it takes a fixed
+   comfortable width instead of a whole line; a width utility in containerClassName still wins
+   (:where keeps single-class specificity). */
+.ds-input-search--full {
+  width: 100%;
+}
+:where(.flex-wrap, .ds-form-row) > .ds-input-search--full {
+  width: 18rem;
+  max-width: 100%;
+}

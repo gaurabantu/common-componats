@@ -9,7 +9,8 @@ import React, { ChangeEvent, TextareaHTMLAttributes } from 'react';
  */
 export interface TextAreaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size' | 'onChange' | 'rows' | 'maxLength'> {
-  label?: string;
+  /** Visible label. Accepts any node (rendered inside the `<label>`). */
+  label?: React.ReactNode;
   /**
    * size: matches UX4G / Bootstrap form-control sizes
    * '' means default
@@ -17,7 +18,11 @@ export interface TextAreaProps
   size?: 'sm' | 'md' | 'lg' | '';
   containerClass?: string;
   rows?: number; // default 3
-  maxLength?: number; // default 500
+  /**
+   * Native `maxLength`. **No limit when omitted** (since 0.0.4; previously defaulted to 500 and
+   * silently truncated longer text). With `showCount`, the counter shows `n / max` or just `n`.
+   */
+  maxLength?: number;
   fullWidth?: boolean;
   helperText?: string;
   errorMessage?: string;
@@ -27,6 +32,11 @@ export interface TextAreaProps
   rounded?: '0' | '1' | '2' | '3' | '4' | '5' | 'pill';
 
   // sanitization and normalization options
+  /**
+   * Run the sanitizer on every change. Off by default. When on, `removeChars` (default `/<>@#`),
+   * `removeEmojis` (default `true`) and `normalizeAccents` (default `true`) apply — so typed text
+   * IS altered. Pass `removeEmojis={false}` etc. to opt out of individual steps.
+   */
   sanitize?: boolean;
   removeChars?: string;
   removeEmojis?: boolean;

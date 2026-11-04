@@ -373,3 +373,100 @@ export const SemanticMarkup: Story = {
     </TableRoot>
   ),
 };
+
+const STICKY_ROWS = Array.from({ length: 30 }, (_, i) => ({
+  account: `${1000 + i * 10} · Account ${i + 1}`,
+  values: Array.from({ length: 8 }, (_, j) => ((i + 1) * (j + 3) * 101.5).toFixed(2)),
+}));
+
+/** `stickyHeader` + `stickyFirstColumn` inside a `maxHeight` wrapper; `casing="none"` + `wrap` header; `selected` row. */
+export const StickyHeaderAndFirstColumn: Story = {
+  render: () => {
+    const [selected, setSelected] = useState(2);
+    return (
+      <TableRoot stickyHeader stickyFirstColumn maxHeight={320} style={{ minWidth: 960 }}>
+        <TableHeader>
+          <TableRow>
+            <TableHead casing="none">Account</TableHead>
+            {Array.from({ length: 8 }, (_, j) => (
+              <TableHead key={j} casing="none" wrap className="text-end">
+                Period {j + 1} closing balance
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {STICKY_ROWS.map((r, i) => (
+            <TableRow key={r.account} selected={i === selected} onClick={() => setSelected(i)}>
+              <TableHead scope="row" casing="none">
+                {r.account}
+              </TableHead>
+              {r.values.map((v, j) => (
+                <TableCell key={j} className="text-end">
+                  {v}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </TableRoot>
+    );
+  },
+};
+
+/** `flush` — no border/radius/shadow, for a table sitting inside a Card. */
+export const FlushInCard: Story = {
+  render: () => (
+    <div
+      style={{
+        border: "1px solid var(--color-border-default)",
+        borderRadius: "var(--radius-md)",
+        background: "var(--color-bg-surface)",
+        padding: "var(--space-2)",
+      }}
+    >
+      <TableRoot flush>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Entity</TableHead>
+            <TableHead className="text-end">Ownership</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>Parent Co</TableCell>
+            <TableCell className="text-end">100%</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Sub A</TableCell>
+            <TableCell className="text-end">80%</TableCell>
+          </TableRow>
+        </TableBody>
+      </TableRoot>
+    </div>
+  ),
+};
+
+/** `scroll={false}` — bare `<table>`; the app owns the scroller, so page-level sticky headers keep working. */
+export const NoScrollWrapper: Story = {
+  render: () => (
+    <div style={{ maxHeight: 240, overflow: "auto", border: "1px solid var(--color-border-default)" }}>
+      <TableRoot scroll={false} stickyHeader>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Account</TableHead>
+            <TableHead className="text-end">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {STICKY_ROWS.map((r) => (
+            <TableRow key={r.account}>
+              <TableCell>{r.account}</TableCell>
+              <TableCell className="text-end">{r.values[0]}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </TableRoot>
+    </div>
+  ),
+};

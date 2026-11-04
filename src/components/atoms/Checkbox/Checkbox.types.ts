@@ -1,12 +1,41 @@
-import type { ReactNode } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 
 /** Control + label scale — `sm` 16px box · `md` 18px box (default) · `lg` 22px box. */
 export type CheckboxSize = "sm" | "md" | "lg";
 
-export interface CheckboxProps {
-  label: string;
-  name: string;
-  value: string;
+/**
+ * Native `<input type="checkbox">` attributes forwarded to the input (`data-*`, `aria-*`, `form`,
+ * `tabIndex`, `onBlur`, `onFocus`, `onClick`, `autoFocus`, …). Props the component manages are omitted.
+ */
+export type CheckboxNativeProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  | "type"
+  | "size"
+  | "onChange"
+  | "checked"
+  | "defaultChecked"
+  | "value"
+  | "name"
+  | "id"
+  | "className"
+  | "required"
+  | "disabled"
+  | "children"
+>;
+
+export interface CheckboxProps extends CheckboxNativeProps {
+  /**
+   * Label content (string or any node). Optional — when omitted/empty, pass `ariaLabel` or
+   * `ariaLabelledBy` so the input still has an accessible name.
+   */
+  label?: ReactNode;
+  /**
+   * Keep the label in the DOM for screen readers (it still names the input) but hide it visually.
+   * @default false
+   */
+  hideLabel?: boolean;
+  name?: string;
+  value?: string;
   checked?: boolean;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;

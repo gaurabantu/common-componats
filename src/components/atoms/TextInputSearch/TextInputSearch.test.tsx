@@ -24,4 +24,10 @@ describe("TextInputSearch", () => {
     );
     expect(screen.getByRole("button", { name: "Go" })).toBeInTheDocument();
   });
+
+  it("forwards ref to the native search input", () => {
+    const ref = React.createRef<HTMLInputElement>();
+    render(<TextInputSearch ref={ref} value="" onChange={() => {}} />);
+    expect(ref.current).toBe(screen.getByRole("searchbox"));
+  });
 });

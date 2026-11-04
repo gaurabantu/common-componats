@@ -15,8 +15,23 @@ export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "ch
   /**
    * Id of the control the label points at. When omitted, the child's own `id` is used,
    * otherwise an id is generated with `useId` and injected into the child.
+   *
+   * Composite children: when the child is a non-labelable wrapper element (e.g. a `<div>` row with
+   * an input + button), `htmlFor` is NOT injected into the wrapper — put that id on the inner
+   * control yourself (`<Input id="app-file" />`). Read hint/error ids via `useFormField()` if the
+   * inner control should also get `aria-describedby`.
    */
   htmlFor?: string;
+  /**
+   * Group mode for multi-control fields (Min–Max pairs, chip / toggle groups, radio-like sets):
+   * the root gets `role="group"` + `aria-labelledby` (the label) + `aria-describedby` (hint/error/counter),
+   * the label renders as a `<span>` (not `<label for>`), nothing is injected into the children and the
+   * dev "no labelable element" warning is skipped. Give each inner control its own accessible name.
+   * @default false
+   */
+  group?: boolean;
+  /** Keep the label for assistive tech (still names the control / group) but hide it visually. @default false */
+  hideLabel?: boolean;
   /** Helper text under the control; linked via `aria-describedby`. */
   hint?: ReactNode;
   /** Error message. Sets `aria-invalid` on the child and is linked via `aria-describedby`. Announced (`role="alert"`) only when it changes after mount. */
@@ -46,4 +61,6 @@ export interface FormFieldContextValue {
   describedBy?: string;
   invalid: boolean;
   required: boolean;
+  /** `true` when the field is in `group` mode (label is a `<span>` referenced by the group's `aria-labelledby`). */
+  group?: boolean;
 }

@@ -196,3 +196,37 @@ export const Sizes: Story = {
   ),
   args: { name: "sizes", checked: true },
 };
+
+/**
+ * `label` takes any node; `hideLabel` keeps it as the accessible name but hides it visually;
+ * extra props (`data-testid`, `aria-*`, `form`, `onBlur`, …) reach the native `<input>`.
+ */
+export const RichLabelHiddenLabelPassthrough: Story = {
+  render: () => {
+    const [a, setA] = useState(true);
+    const [b, setB] = useState(false);
+    return (
+      <div style={{ display: "grid", gap: "var(--space-1)" }}>
+        <CheckBox
+          name="terms"
+          value="yes"
+          checked={a}
+          onChange={(e) => setA(e.target.checked)}
+          data-testid="terms-checkbox"
+          label={
+            <>
+              I accept the <strong>terms of service</strong>
+            </>
+          }
+        />
+        <CheckBox
+          checked={b}
+          onChange={(e) => setB(e.target.checked)}
+          label="Select row INV-001"
+          hideLabel
+          data-testid="row-select-1"
+        />
+      </div>
+    );
+  },
+};

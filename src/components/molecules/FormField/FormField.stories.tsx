@@ -175,3 +175,49 @@ export const WithCombobox: Story = {
     </div>
   ),
 };
+
+/** `group` — role="group" + aria-labelledby for multi-control fields (Min–Max pair). Each input keeps its own name. */
+export const GroupMinMax: Story = {
+  render: () => {
+    const [min, setMin] = useState("");
+    const [max, setMax] = useState("");
+    const invalid = min !== "" && max !== "" && Number(min) > Number(max);
+    return (
+      <FormField
+        label="Amount range"
+        group
+        hint="Leave blank for no limit"
+        error={invalid ? "Minimum must not exceed maximum" : undefined}
+      >
+        <div style={{ display: "flex", gap: "var(--space-1)", alignItems: "center" }}>
+          <Input ariaLabel="Minimum amount" placeholder="Min" value={min} onChange={setMin} />
+          <span aria-hidden="true">–</span>
+          <Input ariaLabel="Maximum amount" placeholder="Max" value={max} onChange={setMax} />
+        </div>
+      </FormField>
+    );
+  },
+};
+
+/** `htmlFor` with a composite child: the label targets the inner Input; the row wrapper is left alone. */
+export const CompositeHtmlFor: Story = {
+  render: () => (
+    <FormField label="Source file" htmlFor="source-file-path" hint="Path on the shared drive">
+      <div style={{ display: "flex", gap: "var(--space-1)" }}>
+        <Input id="source-file-path" placeholder="/imports/tb.csv" />
+        <Button size="md" variant="outlineSecondary">
+          Browse
+        </Button>
+      </div>
+    </FormField>
+  ),
+};
+
+/** `hideLabel` — visually hidden label that still names the control (dense toolbars / grids). */
+export const HiddenLabel: Story = {
+  render: () => (
+    <FormField label="Filter members" hideLabel>
+      <Input placeholder="Filter members…" />
+    </FormField>
+  ),
+};

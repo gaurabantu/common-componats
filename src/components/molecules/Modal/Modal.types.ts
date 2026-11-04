@@ -1,6 +1,15 @@
 export type ModalAnimation = "none" | "fade" | "slide" | "scale";
 
-export type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl";
+/** `"fullscreen"` fills the whole viewport (no margin, no radius) — for full-page editors / workspaces. */
+export type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl" | "fullscreen";
+
+/**
+ * Attributes passed through to the Modal's outermost root element (`.modal-root`, which wraps the
+ * backdrop and the dialog). Use for `data-*` hooks (e.g. `data-anchored-popover`), test ids, etc.
+ */
+export type ModalRootProps = React.HTMLAttributes<HTMLDivElement> & {
+  [dataAttr: `data-${string}`]: string | number | boolean | undefined;
+};
 
 /**
  * - `"inside"` (default): the dialog is capped to the viewport and only the body scrolls; header and footer stay fixed.
@@ -28,13 +37,44 @@ export interface ModalProps {
   isOpen: boolean;
   /** Called when modal should close (backdrop click, escape, close button) */
   onClose: () => void;
-  /** Modal title — the dialog's accessible name (`aria-labelledby`). Rendered as text. */
-  title: string;
   /**
-   * Supporting text rendered under the title and wired to the dialog's `aria-describedby`.
-   * Not rendered when `hideHeader` is set.
+   * Modal title — the dialog's accessible name (`aria-labelledby`). A string or any ReactNode
+   * (e.g. a code badge + text). When it is not plain text, pass `ariaLabel` for a clean accessible name.
+   */
+  title: React.ReactNode;
+  /**
+   * Explicit accessible name. When set it is used as `aria-label` instead of `aria-labelledby` → title.
+   * Also names the dialog when `hideHeader` is set.
+   */
+  ariaLabel?: string;
+  /**
+   * Supporting content rendered under the title (in a block `<div>`, so paragraphs / lists are fine)
+   * and wired to the dialog's `aria-describedby`. Not rendered when `hideHeader` is set.
    */
   description?: React.ReactNode;
+  /** Extra controls rendered in the title bar, before the close (X) button (e.g. Export, Copy). */
+  headerActions?: React.ReactNode;
+  /**
+   * Guard run before any user-initiated close (Escape, backdrop, close button, Cancel). Return `false`
+   * (or a promise resolving to `false`) to keep the modal open — e.g. an unsaved-changes check.
+   * Repeat close requests are ignored while a returned promise is pending.
+   */
+  onBeforeClose?: () => boolean | Promise<boolean>;
+  /**
+   * `false` makes the body a fixed, non-scrolling flex column (`overflow: hidden`) so children own
+   * their scroll — for multi-pane dialogs. @default true
+   */
+  bodyScroll?: boolean;
+  /** Extra class on the body element. */
+  bodyClassName?: string;
+  /**
+   * `false` disables all open/close animation and transforms on the dialog (no `transform` is ever
+   * applied), and closes immediately. Use when the modal hosts dnd-kit `DragOverlay` or other
+   * `position: fixed` content that a transformed ancestor would shift. @default true
+   */
+  animate?: boolean;
+  /** Attributes spread onto the outermost root (`.modal-root`), e.g. `{ "data-anchored-popover": "" }`. */
+  rootProps?: ModalRootProps;
   /** Modal body content */
   children: React.ReactNode;
   /** Called when confirm button is clicked */
@@ -64,7 +104,7 @@ export interface ModalProps {
   showCloseButton?: boolean;
   /** Stacked modals: separate backdrop for nested modals */
   isStackedBackground?: boolean;
-  /** z-index for modal layer */
+  /** z-index for the modal layer (backdrop; the dialog sits at `zIndex + 1`). @default 400 (`--z-modal`) */
   zIndex?: number;
   /** Icon for title: URL, import, or inline React element */
   titleIcon?: React.ReactNode | string | { src: string } | { default: string };
@@ -135,4 +175,6 @@ export interface ModalProps {
    * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
    */
   cancelButtonBorder?: string;
+  /** Any `data-*` attribute passed directly on `<Modal>` is forwarded to the root (same as `rootProps`). */
+  [dataAttr: `data-${string}`]: string | number | boolean | undefined;
 }

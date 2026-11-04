@@ -49,6 +49,11 @@ const CheckboxBase = React.forwardRef<HTMLInputElement, CheckboxProps>(function 
     withShadow = false,
     ariaLabel,
     ariaLabelledBy,
+    hideLabel = false,
+    "aria-label": ariaLabelAttr,
+    "aria-labelledby": ariaLabelledByAttr,
+    "aria-describedby": ariaDescribedByAttr,
+    ...nativeProps
   },
   forwardedRef,
 ) {
@@ -57,8 +62,14 @@ const CheckboxBase = React.forwardRef<HTMLInputElement, CheckboxProps>(function 
   const labelId = `${checkboxId}-label`;
   const descriptionId = description ? `${checkboxId}-description` : undefined;
   const errorId = error ? `${checkboxId}-error` : undefined;
-  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || undefined;
-  const hasVisibleLabel = label.trim().length > 0;
+  const describedBy = [ariaDescribedByAttr, descriptionId, errorId].filter(Boolean).join(" ") || undefined;
+  const hasVisibleLabel =
+    label !== undefined &&
+    label !== null &&
+    label !== false &&
+    !(typeof label === "string" && label.trim().length === 0);
+  const resolvedAriaLabel = ariaLabel ?? ariaLabelAttr;
+  const resolvedAriaLabelledBy = ariaLabelledBy ?? ariaLabelledByAttr;
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const setRefs = useCallback(
@@ -136,7 +147,7 @@ const CheckboxBase = React.forwardRef<HTMLInputElement, CheckboxProps>(function 
   const labelNode = (
     <span
       id={labelId}
-      className={cls("ucs-cc-checkbox-label", labelColorClass)}
+      className={cls("ucs-cc-checkbox-label", labelColorClass, hideLabel && "sr-only")}
       style={labelStyle}
       aria-hidden={!hasVisibleLabel ? true : undefined}
     >
@@ -155,8 +166,10 @@ const CheckboxBase = React.forwardRef<HTMLInputElement, CheckboxProps>(function 
       className={cls("ucs-cc-checkbox-root", className)}
       style={wrapperStyle}
       data-size={size}
+      data-hide-label={hideLabel ? "true" : undefined}
     >
       <input
+        {...nativeProps}
         ref={setRefs}
         type="checkbox"
         id={checkboxId}
@@ -167,12 +180,12 @@ const CheckboxBase = React.forwardRef<HTMLInputElement, CheckboxProps>(function 
         required={required || undefined}
         onChange={onChange}
         readOnly={onChange ? undefined : true}
-        aria-label={!hasVisibleLabel && ariaLabel ? ariaLabel : undefined}
+        aria-label={!hasVisibleLabel && resolvedAriaLabel ? resolvedAriaLabel : undefined}
         aria-labelledby={
           hasVisibleLabel
             ? labelId
-            : !ariaLabel && ariaLabelledBy
-              ? ariaLabelledBy
+            : !resolvedAriaLabel && resolvedAriaLabelledBy
+              ? resolvedAriaLabelledBy
               : undefined
         }
         aria-describedby={describedBy}

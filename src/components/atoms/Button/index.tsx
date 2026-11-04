@@ -309,6 +309,9 @@ const ButtonImpl = React.forwardRef<ButtonElement, ButtonProps>(function Button(
   }
 
   const buttonRest = { ...(restWithoutStyle as Record<string, unknown>) };
+  // Expand-on-hover buttons render icon-only inside table cells (tokens.css), so give them a
+  // native tooltip from their label when the caller didn't set one.
+  if (isExpandable && buttonRest.title == null && typeof children === "string") buttonRest.title = children;
   if (unsafeHref) for (const attr of ANCHOR_ONLY_ATTRS) delete buttonRest[attr];
   const { onClick: buttonOnClick, ...buttonAttrs } = buttonRest as React.ButtonHTMLAttributes<HTMLButtonElement>;
   return (

@@ -30,7 +30,7 @@ export type MaskOptions = Partial<{
 
 type NativeInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "value" | "onChange" | "type" | "maxLength" | "id" | "size" | "pattern" | "prefix" | "suffix"
+  "value" | "defaultValue" | "onChange" | "type" | "maxLength" | "id" | "size" | "pattern" | "prefix" | "suffix"
 >;
 
 /** Ant Design–style: outlined (default) | filled | borderless | underlined */
@@ -46,7 +46,16 @@ export interface TextInputProps extends NativeInputProps {
   type?: React.HTMLInputTypeAttribute;
   validation?: ValidationType;
   required?: boolean;
+  /**
+   * Controlled value. Omit it (leave `undefined`) for uncontrolled use — the input then keeps its
+   * own state, starting from `defaultValue`.
+   */
   value?: string;
+  /**
+   * Initial value for uncontrolled use (when `value` is `undefined`), e.g. edit-in-place cells
+   * that start from a preset value. Ignored when `value` is set.
+   */
+  defaultValue?: string;
   onChange?: (value: string) => void;
   onErrorChange?: (error: string | null) => void;
   onVerifiedChange?: (verified: boolean) => void;
@@ -57,7 +66,18 @@ export interface TextInputProps extends NativeInputProps {
   fullWidth?: boolean;
   disabled?: boolean;
   borderColorClass?: string;
+  /** Class on the outer wrapper (label + field + footer). */
   className?: string;
+  /**
+   * Class on the native `<input>` itself (the outer wrapper gets `className`).
+   * Use it to align overlays with the input text (padding / font).
+   */
+  inputClassName?: string;
+  /**
+   * Inline style merged over the native `<input>`'s computed style (padding, font, height, …).
+   * A plain `style` prop is also merged into the `<input>` style (it no longer replaces it).
+   */
+  inputStyle?: React.CSSProperties;
   ariaLabel?: string;
   /**
    * - `validation="custom"`: full-value check in `validateInput`.

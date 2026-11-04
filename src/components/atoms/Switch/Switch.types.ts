@@ -2,7 +2,28 @@ import type React from "react";
 
 export type SwitchSize = "sm" | "md";
 
-export interface SwitchProps {
+/**
+ * Native `<button role="switch">` attributes forwarded to the control (`data-*` such as
+ * `data-testid`, `aria-*`, `onBlur`, `onFocus`, `onClick`, `tabIndex`, `title`, `form`, …).
+ * Props the component manages are omitted.
+ */
+export type SwitchNativeProps = Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  | "type"
+  | "role"
+  | "id"
+  | "name"
+  | "value"
+  | "disabled"
+  | "className"
+  | "children"
+  | "onChange"
+  | "defaultChecked"
+  | "aria-checked"
+  | "aria-label"
+>;
+
+export interface SwitchProps extends SwitchNativeProps {
   /** Controlled: current on/off state. Omit with `defaultChecked` for uncontrolled. */
   checked?: boolean;
   /** Uncontrolled initial state (ignored when `checked` is set). */
@@ -21,8 +42,13 @@ export interface SwitchProps {
   value?: string;
   /** Submitted when the switch is off (default `"off"`). */
   uncheckedValue?: string;
-  /** Visible label next to the control. */
+  /** Visible label next to the control (any node). */
   label?: React.ReactNode;
+  /**
+   * Keep `label` as the accessible name but hide it visually (for dense rows / table cells).
+   * @default false
+   */
+  hideLabel?: boolean;
   /** Label before or after the track (default `"end"`). */
   labelPosition?: "start" | "end";
   /**

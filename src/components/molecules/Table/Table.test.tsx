@@ -187,3 +187,72 @@ describe("Table primitives (semantic / shadcn-style)", () => {
     expect(screen.getByText("Cell")).toBeInTheDocument();
   });
 });
+
+describe("Table primitives — 0.0.4 options", () => {
+  const body = (
+    <>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Account</TableHead>
+          <TableHead casing="none" wrap>
+            Closing balance
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow selected>
+          <TableCell>1000</TableCell>
+          <TableCell>10</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>2000</TableCell>
+          <TableCell>20</TableCell>
+        </TableRow>
+      </TableBody>
+    </>
+  );
+
+  it("wraps in the scroll container by default", () => {
+    const { container } = render(<TableRoot>{body}</TableRoot>);
+    expect(container.firstElementChild).toHaveClass("table-ui-wrap");
+    expect(container.querySelector(".table-ui-wrap > table")).toBeInTheDocument();
+  });
+
+  it("scroll={false} renders the bare table with no wrapper", () => {
+    const { container } = render(<TableRoot scroll={false} containerClassName="ignored">{body}</TableRoot>);
+    expect(container.firstElementChild?.tagName).toBe("TABLE");
+    expect(container.querySelector(".table-ui-wrap")).toBeNull();
+  });
+
+  it("flush adds the flush modifier on the wrapper", () => {
+    const { container } = render(<TableRoot flush>{body}</TableRoot>);
+    expect(container.firstElementChild).toHaveClass("table-ui-wrap", "table-ui-wrap--flush");
+  });
+
+  it("stickyHeader / stickyFirstColumn add table modifiers; maxHeight sets wrapper max-height", () => {
+    const { container } = render(
+      <TableRoot stickyHeader stickyFirstColumn maxHeight={320}>
+        {body}
+      </TableRoot>,
+    );
+    const table = container.querySelector("table");
+    expect(table).toHaveClass("table-ui--sticky-header", "table-ui--sticky-first-col");
+    expect(container.firstElementChild).toHaveStyle({ maxHeight: "320px", overflowY: "auto" });
+  });
+
+  it("TableHead casing='none' and wrap add modifiers; default keeps upper/nowrap", () => {
+    render(<TableRoot>{body}</TableRoot>);
+    expect(screen.getByRole("columnheader", { name: "Account" })).not.toHaveClass("table-ui-th--casing-none");
+    const custom = screen.getByRole("columnheader", { name: "Closing balance" });
+    expect(custom).toHaveClass("table-ui-th--casing-none", "table-ui-th--wrap");
+  });
+
+  it("TableRow selected sets aria-selected and data-state", () => {
+    render(<TableRoot>{body}</TableRoot>);
+    const rows = screen.getAllByRole("row");
+    expect(rows[1]).toHaveAttribute("aria-selected", "true");
+    expect(rows[1]).toHaveAttribute("data-state", "selected");
+    expect(rows[1]).toHaveClass("table-ui-tr--selected");
+    expect(rows[2]).not.toHaveAttribute("aria-selected");
+  });
+});

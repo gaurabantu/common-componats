@@ -168,7 +168,7 @@
 }
 
 .table-variant-minimal .table-tbody td {
-  border-bottom-color: var(--color-border-default);
+  border-bottom-color: var(--table-divider-color);
   border-bottom-width: 1px;
 }
 
@@ -548,13 +548,20 @@
 }
 
 /* —— Compositional / semantic table (shadcn-style markup API: TableRoot, TableHeader, TableBody, …) —— */
+/* Row/column hairlines: a light tint of the control border so dividers read as
+   structure, not as bold rules (--color-border-default is sized for 3:1 input
+   outlines). Override `--table-ui-divider` on a host to tune. */
+:root {
+  --table-ui-divider: var(--color-border-divider, color-mix(in srgb, var(--color-border-default) 25%, var(--color-bg-surface)));
+}
+
 .table-ui-wrap {
   position: relative;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-md, 8px);
-  border: 1px solid var(--color-border-default);
+  border: 1px solid var(--table-ui-divider);
   background: var(--color-bg-surface);
   box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.06));
 }
@@ -567,6 +574,9 @@
   font-size: var(--text-secondary-size, 14px);
   line-height: 1.5;
   color: var(--color-text-primary);
+  /* Opaque even without .table-ui-wrap (scroll={false}) — otherwise body cells
+     show the page background (#e0e0e0) and rows read as gray. */
+  background: var(--color-bg-surface);
 }
 
 .table-ui-caption {
@@ -588,7 +598,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-text-secondary);
-  border-bottom: 2px solid var(--color-border-default);
+  border-bottom: 1px solid var(--table-ui-divider);
   white-space: nowrap;
 }
 
@@ -606,7 +616,7 @@
 
 .table-ui-td {
   padding: var(--space-2, 12px) var(--space-2, 16px);
-  border-bottom: 1px solid var(--color-border-default);
+  border-bottom: 1px solid var(--table-ui-divider);
   vertical-align: middle;
 }
 
@@ -620,14 +630,14 @@
 }
 
 .table-ui-tfoot .table-ui-td {
-  border-top: 1px solid var(--color-border-default);
+  border-top: 1px solid var(--table-ui-divider);
   border-bottom: none;
 }
 
 [data-theme="dark"] .table-ui-wrap,
 .dark .table-ui-wrap {
   background: var(--color-bg-surface);
-  border-color: var(--color-border-default);
+  border-color: var(--table-ui-divider);
 }
 
 [data-theme="dark"] .table-ui-thead,
@@ -639,6 +649,151 @@
 [data-theme="dark"] .table-ui-th,
 .dark .table-ui-td,
 .dark .table-ui-th {
-  border-color: var(--color-border-default);
+  border-color: var(--table-ui-divider);
   color: var(--color-text-primary);
+}
+
+/* —— TableRoot options (0.0.4) —— */
+
+/* flush: embedded in a Card / panel — no chrome of its own. */
+.table-ui-wrap--flush {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* Sticky header / first column. `separate` keeps cell borders painted while cells are stuck
+   (with `collapse` they scroll away with the row). */
+.table-ui--sticky-header,
+.table-ui--sticky-first-col {
+  border-collapse: separate;
+}
+
+.table-ui--sticky-header .table-ui-thead .table-ui-th,
+.table-ui--sticky-header .table-ui-thead .table-ui-td {
+  position: sticky;
+  top: var(--table-ui-sticky-top, 0);
+  z-index: 2;
+  background: var(--color-bg-secondary, var(--color-bg-surface));
+}
+
+.table-ui--sticky-first-col .table-ui-tr > :first-child {
+  position: sticky;
+  left: var(--table-ui-sticky-left, 0);
+  z-index: 1;
+  background: var(--color-bg-surface);
+}
+
+.table-ui--sticky-first-col .table-ui-thead .table-ui-tr > :first-child,
+.table-ui--sticky-first-col .table-ui-tfoot .table-ui-tr > :first-child {
+  background: var(--color-bg-secondary, var(--color-bg-surface));
+}
+
+/* Corner cell: above both the sticky header row and the sticky column. */
+.table-ui--sticky-header.table-ui--sticky-first-col .table-ui-thead .table-ui-tr > :first-child {
+  z-index: 3;
+}
+
+/* TableHead casing / wrap */
+.table-ui-th--casing-none {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.table-ui-th--wrap {
+  white-space: normal;
+}
+
+/* TableRow selected */
+.table-ui-tr--selected > .table-ui-td,
+.table-ui-tr--selected > .table-ui-th {
+  background: var(--color-accent-lavender-10);
+}
+
+.table-ui-tbody .table-ui-tr--selected:hover > .table-ui-td {
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-accent-lavender-10));
+}
+
+.table-ui-tr--selected > :first-child {
+  box-shadow: inset 3px 0 0 var(--color-border-selected);
+}
+
+/* Sticky first column keeps the row's hover / selected tint. */
+.table-ui--sticky-first-col .table-ui-tbody .table-ui-tr:hover > :first-child {
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface));
+}
+
+.table-ui--sticky-first-col .table-ui-tr.table-ui-tr--selected > :first-child {
+  background: var(--color-accent-lavender-10);
+}
+
+.table-ui--sticky-first-col .table-ui-tbody .table-ui-tr.table-ui-tr--selected:hover > :first-child {
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-accent-lavender-10));
+}
+
+/* —— In-cell editors (0.0.4) ——
+   Wrap an Input / Select that edits a table cell in `.table-ui-cell-editor`: compact height,
+   small text, and no outline at rest — the border appears on row hover and on focus, so a grid
+   full of editors reads like data, not like a form. Heights follow --button-height-sm, so the
+   override is a token, not a hard-coded size. Inline borders on the controls need !important. */
+.table-ui-cell-editor {
+  --button-height-sm: 1.625rem;
+  --ucs-select-chevron-inset: 6px;
+  display: inline-block;
+}
+
+.table-ui-cell-editor select,
+.table-ui-cell-editor div:has(> input) {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.table-ui-cell-editor select,
+.table-ui-cell-editor input {
+  font-size: var(--text-small-size) !important;
+}
+
+.table-ui-cell-editor select {
+  padding-left: 6px !important;
+  padding-right: 22px !important;
+  cursor: pointer;
+}
+
+.table-ui-cell-editor input {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+/* Affordance: show the control on row hover / pointer hover, and fully on focus. */
+.table-ui-tr:hover .table-ui-cell-editor select,
+.table-ui-tr:hover .table-ui-cell-editor div:has(> input),
+.table-ui-cell-editor:hover select,
+.table-ui-cell-editor:hover div:has(> input) {
+  border-color: var(--table-ui-divider) !important;
+  background-color: var(--color-bg-surface) !important;
+}
+
+.table-ui-cell-editor select:focus,
+.table-ui-cell-editor div:has(> input:focus) {
+  border-color: var(--color-border-focus) !important;
+  background-color: var(--color-bg-surface) !important;
+}
+
+/* —— Long-text cells (0.0.4) ——
+   `.table-ui-clamp` on a cell's content: a readable column width and at most 3 lines (override
+   with --table-ui-clamp-lines); pair it with `title={fullText}` so the rest shows on hover. Stops a
+   description from squeezing into a one-word-per-line ribbon or blowing up the row height. */
+.table-ui-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--table-ui-clamp-lines, 3);
+  line-clamp: var(--table-ui-clamp-lines, 3);
+  overflow: hidden;
+  min-width: 14rem;
+  max-width: 28rem;
+  white-space: normal;
+  overflow-wrap: break-word;
 }

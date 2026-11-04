@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LineChart, BarChart, PieChart, AreaChart } from "./index";
+import { LineChart, BarChart, PieChart, AreaChart, ComposedChart, pieLabelNamePercent } from "./index";
 
 const lineData = [
   { name: "Jan", uv: 4000, pv: 2400, amt: 2400 },
@@ -263,5 +263,186 @@ export const ChartAnimationsOff: StoryObj<typeof LineChart> = {
     chartAnimation: false,
     height: 240,
     showLegend: true,
+  },
+};
+
+// ---------------------------------------------------------------------------
+// 0.0.4 — formatters, axes, per-bar colours, stacked bars, pie angles, ComposedChart
+// ---------------------------------------------------------------------------
+
+const money = (v: number) => `$${(v / 1000).toFixed(1)}k`;
+
+const dailyData = Array.from({ length: 14 }, (_, i) => ({
+  date: `2026-03-${String(i + 1).padStart(2, "0")}`,
+  revenue: 2000 + Math.round(Math.sin(i / 2) * 900 + i * 120),
+  margin: 18 + Math.round(Math.cos(i / 3) * 6),
+}));
+
+/** `valueFormatter` (Y ticks + tooltip), `xTickFormatter`, `labelFormatter`, `xTickAngle`, `xTickInterval`. */
+export const LineChartFormatters: StoryObj<typeof LineChart> = {
+  render: (args) => <LineChart {...args} />,
+  args: {
+    data: dailyData,
+    xAxisKey: "date",
+    series: [{ dataKey: "revenue", name: "Revenue" }],
+    valueFormatter: money,
+    xTickFormatter: (v) => String(v).slice(5),
+    labelFormatter: (v) =>
+      new Date(String(v)).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }),
+    xTickAngle: -45,
+    xTickInterval: "auto",
+    margin: { top: 10, right: 20, bottom: 60, left: 56 },
+    height: 320,
+  },
+};
+
+/** Series with `yAxis: "right"` get an independently scaled right axis. */
+export const LineChartDualAxis: StoryObj<typeof LineChart> = {
+  render: (args) => <LineChart {...args} />,
+  args: {
+    data: dailyData,
+    xAxisKey: "date",
+    series: [
+      { dataKey: "revenue", name: "Revenue" },
+      { dataKey: "margin", name: "Margin %", yAxis: "right", strokeDasharray: "5 5" },
+    ],
+    yTickFormatter: money,
+    rightYTickFormatter: (v) => `${v}%`,
+    valueFormatter: (v, key) => (key === "margin" ? `${v}%` : money(v)),
+    xTickFormatter: (v) => String(v).slice(8),
+    margin: { top: 10, right: 48, bottom: 30, left: 56 },
+    height: 320,
+  },
+};
+
+/** Per-bar colours via `getBarColor` (recharts `<Cell>`), formatted value axis. */
+export const BarChartPerBarColors: StoryObj<typeof BarChart> = {
+  render: (args) => <BarChart {...args} />,
+  args: {
+    data: barData,
+    xAxisKey: "name",
+    series: [{ dataKey: "pv", name: "PV" }],
+    getBarColor: (d) => ((d.pv as number) > 4000 ? "var(--color-state-error)" : "var(--color-state-success)"),
+    valueFormatter: money,
+    showLegend: false,
+    margin: { top: 10, right: 20, bottom: 30, left: 56 },
+    height: 300,
+  },
+};
+
+export const BarChartStacked: StoryObj<typeof BarChart> = {
+  render: (args) => <BarChart {...args} />,
+  args: {
+    data: barData,
+    xAxisKey: "name",
+    series: [
+      { dataKey: "uv", name: "UV" },
+      { dataKey: "pv", name: "PV" },
+    ],
+    stacked: true,
+    valueFormatter: money,
+    margin: { top: 10, right: 20, bottom: 30, left: 56 },
+    height: 300,
+  },
+};
+
+/**
+ * `orientation="horizontal-bars"` — unambiguous alias for `layout="horizontal"`
+ * (library `layout` is the opposite of recharts' `layout`). Categories sit on the left.
+ */
+export const BarChartHorizontalBars: StoryObj<typeof BarChart> = {
+  render: (args) => <BarChart {...args} />,
+  args: {
+    data: [
+      { name: "Revenue", count: 42 },
+      { name: "Intercompany", count: 18 },
+      { name: "FX", count: 9 },
+      { name: "Equity", count: 4 },
+    ],
+    xAxisKey: "name",
+    series: [{ dataKey: "count", name: "Anomalies" }],
+    orientation: "horizontal-bars",
+    showYAxis: true,
+    margin: { top: 10, right: 20, bottom: 30, left: 96 },
+    height: 260,
+  },
+};
+
+/** Donut with `centerLabel`, `"name (xx%)"` outside labels, semi-circle via `startAngle`/`endAngle`. */
+export const PieChartDonutAndAngles: StoryObj = {
+  render: () => (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
+      <PieChart
+        data={pieData}
+        innerRadius="60%"
+        outerRadius="75%"
+        width={360}
+        height={320}
+        showLabels
+        labelPosition="outside"
+        labelFormatter={pieLabelNamePercent}
+        valueFormatter={(v) => `${v} AED`}
+        legendPosition="bottom"
+        centerLabel={
+          <div>
+            <div style={{ fontSize: "var(--text-small-size)", color: "var(--color-text-secondary)" }}>Total</div>
+            <div style={{ fontWeight: 600 }}>1,200</div>
+          </div>
+        }
+      />
+      <PieChart
+        data={pieData}
+        innerRadius="55%"
+        startAngle={-90}
+        endAngle={90}
+        width={360}
+        height={320}
+        legendPosition="bottom"
+        centerLabel={<strong>Gauge</strong>}
+      />
+    </div>
+  ),
+};
+
+const forecastData = [
+  { m: "Jan", actual: 120, forecast: 118, lo: 110, hi: 126 },
+  { m: "Feb", actual: 132, forecast: 130, lo: 120, hi: 140 },
+  { m: "Mar", actual: 128, forecast: 136, lo: 124, hi: 150 },
+  { m: "Apr", forecast: 142, lo: 126, hi: 160 },
+  { m: "May", forecast: 150, lo: 130, hi: 172 },
+];
+
+/** Bar + dashed line + confidence band (`type: "range"` between `dataKey` and `upperDataKey`). */
+export const ComposedChartForecast: StoryObj<typeof ComposedChart> = {
+  render: (args) => <ComposedChart {...args} />,
+  args: {
+    data: forecastData,
+    xAxisKey: "m",
+    series: [
+      { type: "range", dataKey: "lo", upperDataKey: "hi", name: "80% confidence" },
+      { type: "bar", dataKey: "actual", name: "Actual" },
+      { type: "line", dataKey: "forecast", name: "Forecast", strokeDasharray: "5 5" },
+    ],
+    valueFormatter: (v) => `${v}k`,
+    margin: { top: 10, right: 20, bottom: 30, left: 48 },
+    height: 320,
+  },
+};
+
+export const ComposedChartDualAxis: StoryObj<typeof ComposedChart> = {
+  render: (args) => <ComposedChart {...args} />,
+  args: {
+    data: dailyData.slice(0, 8),
+    xAxisKey: "date",
+    series: [
+      { type: "bar", dataKey: "revenue", name: "Revenue" },
+      { type: "line", dataKey: "margin", name: "Margin %", yAxis: "right" },
+    ],
+    yTickFormatter: money,
+    rightYTickFormatter: (v) => `${v}%`,
+    valueFormatter: (v, key) => (key === "margin" ? `${v}%` : money(v)),
+    xTickFormatter: (v) => String(v).slice(5),
+    margin: { top: 10, right: 48, bottom: 30, left: 56 },
+    height: 320,
   },
 };

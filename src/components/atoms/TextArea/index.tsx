@@ -1,7 +1,7 @@
 // packages/ui-components/src/components/TextArea/index.tsx
 "use client";
 
-import React, { useId, useState, ChangeEvent, useEffect } from 'react';
+import React, { useId, useState, ChangeEvent, useEffect, forwardRef } from 'react';
 import defaultConfig from './TextArea.config';
 import { sanitizeValue } from './TextArea.utils';
 import type { TextAreaProps } from './TextArea.types';
@@ -10,10 +10,12 @@ import type { TextAreaProps } from './TextArea.types';
  * UX4G TextArea component
  *
  * - Controlled or uncontrolled usage supported
- * - Optional sanitization via text-validator
+ * - Optional sanitization via text-validator (`sanitize`, off by default)
  * - Uses size classes consistent with UX4G/Bootstrap
+ * - `ref` is forwarded to the native `<textarea>`
+ * - No character limit unless `maxLength` is passed
  */
-const TextArea: React.FC<TextAreaProps> = ({
+const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea({
   label,
   size = '',
   className = '',
@@ -37,9 +39,11 @@ const TextArea: React.FC<TextAreaProps> = ({
   onChange,
   ariaLabel,
   disabled = false,
+  id: idProp,
   ...props
-}) => {
-  const textareaId = useId();
+}, ref) {
+  const generatedId = useId();
+  const textareaId = idProp ?? generatedId;
   const [internalValue, setInternalValue] = useState<string>(value ?? defaultValue ?? '');
 
   // Keep internalValue in sync when used as a controlled component
@@ -209,6 +213,7 @@ const TextArea: React.FC<TextAreaProps> = ({
       )}
 
       <textarea
+        ref={ref}
         id={textareaId}
         className={className}
         style={textareaStyle}
@@ -218,6 +223,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         onChange={handleChange}
         aria-invalid={resolvedStatus === 'error'}
         aria-label={label ? undefined : ariaLabel}
+        disabled={disabled}
         {...props}
       />
 
@@ -228,13 +234,15 @@ const TextArea: React.FC<TextAreaProps> = ({
           </span>
           {showCount && (
             <span style={countStyle}>
-              {currentLength} / {maxLength}
+              {maxLength != null ? `${currentLength} / ${maxLength}` : currentLength}
             </span>
           )}
         </div>
       )}
     </div>
   );
-};
+});
+
+TextArea.displayName = 'TextArea';
 
 export default TextArea;

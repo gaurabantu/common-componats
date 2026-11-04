@@ -88,3 +88,12 @@ export const LightVariant: Story = {
     variant: "light",
   },
 };
+
+/** `zIndex` — defaults to `var(--z-tooltip-top, 600)` (above Modal / Drawer / Popover). */
+export const CustomZIndex: Story = {
+  args: {
+    tooltipText: "Rendered at zIndex 12000",
+    placement: "top",
+    zIndex: 12000,
+  },
+};

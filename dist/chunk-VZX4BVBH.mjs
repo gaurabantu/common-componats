@@ -1,7 +1,7 @@
 import {
   TextInputSearch_default,
   search_default
-} from "./chunk-AKKWQ6RK.mjs";
+} from "./chunk-QWEACOCP.mjs";
 
 // src/components/atoms/TextView/index.tsx
 import React from "react";
@@ -206,15 +206,22 @@ var CheckboxBase = React2.forwardRef(function Checkbox({
   rounded = "3",
   withShadow = false,
   ariaLabel,
-  ariaLabelledBy
+  ariaLabelledBy,
+  hideLabel = false,
+  "aria-label": ariaLabelAttr,
+  "aria-labelledby": ariaLabelledByAttr,
+  "aria-describedby": ariaDescribedByAttr,
+  ...nativeProps
 }, forwardedRef) {
   const generatedId = useId();
   const checkboxId = id != null ? id : `ucs-cb-${generatedId}`;
   const labelId = `${checkboxId}-label`;
   const descriptionId = description ? `${checkboxId}-description` : void 0;
   const errorId = error ? `${checkboxId}-error` : void 0;
-  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || void 0;
-  const hasVisibleLabel = label.trim().length > 0;
+  const describedBy = [ariaDescribedByAttr, descriptionId, errorId].filter(Boolean).join(" ") || void 0;
+  const hasVisibleLabel = label !== void 0 && label !== null && label !== false && !(typeof label === "string" && label.trim().length === 0);
+  const resolvedAriaLabel = ariaLabel != null ? ariaLabel : ariaLabelAttr;
+  const resolvedAriaLabelledBy = ariaLabelledBy != null ? ariaLabelledBy : ariaLabelledByAttr;
   const inputRef = useRef(null);
   const setRefs = useCallback(
     (node) => {
@@ -268,7 +275,7 @@ var CheckboxBase = React2.forwardRef(function Checkbox({
     "span",
     {
       id: labelId,
-      className: cls2("ucs-cc-checkbox-label", labelColorClass),
+      className: cls2("ucs-cc-checkbox-label", labelColorClass, hideLabel && "sr-only"),
       style: labelStyle,
       "aria-hidden": !hasVisibleLabel ? true : void 0,
       children: [
@@ -284,10 +291,12 @@ var CheckboxBase = React2.forwardRef(function Checkbox({
       className: cls2("ucs-cc-checkbox-root", className),
       style: wrapperStyle,
       "data-size": size,
+      "data-hide-label": hideLabel ? "true" : void 0,
       children: [
         /* @__PURE__ */ jsx(
           "input",
           {
+            ...nativeProps,
             ref: setRefs,
             type: "checkbox",
             id: checkboxId,
@@ -298,8 +307,8 @@ var CheckboxBase = React2.forwardRef(function Checkbox({
             required: required || void 0,
             onChange,
             readOnly: onChange ? void 0 : true,
-            "aria-label": !hasVisibleLabel && ariaLabel ? ariaLabel : void 0,
-            "aria-labelledby": hasVisibleLabel ? labelId : !ariaLabel && ariaLabelledBy ? ariaLabelledBy : void 0,
+            "aria-label": !hasVisibleLabel && resolvedAriaLabel ? resolvedAriaLabel : void 0,
+            "aria-labelledby": hasVisibleLabel ? labelId : !resolvedAriaLabel && resolvedAriaLabelledBy ? resolvedAriaLabelledBy : void 0,
             "aria-describedby": describedBy,
             "aria-invalid": error ? true : void 0,
             "data-indeterminate": indeterminate ? "true" : void 0,
@@ -358,6 +367,7 @@ function cls3(...parts) {
 function hasContent(node) {
   return node !== void 0 && node !== null && node !== false && node !== "";
 }
+var LABELABLE_TAGS = /* @__PURE__ */ new Set(["input", "select", "textarea", "button", "meter", "output", "progress"]);
 var FormFieldContext = createContext(null);
 function useFormField() {
   return useContext(FormFieldContext);
@@ -386,6 +396,8 @@ var FormField = React3.forwardRef(function FormField2({
   optional = false,
   counter,
   layout = FORM_FIELD_DEFAULTS.layout,
+  group = false,
+  hideLabel = false,
   children,
   className,
   ...rest
@@ -407,13 +419,13 @@ var FormField = React3.forwardRef(function FormField2({
   const overLimit = counter ? counter.value > counter.max : false;
   const announceError = useAnnounceOnChange(error);
   const ctx = useMemo(
-    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required }),
-    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required]
+    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required, group }),
+    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required, group]
   );
   const controlRef = useRef2(null);
   useEffect2(() => {
     var _a2;
-    if (!isDev())
+    if (!isDev() || group)
       return;
     const root = controlRef.current;
     if (!root)
@@ -431,9 +443,10 @@ var FormField = React3.forwardRef(function FormField2({
         `[FormField] No labelable focusable element with id="${controlId}" (and no aria-labelledby="${labelId}") was found inside the field, so the label is not associated with the control. Use Input / TextArea / Select / Combobox / a native control, or wire a custom control with useFormField().`
       );
     }
-  }, [controlId, labelId]);
+  }, [controlId, labelId, group]);
+  const isCompositeWrapper = htmlFor !== void 0 && child !== null && typeof child.type === "string" && !LABELABLE_TAGS.has(child.type);
   let control = children;
-  if (child && !isFormFieldConsumer(child.type)) {
+  if (child && !group && !isCompositeWrapper && !isFormFieldConsumer(child.type)) {
     const inject = {};
     if (childProps.id === void 0)
       inject.id = controlId;
@@ -445,6 +458,7 @@ var FormField = React3.forwardRef(function FormField2({
       inject["aria-required"] = true;
     control = Object.keys(inject).length > 0 ? React3.cloneElement(child, inject) : child;
   }
+  const LabelTag = group ? "span" : "label";
   const optionalText = !required && optional ? typeof optional === "string" ? optional : FORM_FIELD_DEFAULTS.optionalLabel : null;
   return /* @__PURE__ */ jsx2(FormFieldContext.Provider, { value: ctx, children: /* @__PURE__ */ jsxs2(
     "div",
@@ -453,19 +467,30 @@ var FormField = React3.forwardRef(function FormField2({
       className: cls3("ds-form-field", className),
       "data-layout": layout,
       "data-invalid": invalid ? "true" : void 0,
+      "data-group": group ? "true" : void 0,
+      "data-hide-label": hideLabel ? "true" : void 0,
+      ...group ? { role: "group", "aria-labelledby": labelId, "aria-describedby": describedBy } : {},
       ...rest,
       children: [
-        /* @__PURE__ */ jsx2("div", { className: "ds-form-field__label-col", children: /* @__PURE__ */ jsxs2("label", { id: labelId, htmlFor: controlId, className: "ds-form-field__label", children: [
-          label,
-          required ? /* @__PURE__ */ jsxs2(Fragment, { children: [
-            /* @__PURE__ */ jsx2("span", { className: "ds-form-field__required", "aria-hidden": "true", children: "*" }),
-            /* @__PURE__ */ jsxs2("span", { className: "sr-only", children: [
-              " ",
-              FORM_FIELD_REQUIRED_SR_TEXT
-            ] })
-          ] }) : null,
-          optionalText ? /* @__PURE__ */ jsx2("span", { className: "ds-form-field__optional", children: optionalText }) : null
-        ] }) }),
+        /* @__PURE__ */ jsx2("div", { className: "ds-form-field__label-col", children: /* @__PURE__ */ jsxs2(
+          LabelTag,
+          {
+            id: labelId,
+            htmlFor: group ? void 0 : controlId,
+            className: "ds-form-field__label",
+            children: [
+              label,
+              required ? /* @__PURE__ */ jsxs2(Fragment, { children: [
+                /* @__PURE__ */ jsx2("span", { className: "ds-form-field__required", "aria-hidden": "true", children: "*" }),
+                /* @__PURE__ */ jsxs2("span", { className: "sr-only", children: [
+                  " ",
+                  FORM_FIELD_REQUIRED_SR_TEXT
+                ] })
+              ] }) : null,
+              optionalText ? /* @__PURE__ */ jsx2("span", { className: "ds-form-field__optional", children: optionalText }) : null
+            ]
+          }
+        ) }),
         /* @__PURE__ */ jsxs2("div", { className: "ds-form-field__control-col", children: [
           /* @__PURE__ */ jsx2("div", { ref: controlRef, className: "ds-form-field__control", children: control }),
           showHint || showError || counter ? /* @__PURE__ */ jsxs2("div", { className: "ds-form-field__messages", children: [
@@ -667,10 +692,8 @@ var Select = forwardRef((props, ref) => {
   };
   const currentSize = sizeConfig[size];
   const radiusValue = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
-  const wrapperStyle = {
-    width: fullWidth ? "100%" : "auto",
-    display: fullWidth ? "block" : "inline-block"
-  };
+  const wrapperStyle = fullWidth ? void 0 : { width: "auto", display: "inline-block" };
+  const wrapperClass = [customClass, fullWidth ? "ds-select-root--full" : ""].filter(Boolean).join(" ");
   const labelStyle = {
     display: "block",
     marginBottom: 8,
@@ -706,7 +729,7 @@ var Select = forwardRef((props, ref) => {
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5
   };
-  return /* @__PURE__ */ jsxs3("div", { className: customClass, style: wrapperStyle, children: [
+  return /* @__PURE__ */ jsxs3("div", { className: wrapperClass || void 0, style: wrapperStyle, children: [
     label && /* @__PURE__ */ jsxs3("label", { htmlFor: selectId, style: labelStyle, children: [
       label,
       required ? /* @__PURE__ */ jsx3("span", { className: "ds-select__required", "aria-hidden": "true", children: "*" }) : null
@@ -797,8 +820,41 @@ var cls4 = (...classes) => {
 
 // src/components/molecules/Table/TablePrimitives.tsx
 import { jsx as jsx4 } from "react/jsx-runtime";
-var TableRoot = forwardRef2(function TableRoot2({ className, containerClassName, children, ...rest }, ref) {
-  return /* @__PURE__ */ jsx4("div", { className: cls4("table-ui-wrap", containerClassName), children: /* @__PURE__ */ jsx4("table", { ref, className: cls4("table-ui", className), ...rest, children }) });
+var TableRoot = forwardRef2(function TableRoot2({
+  className,
+  containerClassName,
+  scroll = true,
+  stickyHeader = false,
+  stickyFirstColumn = false,
+  maxHeight,
+  flush = false,
+  children,
+  ...rest
+}, ref) {
+  const table = /* @__PURE__ */ jsx4(
+    "table",
+    {
+      ref,
+      className: cls4(
+        "table-ui",
+        stickyHeader && "table-ui--sticky-header",
+        stickyFirstColumn && "table-ui--sticky-first-col",
+        className
+      ),
+      ...rest,
+      children
+    }
+  );
+  if (!scroll)
+    return table;
+  return /* @__PURE__ */ jsx4(
+    "div",
+    {
+      className: cls4("table-ui-wrap", flush && "table-ui-wrap--flush", containerClassName),
+      style: maxHeight !== void 0 ? { maxHeight: typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight, overflowY: "auto" } : void 0,
+      children: table
+    }
+  );
 });
 TableRoot.displayName = "TableRoot";
 var TableCaption = forwardRef2(
@@ -823,12 +879,34 @@ var TableFooter = forwardRef2(
   }
 );
 TableFooter.displayName = "TableFooter";
-var TableRow = forwardRef2(function TableRow2({ className, ...rest }, ref) {
-  return /* @__PURE__ */ jsx4("tr", { ref, className: cls4("table-ui-tr", className), ...rest });
+var TableRow = forwardRef2(function TableRow2({ className, selected, ...rest }, ref) {
+  return /* @__PURE__ */ jsx4(
+    "tr",
+    {
+      ref,
+      className: cls4("table-ui-tr", selected && "table-ui-tr--selected", className),
+      "aria-selected": selected === void 0 ? void 0 : selected,
+      "data-state": selected ? "selected" : void 0,
+      ...rest
+    }
+  );
 });
 TableRow.displayName = "TableRow";
-var TableHead = forwardRef2(function TableHead2({ className, scope = "col", ...rest }, ref) {
-  return /* @__PURE__ */ jsx4("th", { ref, className: cls4("table-ui-th", className), scope, ...rest });
+var TableHead = forwardRef2(function TableHead2({ className, scope = "col", casing = "upper", wrap = false, ...rest }, ref) {
+  return /* @__PURE__ */ jsx4(
+    "th",
+    {
+      ref,
+      className: cls4(
+        "table-ui-th",
+        casing === "none" && "table-ui-th--casing-none",
+        wrap && "table-ui-th--wrap",
+        className
+      ),
+      scope,
+      ...rest
+    }
+  );
 });
 TableHead.displayName = "TableHead";
 var TableCell = forwardRef2(function TableCell2({ className, ...rest }, ref) {
@@ -1468,4 +1546,4 @@ export {
   TableCell,
   Table_default
 };
-//# sourceMappingURL=chunk-2BLR2LGS.mjs.map
+//# sourceMappingURL=chunk-VZX4BVBH.mjs.map

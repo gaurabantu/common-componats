@@ -1142,10 +1142,10 @@ function AppSidebar({
 }
 
 // src/components/molecules/DashboardShell/DashboardShell.tsx
-var import_react13 = __toESM(require("react"));
+var import_react16 = __toESM(require("react"));
 
 // src/components/molecules/AppTopbar/index.tsx
-var import_react12 = require("react");
+var import_react15 = require("react");
 
 // src/components/atoms/Button/index.tsx
 var import_react8 = __toESM(require("react"));
@@ -1475,6 +1475,8 @@ var ButtonImpl = import_react8.default.forwardRef(function Button({
     );
   }
   const buttonRest = { ...restWithoutStyle };
+  if (isExpandable && buttonRest.title == null && typeof children === "string")
+    buttonRest.title = children;
   if (unsafeHref)
     for (const attr of ANCHOR_ONLY_ATTRS)
       delete buttonRest[attr];
@@ -1511,6 +1513,9 @@ var Button2 = import_react8.default.memo(ButtonImpl);
 Button2.displayName = "Button";
 ButtonImpl.displayName = "Button";
 var Button_default = Button2;
+
+// src/components/atoms/TextInputSearch/index.tsx
+var import_react10 = __toESM(require("react"));
 
 // src/components/atoms/TextInput/TextInput.tsx
 var import_react9 = require("react");
@@ -1696,7 +1701,8 @@ var TextInput = (0, import_react9.forwardRef)(({
   placeholder,
   validation = "none",
   required = false,
-  value = "",
+  value,
+  defaultValue,
   onChange,
   onErrorChange,
   onVerifiedChange,
@@ -1736,15 +1742,20 @@ var TextInput = (0, import_react9.forwardRef)(({
   spellCheck: spellCheckProp,
   autoCorrect: autoCorrectProp,
   autoCapitalize: autoCapitalizeProp,
+  inputClassName,
+  inputStyle,
+  style: styleProp,
   ...rest
 }, ref) => {
-  var _a, _b;
+  var _a, _b, _c;
+  const isControlled = value !== void 0;
+  const initialValue = (_a = isControlled ? value : defaultValue) != null ? _a : "";
   const [error, setError] = (0, import_react9.useState)(null);
   const [verified, setVerified] = (0, import_react9.useState)(isVerified);
   const [showValue, setShowValue] = (0, import_react9.useState)(false);
-  const [displayValue, setDisplayValue] = (0, import_react9.useState)(value || "");
+  const [displayValue, setDisplayValue] = (0, import_react9.useState)(initialValue);
   const [isFocused, setIsFocused] = (0, import_react9.useState)(false);
-  const actualValueRef = (0, import_react9.useRef)(value || "");
+  const actualValueRef = (0, import_react9.useRef)(initialValue);
   const inputRef = (0, import_react9.useRef)(null);
   (0, import_react9.useImperativeHandle)(ref, () => inputRef.current, []);
   const validationFunctions = {
@@ -1767,8 +1778,9 @@ var TextInput = (0, import_react9.forwardRef)(({
   const reactId = (0, import_react9.useId)();
   const inputId = (idProp == null ? void 0 : idProp.trim()) ? idProp : `text-input-${reactId}`;
   (0, import_react9.useEffect)(() => {
-    actualValueRef.current = value || "";
-    updateDisplayValue(value || "");
+    const next = (isControlled ? value : actualValueRef.current) || "";
+    actualValueRef.current = next;
+    updateDisplayValue(next);
   }, [value]);
   (0, import_react9.useEffect)(() => {
     setVerified(isVerified);
@@ -2165,7 +2177,7 @@ var TextInput = (0, import_react9.forwardRef)(({
       return "password";
     return type;
   };
-  const hasValue = ((_a = displayValue == null ? void 0 : displayValue.trim()) != null ? _a : "") !== "";
+  const hasValue = ((_b = displayValue == null ? void 0 : displayValue.trim()) != null ? _b : "") !== "";
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
@@ -2264,7 +2276,7 @@ var TextInput = (0, import_react9.forwardRef)(({
     }
   ) : null;
   const hasRightAddons = Boolean(resolvedSuffix || allowClear && hasValue && !disabled || shouldShowToggle);
-  const charCount = (_b = displayValue == null ? void 0 : displayValue.length) != null ? _b : 0;
+  const charCount = (_c = displayValue == null ? void 0 : displayValue.length) != null ? _c : 0;
   const countMax = validation === "businessAID" ? resolvedMaxLength + 2 : resolvedMaxLength;
   const fieldWrapperStyle = {
     ...wrapperStyle,
@@ -2370,10 +2382,11 @@ var TextInput = (0, import_react9.forwardRef)(({
               placeholder,
               className: [
                 "disabled:cursor-not-allowed",
-                getInputType() === "search" ? "ucs-text-input--search" : ""
+                getInputType() === "search" ? "ucs-text-input--search" : "",
+                inputClassName
               ].filter(Boolean).join(" "),
-              style: inputElementStyle,
               ...rest,
+              style: styleProp || inputStyle ? { ...inputElementStyle, ...styleProp, ...inputStyle } : inputElementStyle,
               spellCheck: spellCheckProp != null ? spellCheckProp : autoCorrection ? true : false,
               autoCorrect: autoCorrectProp != null ? autoCorrectProp : autoCorrection ? "on" : "off",
               autoCapitalize: autoCapitalizeProp != null ? autoCapitalizeProp : autoCorrection ? void 0 : "none"
@@ -2585,7 +2598,7 @@ function railKey(inputSize) {
   return "sm";
 }
 var SEARCH_SHELL_ROUNDED = "3";
-var TextInputSearch = ({
+var TextInputSearch = import_react10.default.forwardRef(function TextInputSearch2({
   id = "search",
   leftIcon = search_default,
   leftIconHeight,
@@ -2617,7 +2630,7 @@ var TextInputSearch = ({
   trailingRail: trailingRailProp,
   pattern,
   autoCorrection = false
-}) => {
+}, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
@@ -2709,9 +2722,9 @@ var TextInputSearch = ({
   return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
     "div",
     {
-      className: containerClassName.trim(),
+      className: [containerClassName.trim(), fullWidth ? "ds-input-search--full" : ""].filter(Boolean).join(" "),
       style: {
-        width: fullWidth ? "100%" : "auto",
+        ...fullWidth ? null : { width: "auto" },
         ...containerStyle
       },
       role: "search",
@@ -2721,6 +2734,7 @@ var TextInputSearch = ({
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           TextInput_default,
           {
+            ref,
             id,
             type: "search",
             placeholder,
@@ -2759,7 +2773,8 @@ var TextInputSearch = ({
       ]
     }
   );
-};
+});
+TextInputSearch.displayName = "TextInputSearch";
 var TextInputSearch_default = TextInputSearch;
 
 // src/components/molecules/AppTopbar/AppTopbar.chrome.ts
@@ -2790,14 +2805,14 @@ function mergeTopbarTokensStyle(tokens, base) {
 }
 
 // src/components/molecules/AppTopbar/AppTopbarMenu.tsx
-var import_react10 = __toESM(require("react"));
+var import_react11 = __toESM(require("react"));
 var import_react_dom3 = require("react-dom");
 var import_jsx_runtime10 = require("react/jsx-runtime");
 function cls2(...parts) {
   return parts.filter(Boolean).join(" ");
 }
 function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
-  const menuRef = (0, import_react10.useRef)(null);
+  const menuRef = (0, import_react11.useRef)(null);
   const positionMenu = () => {
     const el = triggerRef.current;
     const menu = menuRef.current;
@@ -2819,12 +2834,12 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
     menu.style.zIndex = "70";
     menu.style.maxHeight = `${Math.max(120, maxH)}px`;
   };
-  (0, import_react10.useLayoutEffect)(() => {
+  (0, import_react11.useLayoutEffect)(() => {
     if (!open)
       return;
     positionMenu();
   }, [open]);
-  (0, import_react10.useEffect)(() => {
+  (0, import_react11.useEffect)(() => {
     if (!open)
       return;
     const onScrollResize = () => positionMenu();
@@ -2835,7 +2850,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
       window.removeEventListener("resize", onScrollResize);
     };
   }, [open]);
-  (0, import_react10.useEffect)(() => {
+  (0, import_react11.useEffect)(() => {
     if (!open)
       return;
     const onDoc = (e) => {
@@ -2858,7 +2873,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
       document.removeEventListener("keydown", onKey);
     };
   }, [open, onClose, triggerRef]);
-  (0, import_react10.useEffect)(() => {
+  (0, import_react11.useEffect)(() => {
     if (!open || !menuRef.current)
       return;
     const first = menuRef.current.querySelector(
@@ -2918,7 +2933,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
               children: content
             }
           );
-          return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_react10.default.Fragment, { children: node }, item.id);
+          return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_react11.default.Fragment, { children: node }, item.id);
         })
       }
     ),
@@ -2927,7 +2942,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
 }
 
 // src/components/molecules/Popover/index.tsx
-var import_react11 = __toESM(require("react"));
+var import_react14 = __toESM(require("react"));
 var import_react_dom4 = require("react-dom");
 
 // src/components/molecules/Popover/popoverPosition.ts
@@ -2977,36 +2992,225 @@ function computePopoverPosition(triggerRect, contentWidth, contentHeight, placem
   };
 }
 
+// src/components/molecules/Popover/layering.ts
+var import_react12 = require("react");
+var DEFAULT_POPOVER_Z = 450;
+function getAncestorZIndex(el) {
+  if (!el || typeof window === "undefined" || typeof window.getComputedStyle !== "function")
+    return 0;
+  let max = 0;
+  let node = el;
+  while (node && node !== document.body && node !== document.documentElement) {
+    let raw = "";
+    try {
+      raw = window.getComputedStyle(node).zIndex;
+    } catch (e) {
+      raw = "";
+    }
+    if (!raw && node instanceof HTMLElement)
+      raw = node.style.zIndex;
+    const z = parseInt(raw, 10);
+    if (Number.isFinite(z) && z > max)
+      max = z;
+    node = node.parentElement;
+  }
+  return max;
+}
+function readZToken(tokenName, fallback) {
+  if (typeof window === "undefined" || typeof document === "undefined")
+    return fallback;
+  try {
+    const raw = window.getComputedStyle(document.documentElement).getPropertyValue(tokenName);
+    const z = parseInt(raw, 10);
+    return Number.isFinite(z) ? z : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+function resolveLayerZIndex(anchor, explicit, tokenName = "--z-popover", fallback = DEFAULT_POPOVER_Z) {
+  if (explicit !== void 0 && explicit !== null && explicit !== "")
+    return explicit;
+  const tokenValue = `var(${tokenName}, ${fallback})`;
+  const ancestorZ = getAncestorZIndex(anchor);
+  if (ancestorZ <= 0)
+    return tokenValue;
+  const tokenZ = readZToken(tokenName, fallback);
+  return ancestorZ + 1 > tokenZ ? ancestorZ + 1 : tokenValue;
+}
+var floatingStack = [];
+var FloatingLayerContext = (0, import_react12.createContext)(null);
+function pushFloatingLayer(id, parent = null) {
+  popFloatingLayer(id);
+  floatingStack.push({ id, parent });
+}
+function popFloatingLayer(id) {
+  const i = floatingStack.findIndex((e) => e.id === id);
+  if (i >= 0)
+    floatingStack.splice(i, 1);
+}
+function isTopFloatingLayer(id) {
+  if (floatingStack.length === 0)
+    return true;
+  const parents = new Set(floatingStack.map((e) => e.parent));
+  const leaves = floatingStack.filter((e) => !parents.has(e.id));
+  const top = leaves[leaves.length - 1];
+  return !top || top.id === id;
+}
+
+// src/components/molecules/Popover/menuNavigation.ts
+var MENU_ITEM_SELECTOR = [
+  '[role="menuitem"]',
+  '[role="menuitemcheckbox"]',
+  '[role="menuitemradio"]'
+].map((r) => `${r}:not([disabled]):not([aria-disabled="true"])`).join(", ");
+var LISTBOX_OPTION_SELECTOR = '[role="option"]:not([aria-disabled="true"])';
+function getMenuItems(root, selector = MENU_ITEM_SELECTOR) {
+  return Array.from(root.querySelectorAll(selector));
+}
+function handleMenuKeyNavigation(e, selector = MENU_ITEM_SELECTOR) {
+  var _a, _b;
+  const root = e.currentTarget;
+  const items = getMenuItems(root, selector);
+  if (items.length === 0)
+    return false;
+  const i = items.indexOf(document.activeElement);
+  let next = -1;
+  switch (e.key) {
+    case "ArrowDown":
+      next = i < 0 ? 0 : (i + 1) % items.length;
+      break;
+    case "ArrowUp":
+      next = i < 0 ? items.length - 1 : (i - 1 + items.length) % items.length;
+      break;
+    case "Home":
+      next = 0;
+      break;
+    case "End":
+      next = items.length - 1;
+      break;
+    default: {
+      if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey || e.key === " ")
+        return false;
+      const t = e.target;
+      if (t.isContentEditable || t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT") {
+        return false;
+      }
+      const ch = e.key.toLowerCase();
+      for (let step = 1; step <= items.length; step += 1) {
+        const candidate = items[(Math.max(i, -1) + step + items.length) % items.length];
+        if (((_a = candidate.textContent) != null ? _a : "").trim().toLowerCase().startsWith(ch)) {
+          next = items.indexOf(candidate);
+          break;
+        }
+      }
+      if (next < 0)
+        return false;
+    }
+  }
+  e.preventDefault();
+  (_b = items[next]) == null ? void 0 : _b.focus();
+  return true;
+}
+
+// src/components/molecules/Popover/slot.tsx
+var import_react13 = __toESM(require("react"));
+function getElementRef(element) {
+  const major = parseInt(import_react13.default.version, 10);
+  if (major >= 19)
+    return element.props.ref;
+  return element.ref;
+}
+function setRef(ref, value) {
+  if (typeof ref === "function")
+    ref(value);
+  else if (ref && typeof ref === "object")
+    ref.current = value;
+}
+function renderSlot(children, slotProps, ref, component) {
+  const child = import_react13.default.Children.only(children);
+  if (!(0, import_react13.isValidElement)(child)) {
+    throw new Error(`${component} with asChild expects a single React element child`);
+  }
+  const childProps = child.props;
+  const childRef = getElementRef(child);
+  const merged = { ...childProps };
+  for (const key of Object.keys(slotProps)) {
+    const slotValue = slotProps[key];
+    const childValue = childProps[key];
+    if (slotValue === void 0)
+      continue;
+    if (/^on[A-Z]/.test(key) && typeof slotValue === "function" && typeof childValue === "function") {
+      merged[key] = (event, ...args) => {
+        childValue(event, ...args);
+        if (event && event.defaultPrevented)
+          return;
+        slotValue(event, ...args);
+      };
+    } else if (key === "className") {
+      merged[key] = [childValue, slotValue].filter(Boolean).join(" ") || void 0;
+    } else if (key === "style") {
+      merged[key] = { ...slotValue, ...childValue };
+    } else {
+      merged[key] = slotValue;
+    }
+  }
+  merged.ref = (node) => {
+    setRef(ref, node);
+    setRef(childRef, node);
+  };
+  return (0, import_react13.cloneElement)(child, merged);
+}
+
 // src/components/molecules/Popover/index.tsx
 var import_jsx_runtime11 = require("react/jsx-runtime");
 function cls3(...parts) {
   return parts.filter(Boolean).join(" ");
 }
-var PopoverContext = (0, import_react11.createContext)(null);
+function indentStyle(indent, style) {
+  if (!indent || indent <= 0)
+    return style;
+  return {
+    paddingInlineStart: `calc(0.75rem + ${Math.floor(indent)} * var(--space-2, 16px))`,
+    ...style
+  };
+}
+var PopoverContext = (0, import_react14.createContext)(null);
 function usePopoverContext(component) {
-  const ctx = (0, import_react11.useContext)(PopoverContext);
+  const ctx = (0, import_react14.useContext)(PopoverContext);
   if (!ctx) {
-    throw new Error(`${component} must be used within <Popover> or <DropdownMenu>`);
+    throw new Error(`${component} must be used within <Popover>, <DropdownMenu> or <ContextMenu>`);
   }
   return ctx;
 }
-var Popover = import_react11.default.memo(function Popover2({
+function restoreFocus(el) {
+  if (!el || typeof document === "undefined" || !el.isConnected)
+    return;
+  const active = document.activeElement;
+  if (active && active !== document.body && active !== document.documentElement && active.isConnected)
+    return;
+  el.focus();
+}
+var Popover = import_react14.default.memo(function Popover2({
   children,
   open: openProp,
   defaultOpen = false,
   onOpenChange,
-  placement = "bottom-start"
+  placement = "bottom-start",
+  anchorRef: anchorRefProp
 }) {
-  const reactId = (0, import_react11.useId)();
+  const reactId = (0, import_react14.useId)();
   const base = reactId.replace(/:/g, "");
   const triggerId = `popover-trigger-${base}`;
   const contentId = `popover-content-${base}`;
-  const triggerRef = (0, import_react11.useRef)(null);
+  const triggerRef = (0, import_react14.useRef)(null);
+  const innerAnchorRef = (0, import_react14.useRef)(null);
+  const anchorRef = anchorRefProp != null ? anchorRefProp : innerAnchorRef;
   const isControlled = openProp !== void 0;
-  const [innerOpen, setInnerOpen] = (0, import_react11.useState)(defaultOpen);
+  const [innerOpen, setInnerOpen] = (0, import_react14.useState)(defaultOpen);
   const open = isControlled ? Boolean(openProp) : innerOpen;
-  const prevOpenRef = (0, import_react11.useRef)(false);
-  const setOpen = (0, import_react11.useCallback)(
+  const prevOpenRef = (0, import_react14.useRef)(false);
+  const returnFocusRef = (0, import_react14.useRef)(null);
+  const setOpen = (0, import_react14.useCallback)(
     (next) => {
       if (!isControlled) {
         setInnerOpen(next);
@@ -3015,32 +3219,37 @@ var Popover = import_react11.default.memo(function Popover2({
     },
     [isControlled, onOpenChange]
   );
-  (0, import_react11.useEffect)(() => {
-    if (prevOpenRef.current && !open && triggerRef.current) {
-      requestAnimationFrame(() => {
-        var _a;
-        return (_a = triggerRef.current) == null ? void 0 : _a.focus();
-      });
+  (0, import_react14.useLayoutEffect)(() => {
+    if (!prevOpenRef.current && open && typeof document !== "undefined") {
+      returnFocusRef.current = document.activeElement;
+    }
+  }, [open]);
+  (0, import_react14.useEffect)(() => {
+    var _a;
+    if (prevOpenRef.current && !open) {
+      const target = (_a = triggerRef.current) != null ? _a : returnFocusRef.current;
+      requestAnimationFrame(() => restoreFocus(target));
     }
     prevOpenRef.current = open;
   }, [open]);
-  const ctx = (0, import_react11.useMemo)(
+  const ctx = (0, import_react14.useMemo)(
     () => ({
       open,
       setOpen,
       triggerId,
       contentId,
       triggerRef,
+      anchorRef,
       placement
     }),
-    [open, setOpen, triggerId, contentId, placement]
+    [open, setOpen, triggerId, contentId, anchorRef, placement]
   );
   return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PopoverContext.Provider, { value: ctx, children });
 });
-var PopoverTrigger = (0, import_react11.forwardRef)(function PopoverTrigger2({ children, className, hasPopup = "dialog", type = "button", onClick, ...rest }, ref) {
+var PopoverTrigger = (0, import_react14.forwardRef)(function PopoverTrigger2({ children, className, hasPopup = "dialog", type = "button", onClick, asChild = false, ...rest }, ref) {
   const ctx = usePopoverContext("PopoverTrigger");
   const open = ctx.open;
-  const setRefs = (0, import_react11.useCallback)(
+  const setRefs = (0, import_react14.useCallback)(
     (el) => {
       ctx.triggerRef.current = el;
       if (typeof ref === "function")
@@ -3050,6 +3259,27 @@ var PopoverTrigger = (0, import_react11.forwardRef)(function PopoverTrigger2({ c
     },
     [ctx.triggerRef, ref]
   );
+  if (asChild) {
+    return renderSlot(
+      children,
+      {
+        ...rest,
+        className,
+        id: ctx.triggerId,
+        "aria-expanded": open,
+        "aria-controls": open ? ctx.contentId : void 0,
+        "aria-haspopup": hasPopup,
+        onClick: (e) => {
+          onClick == null ? void 0 : onClick(e);
+          if (e.defaultPrevented)
+            return;
+          ctx.setOpen(!open);
+        }
+      },
+      setRefs,
+      "PopoverTrigger"
+    );
+  }
   return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
     "button",
     {
@@ -3069,29 +3299,58 @@ var PopoverTrigger = (0, import_react11.forwardRef)(function PopoverTrigger2({ c
     }
   );
 });
+var PopoverAnchor = (0, import_react14.forwardRef)(function PopoverAnchor2({ children, asChild = false, ...rest }, ref) {
+  const ctx = usePopoverContext("PopoverAnchor");
+  const setRefs = (0, import_react14.useCallback)(
+    (el) => {
+      ctx.anchorRef.current = el;
+      if (typeof ref === "function")
+        ref(el);
+      else if (ref)
+        ref.current = el;
+    },
+    [ctx.anchorRef, ref]
+  );
+  if (asChild)
+    return renderSlot(children, rest, setRefs, "PopoverAnchor");
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { ...rest, ref: setRefs, children });
+});
 var ARROW_EDGE_PAD = 12;
-var PopoverContent = import_react11.default.memo(function PopoverContent2({
+var PopoverContent = import_react14.default.memo(function PopoverContent2({
   children,
   className,
   role: roleProp,
   onKeyDown,
+  onMouseDownCapture,
   style,
   showPointer = true,
+  zIndex,
   ...rest
 }) {
+  var _a;
   const ctx = usePopoverContext("PopoverContent");
-  const contentRef = (0, import_react11.useRef)(null);
-  const [pos, setPos] = (0, import_react11.useState)({
+  const contentRef = (0, import_react14.useRef)(null);
+  const insideTreeRef = (0, import_react14.useRef)(false);
+  const [layerZ, setLayerZ] = (0, import_react14.useState)("var(--z-popover, 450)");
+  const [pos, setPos] = (0, import_react14.useState)({
     top: 0,
     left: 0
   });
-  const updatePosition = (0, import_react11.useCallback)(() => {
-    var _a;
-    const trigger = ctx.triggerRef.current;
+  const { anchorRef, triggerRef, setOpen } = ctx;
+  const getAnchor = (0, import_react14.useCallback)(
+    () => {
+      var _a2;
+      return (_a2 = anchorRef.current) != null ? _a2 : triggerRef.current;
+    },
+    [anchorRef, triggerRef]
+  );
+  const updatePosition = (0, import_react14.useCallback)(() => {
+    var _a2;
+    const anchor = getAnchor();
     const panel = contentRef.current;
-    if (!trigger || !panel || typeof window === "undefined")
+    if (!anchor || !panel || typeof window === "undefined")
       return;
-    const tr = trigger.getBoundingClientRect();
+    const tr = anchor.getBoundingClientRect();
     const cw = panel.offsetWidth || 140;
     const ch = Math.max(panel.offsetHeight || 80, 80);
     const result = computePopoverPosition(tr, cw, ch, ctx.placement);
@@ -3101,7 +3360,7 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
     }
     const below = result.top >= tr.bottom - 4;
     const triggerCx = tr.left + tr.width / 2;
-    const panelW = (_a = result.width) != null ? _a : cw;
+    const panelW = (_a2 = result.width) != null ? _a2 : cw;
     const arrowX = Math.min(
       Math.max(triggerCx - result.left, ARROW_EDGE_PAD),
       panelW - ARROW_EDGE_PAD
@@ -3111,15 +3370,20 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
       arrowEdge: below ? "top" : "bottom",
       arrowX
     });
-  }, [ctx.placement, ctx.triggerRef, showPointer]);
-  (0, import_react11.useLayoutEffect)(() => {
+  }, [ctx.placement, getAnchor, showPointer]);
+  (0, import_react14.useLayoutEffect)(() => {
+    if (!ctx.open || zIndex !== void 0)
+      return;
+    setLayerZ(resolveLayerZIndex(getAnchor(), void 0));
+  }, [ctx.open, zIndex, getAnchor]);
+  (0, import_react14.useLayoutEffect)(() => {
     if (!ctx.open)
       return;
     updatePosition();
     const id = requestAnimationFrame(() => updatePosition());
     return () => cancelAnimationFrame(id);
   }, [ctx.open, updatePosition]);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react14.useEffect)(() => {
     if (!ctx.open)
       return;
     const onResize = () => updatePosition();
@@ -3130,32 +3394,49 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
       window.removeEventListener("scroll", onResize, true);
     };
   }, [ctx.open, updatePosition]);
-  (0, import_react11.useEffect)(() => {
+  const layerId = ctx.contentId;
+  const parentLayerId = (0, import_react14.useContext)(FloatingLayerContext);
+  (0, import_react14.useEffect)(() => {
+    if (!ctx.open)
+      return void 0;
+    pushFloatingLayer(layerId, parentLayerId);
+    return () => popFloatingLayer(layerId);
+  }, [ctx.open, layerId, parentLayerId]);
+  (0, import_react14.useEffect)(() => {
     if (!ctx.open)
       return;
     const onDocMouse = (e) => {
-      var _a, _b;
-      const t = e.target;
-      if (((_a = ctx.triggerRef.current) == null ? void 0 : _a.contains(t)) || ((_b = contentRef.current) == null ? void 0 : _b.contains(t)))
+      var _a2, _b, _c;
+      const inside = insideTreeRef.current;
+      insideTreeRef.current = false;
+      if (inside)
         return;
-      ctx.setOpen(false);
+      const t = e.target;
+      if (((_a2 = triggerRef.current) == null ? void 0 : _a2.contains(t)) || ((_b = anchorRef.current) == null ? void 0 : _b.contains(t)) || ((_c = contentRef.current) == null ? void 0 : _c.contains(t))) {
+        return;
+      }
+      setOpen(false);
     };
     const onKey = (e) => {
-      if (e.key === "Escape")
-        ctx.setOpen(false);
+      if (e.key !== "Escape" || e.isComposing || e.defaultPrevented)
+        return;
+      if (!isTopFloatingLayer(layerId))
+        return;
+      e.preventDefault();
+      setOpen(false);
     };
     document.addEventListener("mousedown", onDocMouse);
-    document.addEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey, true);
     return () => {
       document.removeEventListener("mousedown", onDocMouse);
-      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("keydown", onKey, true);
     };
-  }, [ctx]);
-  (0, import_react11.useEffect)(() => {
+  }, [ctx.open, setOpen, triggerRef, anchorRef, layerId]);
+  (0, import_react14.useEffect)(() => {
     if (!ctx.open || !contentRef.current)
       return;
     const el = contentRef.current.querySelector(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
     el == null ? void 0 : el.focus();
   }, [ctx.open]);
@@ -3163,6 +3444,7 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
   if (!ctx.open)
     return null;
   const pointerStyle = showPointer && pos.arrowX != null ? { ["--popover-arrow-x"]: `${pos.arrowX}px` } : void 0;
+  const labelledBy = (_a = rest["aria-labelledby"]) != null ? _a : rest["aria-label"] || !triggerRef.current ? void 0 : ctx.triggerId;
   const content = /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
     "div",
     {
@@ -3171,7 +3453,7 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
       id: ctx.contentId,
       role: role === "none" ? void 0 : role,
       "aria-modal": role === "dialog" ? false : void 0,
-      "aria-labelledby": ctx.triggerId,
+      "aria-labelledby": labelledBy,
       className: cls3(
         "ds-popover__content",
         showPointer && "ds-popover__content--with-pointer",
@@ -3186,16 +3468,22 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
         width: pos.width,
         maxHeight: showPointer ? void 0 : pos.maxHeight,
         overflow: showPointer ? "visible" : "auto",
-        zIndex: "var(--z-dropdown, 100)",
+        zIndex: zIndex != null ? zIndex : layerZ,
         ...pointerStyle,
         ...style
       },
+      onMouseDownCapture: (e) => {
+        insideTreeRef.current = true;
+        onMouseDownCapture == null ? void 0 : onMouseDownCapture(e);
+      },
       onKeyDown: (e) => {
         onKeyDown == null ? void 0 : onKeyDown(e);
-        if (e.key === "Escape")
-          ctx.setOpen(false);
+        if (e.key === "Escape" && !e.defaultPrevented) {
+          e.preventDefault();
+          setOpen(false);
+        }
       },
-      children: showPointer ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "ds-popover__content-scroll", style: { maxHeight: pos.maxHeight }, children }) : children
+      children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(FloatingLayerContext.Provider, { value: layerId, children: showPointer ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "ds-popover__content-scroll", style: { maxHeight: pos.maxHeight }, children }) : children })
     }
   );
   if (typeof document === "undefined")
@@ -3203,46 +3491,24 @@ var PopoverContent = import_react11.default.memo(function PopoverContent2({
   return (0, import_react_dom4.createPortal)(content, document.body);
 });
 var DropdownMenu = Popover;
-var DropdownMenuTrigger = (0, import_react11.forwardRef)(
+var DropdownMenuTrigger = (0, import_react14.forwardRef)(
   function DropdownMenuTrigger2(props, ref) {
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PopoverTrigger, { ...props, ref, hasPopup: "menu" });
   }
 );
-var DropdownMenuContent = import_react11.default.memo(function DropdownMenuContent2({
+var DropdownMenuContent = import_react14.default.memo(function DropdownMenuContent2({
   children,
   className,
   showPointer = false,
   onKeyDown,
   ...rest
 }) {
-  const handleMenuKeyDown = (0, import_react11.useCallback)(
+  const handleMenuKeyDown = (0, import_react14.useCallback)(
     (e) => {
-      var _a;
       onKeyDown == null ? void 0 : onKeyDown(e);
       if (e.defaultPrevented)
         return;
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Home" && e.key !== "End")
-        return;
-      const root = e.currentTarget;
-      const items = Array.from(root.querySelectorAll('[role="menuitem"]:not([disabled])'));
-      if (items.length === 0)
-        return;
-      const i = items.indexOf(document.activeElement);
-      let next = i;
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        next = i < 0 ? 0 : (i + 1) % items.length;
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        next = i < 0 ? items.length - 1 : (i - 1 + items.length) % items.length;
-      } else if (e.key === "Home") {
-        e.preventDefault();
-        next = 0;
-      } else if (e.key === "End") {
-        e.preventDefault();
-        next = items.length - 1;
-      }
-      (_a = items[next]) == null ? void 0 : _a.focus();
+      handleMenuKeyNavigation(e);
     },
     [onKeyDown]
   );
@@ -3259,31 +3525,44 @@ var DropdownMenuContent = import_react11.default.memo(function DropdownMenuConte
     }
   );
 });
-var DropdownMenuItem = import_react11.default.memo(function DropdownMenuItem2({
+var MenuRow = (0, import_react14.forwardRef)(function MenuRow2({
   children,
   className,
-  onSelect,
   variant = "default",
   disabled = false,
   ripple = true,
   onClick,
   type = "button",
   onPointerDown,
+  icon,
+  description,
+  shortcut,
+  indent = 0,
+  itemRole,
+  checked,
+  indicator,
+  onActivate,
+  style,
   ...rest
-}) {
-  const ctx = usePopoverContext("DropdownMenuItem");
+}, ref) {
   const rippleEnabled = ripple !== false && !disabled;
   const rippleApi = useRipple(rippleEnabled);
+  const isCheckable = itemRole !== "menuitem";
   return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
     "button",
     {
       ...rest,
+      ref,
       type,
-      role: "menuitem",
+      role: itemRole,
+      "aria-checked": isCheckable ? Boolean(checked) : void 0,
       disabled,
+      "data-state": isCheckable ? checked ? "checked" : "unchecked" : void 0,
+      style: indentStyle(indent, style),
       className: cls3(
         "ds-dropdown-menu__item",
         variant === "danger" && "ds-dropdown-menu__item--danger",
+        description != null && "ds-dropdown-menu__item--with-description",
         rippleEnabled && "ucs-ripple-parent",
         className
       ),
@@ -3295,13 +3574,281 @@ var DropdownMenuItem = import_react11.default.memo(function DropdownMenuItem2({
         onClick == null ? void 0 : onClick(e);
         if (disabled)
           return;
-        onSelect == null ? void 0 : onSelect();
-        ctx.setOpen(false);
+        onActivate();
       },
       children: [
         rippleApi.RippleOverlay,
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-inner", children })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "ds-dropdown-menu__item-inner", children: [
+          isCheckable ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__indicator", "aria-hidden": "true", children: checked ? indicator : null }) : null,
+          icon != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__icon", "aria-hidden": "true", children: icon }) : null,
+          description != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "ds-dropdown-menu__item-text", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-label", children }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-description", children: description })
+          ] }) : children,
+          shortcut != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-shortcut", "aria-hidden": "true", children: shortcut }) : null
+        ] })
       ]
+    }
+  );
+});
+var CheckIndicator = /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("svg", { viewBox: "0 0 16 16", width: "14", height: "14", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+  "path",
+  {
+    d: "M3.5 8.5l3 3 6-7",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }
+) });
+var RadioIndicator = /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("svg", { viewBox: "0 0 16 16", width: "14", height: "14", focusable: "false", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("circle", { cx: "8", cy: "8", r: "3.5", fill: "currentColor" }) });
+var DropdownMenuItem = import_react14.default.memo(
+  (0, import_react14.forwardRef)(function DropdownMenuItem2({ onSelect, closeOnSelect = true, ...rest }, ref) {
+    const ctx = usePopoverContext("DropdownMenuItem");
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      MenuRow,
+      {
+        ...rest,
+        ref,
+        itemRole: "menuitem",
+        onActivate: () => {
+          onSelect == null ? void 0 : onSelect();
+          if (closeOnSelect)
+            ctx.setOpen(false);
+        }
+      }
+    );
+  })
+);
+var DropdownMenuCheckboxItem = import_react14.default.memo(
+  (0, import_react14.forwardRef)(function DropdownMenuCheckboxItem2({
+    checked: checkedProp,
+    defaultChecked = false,
+    onCheckedChange,
+    onSelect,
+    closeOnSelect = false,
+    ...rest
+  }, ref) {
+    const ctx = usePopoverContext("DropdownMenuCheckboxItem");
+    const isControlled = checkedProp !== void 0;
+    const [inner, setInner] = (0, import_react14.useState)(defaultChecked);
+    const checked = isControlled ? Boolean(checkedProp) : inner;
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      MenuRow,
+      {
+        ...rest,
+        ref,
+        itemRole: "menuitemcheckbox",
+        checked,
+        indicator: CheckIndicator,
+        onActivate: () => {
+          const next = !checked;
+          if (!isControlled)
+            setInner(next);
+          onCheckedChange == null ? void 0 : onCheckedChange(next);
+          onSelect == null ? void 0 : onSelect();
+          if (closeOnSelect)
+            ctx.setOpen(false);
+        }
+      }
+    );
+  })
+);
+var DropdownRadioGroupContext = (0, import_react14.createContext)(null);
+var DropdownMenuGroup = (0, import_react14.forwardRef)(function DropdownMenuGroup2({ children, label, className, ...rest }, ref) {
+  const labelId = `ds-menu-group-${(0, import_react14.useId)().replace(/:/g, "")}`;
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+    "div",
+    {
+      ...rest,
+      ref,
+      role: "group",
+      "aria-labelledby": label != null ? labelId : rest["aria-labelledby"],
+      className: cls3("ds-dropdown-menu__group", className),
+      children: [
+        label != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DropdownMenuLabel, { id: labelId, children: label }) : null,
+        children
+      ]
+    }
+  );
+});
+var DropdownMenuRadioGroup = (0, import_react14.forwardRef)(
+  function DropdownMenuRadioGroup2({ children, value: valueProp, defaultValue, onValueChange, label, ...rest }, ref) {
+    const isControlled = valueProp !== void 0;
+    const [inner, setInner] = (0, import_react14.useState)(defaultValue);
+    const value = isControlled ? valueProp : inner;
+    const setValue = (0, import_react14.useCallback)(
+      (v) => {
+        if (!isControlled)
+          setInner(v);
+        onValueChange == null ? void 0 : onValueChange(v);
+      },
+      [isControlled, onValueChange]
+    );
+    const ctxValue = (0, import_react14.useMemo)(() => ({ value, setValue }), [value, setValue]);
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DropdownRadioGroupContext.Provider, { value: ctxValue, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(DropdownMenuGroup, { ...rest, ref, label, children }) });
+  }
+);
+var DropdownMenuRadioItem = import_react14.default.memo(
+  (0, import_react14.forwardRef)(function DropdownMenuRadioItem2({ value, onSelect, closeOnSelect = false, ...rest }, ref) {
+    const ctx = usePopoverContext("DropdownMenuRadioItem");
+    const group = (0, import_react14.useContext)(DropdownRadioGroupContext);
+    if (!group)
+      throw new Error("DropdownMenuRadioItem must be used within <DropdownMenuRadioGroup>");
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      MenuRow,
+      {
+        ...rest,
+        ref,
+        itemRole: "menuitemradio",
+        checked: group.value === value,
+        indicator: RadioIndicator,
+        onActivate: () => {
+          group.setValue(value);
+          onSelect == null ? void 0 : onSelect();
+          if (closeOnSelect)
+            ctx.setOpen(false);
+        }
+      }
+    );
+  })
+);
+var DropdownMenuLabel = (0, import_react14.forwardRef)(function DropdownMenuLabel2({ children, className, indent = 0, style, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    "div",
+    {
+      ...rest,
+      ref,
+      className: cls3("ds-dropdown-menu__label", className),
+      style: indentStyle(indent, style),
+      children
+    }
+  );
+});
+var DropdownMenuSeparator = (0, import_react14.forwardRef)(
+  function DropdownMenuSeparator2({ className, ...rest }, ref) {
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      "div",
+      {
+        ...rest,
+        ref,
+        role: "separator",
+        "aria-orientation": "horizontal",
+        className: cls3("ds-dropdown-menu__separator", className)
+      }
+    );
+  }
+);
+var Listbox = (0, import_react14.forwardRef)(function Listbox2({ children, className, multiple = false, onKeyDown, onFocus, ...rest }, ref) {
+  const rootRef = (0, import_react14.useRef)(null);
+  (0, import_react14.useLayoutEffect)(() => {
+    var _a;
+    const root = rootRef.current;
+    if (!root)
+      return;
+    const options = Array.from(root.querySelectorAll(LISTBOX_OPTION_SELECTOR));
+    if (options.length === 0)
+      return;
+    const current = options.find((o) => o.getAttribute("tabindex") === "0");
+    const target = (_a = current != null ? current : options.find((o) => o.getAttribute("aria-selected") === "true")) != null ? _a : options[0];
+    for (const o of options)
+      o.setAttribute("tabindex", o === target ? "0" : "-1");
+  });
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    "div",
+    {
+      ...rest,
+      ref: (el) => {
+        rootRef.current = el;
+        if (typeof ref === "function")
+          ref(el);
+        else if (ref)
+          ref.current = el;
+      },
+      role: "listbox",
+      "aria-multiselectable": multiple || void 0,
+      className: cls3("ds-listbox", className),
+      onFocus: (e) => {
+        onFocus == null ? void 0 : onFocus(e);
+        const root = rootRef.current;
+        const t = e.target;
+        if (!root || t.getAttribute("role") !== "option")
+          return;
+        for (const o of Array.from(root.querySelectorAll('[role="option"]'))) {
+          o.setAttribute("tabindex", o === t ? "0" : "-1");
+        }
+      },
+      onKeyDown: (e) => {
+        onKeyDown == null ? void 0 : onKeyDown(e);
+        if (e.defaultPrevented)
+          return;
+        handleMenuKeyNavigation(e, LISTBOX_OPTION_SELECTOR);
+      },
+      children
+    }
+  );
+});
+var ListboxOption = (0, import_react14.forwardRef)(function ListboxOption2({
+  children,
+  className,
+  selected = false,
+  disabled = false,
+  description,
+  icon,
+  trailing,
+  indent = 0,
+  onSelect,
+  role = "option",
+  onClick,
+  onKeyDown,
+  style,
+  ...rest
+}, ref) {
+  const activate = () => {
+    if (!disabled)
+      onSelect == null ? void 0 : onSelect();
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    "div",
+    {
+      tabIndex: -1,
+      ...rest,
+      ref,
+      role,
+      "aria-selected": role === "menuitem" ? void 0 : selected,
+      "aria-disabled": disabled || void 0,
+      "data-selected": selected ? "true" : void 0,
+      style: indentStyle(indent, style),
+      className: cls3(
+        "ds-dropdown-menu__item",
+        "ds-listbox__option",
+        selected && "ds-listbox__option--selected",
+        description != null && "ds-dropdown-menu__item--with-description",
+        className
+      ),
+      onClick: (e) => {
+        onClick == null ? void 0 : onClick(e);
+        if (!e.defaultPrevented)
+          activate();
+      },
+      onKeyDown: (e) => {
+        onKeyDown == null ? void 0 : onKeyDown(e);
+        if (e.defaultPrevented)
+          return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activate();
+        }
+      },
+      children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "ds-dropdown-menu__item-inner", children: [
+        icon != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__icon", "aria-hidden": "true", children: icon }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "ds-dropdown-menu__item-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-label", children }),
+          description != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-description", children: description }) : null
+        ] }),
+        trailing != null ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "ds-dropdown-menu__item-shortcut", children: trailing }) : null
+      ] })
     }
   );
 });
@@ -3349,28 +3896,28 @@ var AppTopbar = ({
   classNames
 }) => {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p;
-  const rootId = (0, import_react12.useId)();
+  const rootId = (0, import_react15.useId)();
   const baseId = rootId.replace(/[^a-zA-Z0-9_-]/g, "");
   const searchInputId = (_a = search == null ? void 0 : search.inputId) != null ? _a : `app-topbar-search-${baseId}`;
-  const menuDomId = (0, import_react12.useMemo)(() => `app-topbar-menu-root-${baseId}`, [baseId]);
+  const menuDomId = (0, import_react15.useMemo)(() => `app-topbar-menu-root-${baseId}`, [baseId]);
   const isNarrow = useBelowWidth(collapseCenterBelowWidth, responsive);
   const hasMenuItems = Boolean(mobileMenuItems && mobileMenuItems.length > 0);
   const showHamburger = isNarrow && (hasMenuItems || Boolean(onMobileMenuClick));
   const hasCenterContent = centerSlot != null || search != null;
   const hideCenterColumn = isNarrow && search != null && centerSlot == null;
   const showCenterCell = hasCenterContent && !hideCenterColumn;
-  const [mobileSearchOpen, setMobileSearchOpen] = (0, import_react12.useState)(false);
-  const [menuOpen, setMenuOpen] = (0, import_react12.useState)(false);
-  const menuTriggerWrapRef = (0, import_react12.useRef)(null);
+  const [mobileSearchOpen, setMobileSearchOpen] = (0, import_react15.useState)(false);
+  const [menuOpen, setMenuOpen] = (0, import_react15.useState)(false);
+  const menuTriggerWrapRef = (0, import_react15.useRef)(null);
   const hasProfileMenu = Boolean((profile == null ? void 0 : profile.menuItems) && profile.menuItems.length > 0);
-  const [profileMenuOpen, setProfileMenuOpen] = (0, import_react12.useState)(false);
-  (0, import_react12.useEffect)(() => {
+  const [profileMenuOpen, setProfileMenuOpen] = (0, import_react15.useState)(false);
+  (0, import_react15.useEffect)(() => {
     if (!isNarrow) {
       setMobileSearchOpen(false);
       setMenuOpen(false);
     }
   }, [isNarrow]);
-  (0, import_react12.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (!mobileSearchOpen)
       return;
     const onKey = (e) => {
@@ -3380,7 +3927,7 @@ var AppTopbar = ({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileSearchOpen]);
-  (0, import_react12.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (!mobileSearchOpen || !hideCenterColumn)
       return;
     const id = requestAnimationFrame(() => {
@@ -3389,7 +3936,7 @@ var AppTopbar = ({
     });
     return () => cancelAnimationFrame(id);
   }, [mobileSearchOpen, hideCenterColumn, searchInputId]);
-  (0, import_react12.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (!search)
       return;
     const onKey = (e) => {
@@ -3639,10 +4186,10 @@ function isAppTopbarElement(node) {
   return t === AppTopbar_default || (t == null ? void 0 : t.displayName) === "AppTopbar" || (t == null ? void 0 : t.name) === "AppTopbar";
 }
 function prepareTopbar(topbar, pinTopbar) {
-  if (!pinTopbar || !import_react13.default.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
+  if (!pinTopbar || !import_react16.default.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
     return topbar;
   }
-  return import_react13.default.cloneElement(topbar, { sticky: false });
+  return import_react16.default.cloneElement(topbar, { sticky: false });
 }
 var DEFAULT_ROOT_CLASSNAME = "flex flex-nowrap h-[100dvh] max-h-[100dvh] min-h-0 w-full min-w-0 max-w-[100vw] items-stretch overflow-hidden bg-[var(--color-bg-page)] text-[var(--color-text-primary)]";
 var DEFAULT_INSET_CLASSNAME = "isolate flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden";

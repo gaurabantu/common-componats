@@ -18,4 +18,10 @@ export interface TooltipIconProps
   iconToolTip?: IconSource;
   maxWidth?: number | string;
   variant?: "dark" | "light";
+  /**
+   * Stacking order of the bubble (number or CSS value). @default "var(--z-tooltip-top, 600)" —
+   * above Modal / Drawer / Popover. The bubble renders inside the trigger, so it can never escape
+   * a stacking context the trigger is in; use the portalled `Tooltip` molecule for that.
+   */
+  zIndex?: number | string;
 }

@@ -15,6 +15,7 @@ import {
   startOfMonth,
 } from "./DatePicker.utils";
 import Calendar from "../../molecules/Calendar";
+import { getAncestorZIndex } from "../../molecules/Popover/layering";
 
 function splitRangeValue(value: string): [string, string] {
   const parts = value.split(/\s+(?:-|to)\s+/i);
@@ -149,7 +150,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
       maxWidth: `calc(100vw - ${viewportPadding * 2}px)`,
       maxHeight: `calc(100vh - ${viewportPadding * 2}px)`,
       overflow: "auto",
-      zIndex: 1400,
+      // Portaled to <body>: lift above the dialog/drawer the field sits in (host modals
+      // commonly use z 9999+), otherwise the calendar opens hidden behind it.
+      zIndex: Math.max(1400, getAncestorZIndex(anchorEl) + 1),
     });
   }, [range]);
 

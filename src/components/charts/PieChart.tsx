@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import type { ChartLayoutProps } from "./Chart.types";
+import type { ChartLayoutProps, ChartTooltipItem } from "./Chart.types";
 import { CHART_THEME_COLORS } from "./Chart.types";
 import { ChartTooltip } from "./ChartTooltip";
 import { resolveChartAnimation, useChartAnimationProgress } from "./useChartAnimation";
@@ -21,7 +21,22 @@ const DEFAULT_COLORS = [
 export interface PieChartDataPoint {
   name: string;
   value: number;
+  /** Per-slice colour; overrides `colors[i]`. */
+  color?: string;
 }
+
+/** Slice info passed to `PieChartProps.labelFormatter`. */
+export interface PieLabelInfo {
+  name: string;
+  value: number;
+  /** Share of the total, 0–100. */
+  percent: number;
+  index: number;
+}
+
+/** Ready-made slice label: `"Name (42%)"`. */
+export const pieLabelNamePercent = ({ name, percent }: PieLabelInfo): string =>
+  `${name} (${Math.round(percent)}%)`;
 
 export interface PieChartProps extends Omit<ChartLayoutProps, "showGrid"> {
   data: PieChartDataPoint[];
@@ -31,6 +46,25 @@ export interface PieChartProps extends Omit<ChartLayoutProps, "showGrid"> {
   showLabels?: boolean;
   showLabelLine?: boolean;
   paddingAngle?: number;
+  /**
+   * Where the sweep starts, in degrees. **Library convention: 0° = 12 o'clock, increasing
+   * clockwise** (recharts uses 0° = 3 o'clock counter-clockwise). Semi-donut gauge:
+   * `startAngle={-90} endAngle={90}`. @default 0
+   */
+  startAngle?: number;
+  /** Where the sweep ends (same convention). `endAngle < startAngle` sweeps counter-clockwise. @default 360 */
+  endAngle?: number;
+  /** Content centred over the chart (e.g. a total inside a donut). Not interactive. */
+  centerLabel?: React.ReactNode;
+  /**
+   * Text for each slice label when `showLabels` is on. Default `"42%"`.
+   * Use `pieLabelNamePercent` for `"Name (42%)"`.
+   */
+  labelFormatter?: (slice: PieLabelInfo) => string;
+  /** `"inside"` (default) centres labels in the ring; `"outside"` draws them beyond the rim (with `showLabelLine`). */
+  labelPosition?: "inside" | "outside";
+  /** Formats slice values in the tooltip and legend (`(value, name) => string`). */
+  valueFormatter?: (value: number, name?: string) => string;
 }
 
 const PieChartComponent: React.FC<PieChartProps> = ({
@@ -41,6 +75,12 @@ const PieChartComponent: React.FC<PieChartProps> = ({
   showLabels = false,
   showLabelLine = true,
   paddingAngle = 0,
+  startAngle = 0,
+  endAngle = 360,
+  centerLabel,
+  labelFormatter,
+  labelPosition = "inside",
+  valueFormatter,
   width = "100%",
   height = 300,
   margin = { top: 10, right: 10, left: 10, bottom: 10 },
@@ -75,7 +115,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
     cw: number;
     ch: number;
     label: string;
-    items: { name: string; value: number; color: string }[];
+    items: ChartTooltipItem[];
   } | null>(null);
 
   const w = typeof width === "number" ? width : 400;
@@ -107,23 +147,34 @@ const PieChartComponent: React.FC<PieChartProps> = ({
 
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
   const n = data.length;
+  const sweep = Math.min(360, Math.abs(endAngle - startAngle)) || 360;
+  const dir = endAngle < startAngle ? -1 : 1;
   const totalPaddingDeg = paddingAngle * Math.max(0, n - 1);
-  const totalSliceDeg = 360 - totalPaddingDeg;
-  const startAngleOffset = 0; // 0° = 12 o'clock in polarToCartesian
+  const totalSliceDeg = Math.max(0, sweep - totalPaddingDeg);
+  const colorAt = (i: number) => data[i]?.color ?? colors[i % colors.length];
 
-  let currentDeg = startAngleOffset;
+  let currentDeg = startAngle; // 0° = 12 o'clock in polarToCartesian
   const slices = data.map((d, i) => {
     const pct = d.value / total;
     const spanDeg = Math.max(0.5, pct * totalSliceDeg);
-    const startDeg = currentDeg;
-    currentDeg += spanDeg + (i < n - 1 ? paddingAngle : 0);
+    const a = currentDeg;
+    const b = currentDeg + dir * spanDeg;
+    currentDeg = b + dir * (i < n - 1 ? paddingAngle : 0);
     return {
       ...d,
-      startDeg,
-      endDeg: startDeg + spanDeg,
-      color: colors[i % colors.length],
+      startDeg: Math.min(a, b),
+      endDeg: Math.max(a, b),
+      color: colorAt(i),
     };
   });
+  const labelText = (i: number) => {
+    const d = data[i];
+    const percent = (d.value / total) * 100;
+    return labelFormatter
+      ? labelFormatter({ name: d.name, value: d.value, percent, index: i })
+      : `${percent.toFixed(0)}%`;
+  };
+  const fmtValue = (v: number, name: string) => (valueFormatter ? valueFormatter(v, name) : String(v));
 
   const handleSlicePointer = useCallback(
     (e: React.MouseEvent, i: number) => {
@@ -142,12 +193,13 @@ const PieChartComponent: React.FC<PieChartProps> = ({
           {
             name: "Value",
             value: slice.value,
-            color: colors[i % colors.length],
+            color: data[i]?.color ?? colors[i % colors.length],
+            displayValue: valueFormatter ? valueFormatter(slice.value, slice.name) : undefined,
           },
         ],
       });
     },
-    [showTooltip, data, colors, total]
+    [showTooltip, data, colors, total, valueFormatter]
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -171,12 +223,13 @@ const PieChartComponent: React.FC<PieChartProps> = ({
         ...style,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", flex: 1, minHeight: 260 }}>
+      <div style={{ display: "flex", alignItems: "center", flex: 1, minHeight: 260, position: "relative" }}>
         <svg
           width="100%"
           height="100%"
           viewBox={`0 0 ${chartW} ${chartH}`}
           preserveAspectRatio="xMidYMid meet"
+          style={{ overflow: "visible" }}
           onMouseLeave={handleMouseLeave}
         >
           <g transform={`translate(${cx} ${cy}) scale(${scaleFactor}) translate(${-cx} ${-cy})`}>
@@ -194,12 +247,13 @@ const PieChartComponent: React.FC<PieChartProps> = ({
               >
                 {!showTooltip && (
                   <title>
-                    {slice.name}: {slice.value} ({((slice.value / total) * 100).toFixed(1)}%)
+                    {slice.name}: {fmtValue(slice.value, slice.name)} ({((slice.value / total) * 100).toFixed(1)}%)
                   </title>
                 )}
               </path>
             ))}
             {showLabels &&
+              labelPosition === "inside" &&
               slices.map((slice, i) => {
                 const midDeg = (slice.startDeg + slice.endDeg) / 2;
                 const labelR = ir + (or - ir) * 0.5;
@@ -216,12 +270,56 @@ const PieChartComponent: React.FC<PieChartProps> = ({
                     opacity={animProgress}
                     style={{ pointerEvents: "none" }}
                   >
-                    {((slice.value / total) * 100).toFixed(0)}%
+                    {labelText(i)}
                   </text>
+                );
+              })}
+            {showLabels &&
+              labelPosition === "outside" &&
+              slices.map((slice, i) => {
+                const midDeg = (slice.startDeg + slice.endDeg) / 2;
+                const p0 = polarToCartesian(cx, cy, or, midDeg);
+                const p1 = polarToCartesian(cx, cy, or + 10, midDeg);
+                const pt = polarToCartesian(cx, cy, or + 14, midDeg);
+                const norm = ((midDeg % 360) + 360) % 360;
+                const anchor = norm > 5 && norm < 175 ? "start" : norm > 185 && norm < 355 ? "end" : "middle";
+                return (
+                  <g key={i} opacity={animProgress} style={{ pointerEvents: "none" }}>
+                    {showLabelLine && (
+                      <line x1={p0.x} y1={p0.y} x2={p1.x} y2={p1.y} stroke={slice.color} strokeWidth={1} />
+                    )}
+                    <text
+                      x={pt.x}
+                      y={pt.y}
+                      textAnchor={anchor}
+                      dominantBaseline="middle"
+                      fontSize={11}
+                      fill={themeColors.axisText}
+                    >
+                      {labelText(i)}
+                    </text>
+                  </g>
                 );
               })}
           </g>
         </svg>
+        {centerLabel != null && centerLabel !== false && (
+          <div
+            className="ds-chart-pie-center"
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              pointerEvents: "none",
+              color: themeColors.tooltipText,
+            }}
+          >
+            {centerLabel}
+          </div>
+        )}
       </div>
       {showTooltip && tooltip && (
         <ChartTooltip
@@ -260,11 +358,11 @@ const PieChartComponent: React.FC<PieChartProps> = ({
                   width: 12,
                   height: 12,
                   borderRadius: 2,
-                  background: colors[i % colors.length],
+                  background: colorAt(i),
                 }}
               />
               <span style={{ color: themeColors.legendText }}>
-                {d.name}: {d.value}
+                {d.name}: {fmtValue(d.value, d.name)}
               </span>
             </div>
           ))}

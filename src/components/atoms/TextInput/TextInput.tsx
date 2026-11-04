@@ -46,7 +46,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   placeholder,
   validation = "none",
   required = false,
-  value = "",
+  value,
+  defaultValue,
   onChange,
   onErrorChange,
   onVerifiedChange,
@@ -86,14 +87,19 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   spellCheck: spellCheckProp,
   autoCorrect: autoCorrectProp,
   autoCapitalize: autoCapitalizeProp,
+  inputClassName,
+  inputStyle,
+  style: styleProp,
   ...rest
 }, ref) => {
+  const isControlled = value !== undefined;
+  const initialValue = (isControlled ? value : defaultValue) ?? "";
   const [error, setError] = useState<string | null>(null);
   const [verified, setVerified] = useState(isVerified);
   const [showValue, setShowValue] = useState(false);
-  const [displayValue, setDisplayValue] = useState(value || "");
+  const [displayValue, setDisplayValue] = useState(initialValue);
   const [isFocused, setIsFocused] = useState(false);
-  const actualValueRef = useRef(value || "");
+  const actualValueRef = useRef(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => inputRef.current as HTMLInputElement, []);
 
@@ -118,9 +124,13 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   const reactId = useId();
   const inputId: string = idProp?.trim() ? idProp : `text-input-${reactId}`;
 
+  // Controlled: mirror `value`. Uncontrolled: apply `defaultValue` once on mount (formatting/masking).
+  // (`value` stays undefined while uncontrolled, so this only re-runs for controlled updates.)
   useEffect(() => {
-    actualValueRef.current = value || "";
-    updateDisplayValue(value || "");
+    const next = (isControlled ? value : actualValueRef.current) || "";
+    actualValueRef.current = next;
+    updateDisplayValue(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   useEffect(() => {
@@ -812,11 +822,12 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
           className={[
             "disabled:cursor-not-allowed",
             getInputType() === "search" ? "ucs-text-input--search" : "",
+            inputClassName,
           ]
             .filter(Boolean)
             .join(" ")}
-          style={inputElementStyle}
           {...rest}
+          style={styleProp || inputStyle ? { ...inputElementStyle, ...styleProp, ...inputStyle } : inputElementStyle}
           spellCheck={spellCheckProp ?? (autoCorrection ? true : false)}
           autoCorrect={(autoCorrectProp ?? (autoCorrection ? "on" : "off")) as React.HTMLAttributes<HTMLInputElement>["autoCorrect"]}
           autoCapitalize={

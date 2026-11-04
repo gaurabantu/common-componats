@@ -20,6 +20,7 @@ export const modalSizeMap: Record<string, string> = {
   lg: "modal-lg",
   xl: "modal-xl",
   xxl: "modal-xxl",
+  fullscreen: "modal-fullscreen",
 };
 
 /** §27 canonical widths; xl/xxl = legacy wide modals */
@@ -29,4 +30,5 @@ export const modalSizeWidths: Record<string, string> = {
   lg: "560px",
   xl: "800px",
   xxl: "min(1140px, 90vw)",
+  fullscreen: "100%",
 };

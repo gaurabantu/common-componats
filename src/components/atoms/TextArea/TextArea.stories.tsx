@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import TextArea from "./index";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import Button from "../Button";
 
 const meta: Meta<typeof TextArea> = {
   title: "Design System/Atoms/TextArea",
@@ -124,5 +125,28 @@ export const FullWidth: Story = {
     label: "Full width (max 640px)",
     placeholder: "Fills container...",
     rows: 4,
+  },
+};
+
+/** `ref` reaches the native `<textarea>` (focus, selection, scroll). No `maxLength` → no limit; the counter shows only the length. */
+export const RefAndNoLimit: Story = {
+  render: (args) => {
+    const ref = useRef<HTMLTextAreaElement>(null);
+    const [value, setValue] = useState("");
+    return (
+      <div style={{ display: "grid", gap: "var(--space-1)" }}>
+        <TextArea {...args} ref={ref} value={value} onChange={(v) => setValue(v)} />
+        <div>
+          <Button size="sm" variant="outlineSecondary" onClick={() => ref.current?.focus()}>
+            Focus textarea
+          </Button>
+        </div>
+      </div>
+    );
+  },
+  args: {
+    label: "Long description (no limit)",
+    rows: 4,
+    showCount: true,
   },
 };

@@ -1,0 +1,59 @@
+/* ToggleButton — pressed/unpressed two-state button. Sizes come from the shared
+   .btn-base / .btn-size-* / .btn-icon-only-* classes in tokens.css. */
+
+button.ucs-toggle.ucs-toggle--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text-primary);
+}
+
+button.ucs-toggle.ucs-toggle--outline {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+}
+
+button.ucs-toggle:hover:not(:disabled) {
+  background-color: var(--color-theme-surface-hover);
+}
+
+/* Pressed: tinted fill + selected border (state also exposed via aria-pressed). */
+button.ucs-toggle.ucs-toggle[aria-pressed="true"] {
+  background-color: var(--color-accent-lavender-10);
+  border-color: var(--color-border-selected);
+  color: var(--color-text-primary);
+}
+
+button.ucs-toggle.ucs-toggle[aria-pressed="true"]:hover:not(:disabled) {
+  background-color: var(--color-accent-lavender-10);
+  border-color: var(--color-border-strong);
+}
+
+button.ucs-toggle:disabled {
+  cursor: not-allowed;
+  color: var(--color-text-disabled);
+  opacity: 0.7;
+}
+
+button.ucs-toggle:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+.ucs-toggle__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.ucs-toggle__icon + .ucs-toggle__label {
+  margin-left: var(--space-0, 4px);
+}
+
+@media (forced-colors: active) {
+  button.ucs-toggle[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}

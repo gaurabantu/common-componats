@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tooltip } from "./index";
 import Button from "../../atoms/Button";
+import Modal from "../Modal";
 import { TOOLTIP_ALIGNS, TOOLTIP_DEFAULTS, TOOLTIP_SIDES, TOOLTIP_VARIANTS } from "./Tooltip.config";
 
 const TrashIcon = (
@@ -178,4 +179,31 @@ export const Disabled: Story = {
       <Button variant="outlineSecondary">Tooltip disabled</Button>
     </Tooltip>
   ),
+};
+
+/**
+ * Layering: default `--z-tooltip-top` (600) sits above Modal / Drawer / Popover, and is lifted above
+ * any host overlay stacked higher (here a Modal at `zIndex={10000}`). `zIndex` overrides both.
+ */
+export const InsideHighModal: Story = {
+  render: function InsideHighModalDemo(args) {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button size="sm" onClick={() => setOpen(true)}>
+          Open dialog (z 10000)
+        </Button>
+        <Modal isOpen={open} onClose={() => setOpen(false)} title="Tooltip layering" zIndex={10000} hideFooter>
+          <div style={{ display: "flex", gap: "var(--space-2)" }}>
+            <Tooltip {...args} content="Auto-lifted above the dialog">
+              <Button variant="outlineSecondary">Auto layer</Button>
+            </Tooltip>
+            <Tooltip {...args} content="Explicit zIndex={20000}" zIndex={20000}>
+              <Button variant="outlineSecondary">Explicit zIndex</Button>
+            </Tooltip>
+          </div>
+        </Modal>
+      </>
+    );
+  },
 };

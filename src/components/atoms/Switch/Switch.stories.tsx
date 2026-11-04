@@ -104,3 +104,19 @@ export const Disabled: Story = {
     defaultChecked: false,
   },
 };
+
+/** `hideLabel` keeps the label as the accessible name; `data-testid` and `aria-*` reach the `<button role="switch">`. */
+export const HiddenLabelAndPassthrough: Story = {
+  render: () => (
+    <div style={{ display: "grid", gap: "var(--space-1)" }}>
+      <Switch label="Enable auto-sync" hideLabel defaultChecked data-testid="auto-sync-switch" />
+      <Switch
+        label={
+          <span>
+            Email <strong>digest</strong>
+          </span>
+        }
+      />
+    </div>
+  ),
+};

@@ -24,7 +24,35 @@
   overflow-y: visible !important;
 }
 
+/* bodyScroll={false}: fixed, non-scrolling body — children own their scroll (multi-pane dialogs) */
+.modal .modal-body.modal-body--fixed {
+  overflow: hidden !important;
+}
+
+/* size="fullscreen": edge to edge, no radius, at every breakpoint */
+.modal.modal--fullscreen .modal-dialog {
+  max-width: 100% !important;
+}
+
+/* animate={false}: never animate or transform the dialog (dnd-kit DragOverlay / fixed children) */
+.modal-dialog.modal-dialog--static,
+.modal-dialog.modal-dialog--static.modal-dialog--entering,
+.modal-dialog.modal-dialog--static.modal-dialog--exiting {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  opacity: 1;
+}
+
 @media (max-width: 480px) {
+  .modal.modal--fullscreen {
+    padding: 0 !important;
+  }
+
+  .modal.modal--fullscreen:not(.modal--scroll-outside) .modal-dialog {
+    max-height: 100dvh !important;
+  }
+
   .modal {
     padding: 0.75rem !important;
   }

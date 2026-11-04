@@ -281,3 +281,85 @@ describe("Drawer — dismissal", () => {
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 });
+
+describe("Drawer — 0.0.4 additions", () => {
+  it("renders headerActions in the header before the close button", () => {
+    render(
+      <Drawer open onOpenChange={() => {}} title="Detail" headerActions={<button type="button">Export</button>} />,
+    );
+    const header = document.querySelector(".ds-drawer__header") as HTMLElement;
+    const names = Array.from(header.querySelectorAll("button")).map(
+      (b) => b.getAttribute("aria-label") ?? b.textContent,
+    );
+    expect(names).toEqual(["Export", "Close"]);
+    expect(header.querySelector(".ds-drawer__header-actions")).not.toBeNull();
+  });
+
+  it("description holds block content", () => {
+    render(
+      <Drawer open onOpenChange={() => {}} title="T" id="d" description={<ul><li>One</li></ul>} />,
+    );
+    const desc = document.getElementById("d-description")!;
+    expect(desc.tagName).toBe("DIV");
+    expect(screen.getByRole("dialog")).toHaveAccessibleDescription("One");
+  });
+
+  it("bodyScroll={false} marks the body non-scrolling and never makes it a tab stop", () => {
+    render(
+      <Drawer open onOpenChange={() => {}} title="T" bodyScroll={false} bodyClassName="grid-host">
+        Body
+      </Drawer>,
+    );
+    const body = document.querySelector(".ds-drawer__body") as HTMLElement;
+    expect(body).toHaveAttribute("data-body-scroll", "false");
+    expect(body).toHaveClass("grid-host");
+    expect(body).not.toHaveAttribute("tabindex");
+  });
+
+  describe("onBeforeClose", () => {
+    it("false aborts Escape, backdrop and close-button closes", () => {
+      const onOpenChange = vi.fn();
+      const guard = vi.fn(() => false);
+      const { baseElement } = render(
+        <Drawer open onOpenChange={onOpenChange} title="T" onBeforeClose={guard} />,
+      );
+      fireEvent.keyDown(document, { key: "Escape" });
+      fireEvent.click(baseElement.querySelector(".ds-drawer__backdrop")!);
+      fireEvent.click(screen.getByRole("button", { name: "Close" }));
+      expect(guard).toHaveBeenCalledTimes(3);
+      expect(onOpenChange).not.toHaveBeenCalled();
+    });
+
+    it("true closes synchronously", () => {
+      const onOpenChange = vi.fn();
+      render(<Drawer open onOpenChange={onOpenChange} title="T" onBeforeClose={() => true} />);
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it("awaits a promise and ignores repeat requests while pending", async () => {
+      const onOpenChange = vi.fn();
+      let resolve!: (v: boolean) => void;
+      const guard = vi.fn(() => new Promise<boolean>((r) => (resolve = r)));
+      render(<Drawer open onOpenChange={onOpenChange} title="T" onBeforeClose={guard} />);
+      fireEvent.click(screen.getByRole("button", { name: "Close" }));
+      fireEvent.click(screen.getByRole("button", { name: "Close" }));
+      expect(guard).toHaveBeenCalledTimes(1);
+      resolve(true);
+      await vi.waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+    });
+
+    it("a rejected promise keeps the drawer open", async () => {
+      const onOpenChange = vi.fn();
+      const guard = vi.fn(() => Promise.reject(new Error("nope")));
+      render(<Drawer open onOpenChange={onOpenChange} title="T" onBeforeClose={guard} />);
+      fireEvent.keyDown(document, { key: "Escape" });
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(onOpenChange).not.toHaveBeenCalled();
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(guard).toHaveBeenCalledTimes(2);
+    });
+  });
+});

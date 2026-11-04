@@ -11,3 +11,16 @@
 .ucs-switch__control:disabled:focus-visible {
   outline: none;
 }
+
+/* hideLabel — label stays the accessible name but is visually hidden. */
+.ucs-switch__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

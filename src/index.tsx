@@ -6,6 +6,10 @@ export { default as TextView } from "./components/atoms/TextView";
 export { default as Input } from "./components/atoms/TextInput";
 export { default as CheckBox } from "./components/atoms/Checkbox";
 export { default as Switch } from "./components/atoms/Switch";
+export { default as ToggleButton } from "./components/atoms/ToggleButton";
+export { default as ToggleGroup } from "./components/molecules/ToggleGroup";
+export { default as Slider } from "./components/atoms/Slider";
+export { default as ColorPicker, DEFAULT_COLOR_PICKER_PALETTE, normalizeHex } from "./components/molecules/ColorPicker";
 export { default as Badge, Chip, Tag } from "./components/atoms/Badge";
 export { default as RadioGroup } from "./components/atoms/RadioGroup";
 export { default as Form } from "./components/molecules/Form";
@@ -38,6 +42,7 @@ export {
   validateFileSecurity,
   validateFilesSecurity,
   parseAcceptString,
+  useFilePicker,
 } from "./components/molecules/FileUpload";
 export {
   Popover,
@@ -47,7 +52,29 @@ export {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  PopoverAnchor,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  Listbox,
+  ListboxOption,
 } from "./components/molecules/Popover";
+export {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuCheckboxItem,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuGroup,
+  computeContextMenuPosition,
+} from "./components/molecules/ContextMenu";
 export { default as Icon } from "./components/atoms/Icon";
 export { default as TextArea } from "./components/atoms/TextArea";
 export { default as ProgressBar } from "./components/atoms/ProgressBar";
@@ -108,6 +135,7 @@ export { default as Alert } from "./components/molecules/Alert";
 export { default as Toast, ToastProvider, useToast } from "./components/molecules/Toast";
 export { default as Drawer, Sheet } from "./components/molecules/Drawer";
 export { default as Spinner } from "./components/atoms/Spinner";
+export { default as LoadingOverlay } from "./components/molecules/LoadingOverlay";
 export { default as Skeleton, SkeletonGroup } from "./components/atoms/Skeleton";
 export { default as Pagination, getPaginationRange, getPageCount, getItemRange } from "./components/molecules/Pagination";
 export { Tooltip } from "./components/molecules/Tooltip";
@@ -128,6 +156,8 @@ export {
   BarChart,
   PieChart,
   AreaChart,
+  ComposedChart,
+  pieLabelNamePercent,
   ChartTooltip,
 } from "./components/charts";
 
@@ -136,7 +166,8 @@ export type { ButtonProps } from "./components/atoms/Button/Button.types";
 export type { ButtonElement } from "./components/atoms/Button";
 export type { FormProps } from "./components/molecules/Form";
 export type { BreadcrumbProps, BreadcrumbItemProps, BreadcrumbSeparator } from "./components/molecules/Breadcrumb/Breadcrumb.types";
-export type { FileUploadProps, FileUploadSize, DropzoneProps } from "./components/molecules/FileUpload/FileUpload.types";
+export type { FileUploadProps, FileUploadSize, FileUploadVariant, DropzoneProps } from "./components/molecules/FileUpload/FileUpload.types";
+export type { UseFilePickerOptions, UseFilePickerResult, FilePickerInputProps } from "./components/molecules/FileUpload/useFilePicker";
 export type { DetectedKind, FileUploadSecurityOptions } from "./components/molecules/FileUpload";
 export type {
   PopoverProps,
@@ -144,7 +175,22 @@ export type {
   PopoverContentProps,
   DropdownMenuItemProps,
   PopoverPlacement,
+  PopoverAnchorProps,
+  DropdownMenuCheckboxItemProps,
+  DropdownMenuRadioGroupProps,
+  DropdownMenuRadioItemProps,
+  DropdownMenuGroupProps,
+  DropdownMenuLabelProps,
+  DropdownMenuSeparatorProps,
+  ListboxProps,
+  ListboxOptionProps,
 } from "./components/molecules/Popover";
+export type {
+  ContextMenuProps,
+  ContextMenuTriggerProps,
+  ContextMenuContentProps,
+  ContextMenuPosition,
+} from "./components/molecules/ContextMenu";
 export type {
   TabsProps,
   TabsListProps,
@@ -201,8 +247,12 @@ export type {
 export type { IconProps, IconSource } from "./components/atoms/Icon";
 export type { TextAreaProps } from "./components/atoms/TextArea/TextArea.types";
 export type { GradientTextProps } from "./components/atoms/GradientText/GradientText.types";
-export type { CheckboxProps } from "./components/atoms/Checkbox/Checkbox.types";
-export type { SwitchProps, SwitchSize } from "./components/atoms/Switch/Switch.types";
+export type { CheckboxProps, CheckboxNativeProps } from "./components/atoms/Checkbox/Checkbox.types";
+export type { SwitchProps, SwitchSize, SwitchNativeProps } from "./components/atoms/Switch/Switch.types";
+export type { ToggleButtonProps, ToggleButtonSize, ToggleButtonVariant } from "./components/atoms/ToggleButton";
+export type { ToggleGroupProps, ToggleGroupSingleProps, ToggleGroupMultipleProps, ToggleGroupItem } from "./components/molecules/ToggleGroup";
+export type { SliderProps, SliderSingleProps, SliderRangeProps, SliderSize } from "./components/atoms/Slider";
+export type { ColorPickerProps, ColorPickerSwatch, ColorPickerSwatchSize } from "./components/molecules/ColorPicker";
 export type {
   BadgeProps,
   BadgeVariant,
@@ -249,6 +299,7 @@ export type {
   TableRowProps,
   TableHeadProps,
   TableCellProps,
+  TableHeadCasing,
 } from "./components/molecules/Table";
 export type { DashboardShellProps, AppShellProps } from "./components/molecules/DashboardShell/DashboardShell";
 export type {
@@ -292,7 +343,8 @@ export type {
   FeedbackSize,
   FeedbackAnimationName,
 } from "./components/molecules/FeedbackStates";
-export type { ModalProps, ModalSize, ModalAnimation, ModalScrollBehavior, ModalAutoFocusEvent } from "./components/molecules/Modal";
+export type { ModalProps, ModalSize, ModalAnimation, ModalScrollBehavior, ModalAutoFocusEvent, ModalRootProps, BeforeCloseGuard } from "./components/molecules/Modal";
+export type { LoadingOverlayProps, LoadingOverlayBackdrop } from "./components/molecules/LoadingOverlay";
 export type { DrawerProps, DrawerSide, DrawerSize, SheetProps } from "./components/molecules/Drawer";
 export type { AlertDialogProps, AlertDialogVariant } from "./components/molecules/AlertDialog";
 export type { ProgressBarProps } from "./components/atoms/ProgressBar/ProgresBar.types";
@@ -304,6 +356,16 @@ export type {
   PieChartProps,
   PieChartDataPoint,
   AreaChartProps,
+  ComposedChartProps,
+  ComposedChartSeries,
+  ComposedSeriesType,
+  BarChartOrientation,
+  PieLabelInfo,
+  CartesianAxisProps,
+  ChartYAxisSide,
+  ChartValueFormatter,
+  ChartXTickFormatter,
+  ChartLabelFormatter,
   ChartDataPoint,
   ChartDataSeries,
   ChartLayoutProps,

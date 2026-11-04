@@ -1,13 +1,13 @@
 import * as React$1 from 'react';
-import React__default, { ReactNode, HTMLAttributes, LiHTMLAttributes, AnchorHTMLAttributes, ButtonHTMLAttributes, TextareaHTMLAttributes, ChangeEvent, RefObject, MouseEvent, ReactElement, InputHTMLAttributes } from 'react';
-import { B as ButtonProps, T as TableColumn, a as TableProps } from './table-baec8534.js';
-export { k as InputSearch, l as InputSearchProps, m as SearchActionButtonProps, S as SearchButtonDisplay, b as Table, f as TableBody, u as TableBodyProps, d as TableCaption, s as TableCaptionProps, j as TableCell, y as TableCellProps, g as TableFooter, v as TableFooterProps, i as TableHead, x as TableHeadProps, e as TableHeader, t as TableHeaderProps, o as TableLayout, c as TableRoot, r as TableRootProps, h as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-baec8534.js';
+import React__default, { InputHTMLAttributes, ReactNode, HTMLAttributes, LiHTMLAttributes, AnchorHTMLAttributes, ButtonHTMLAttributes, RefObject, ChangeEvent, TextareaHTMLAttributes, MouseEvent, ReactElement } from 'react';
+import { B as ButtonProps, T as TableColumn, a as TableProps } from './table-f0e7197e.js';
+export { k as InputSearch, l as InputSearchProps, m as SearchActionButtonProps, S as SearchButtonDisplay, b as Table, f as TableBody, u as TableBodyProps, d as TableCaption, s as TableCaptionProps, j as TableCell, y as TableCellProps, g as TableFooter, v as TableFooterProps, i as TableHead, z as TableHeadCasing, x as TableHeadProps, e as TableHeader, t as TableHeaderProps, o as TableLayout, c as TableRoot, r as TableRootProps, h as TableRow, w as TableRowProps, n as TableSearchProps, q as TableTheme, p as TableVariant } from './table-f0e7197e.js';
 import { I as IconSource } from './index-8a491a10.js';
 export { a as Icon, b as IconProps } from './index-8a491a10.js';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { A as AvatarProps } from './shell-81b82aed.js';
 export { b as AppShell, e as AppShellProps, a as AppSidebar, p as AppSidebarClassNames, m as AppSidebarFooterAction, q as AppSidebarFooterLayout, k as AppSidebarHeader, g as AppSidebarNavItem, E as AppSidebarPersistPayload, f as AppSidebarProps, h as AppSidebarSection, j as AppSidebarSectionGrouping, i as AppSidebarTier, o as AppSidebarTokens, n as AppSidebarTrailingPreset, l as AppSidebarUser, c as AppTopbar, u as AppTopbarAction, x as AppTopbarClassNames, y as AppTopbarMenuItem, v as AppTopbarProfile, r as AppTopbarProps, t as AppTopbarSearchConfig, s as AppTopbarTheme, w as AppTopbarTokens, D as DashboardShell, d as DashboardShellProps, z as mergeSidebarTokensStyle, F as mergeTopbarTokensStyle, B as readAppSidebarPersist, C as writeAppSidebarPersist } from './shell-81b82aed.js';
-export { AreaChart, AreaChartProps, BarChart, BarChartProps, ChartDataPoint, ChartDataSeries, ChartLayoutProps, ChartTheme, ChartTooltip, ChartTooltipItem, ChartTooltipProps, LineChart, LineChartProps, PieChart, PieChartDataPoint, PieChartProps } from './charts.js';
+export { AreaChart, AreaChartProps, BarChart, BarChartOrientation, BarChartProps, CartesianAxisProps, ChartDataPoint, ChartDataSeries, ChartLabelFormatter, ChartLayoutProps, ChartTheme, ChartTooltip, ChartTooltipItem, ChartTooltipProps, ChartValueFormatter, ChartXTickFormatter, ChartYAxisSide, ComposedChart, ComposedChartProps, ComposedChartSeries, ComposedSeriesType, LineChart, LineChartProps, PieChart, PieChartDataPoint, PieChartProps, PieLabelInfo, pieLabelNamePercent } from './charts.js';
 
 /** Element a Button ref resolves to: `<button>`, or `<a>` when `href` is safe. */
 type ButtonElement = HTMLButtonElement | HTMLAnchorElement;
@@ -62,7 +62,7 @@ type MaskOptions = Partial<{
     maskFrom: MaskFrom;
     maskPattern: number[];
 }>;
-type NativeInputProps = Omit<React$1.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "type" | "maxLength" | "id" | "size" | "pattern" | "prefix" | "suffix">;
+type NativeInputProps = Omit<React$1.InputHTMLAttributes<HTMLInputElement>, "value" | "defaultValue" | "onChange" | "type" | "maxLength" | "id" | "size" | "pattern" | "prefix" | "suffix">;
 /** Ant Design–style: outlined (default) | filled | borderless | underlined */
 type InputVariant = "outlined" | "filled" | "borderless" | "underlined";
 /** Explicit validation/status display: error | warning | success */
@@ -74,7 +74,16 @@ interface TextInputProps extends NativeInputProps {
     type?: React$1.HTMLInputTypeAttribute;
     validation?: ValidationType;
     required?: boolean;
+    /**
+     * Controlled value. Omit it (leave `undefined`) for uncontrolled use — the input then keeps its
+     * own state, starting from `defaultValue`.
+     */
     value?: string;
+    /**
+     * Initial value for uncontrolled use (when `value` is `undefined`), e.g. edit-in-place cells
+     * that start from a preset value. Ignored when `value` is set.
+     */
+    defaultValue?: string;
     onChange?: (value: string) => void;
     onErrorChange?: (error: string | null) => void;
     onVerifiedChange?: (verified: boolean) => void;
@@ -85,7 +94,18 @@ interface TextInputProps extends NativeInputProps {
     fullWidth?: boolean;
     disabled?: boolean;
     borderColorClass?: string;
+    /** Class on the outer wrapper (label + field + footer). */
     className?: string;
+    /**
+     * Class on the native `<input>` itself (the outer wrapper gets `className`).
+     * Use it to align overlays with the input text (padding / font).
+     */
+    inputClassName?: string;
+    /**
+     * Inline style merged over the native `<input>`'s computed style (padding, font, height, …).
+     * A plain `style` prop is also merged into the `<input>` style (it no longer replaces it).
+     */
+    inputStyle?: React$1.CSSProperties;
     ariaLabel?: string;
     /**
      * - `validation="custom"`: full-value check in `validateInput`.
@@ -142,10 +162,24 @@ declare const TextInput: React__default.ForwardRefExoticComponent<TextInputProps
 
 /** Control + label scale — `sm` 16px box · `md` 18px box (default) · `lg` 22px box. */
 type CheckboxSize = "sm" | "md" | "lg";
-interface CheckboxProps {
-    label: string;
-    name: string;
-    value: string;
+/**
+ * Native `<input type="checkbox">` attributes forwarded to the input (`data-*`, `aria-*`, `form`,
+ * `tabIndex`, `onBlur`, `onFocus`, `onClick`, `autoFocus`, …). Props the component manages are omitted.
+ */
+type CheckboxNativeProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "size" | "onChange" | "checked" | "defaultChecked" | "value" | "name" | "id" | "className" | "required" | "disabled" | "children">;
+interface CheckboxProps extends CheckboxNativeProps {
+    /**
+     * Label content (string or any node). Optional — when omitted/empty, pass `ariaLabel` or
+     * `ariaLabelledBy` so the input still has an accessible name.
+     */
+    label?: ReactNode;
+    /**
+     * Keep the label in the DOM for screen readers (it still names the input) but hide it visually.
+     * @default false
+     */
+    hideLabel?: boolean;
+    name?: string;
+    value?: string;
     checked?: boolean;
     disabled?: boolean;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -193,7 +227,13 @@ interface CheckboxProps {
 declare const Checkbox: React__default.NamedExoticComponent<CheckboxProps & React__default.RefAttributes<HTMLInputElement>>;
 
 type SwitchSize = "sm" | "md";
-interface SwitchProps {
+/**
+ * Native `<button role="switch">` attributes forwarded to the control (`data-*` such as
+ * `data-testid`, `aria-*`, `onBlur`, `onFocus`, `onClick`, `tabIndex`, `title`, `form`, …).
+ * Props the component manages are omitted.
+ */
+type SwitchNativeProps = Omit<React__default.ButtonHTMLAttributes<HTMLButtonElement>, "type" | "role" | "id" | "name" | "value" | "disabled" | "className" | "children" | "onChange" | "defaultChecked" | "aria-checked" | "aria-label">;
+interface SwitchProps extends SwitchNativeProps {
     /** Controlled: current on/off state. Omit with `defaultChecked` for uncontrolled. */
     checked?: boolean;
     /** Uncontrolled initial state (ignored when `checked` is set). */
@@ -212,8 +252,13 @@ interface SwitchProps {
     value?: string;
     /** Submitted when the switch is off (default `"off"`). */
     uncheckedValue?: string;
-    /** Visible label next to the control. */
+    /** Visible label next to the control (any node). */
     label?: React__default.ReactNode;
+    /**
+     * Keep `label` as the accessible name but hide it visually (for dense rows / table cells).
+     * @default false
+     */
+    hideLabel?: boolean;
     /** Label before or after the track (default `"end"`). */
     labelPosition?: "start" | "end";
     /**
@@ -229,14 +274,234 @@ interface SwitchProps {
     size?: SwitchSize;
 }
 
+declare const Switch: React__default.NamedExoticComponent<SwitchProps & React__default.RefAttributes<HTMLButtonElement>>;
+
+/** Same height tiers as `Button` (§20): xxs 1.375rem · xs 1.625rem · sm 1.875rem · md 2.125rem · lg 2.375rem. */
+type ToggleButtonSize = "xxs" | "xs" | "sm" | "md" | "lg";
+/** `ghost` = transparent until hovered/pressed (toolbars); `outline` = bordered. */
+type ToggleButtonVariant = "ghost" | "outline";
+interface ToggleButtonProps extends Omit<React__default.ButtonHTMLAttributes<HTMLButtonElement>, "onChange" | "value" | "type" | "aria-pressed"> {
+    /** Controlled pressed state. */
+    pressed?: boolean;
+    /** Uncontrolled initial pressed state. @default false */
+    defaultPressed?: boolean;
+    /** Fires with the next pressed state. */
+    onPressedChange?: (pressed: boolean) => void;
+    /** @default "sm" */
+    size?: ToggleButtonSize;
+    /** @default "ghost" */
+    variant?: ToggleButtonVariant;
+    /** Leading icon (any React node, e.g. a lucide icon). Decorative — hidden from AT. */
+    icon?: React__default.ReactNode;
+    /**
+     * Accessible name. **Required for icon-only toggles** (no children), e.g. `"Bold"`.
+     * Also accepted as the native `aria-label` attribute.
+     */
+    ariaLabel?: string;
+    /** Item value when used inside `ToggleGroup` (required there). */
+    value?: string;
+    children?: React__default.ReactNode;
+}
+
 /**
- * Toggle switch — boolean on/off control.
+ * Two-state toggle button (Bold / Italic / alignment, filter chips…).
  *
- * Follows the [ARIA switch pattern](https://www.w3.org/WAI/ARIA/apg/patterns/switch/)
- * (same semantics as Radix UI Switch / MUI Switch): `role="switch"`, `aria-checked`,
- * native `<button>` activation (pointer + Space/Enter), visible focus ring.
+ * Follows the [ARIA button pattern (toggle)](https://www.w3.org/WAI/ARIA/apg/patterns/button/):
+ * native `<button>` with `aria-pressed`. Icon-only toggles need `ariaLabel`.
+ * Inside a `ToggleGroup`, `value` identifies the item and the group owns the state.
  */
-declare const Switch: React__default.NamedExoticComponent<SwitchProps>;
+declare const ToggleButton: React__default.ForwardRefExoticComponent<ToggleButtonProps & React__default.RefAttributes<HTMLButtonElement>>;
+
+interface ToggleGroupItem {
+    value: string;
+    /** Visible text. Omit for icon-only items (then `ariaLabel` is required). */
+    label?: React__default.ReactNode;
+    icon?: React__default.ReactNode;
+    ariaLabel?: string;
+    disabled?: boolean;
+    /** Native tooltip text. */
+    title?: string;
+}
+interface ToggleGroupBaseProps {
+    /** Items to render. Alternatively pass `<ToggleButton value="…">` children. */
+    items?: ToggleGroupItem[];
+    children?: React__default.ReactNode;
+    /** Accessible name of the group (e.g. "Text formatting"). */
+    ariaLabel?: string;
+    "aria-labelledby"?: string;
+    /** @default "sm" — same tiers as Button */
+    size?: ToggleButtonSize;
+    /** @default "ghost" */
+    variant?: ToggleButtonVariant;
+    disabled?: boolean;
+    /** Arrow-key direction. @default "horizontal" */
+    orientation?: "horizontal" | "vertical";
+    /**
+     * Roving tabindex: the group is one Tab stop and arrow keys / Home / End move between items.
+     * @default true
+     */
+    rovingFocus?: boolean;
+    className?: string;
+    id?: string;
+}
+interface ToggleGroupSingleProps extends ToggleGroupBaseProps {
+    /** At most one item pressed (alignment: left / centre / right). */
+    type: "single";
+    value?: string | null;
+    defaultValue?: string | null;
+    onValueChange?: (value: string | null) => void;
+    /** Clicking the pressed item un-presses it (value → null). @default true */
+    allowDeselect?: boolean;
+}
+interface ToggleGroupMultipleProps extends ToggleGroupBaseProps {
+    /** Any number of items pressed (Bold / Italic / Underline). */
+    type: "multiple";
+    value?: string[];
+    defaultValue?: string[];
+    onValueChange?: (value: string[]) => void;
+}
+type ToggleGroupProps = ToggleGroupSingleProps | ToggleGroupMultipleProps;
+
+/**
+ * A set of `ToggleButton`s sharing state — `type="single"` (alignment) or `type="multiple"`
+ * (Bold / Italic / Underline). Renders `role="group"` with `aria-pressed` buttons and a roving
+ * tabindex (one Tab stop; ←/→ or ↑/↓, Home, End move focus; Space / Enter toggle).
+ */
+declare function ToggleGroup(props: ToggleGroupProps): react_jsx_runtime.JSX.Element;
+declare namespace ToggleGroup {
+    var displayName: string;
+}
+
+type SliderSize = "sm" | "md";
+interface SliderBaseProps {
+    /** @default 0 */
+    min?: number;
+    /** @default 100 */
+    max?: number;
+    /** @default 1 */
+    step?: number;
+    disabled?: boolean;
+    /** Visible label above the track (wired with `<label for>` / `aria-labelledby`). */
+    label?: React__default.ReactNode;
+    /** Accessible name when there is no visible `label`. */
+    ariaLabel?: string;
+    "aria-labelledby"?: string;
+    /** Show the current value (formatted) next to the label. @default false */
+    showValue?: boolean;
+    /** Formats the value label and `aria-valuetext` (e.g. `v => \`${v}%\``). */
+    valueFormatter?: (value: number) => string;
+    /** Show min / max under the track. @default false */
+    showMinMax?: boolean;
+    /** @default "md" */
+    size?: SliderSize;
+    id?: string;
+    /** Form field name. Range sliders submit `name` twice (low, high). */
+    name?: string;
+    className?: string;
+}
+interface SliderSingleProps extends SliderBaseProps {
+    range?: false;
+    value?: number;
+    /** @default min */
+    defaultValue?: number;
+    /** Fires on every change (drag / key). */
+    onValueChange?: (value: number) => void;
+    /** Alias of `onValueChange`. */
+    onChange?: (value: number) => void;
+    /** Fires when the user releases the pointer or finishes a key press. */
+    onValueCommit?: (value: number) => void;
+}
+interface SliderRangeProps extends SliderBaseProps {
+    /** Two thumbs: `[low, high]`. */
+    range: true;
+    value?: [number, number];
+    /** @default [min, max] */
+    defaultValue?: [number, number];
+    onValueChange?: (value: [number, number]) => void;
+    /** Alias of `onValueChange`. */
+    onChange?: (value: [number, number]) => void;
+    onValueCommit?: (value: [number, number]) => void;
+    /** Accessible names for the two thumbs. @default ["Minimum", "Maximum"] (prefixed by `ariaLabel`) */
+    thumbLabels?: [string, string];
+}
+type SliderProps = SliderSingleProps | SliderRangeProps;
+
+/**
+ * Slider — single value or `range` (two thumbs) on native `<input type="range">`, so keyboard
+ * (←/→/↑/↓, PageUp/PageDown, Home/End) and `role="slider"` semantics come from the platform.
+ * `valueFormatter` drives both the visible value and `aria-valuetext`.
+ */
+declare function Slider(props: SliderProps): react_jsx_runtime.JSX.Element;
+declare namespace Slider {
+    var displayName: string;
+}
+
+interface ColorPickerSwatch {
+    /** Hex colour (`#rgb` or `#rrggbb`). This is what `onChange` receives (normalised to `#rrggbb`). */
+    value: string;
+    /** Accessible / tooltip name, e.g. "Success green". Defaults to the hex. */
+    label?: string;
+    /**
+     * Design token the swatch mirrors, e.g. `"--color-state-success"`. With `resolveTokens`
+     * the swatch takes the token's live value (current theme); otherwise `value` is used.
+     */
+    token?: string;
+}
+type ColorPickerSwatchSize = "sm" | "md";
+interface ColorPickerProps {
+    /** Controlled hex value (`#rrggbb`; `#rgb` accepted). Case-insensitive. */
+    value?: string;
+    /** Uncontrolled initial hex. */
+    defaultValue?: string;
+    /** Fires with a normalised lowercase `#rrggbb` hex string. */
+    onChange?: (hex: string) => void;
+    /** Alias of `onChange`. */
+    onValueChange?: (hex: string) => void;
+    /** Swatches (hex strings or objects). @default DEFAULT_COLOR_PICKER_PALETTE (design-token colours) */
+    palette?: Array<string | ColorPickerSwatch>;
+    /** Swatches per row. @default 5 for the default palette, otherwise 8 */
+    columns?: number;
+    /** Hex text field under the swatches. @default true */
+    showHexInput?: boolean;
+    /** Native `<input type="color">` for arbitrary colours. @default false */
+    showNativePicker?: boolean;
+    /**
+     * Resolve swatch `token`s against the current theme at mount (the emitted value is still hex).
+     * Off by default so stored colours don't depend on the active theme. @default false
+     */
+    resolveTokens?: boolean;
+    /** Visible label (names the swatch radiogroup). */
+    label?: React__default.ReactNode;
+    /** Accessible name when there is no visible label. @default "Colour" */
+    ariaLabel?: string;
+    /** @default "md" (28px; `sm` = 24px — both meet WCAG 2.5.8) */
+    swatchSize?: ColorPickerSwatchSize;
+    disabled?: boolean;
+    id?: string;
+    /** Renders a hidden input with the current hex for native form posts. */
+    name?: string;
+    className?: string;
+}
+
+/**
+ * Normalise a hex colour to lowercase `#rrggbb`. Accepts `#rgb`, `rgb`, `#rrggbb`, `rrggbb`
+ * (surrounding whitespace ignored). Returns `null` for anything else.
+ */
+declare function normalizeHex(input: string | null | undefined): string | null;
+/**
+ * Default swatches — the design-system colour tokens (light-theme values).
+ * Rows of 5: neutrals · brand & state · accent foregrounds · accent 40 · accent 10.
+ */
+declare const DEFAULT_COLOR_PICKER_PALETTE: ColorPickerSwatch[];
+
+/**
+ * Colour picker — swatch grid (radio-group semantics, arrow-key navigation), hex text field and
+ * optional native picker. **Value is always a hex string** (`#rrggbb`, lowercase).
+ */
+declare function ColorPicker({ value: valueProp, defaultValue, onChange, onValueChange, palette, columns, showHexInput, showNativePicker, resolveTokens, label, ariaLabel, swatchSize, disabled, id: idProp, name, className, }: ColorPickerProps): react_jsx_runtime.JSX.Element;
+declare namespace ColorPicker {
+    var displayName: string;
+}
 
 type BadgeVariant = "neutral" | "primary" | "success" | "warning" | "danger" | "info";
 /** Soft = tinted surface; solid = strong fill; outline = border emphasis */
@@ -696,9 +961,32 @@ declare const Stepper: React__default.NamedExoticComponent<StepperProps>;
 declare const StepperStep: React__default.NamedExoticComponent<StepperStepProps>;
 
 type FileUploadSize = "sm" | "md";
+/** `dropzone` (default) — dashed drop area; `button` — a library `Button` that opens the picker (no drop area). */
+type FileUploadVariant = "dropzone" | "button";
+type ButtonOnlyProps = Extract<ButtonProps, {
+    href?: undefined;
+}>;
 interface FileUploadProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "onError"> {
-    /** Visible title inside the dropzone (also used for the control’s accessible name) */
+    /** Visible title inside the dropzone, or the button text when `variant="button"` (accessible name). */
     label: string;
+    /**
+     * `dropzone` (default) or `button` — renders a library `Button` that opens the native picker
+     * (same validation; `description` / errors render below it). In button mode `id` goes on the
+     * `Button` (so `FormField htmlFor` / `<label for>` target it) and the hidden input gets `${id}-input`.
+     * @default "dropzone"
+     */
+    variant?: FileUploadVariant;
+    /** `variant="button"`: Button variant. @default "outlineSecondary" */
+    buttonVariant?: ButtonOnlyProps["variant"];
+    /** `variant="button"`: Button size. @default "md" */
+    buttonSize?: ButtonOnlyProps["size"];
+    /**
+     * `variant="button"`: extra props for the `Button` (e.g. `data-testid`, `ariaLabel`, `className`,
+     * `iconPosition`). `onClick`, `disabled`, `id` and `children` are managed.
+     */
+    buttonProps?: Omit<ButtonOnlyProps, "onClick" | "disabled" | "id" | "children" | "href" | "type"> & {
+        [dataAttr: `data-${string}`]: string | undefined;
+    };
     /** Secondary line under the label */
     description?: string;
     /** Shown below the zone; use with `aria-invalid` via `errorMessage` */
@@ -743,13 +1031,91 @@ interface FileUploadProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange
     clearInputAfterSelect?: boolean;
     size?: FileUploadSize;
     /**
-     * Icon above the label. Omit for default upload glyph; pass `null` to hide.
+     * Icon above the label (dropzone) or inside the button (`variant="button"`). Omit for the default
+     * upload glyph; pass `null` to hide. In button mode it is passed to `Button` `icon` (element / src).
      */
     icon?: ReactNode | null;
     id?: string;
 }
 /** Alias — same props as `FileUpload` */
 type DropzoneProps = FileUploadProps;
+
+/** Validation + picker options shared by `useFilePicker` and `FileUpload`. */
+interface UseFilePickerOptions {
+    /** Native `accept` (e.g. `".csv,.xlsx"` or `"image/*"`). Also used for validation. */
+    accept?: string;
+    multiple?: boolean;
+    disabled?: boolean;
+    /** Native `name` on the input (form posts). */
+    name?: string;
+    /** When `multiple`, caps how many files are accepted. */
+    maxFiles?: number;
+    /** Per-file maximum size in bytes. */
+    maxSizeBytes?: number;
+    /** Allowed extensions (with dot), combined with `accept` / `allowedMimeTypes`. */
+    allowedExtensions?: string[];
+    /** Allowed MIME types (wildcards like `image/*` supported). */
+    allowedMimeTypes?: string[];
+    /**
+     * Verify content (magic bytes) matches extension/MIME. Defaults to `true` when `accept`,
+     * `allowedExtensions` or `allowedMimeTypes` is set.
+     */
+    verifyMagicBytes?: boolean;
+    /** Best-effort scan of PDF/SVG payloads for SQL-/script-like patterns. @default false */
+    scanPdfForSqlInjection?: boolean;
+    /** Max bytes read for magic-byte / content scans (default 256 KiB). */
+    maxScanBytes?: number;
+    /** Passed to the native input. */
+    capture?: boolean | "user" | "environment";
+    /** Called with the validated files. */
+    onFiles?: (files: File[]) => void;
+    /** Called with a human-readable message when validation fails. */
+    onError?: (message: string) => void;
+    /** Reset the input after handling so the same file can be picked again. @default true */
+    clearInputAfterSelect?: boolean;
+}
+/** Props to spread onto a native `<input>` — a hidden, non-focusable file input by default. */
+interface FilePickerInputProps {
+    ref: RefObject<HTMLInputElement | null>;
+    type: "file";
+    accept?: string;
+    multiple: boolean;
+    disabled: boolean;
+    name?: string;
+    capture?: "user" | "environment";
+    hidden: boolean;
+    tabIndex: number;
+    "aria-hidden": boolean;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+interface UseFilePickerResult {
+    /** Opens the native file dialog (no-op while `disabled`). Call from a click handler. */
+    open: () => void;
+    /** Spread onto `<input {...inputProps} />` (hidden + `tabIndex=-1` + `aria-hidden`). */
+    inputProps: FilePickerInputProps;
+    /** Same ref as `inputProps.ref`. */
+    inputRef: RefObject<HTMLInputElement | null>;
+    /** Last validation error, or `null`. */
+    error: string | null;
+    clearError: () => void;
+    /**
+     * Validate and commit files from another source (e.g. a drop event). Resolves `true` when
+     * the files passed validation and `onFiles` was called.
+     */
+    handleFiles: (files: File[] | FileList | null) => Promise<boolean>;
+}
+/**
+ * Headless file picker: hidden native input + `open()` so any existing button can open the dialog,
+ * with the same validation as `FileUpload` (count, size, accept/extension/MIME allowlist,
+ * magic-byte spoofing check, optional content scan). Always re-validate on the server.
+ *
+ * ```tsx
+ * const picker = useFilePicker({ accept: ".csv", onFiles: ([f]) => importCsv(f) });
+ * <Button onClick={picker.open}>Import CSV</Button>
+ * <input {...picker.inputProps} />
+ * ```
+ */
+declare function useFilePicker(options?: UseFilePickerOptions): UseFilePickerResult;
 
 /**
  * Client-side file validation helpers. Browser checks can be bypassed — always re-validate on the server.
@@ -804,11 +1170,30 @@ interface PopoverProps {
     defaultOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
     placement?: PopoverPlacement;
+    /**
+     * Position the panel against this external element instead of the trigger (e.g. a grid cell
+     * or a toolbar). A `PopoverTrigger` becomes optional — drive `open` yourself.
+     * Clicks on the anchor do not count as "outside".
+     */
+    anchorRef?: RefObject<HTMLElement | null>;
 }
 interface PopoverTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
     /** Maps to `aria-haspopup` (menus, dialogs, listbox, etc.). */
     hasPopup?: "dialog" | "menu" | "true" | "listbox";
+    /**
+     * Render the single child element as the trigger instead of a wrapping `<button>` (Radix-style).
+     * Use it with a library `Button` (or any focusable element) to avoid nested buttons. Trigger
+     * props, aria attributes, ref and `onClick` are merged onto the child; a child `onClick` that
+     * calls `preventDefault()` cancels the toggle.
+     * @default false
+     */
+    asChild?: boolean;
+}
+interface PopoverAnchorProps extends HTMLAttributes<HTMLDivElement> {
+    children: ReactNode;
+    /** Use the single child element as the anchor instead of a wrapping `<div>`. @default false */
+    asChild?: boolean;
 }
 interface PopoverContentProps extends HTMLAttributes<HTMLDivElement> {
     children: ReactNode;
@@ -820,26 +1205,201 @@ interface PopoverContentProps extends HTMLAttributes<HTMLDivElement> {
      * `DropdownMenuContent` defaults to `false`.
      */
     showPointer?: boolean;
+    /**
+     * Stacking order of the portalled panel. Number or any CSS value (e.g. `"var(--app-z-menu)"`).
+     * Default: `var(--z-popover, 450)` — above the library Modal (`--z-modal` 400) and Drawer —
+     * automatically lifted to one above the highest z-index among the anchor's ancestors, so a menu
+     * opened inside a host dialog at z 10000 renders at 10001.
+     */
+    zIndex?: number | string;
 }
-interface DropdownMenuItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface DropdownMenuItemProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSelect"> {
     children: ReactNode;
-    /** Called when item is chosen; menu closes after */
+    /** Called when item is chosen; menu closes after (unless `closeOnSelect` is false) */
     onSelect?: () => void;
     /** Destructive action styling */
     variant?: "default" | "danger";
     disabled?: boolean;
     /** Press ripple; off when disabled. @default true */
     ripple?: boolean;
+    /** Leading icon / adornment (decorative — keep the label as text). */
+    icon?: ReactNode;
+    /** Secondary text under the label (included in the accessible name). */
+    description?: ReactNode;
+    /** Trailing hint such as a keyboard shortcut (`⌘C`). Rendered `aria-hidden`. */
+    shortcut?: ReactNode;
+    /** Indentation level (0 = none); each level adds one spacing step. @default 0 */
+    indent?: number;
+    /** Close the menu after selection. @default true */
+    closeOnSelect?: boolean;
+}
+interface DropdownMenuCheckboxItemProps extends Omit<DropdownMenuItemProps, "variant"> {
+    /** Controlled checked state. */
+    checked?: boolean;
+    /** Uncontrolled initial state. @default false */
+    defaultChecked?: boolean;
+    onCheckedChange?: (checked: boolean) => void;
+    /** @default false — toggles keep the menu open */
+    closeOnSelect?: boolean;
+}
+interface DropdownMenuRadioGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange"> {
+    children: ReactNode;
+    value?: string;
+    defaultValue?: string;
+    onValueChange?: (value: string) => void;
+    /** Visible group label (also names the group). */
+    label?: ReactNode;
+}
+interface DropdownMenuRadioItemProps extends Omit<DropdownMenuItemProps, "variant"> {
+    value: string;
+    /** @default false — choosing keeps the menu open */
+    closeOnSelect?: boolean;
+}
+interface DropdownMenuGroupProps extends HTMLAttributes<HTMLDivElement> {
+    children: ReactNode;
+    /** Visible group label; also becomes the group's accessible name. */
+    label?: ReactNode;
+}
+interface DropdownMenuLabelProps extends HTMLAttributes<HTMLDivElement> {
+    children: ReactNode;
+    /** Indentation level to line up with indented / icon rows. @default 0 */
+    indent?: number;
+}
+type DropdownMenuSeparatorProps = HTMLAttributes<HTMLDivElement>;
+interface ListboxProps extends HTMLAttributes<HTMLDivElement> {
+    children: ReactNode;
+    /** Allow multiple selection (`aria-multiselectable`). @default false */
+    multiple?: boolean;
+}
+interface ListboxOptionProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect" | "role"> {
+    children: ReactNode;
+    /** `aria-selected` + selected styling. @default false */
+    selected?: boolean;
+    /** `aria-disabled`, skipped by keyboard navigation. @default false */
+    disabled?: boolean;
+    /** Secondary text under the label. */
+    description?: ReactNode;
+    /** Leading icon / adornment. */
+    icon?: ReactNode;
+    /** Trailing adornment (count, shortcut, badge). */
+    trailing?: ReactNode;
+    /** Indentation level (tree-like lists). @default 0 */
+    indent?: number;
+    /** Click, Enter or Space. */
+    onSelect?: () => void;
+    /** Row role. Use "menuitem" inside a custom role="menu". @default "option" */
+    role?: "option" | "menuitem" | "treeitem";
 }
 
 declare const Popover: React__default.NamedExoticComponent<PopoverProps>;
 declare const PopoverTrigger: React__default.ForwardRefExoticComponent<PopoverTriggerProps & React__default.RefAttributes<HTMLButtonElement>>;
+/**
+ * Positioning anchor other than the trigger (e.g. the whole field around an icon trigger,
+ * or a grid cell). Renders a `<div>`, or merges onto its child with `asChild`.
+ */
+declare const PopoverAnchor: React__default.ForwardRefExoticComponent<PopoverAnchorProps & React__default.RefAttributes<HTMLDivElement>>;
 declare const PopoverContent: React__default.NamedExoticComponent<PopoverContentProps>;
 /** Same root as `Popover` — use for action menus (Delete, Resend, …). */
 declare const DropdownMenu: React__default.NamedExoticComponent<PopoverProps>;
 declare const DropdownMenuTrigger: React__default.ForwardRefExoticComponent<Omit<PopoverTriggerProps, "hasPopup"> & React__default.RefAttributes<HTMLButtonElement>>;
 declare const DropdownMenuContent: React__default.NamedExoticComponent<Omit<PopoverContentProps, "role">>;
-declare const DropdownMenuItem: React__default.NamedExoticComponent<DropdownMenuItemProps>;
+declare const DropdownMenuItem: React__default.NamedExoticComponent<DropdownMenuItemProps & React__default.RefAttributes<HTMLButtonElement>>;
+/** Toggle row (`role="menuitemcheckbox"`). Keeps the menu open by default. */
+declare const DropdownMenuCheckboxItem: React__default.NamedExoticComponent<DropdownMenuCheckboxItemProps & React__default.RefAttributes<HTMLButtonElement>>;
+/** `role="group"` wrapper; `label` renders a `DropdownMenuLabel` that names the group. */
+declare const DropdownMenuGroup: React__default.ForwardRefExoticComponent<DropdownMenuGroupProps & React__default.RefAttributes<HTMLDivElement>>;
+/** Single-choice group for `DropdownMenuRadioItem`s (`role="group"`). */
+declare const DropdownMenuRadioGroup: React__default.ForwardRefExoticComponent<DropdownMenuRadioGroupProps & React__default.RefAttributes<HTMLDivElement>>;
+/** Choice row (`role="menuitemradio"`) — must be inside `DropdownMenuRadioGroup`. */
+declare const DropdownMenuRadioItem: React__default.NamedExoticComponent<DropdownMenuRadioItemProps & React__default.RefAttributes<HTMLButtonElement>>;
+/** Non-interactive heading row inside a menu. */
+declare const DropdownMenuLabel: React__default.ForwardRefExoticComponent<DropdownMenuLabelProps & React__default.RefAttributes<HTMLDivElement>>;
+/** Horizontal rule between menu sections (`role="separator"`). */
+declare const DropdownMenuSeparator: React__default.ForwardRefExoticComponent<DropdownMenuSeparatorProps & React__default.RefAttributes<HTMLDivElement>>;
+/**
+ * `role="listbox"` container with roving focus (ArrowUp/Down, Home/End, typeahead) over its
+ * `ListboxOption`s. Selection state is owned by the caller (`selected` on each option).
+ */
+declare const Listbox: React__default.ForwardRefExoticComponent<ListboxProps & React__default.RefAttributes<HTMLDivElement>>;
+/** Menu-row styled option: selected, disabled, secondary text, icon, trailing slot, indent level. */
+declare const ListboxOption: React__default.ForwardRefExoticComponent<ListboxOptionProps & React__default.RefAttributes<HTMLDivElement>>;
+
+/** Viewport (client) coordinates — e.g. `{ x: event.clientX, y: event.clientY }`. */
+interface ContextMenuPosition {
+    x: number;
+    y: number;
+}
+interface ContextMenuProps {
+    children: ReactNode;
+    /** Controlled open state (imperative form for grids that compute the cell themselves). */
+    open?: boolean;
+    /** Uncontrolled initial open state. @default false */
+    defaultOpen?: boolean;
+    /** Called on every open / close request (right-click, Escape, item select, click outside…). */
+    onOpenChange?: (open: boolean) => void;
+    /**
+     * Controlled anchor point in viewport coordinates. When omitted, `ContextMenuTrigger` records
+     * the pointer position of the `contextmenu` event (or the focused element for Shift+F10).
+     */
+    position?: ContextMenuPosition;
+    /** Ignore right-clicks / keyboard invocation on the trigger. @default false */
+    disabled?: boolean;
+}
+interface ContextMenuTriggerProps extends HTMLAttributes<HTMLElement> {
+    children: ReactNode;
+    /** Merge behaviour onto the single child instead of rendering a wrapping `<div>`. @default false */
+    asChild?: boolean;
+    /** Let the native browser menu show for this region. @default false */
+    disabled?: boolean;
+}
+interface ContextMenuContentProps extends HTMLAttributes<HTMLDivElement> {
+    children: ReactNode;
+    /**
+     * Stacking order (number or CSS value). Default `var(--z-popover, 450)`, lifted above the highest
+     * z-index among the trigger's (or invoking element's) ancestors.
+     */
+    zIndex?: number | string;
+    /** Minimum distance kept from the viewport edges in px. @default 8 */
+    collisionPadding?: number;
+}
+
+interface ContextMenuPlacement {
+    top: number;
+    left: number;
+    maxHeight: number;
+}
+/**
+ * Place a menu of `width` x `height` at `point`, flipping to the left / above the point when it
+ * would overflow, then clamping inside the viewport (minus `padding`).
+ */
+declare function computeContextMenuPosition(point: ContextMenuPosition, width: number, height: number, viewport: {
+    width: number;
+    height: number;
+}, padding?: number): ContextMenuPlacement;
+
+/**
+ * ContextMenu — a menu that opens at the pointer.
+ *
+ * Declarative: wrap a region in `ContextMenuTrigger`; right-click (or Shift+F10 / the Menu key on
+ * the focused trigger) opens `ContextMenuContent` at that point. Imperative: omit the trigger and
+ * drive `open` + `position` yourself (e.g. a grid that resolves the cell first).
+ * Items are the DropdownMenu parts (`ContextMenuItem` = `DropdownMenuItem`, etc.).
+ */
+declare function ContextMenu({ children, open: openProp, defaultOpen, onOpenChange, position: positionProp, disabled, }: ContextMenuProps): react_jsx_runtime.JSX.Element;
+declare namespace ContextMenu {
+    var displayName: string;
+}
+/** Region that opens the menu on right-click, long-press emulation (contextmenu event), Shift+F10 or the Menu key. */
+declare const ContextMenuTrigger: React__default.ForwardRefExoticComponent<ContextMenuTriggerProps & React__default.RefAttributes<HTMLElement>>;
+/** The menu panel (`role="menu"`), portalled to `<body>` and clamped to the viewport. */
+declare const ContextMenuContent: React__default.ForwardRefExoticComponent<ContextMenuContentProps & React__default.RefAttributes<HTMLDivElement>>;
+declare const ContextMenuItem: React__default.NamedExoticComponent<DropdownMenuItemProps & React__default.RefAttributes<HTMLButtonElement>>;
+declare const ContextMenuCheckboxItem: React__default.NamedExoticComponent<DropdownMenuCheckboxItemProps & React__default.RefAttributes<HTMLButtonElement>>;
+declare const ContextMenuRadioGroup: React__default.ForwardRefExoticComponent<DropdownMenuRadioGroupProps & React__default.RefAttributes<HTMLDivElement>>;
+declare const ContextMenuRadioItem: React__default.NamedExoticComponent<DropdownMenuRadioItemProps & React__default.RefAttributes<HTMLButtonElement>>;
+declare const ContextMenuLabel: React__default.ForwardRefExoticComponent<DropdownMenuLabelProps & React__default.RefAttributes<HTMLDivElement>>;
+declare const ContextMenuSeparator: React__default.ForwardRefExoticComponent<DropdownMenuSeparatorProps & React__default.RefAttributes<HTMLDivElement>>;
+declare const ContextMenuGroup: React__default.ForwardRefExoticComponent<DropdownMenuGroupProps & React__default.RefAttributes<HTMLDivElement>>;
 
 /**
  * TextAreaProps
@@ -847,7 +1407,8 @@ declare const DropdownMenuItem: React__default.NamedExoticComponent<DropdownMenu
  * - onChange returns (value, event) for simpler integration.
  */
 interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size' | 'onChange' | 'rows' | 'maxLength'> {
-    label?: string;
+    /** Visible label. Accepts any node (rendered inside the `<label>`). */
+    label?: React__default.ReactNode;
     /**
      * size: matches UX4G / Bootstrap form-control sizes
      * '' means default
@@ -855,6 +1416,10 @@ interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>
     size?: 'sm' | 'md' | 'lg' | '';
     containerClass?: string;
     rows?: number;
+    /**
+     * Native `maxLength`. **No limit when omitted** (since 0.0.4; previously defaulted to 500 and
+     * silently truncated longer text). With `showCount`, the counter shows `n / max` or just `n`.
+     */
     maxLength?: number;
     fullWidth?: boolean;
     helperText?: string;
@@ -863,6 +1428,11 @@ interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>
     status?: 'error' | 'warning' | 'success';
     resize?: 'none' | 'vertical' | 'horizontal' | 'both';
     rounded?: '0' | '1' | '2' | '3' | '4' | '5' | 'pill';
+    /**
+     * Run the sanitizer on every change. Off by default. When on, `removeChars` (default `/<>@#`),
+     * `removeEmojis` (default `true`) and `normalizeAccents` (default `true`) apply — so typed text
+     * IS altered. Pass `removeEmojis={false}` etc. to opt out of individual steps.
+     */
     sanitize?: boolean;
     removeChars?: string;
     removeEmojis?: boolean;
@@ -884,10 +1454,12 @@ interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>
  * UX4G TextArea component
  *
  * - Controlled or uncontrolled usage supported
- * - Optional sanitization via text-validator
+ * - Optional sanitization via text-validator (`sanitize`, off by default)
  * - Uses size classes consistent with UX4G/Bootstrap
+ * - `ref` is forwarded to the native `<textarea>`
+ * - No character limit unless `maxLength` is passed
  */
-declare const TextArea: React__default.FC<TextAreaProps>;
+declare const TextArea: React__default.ForwardRefExoticComponent<TextAreaProps & React__default.RefAttributes<HTMLTextAreaElement>>;
 
 type ProgressBarType = "line" | "circle";
 type ProgressBarSize = "xs" | "sm" | "md" | "lg";
@@ -946,6 +1518,12 @@ interface TooltipIconProps extends Omit<React__default.HTMLAttributes<HTMLSpanEl
     iconToolTip?: IconSource;
     maxWidth?: number | string;
     variant?: "dark" | "light";
+    /**
+     * Stacking order of the bubble (number or CSS value). @default "var(--z-tooltip-top, 600)" —
+     * above Modal / Drawer / Popover. The bubble renders inside the trigger, so it can never escape
+     * a stacking context the trigger is in; use the portalled `Tooltip` molecule for that.
+     */
+    zIndex?: number | string;
 }
 
 declare const TooltipIcon: React__default.FC<TooltipIconProps>;
@@ -1510,7 +2088,15 @@ interface ComboboxProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" 
 declare const Combobox: React__default.NamedExoticComponent<ComboboxProps>;
 
 type ModalAnimation = "none" | "fade" | "slide" | "scale";
-type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl";
+/** `"fullscreen"` fills the whole viewport (no margin, no radius) — for full-page editors / workspaces. */
+type ModalSize = "sm" | "md" | "lg" | "xl" | "xxl" | "fullscreen";
+/**
+ * Attributes passed through to the Modal's outermost root element (`.modal-root`, which wraps the
+ * backdrop and the dialog). Use for `data-*` hooks (e.g. `data-anchored-popover`), test ids, etc.
+ */
+type ModalRootProps = React.HTMLAttributes<HTMLDivElement> & {
+    [dataAttr: `data-${string}`]: string | number | boolean | undefined;
+};
 /**
  * - `"inside"` (default): the dialog is capped to the viewport and only the body scrolls; header and footer stay fixed.
  * - `"outside"`: the dialog grows with its content and the whole dialog scrolls inside the viewport.
@@ -1535,13 +2121,44 @@ interface ModalProps {
     isOpen: boolean;
     /** Called when modal should close (backdrop click, escape, close button) */
     onClose: () => void;
-    /** Modal title — the dialog's accessible name (`aria-labelledby`). Rendered as text. */
-    title: string;
     /**
-     * Supporting text rendered under the title and wired to the dialog's `aria-describedby`.
-     * Not rendered when `hideHeader` is set.
+     * Modal title — the dialog's accessible name (`aria-labelledby`). A string or any ReactNode
+     * (e.g. a code badge + text). When it is not plain text, pass `ariaLabel` for a clean accessible name.
+     */
+    title: React.ReactNode;
+    /**
+     * Explicit accessible name. When set it is used as `aria-label` instead of `aria-labelledby` → title.
+     * Also names the dialog when `hideHeader` is set.
+     */
+    ariaLabel?: string;
+    /**
+     * Supporting content rendered under the title (in a block `<div>`, so paragraphs / lists are fine)
+     * and wired to the dialog's `aria-describedby`. Not rendered when `hideHeader` is set.
      */
     description?: React.ReactNode;
+    /** Extra controls rendered in the title bar, before the close (X) button (e.g. Export, Copy). */
+    headerActions?: React.ReactNode;
+    /**
+     * Guard run before any user-initiated close (Escape, backdrop, close button, Cancel). Return `false`
+     * (or a promise resolving to `false`) to keep the modal open — e.g. an unsaved-changes check.
+     * Repeat close requests are ignored while a returned promise is pending.
+     */
+    onBeforeClose?: () => boolean | Promise<boolean>;
+    /**
+     * `false` makes the body a fixed, non-scrolling flex column (`overflow: hidden`) so children own
+     * their scroll — for multi-pane dialogs. @default true
+     */
+    bodyScroll?: boolean;
+    /** Extra class on the body element. */
+    bodyClassName?: string;
+    /**
+     * `false` disables all open/close animation and transforms on the dialog (no `transform` is ever
+     * applied), and closes immediately. Use when the modal hosts dnd-kit `DragOverlay` or other
+     * `position: fixed` content that a transformed ancestor would shift. @default true
+     */
+    animate?: boolean;
+    /** Attributes spread onto the outermost root (`.modal-root`), e.g. `{ "data-anchored-popover": "" }`. */
+    rootProps?: ModalRootProps;
     /** Modal body content */
     children: React.ReactNode;
     /** Called when confirm button is clicked */
@@ -1571,7 +2188,7 @@ interface ModalProps {
     showCloseButton?: boolean;
     /** Stacked modals: separate backdrop for nested modals */
     isStackedBackground?: boolean;
-    /** z-index for modal layer */
+    /** z-index for the modal layer (backdrop; the dialog sits at `zIndex + 1`). @default 400 (`--z-modal`) */
     zIndex?: number;
     /** Icon for title: URL, import, or inline React element */
     titleIcon?: React.ReactNode | string | {
@@ -1646,9 +2263,21 @@ interface ModalProps {
      * @deprecated Raw colour overrides bypass theme tokens and break dark / mist themes. Use `cancelButtonVariant`, or pass your own buttons through the `footer` slot. Still applied for backward compatibility.
      */
     cancelButtonBorder?: string;
+    /** Any `data-*` attribute passed directly on `<Modal>` is forwarded to the root (same as `rootProps`). */
+    [dataAttr: `data-${string}`]: string | number | boolean | undefined;
 }
 
-declare function Modal({ isOpen, onClose, title, description, children, onConfirm, confirmText, confirmDisabled, confirmLoading, cancelText, showCancel, hideFooter, footer, size, id, showCloseButton, isStackedBackground, zIndex, titleIcon, titleIconSize, animation, animationDuration, closeAfterTransition, closeOnBackdropClick, closeOnEscape, className, hideHeader, initialFocusRef, scrollBehavior, fullscreenOnMobile, onOpenAutoFocus, onCloseAutoFocus, confirmButtonVariant, confirmButtonColor, confirmButtonBackground, confirmButtonBorder, cancelButtonVariant, cancelButtonColor, cancelButtonBackground, cancelButtonBorder, }: ModalProps): React__default.ReactPortal | null;
+/**
+ * Shared "guarded close" helper for Modal and Drawer (`onBeforeClose`).
+ *
+ * The guard runs before any user-initiated close (Escape, backdrop click, close button, Cancel).
+ * Returning `false` (or a promise resolving to `false`, or a rejected promise) aborts the close.
+ * With no guard — or a synchronous non-false result — `proceed` runs synchronously, so existing
+ * close timing is unchanged.
+ */
+type BeforeCloseGuard = () => boolean | Promise<boolean>;
+
+declare function Modal({ isOpen, onClose, title, ariaLabel, description, headerActions, onBeforeClose, bodyScroll, bodyClassName, animate, rootProps, children, onConfirm, confirmText, confirmDisabled, confirmLoading, cancelText, showCancel, hideFooter, footer, size, id, showCloseButton, isStackedBackground, zIndex, titleIcon, titleIconSize, animation, animationDuration, closeAfterTransition, closeOnBackdropClick, closeOnEscape, className, hideHeader, initialFocusRef, scrollBehavior, fullscreenOnMobile, onOpenAutoFocus, onCloseAutoFocus, confirmButtonVariant, confirmButtonColor, confirmButtonBackground, confirmButtonBorder, cancelButtonVariant, cancelButtonColor, cancelButtonBackground, cancelButtonBorder, ...restProps }: ModalProps): React__default.ReactPortal | null;
 
 type AlertDialogVariant = "info" | "success" | "warning" | "error";
 interface AlertDialogProps {
@@ -2022,8 +2651,24 @@ interface DrawerProps {
     size?: DrawerSize;
     /** Heading rendered as the dialog's accessible name (`aria-labelledby`). Rendered as text, never parsed as HTML. */
     title: ReactNode;
-    /** Supporting text under the title, wired to `aria-describedby`. */
+    /** Supporting content under the title (block `<div>`, so rich content is fine), wired to `aria-describedby`. */
     description?: ReactNode;
+    /** Extra controls rendered in the header, before the close (X) button (e.g. Export, Refresh). */
+    headerActions?: ReactNode;
+    /**
+     * Guard run before any user-initiated close (Escape, backdrop click, close button). Return `false`
+     * (or a promise resolving to `false`) to keep the drawer open — e.g. an unsaved-changes check.
+     * Repeat close requests are ignored while a returned promise is pending. Not called when the
+     * parent sets `open={false}` itself.
+     */
+    onBeforeClose?: () => boolean | Promise<boolean>;
+    /**
+     * `false` makes the body a fixed, non-scrolling flex column (`overflow: hidden`) so a child owns the
+     * scroll (e.g. a table with a sticky header). @default true
+     */
+    bodyScroll?: boolean;
+    /** Extra class on the body element. */
+    bodyClassName?: string;
     /** Scrollable body content. The header and footer stay fixed while this scrolls. */
     children?: ReactNode;
     /** Sticky footer area (actions). */
@@ -2097,6 +2742,59 @@ interface SpinnerProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children">
  * surrounding control already exposes the busy state (e.g. inside a loading Button).
  */
 declare const Spinner: React__default.ForwardRefExoticComponent<SpinnerProps & React__default.RefAttributes<HTMLSpanElement>>;
+
+/**
+ * Veil behind the spinner.
+ * - `surface` — translucent `--color-bg-surface` (default; reads well over cards / grids)
+ * - `dim` — `--color-bg-overlay` (dark scrim, like a modal backdrop)
+ * - `none` — transparent
+ */
+type LoadingOverlayBackdrop = "surface" | "dim" | "none";
+interface LoadingOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+    /** Render the overlay. `false` renders nothing. @default true */
+    visible?: boolean;
+    /**
+     * Cover the whole viewport (`position: fixed`, portalled to `document.body`).
+     * Otherwise it covers its nearest positioned ancestor (`position: absolute; inset: 0`) —
+     * give the parent `position: relative`. @default false
+     */
+    fullScreen?: boolean;
+    /**
+     * `true` (default): catches all pointer input on the covered area and, in container mode, marks the
+     * covered parent `aria-busy="true"` while shown. Spinner is centred.
+     * `false`: a non-blocking veil — `pointer-events: none`, never takes focus, content stays usable;
+     * for "Recalculating…" status hints.
+     * @default true
+     */
+    blocking?: boolean;
+    /** Visible text under (blocking) or beside (veil) the spinner. Also the announced status text. */
+    label?: ReactNode;
+    /** Announced text when there is no visible `label`. @default "Loading" */
+    ariaLabel?: string;
+    /** Spinner size. @default "lg" when blocking, "sm" for the veil */
+    spinnerSize?: SpinnerSize;
+    /** Veil style. @default "surface" */
+    backdrop?: LoadingOverlayBackdrop;
+    /**
+     * z-index override. Defaults: container `var(--z-raised)`; `fullScreen` sits above open modals
+     * (`calc(var(--z-modal) + 2)`).
+     */
+    zIndex?: number;
+    /** Extra content under the label (e.g. a Cancel button — only clickable when `blocking`). */
+    children?: ReactNode;
+}
+
+/**
+ * LoadingOverlay — covers its positioned parent (or the viewport with `fullScreen`) while work runs.
+ *
+ * - `blocking` (default): swallows pointer input over the covered area and marks the covered parent
+ *   `aria-busy="true"` (container mode). It never moves focus.
+ * - `blocking={false}`: a non-blocking veil (`pointer-events: none`) with a small status pill —
+ *   the content underneath stays fully usable; focus is never trapped or moved.
+ *
+ * The status text (`label`, else `ariaLabel`) is exposed through a `role="status"` live region.
+ */
+declare const LoadingOverlay: React__default.ForwardRefExoticComponent<LoadingOverlayProps & React__default.RefAttributes<HTMLDivElement>>;
 
 /**
  * - `text` — one or more line bars (use `lines`; the last line is 60% wide)
@@ -2281,6 +2979,12 @@ interface TooltipProps extends Omit<HTMLAttributes<HTMLDivElement>, "content" | 
     maxWidth?: number | string;
     /** @default "dark" */
     variant?: TooltipVariant;
+    /**
+     * Stacking order of the portalled bubble (number or CSS value). Default `var(--z-tooltip-top, 600)`
+     * — above Modal / Drawer / Popover — automatically lifted to one above the highest z-index among
+     * the trigger's ancestors (e.g. a host dialog at z 10000 → 10001).
+     */
+    zIndex?: number | string;
 }
 
 /**
@@ -2306,8 +3010,23 @@ interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"
     /**
      * Id of the control the label points at. When omitted, the child's own `id` is used,
      * otherwise an id is generated with `useId` and injected into the child.
+     *
+     * Composite children: when the child is a non-labelable wrapper element (e.g. a `<div>` row with
+     * an input + button), `htmlFor` is NOT injected into the wrapper — put that id on the inner
+     * control yourself (`<Input id="app-file" />`). Read hint/error ids via `useFormField()` if the
+     * inner control should also get `aria-describedby`.
      */
     htmlFor?: string;
+    /**
+     * Group mode for multi-control fields (Min–Max pairs, chip / toggle groups, radio-like sets):
+     * the root gets `role="group"` + `aria-labelledby` (the label) + `aria-describedby` (hint/error/counter),
+     * the label renders as a `<span>` (not `<label for>`), nothing is injected into the children and the
+     * dev "no labelable element" warning is skipped. Give each inner control its own accessible name.
+     * @default false
+     */
+    group?: boolean;
+    /** Keep the label for assistive tech (still names the control / group) but hide it visually. @default false */
+    hideLabel?: boolean;
     /** Helper text under the control; linked via `aria-describedby`. */
     hint?: ReactNode;
     /** Error message. Sets `aria-invalid` on the child and is linked via `aria-describedby`. Announced (`role="alert"`) only when it changes after mount. */
@@ -2336,6 +3055,8 @@ interface FormFieldContextValue {
     describedBy?: string;
     invalid: boolean;
     required: boolean;
+    /** `true` when the field is in `group` mode (label is a `<span>` referenced by the group's `aria-labelledby`). */
+    group?: boolean;
 }
 
 /**
@@ -3108,4 +3829,4 @@ declare const DEFAULT_RANGE_PRESETS: DateRangePreset[];
  */
 declare const DateRangePicker: React__default.ForwardRefExoticComponent<DateRangePickerProps & React__default.RefAttributes<HTMLDivElement>>;
 
-export { Accordion, AccordionContent, AccordionContentProps, AccordionContextValue, AccordionDensity, AccordionItem, AccordionItemProps, AccordionMotion, AccordionProps, AccordionTrigger, AccordionTriggerProps, AccordionType, AccordionVariant, Alert, AlertAppearance, AlertDialog, AlertDialogProps, AlertDialogVariant, AlertLive, AlertProps, AlertVariant, AvatarProps, Avatar as Avtar, Badge, BadgeProps, BadgeShape, BadgeSize, BadgeTone, BadgeVariant, Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps, BreadcrumbSeparator, Button, ButtonElement, ButtonGroup, ButtonGroupContextValue, ButtonGroupOrientation, ButtonGroupProps, ButtonGroupSeparator, ButtonGroupSeparatorProps, ButtonGroupText, ButtonGroupTextProps, ButtonProps, Calendar, CalendarAnimation, CalendarCaptionLayout, CalendarElevation, CalendarProps, CalendarSize, CalendarTheme, CalendarVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps, CardSize, CardTitle, CardTitleProps, CardVariantName, Checkbox as CheckBox, CheckboxProps, CheckboxSize, Chip, ChipProps, CodeBlock, CodeBlockProps, CodeBlockTone, Combobox, ComboboxGroup, ComboboxOption, ComboboxProps, CommandGroup, CommandItem, CommandPalette, CommandPaletteProps, CommandSearchContext, CompleteDateRange, DEFAULT_RANGE_PRESETS, DataTable, DataTableBulkAction, DataTableBulkActionHelpers, DataTableColumn, DataTableError, DataTableExportOptions, DataTableFilterBarProps, DataTableLabels, DataTableProps, DataTableRow, DataTableServerPagination, DataTableSort, DataTableSortDirection, DatePicker, DatePickerProps, DateRange, DateRangePicker, DateRangePickerProps, DateRangePreset, DateRangeWeekStart, DetectedKind, Divider, Drawer, DrawerProps, DrawerSide, DrawerSize, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuItemProps, DropdownMenuTrigger, Dropzone, DropzoneProps, EmptyState, EmptyStateProps, ErrorAnimation, ErrorState, ErrorStateProps, FEEDBACK_ANIMATIONS, FeedbackAnimationName, FeedbackSize, FeedbackState, FeedbackStateProps, FeedbackStateVariant, FeedbackVisualTone, FileUpload, FileUploadProps, FileUploadSecurityOptions, FileUploadSize, FilterBar, FilterBarFilter, FilterBarFilterType, FilterBarFilterValue, FilterBarLabels, FilterBarOption, FilterBarProps, FilterBarValue, Form, FormField, FormFieldContextValue, FormFieldCounter, FormFieldLayout, FormFieldProps, FormProps, GradientText, GradientTextProps, Grid, GridItem, GridItemProps, GridProps, Hyperlink, HyperlinkProps, IconBox, IconBoxProps, IconBoxShape, IconBoxSize, IconBoxTone, IconSource, InfoAnimation, TextInput as Input, TextInputProps as InputProps, Kbd, KbdKeyLabel, KbdPlatform, KbdProps, KbdSize, List, ListItem, ListItemProps, ListProps, ListSize, Modal, ModalAnimation, ModalAutoFocusEvent, ModalProps, ModalScrollBehavior, ModalSize, NoDataAnimation, NoSearchResultsAnimation, NumberInput, NumberInputProps, NumberInputSize, OfflineAnimation, OfflineBanner, OfflineBannerProps, OtpBox, OtpBoxProps, OtpBoxSize, OtpBoxVariant, PageHeader, PageHeaderAction, PageHeaderProps, PageHeaderTitleAs, Pagination, PaginationItem, PaginationLabels, PaginationProps, PaginationRange, PaginationSize, Popover, PopoverContent, PopoverContentProps, PopoverPlacement, PopoverProps, PopoverTrigger, PopoverTriggerProps, ProgressBar, ProgressBarProps, RadioButtonProps, RadioGroup, SEGMENTED_CONTROL_DEFAULTS, SEGMENTED_CONTROL_SIZES, SegmentedControl, SegmentedControlOption, SegmentedControlProps, SegmentedControlSize, Select, SelectOptionGroup, SelectProps, SelectSize, Sheet, SheetProps, Skeleton, SkeletonDimension, SkeletonGroup, SkeletonGroupProps, SkeletonProps, SkeletonShape, Spinner, SpinnerProps, SpinnerSize, SpinnerTone, StatCard, StatCardProps, StatDelta, StatTrend, Stepper, StepperAppearance, StepperContextValue, StepperProps, StepperSize, StepperStep, StepperStepProps, StepperTrackMode, SuccessAnimation, Switch, SwitchProps, SwitchSize, TableColumn, TableProps, Tabs, TabsActivationMode, TabsContent, TabsContentAnimation, TabsContentProps, TabsContextValue, TabsList, TabsListLayout, TabsListProps, TabsOrientation, TabsProps, TabsSize, TabsTrigger, TabsTriggerAlign, TabsTriggerLayout, TabsTriggerProps, TabsVariant, Tag, TagProps, TextArea, TextAreaProps, TextView, TextViewProps, Toast, ToastAction, ToastContextValue, ToastOptions, ToastPosition, ToastProps, ToastProvider, ToastProviderProps, ToastVariant, TooltipIcon as ToolTip, Tooltip, TooltipAlign, TooltipIconProps, TooltipProps, TooltipSide, TooltipVariant, WIZARD_DEFAULTS, Wizard, WizardHeadingLevel, WizardProps, WizardStep, WizardValidationResult, createDefaultRangePresets, detectFileKindFromBuffer, detectIsMac, escapeCsvCell, formatLocaleNumber, formatShortcut, getItemRange, getPageCount, getPaginationRange, parseAcceptString, parseLocaleNumber, toAriaKeyShortcuts, toCsv, useFormField, useToast, validateFileSecurity, validateFilename, validateFilesSecurity };
+export { Accordion, AccordionContent, AccordionContentProps, AccordionContextValue, AccordionDensity, AccordionItem, AccordionItemProps, AccordionMotion, AccordionProps, AccordionTrigger, AccordionTriggerProps, AccordionType, AccordionVariant, Alert, AlertAppearance, AlertDialog, AlertDialogProps, AlertDialogVariant, AlertLive, AlertProps, AlertVariant, AvatarProps, Avatar as Avtar, Badge, BadgeProps, BadgeShape, BadgeSize, BadgeTone, BadgeVariant, BeforeCloseGuard, Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps, BreadcrumbSeparator, Button, ButtonElement, ButtonGroup, ButtonGroupContextValue, ButtonGroupOrientation, ButtonGroupProps, ButtonGroupSeparator, ButtonGroupSeparatorProps, ButtonGroupText, ButtonGroupTextProps, ButtonProps, Calendar, CalendarAnimation, CalendarCaptionLayout, CalendarElevation, CalendarProps, CalendarSize, CalendarTheme, CalendarVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps, CardSize, CardTitle, CardTitleProps, CardVariantName, Checkbox as CheckBox, CheckboxNativeProps, CheckboxProps, CheckboxSize, Chip, ChipProps, CodeBlock, CodeBlockProps, CodeBlockTone, ColorPicker, ColorPickerProps, ColorPickerSwatch, ColorPickerSwatchSize, Combobox, ComboboxGroup, ComboboxOption, ComboboxProps, CommandGroup, CommandItem, CommandPalette, CommandPaletteProps, CommandSearchContext, CompleteDateRange, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuContentProps, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuPosition, ContextMenuProps, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuTrigger, ContextMenuTriggerProps, DEFAULT_COLOR_PICKER_PALETTE, DEFAULT_RANGE_PRESETS, DataTable, DataTableBulkAction, DataTableBulkActionHelpers, DataTableColumn, DataTableError, DataTableExportOptions, DataTableFilterBarProps, DataTableLabels, DataTableProps, DataTableRow, DataTableServerPagination, DataTableSort, DataTableSortDirection, DatePicker, DatePickerProps, DateRange, DateRangePicker, DateRangePickerProps, DateRangePreset, DateRangeWeekStart, DetectedKind, Divider, Drawer, DrawerProps, DrawerSide, DrawerSize, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuCheckboxItemProps, DropdownMenuContent, DropdownMenuGroup, DropdownMenuGroupProps, DropdownMenuItem, DropdownMenuItemProps, DropdownMenuLabel, DropdownMenuLabelProps, DropdownMenuRadioGroup, DropdownMenuRadioGroupProps, DropdownMenuRadioItem, DropdownMenuRadioItemProps, DropdownMenuSeparator, DropdownMenuSeparatorProps, DropdownMenuTrigger, Dropzone, DropzoneProps, EmptyState, EmptyStateProps, ErrorAnimation, ErrorState, ErrorStateProps, FEEDBACK_ANIMATIONS, FeedbackAnimationName, FeedbackSize, FeedbackState, FeedbackStateProps, FeedbackStateVariant, FeedbackVisualTone, FilePickerInputProps, FileUpload, FileUploadProps, FileUploadSecurityOptions, FileUploadSize, FileUploadVariant, FilterBar, FilterBarFilter, FilterBarFilterType, FilterBarFilterValue, FilterBarLabels, FilterBarOption, FilterBarProps, FilterBarValue, Form, FormField, FormFieldContextValue, FormFieldCounter, FormFieldLayout, FormFieldProps, FormProps, GradientText, GradientTextProps, Grid, GridItem, GridItemProps, GridProps, Hyperlink, HyperlinkProps, IconBox, IconBoxProps, IconBoxShape, IconBoxSize, IconBoxTone, IconSource, InfoAnimation, TextInput as Input, TextInputProps as InputProps, Kbd, KbdKeyLabel, KbdPlatform, KbdProps, KbdSize, List, ListItem, ListItemProps, ListProps, ListSize, Listbox, ListboxOption, ListboxOptionProps, ListboxProps, LoadingOverlay, LoadingOverlayBackdrop, LoadingOverlayProps, Modal, ModalAnimation, ModalAutoFocusEvent, ModalProps, ModalRootProps, ModalScrollBehavior, ModalSize, NoDataAnimation, NoSearchResultsAnimation, NumberInput, NumberInputProps, NumberInputSize, OfflineAnimation, OfflineBanner, OfflineBannerProps, OtpBox, OtpBoxProps, OtpBoxSize, OtpBoxVariant, PageHeader, PageHeaderAction, PageHeaderProps, PageHeaderTitleAs, Pagination, PaginationItem, PaginationLabels, PaginationProps, PaginationRange, PaginationSize, Popover, PopoverAnchor, PopoverAnchorProps, PopoverContent, PopoverContentProps, PopoverPlacement, PopoverProps, PopoverTrigger, PopoverTriggerProps, ProgressBar, ProgressBarProps, RadioButtonProps, RadioGroup, SEGMENTED_CONTROL_DEFAULTS, SEGMENTED_CONTROL_SIZES, SegmentedControl, SegmentedControlOption, SegmentedControlProps, SegmentedControlSize, Select, SelectOptionGroup, SelectProps, SelectSize, Sheet, SheetProps, Skeleton, SkeletonDimension, SkeletonGroup, SkeletonGroupProps, SkeletonProps, SkeletonShape, Slider, SliderProps, SliderRangeProps, SliderSingleProps, SliderSize, Spinner, SpinnerProps, SpinnerSize, SpinnerTone, StatCard, StatCardProps, StatDelta, StatTrend, Stepper, StepperAppearance, StepperContextValue, StepperProps, StepperSize, StepperStep, StepperStepProps, StepperTrackMode, SuccessAnimation, Switch, SwitchNativeProps, SwitchProps, SwitchSize, TableColumn, TableProps, Tabs, TabsActivationMode, TabsContent, TabsContentAnimation, TabsContentProps, TabsContextValue, TabsList, TabsListLayout, TabsListProps, TabsOrientation, TabsProps, TabsSize, TabsTrigger, TabsTriggerAlign, TabsTriggerLayout, TabsTriggerProps, TabsVariant, Tag, TagProps, TextArea, TextAreaProps, TextView, TextViewProps, Toast, ToastAction, ToastContextValue, ToastOptions, ToastPosition, ToastProps, ToastProvider, ToastProviderProps, ToastVariant, ToggleButton, ToggleButtonProps, ToggleButtonSize, ToggleButtonVariant, ToggleGroup, ToggleGroupItem, ToggleGroupMultipleProps, ToggleGroupProps, ToggleGroupSingleProps, TooltipIcon as ToolTip, Tooltip, TooltipAlign, TooltipIconProps, TooltipProps, TooltipSide, TooltipVariant, UseFilePickerOptions, UseFilePickerResult, WIZARD_DEFAULTS, Wizard, WizardHeadingLevel, WizardProps, WizardStep, WizardValidationResult, computeContextMenuPosition, createDefaultRangePresets, detectFileKindFromBuffer, detectIsMac, escapeCsvCell, formatLocaleNumber, formatShortcut, getItemRange, getPageCount, getPaginationRange, normalizeHex, parseAcceptString, parseLocaleNumber, toAriaKeyShortcuts, toCsv, useFilePicker, useFormField, useToast, validateFileSecurity, validateFilename, validateFilesSecurity };

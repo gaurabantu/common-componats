@@ -31,6 +31,7 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
   className = "",
   maxWidth = 240,
   variant = "dark",
+  zIndex = "var(--z-tooltip-top, 600)",
   ...rest
 }) => {
   const tooltipId = useId();
@@ -278,7 +279,7 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
           role="tooltip"
           style={{
             position: "fixed",
-            zIndex: 50,
+            zIndex,
             maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
             minWidth: 120,
             padding: "10px 12px",

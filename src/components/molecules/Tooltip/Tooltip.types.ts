@@ -38,6 +38,12 @@ export interface TooltipProps
   maxWidth?: number | string;
   /** @default "dark" */
   variant?: TooltipVariant;
+  /**
+   * Stacking order of the portalled bubble (number or CSS value). Default `var(--z-tooltip-top, 600)`
+   * — above Modal / Drawer / Popover — automatically lifted to one above the highest z-index among
+   * the trigger's ancestors (e.g. a host dialog at z 10000 → 10001).
+   */
+  zIndex?: number | string;
 }
 
 export interface TooltipPositionResult {

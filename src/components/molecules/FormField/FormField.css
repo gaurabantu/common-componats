@@ -144,3 +144,28 @@
     color: CanvasText;
   }
 }
+
+/* hideLabel — label column stays in the a11y tree but is visually hidden (and out of the grid flow). */
+.ds-form-field[data-hide-label="true"] .ds-form-field__label-col {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ds-form-field[data-hide-label="true"][data-layout="horizontal"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Inline filter / POV bars: a field placed directly in a wrapping flex row sizes to its control
+   instead of taking a full line (width:100% made every field wrap onto its own row). Use
+   `.ds-form-row` or a `flex-wrap` row. `:where` keeps specificity equal to `.ds-form-field`, so a
+   width / flex utility on the field (w-40, flex-1) still wins. */
+:where(.ds-form-row, .flex-wrap) > .ds-form-field {
+  width: auto;
+}

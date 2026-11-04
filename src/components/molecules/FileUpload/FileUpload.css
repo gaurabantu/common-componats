@@ -167,3 +167,12 @@
     max-width: 100%;
   }
 }
+
+/* variant="button" — Button trigger + messages, no drop area. */
+.ds-file-upload--button {
+  width: auto;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-0);
+}

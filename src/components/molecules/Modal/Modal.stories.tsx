@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Modal from "./index";
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import Button from "../../atoms/Button";
 
 const meta: Meta<typeof Modal> = {
@@ -17,12 +17,21 @@ const meta: Meta<typeof Modal> = {
           "`title` names the dialog and `description` describes it (`aria-describedby`). With `scrollBehavior=\"inside\"` (the default) only the body scrolls. " +
           "With `\"outside\"` the whole dialog scrolls in the viewport. `fullscreenOnMobile` fills the screen at 480px or narrower. " +
           "`confirmLoading` shows the Button spinner and blocks double submits. Style the buttons with `confirmButtonVariant` / " +
-          "`cancelButtonVariant` or the `footer` slot. The raw colour props (`confirmButtonColor` and the others) are deprecated. Use `Drawer` for edge-attached panels.",
+          "`cancelButtonVariant` or the `footer` slot. The raw colour props (`confirmButtonColor` and the others) are deprecated. Use `Drawer` for edge-attached panels. " +
+          "Since 0.0.4: `size=\"fullscreen\"` for full-page workspaces, `headerActions` in the title bar, a ReactNode `title` (with `ariaLabel` for a plain accessible name), " +
+          "block `description` content, `rootProps` / `data-*` pass-through on the root, `bodyScroll={false}` for multi-pane dialogs whose children own the scroll, " +
+          "`animate={false}` (no transform — safe for dnd-kit `DragOverlay`), and `onBeforeClose` to veto Escape / backdrop / close-button / Cancel closes (e.g. unsaved changes).",
       },
     },
   },
   argTypes: {
-    size: { control: "select", options: ["sm", "md", "lg", "xl", "xxl"] },
+    size: { control: "select", options: ["sm", "md", "lg", "xl", "xxl", "fullscreen"] },
+    animate: { control: "boolean" },
+    bodyScroll: { control: "boolean" },
+    ariaLabel: { control: "text" },
+    headerActions: { control: false },
+    rootProps: { control: false },
+    onBeforeClose: { control: false },
     animation: { control: "select", options: ["none", "fade", "slide", "scale"] },
     confirmButtonVariant: {
       control: "select",
@@ -350,4 +359,161 @@ export const InitialFocus: Story = {
     },
   },
   render: () => <InitialFocusDemo />,
+};
+
+const paneStyle: CSSProperties = {
+  overflowY: "auto",
+  minHeight: 0,
+  padding: "var(--space-1)",
+  border: "1px solid var(--color-border-subtle)",
+  borderRadius: "var(--radius-md)",
+};
+
+const listItems = (prefix: string) =>
+  Array.from({ length: 40 }, (_, i) => (
+    <div key={i} className="text-body text-text-primary" style={{ padding: "var(--space-0) 0" }}>
+      {prefix} {i + 1}
+    </div>
+  ));
+
+/** `size="fullscreen"` — a full-viewport workspace (no margin, no radius). */
+export const Fullscreen: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Calculation manager",
+    size: "fullscreen",
+    hideFooter: true,
+    headerActions: (
+      <Button variant="outlineSecondary" size="sm">
+        Validate
+      </Button>
+    ),
+    children: <p className="text-body text-text-primary">Full-page editor content.</p>,
+  },
+};
+
+/** `headerActions` + ReactNode `title` — `ariaLabel` gives a plain accessible name. */
+export const HeaderActionsAndRichTitle: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: (
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "var(--space-1)" }}>
+        <code
+          style={{
+            padding: "0 var(--space-0)",
+            borderRadius: "var(--radius-md)",
+            background: "var(--color-bg-page)",
+            fontSize: "var(--text-body-size)",
+          }}
+        >
+          ACC-1000
+        </code>
+        Cash and cash equivalents
+      </span>
+    ),
+    ariaLabel: "Account ACC-1000, Cash and cash equivalents",
+    headerActions: (
+      <>
+        <Button variant="outlineSecondary" size="sm">
+          Copy
+        </Button>
+        <Button variant="outlinePrimary" size="sm">
+          Export
+        </Button>
+      </>
+    ),
+    hideFooter: true,
+    children: <p className="text-body text-text-primary">Account detail body.</p>,
+  },
+};
+
+/** `description` is a block container — paragraphs and lists are fine. */
+export const BlockDescription: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Select members",
+    description: (
+      <>
+        <p style={{ margin: 0 }}>Pick the members to include.</p>
+        <ul style={{ margin: "var(--space-0) 0 0", paddingLeft: "var(--space-3)" }}>
+          <li>Descendants are included automatically.</li>
+          <li>Shared members are listed once.</li>
+        </ul>
+      </>
+    ),
+    children: <p className="text-body text-text-primary">Body.</p>,
+  },
+};
+
+/** `bodyScroll={false}` — the body is a fixed flex column; each pane scrolls on its own. */
+export const FixedBodyMultiPane: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Member selector",
+    size: "xl",
+    bodyScroll: false,
+    children: (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-2)", height: "60dvh", minHeight: 0 }}>
+        <div style={paneStyle} tabIndex={0} aria-label="Available members">
+          {listItems("Available")}
+        </div>
+        <div style={paneStyle} tabIndex={0} aria-label="Selected members">
+          {listItems("Selected")}
+        </div>
+      </div>
+    ),
+  },
+};
+
+/** `animate={false}` — no open/close transform, so `position: fixed` children (dnd-kit DragOverlay) are not shifted. */
+export const NoAnimation: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Layout designer",
+    animate: false,
+    children: <p className="text-body text-text-primary">Opens and closes instantly with no transform.</p>,
+  },
+};
+
+function GuardedCloseDemo() {
+  const [open, setOpen] = useState(false);
+  const [dirty, setDirty] = useState(true);
+  return (
+    <>
+      <Button variant="primary" onClick={() => setOpen(true)}>
+        Open editor
+      </Button>
+      <Modal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Edit rule"
+        onBeforeClose={() => !dirty || window.confirm("Discard unsaved changes?")}
+        onConfirm={() => {
+          setDirty(false);
+          setOpen(false);
+        }}
+        confirmText="Save"
+      >
+        <label className="text-body text-text-primary" style={{ display: "flex", gap: "var(--space-1)" }}>
+          <input type="checkbox" checked={dirty} onChange={(e) => setDirty(e.target.checked)} />
+          Has unsaved changes
+        </label>
+      </Modal>
+    </>
+  );
+}
+
+/** `onBeforeClose` vetoes Escape / backdrop / X / Cancel — return `false` (or a promise of it) to stay open. */
+export const GuardedClose: Story = {
+  render: () => <GuardedCloseDemo />,
+};
+
+/** `rootProps` and direct `data-*` props land on the outermost `.modal-root`. */
+export const RootAttributes: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Insert function",
+    rootProps: { "data-anchored-popover": "true", className: "my-root-hook" },
+    children: <p className="text-body text-text-primary">Inspect `.modal-root` for `data-anchored-popover`.</p>,
+  },
 };

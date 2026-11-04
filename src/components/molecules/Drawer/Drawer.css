@@ -141,6 +141,21 @@
   overflow-wrap: anywhere;
 }
 
+.ds-drawer__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 0 0 auto;
+  min-height: 2.5rem;
+}
+
+/* bodyScroll={false}: a child owns the scroll (sticky table headers etc.) */
+.ds-drawer__body[data-body-scroll="false"] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .ds-drawer__description {
   margin: 0;
   font-size: var(--text-body-size);

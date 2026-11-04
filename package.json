@@ -1,6 +1,6 @@
 {
   "name": "ui-common-components",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Reusable React components — UX Governance Design System (Tailwind + CSS tokens, WCAG 2.2 AA)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -31,6 +31,12 @@
     },
     "./index.css": {
       "default": "./dist/index.css"
+    },
+    "./charts.css": {
+      "default": "./dist/charts.css"
+    },
+    "./dist/charts.css": {
+      "default": "./dist/charts.css"
     },
     "./design-system/tokens.css": "./src/design-system/tokens.css",
     "./tailwind.preset.js": "./tailwind.preset.js",

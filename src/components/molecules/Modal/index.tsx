@@ -7,6 +7,7 @@ import { ModalProps } from "./Modal.types";
 import { defaultModalOptions, modalSizeMap, modalSizeWidths } from "./Modal.config";
 import { acquireBodyScrollLock, releaseBodyScrollLock } from "./bodyScrollLock";
 import { OverlayLayerContext, isTopLayer, popLayer, pushLayer } from "./overlayStack";
+import { runGuardedClose } from "./closeGuard";
 import "./Modal.css";
 
 export type {
@@ -15,7 +16,9 @@ export type {
   ModalAnimation,
   ModalScrollBehavior,
   ModalAutoFocusEvent,
+  ModalRootProps,
 } from "./Modal.types";
+export type { BeforeCloseGuard } from "./closeGuard";
 
 function createAutoFocusEvent(type: string): Event {
   return new Event(type, { cancelable: true });
@@ -25,7 +28,14 @@ export default function Modal({
   isOpen,
   onClose,
   title,
+  ariaLabel,
   description,
+  headerActions,
+  onBeforeClose,
+  bodyScroll = true,
+  bodyClassName,
+  animate = true,
+  rootProps,
   children,
   onConfirm,
   confirmText = "Confirm",
@@ -62,6 +72,7 @@ export default function Modal({
   cancelButtonColor,
   cancelButtonBackground,
   cancelButtonBorder,
+  ...restProps
 }: ModalProps) {
   const [isExiting, setIsExiting] = useState(false);
   const exitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -77,8 +88,16 @@ export default function Modal({
   const onCloseAutoFocusRef = useRef(onCloseAutoFocus);
   onCloseAutoFocusRef.current = onCloseAutoFocus;
 
+  // `animate={false}` overrides `animation`: no keyframes, no transform, immediate close.
+  const effectiveAnimation = animate ? animation : "none";
+  const isFullscreen = size === "fullscreen";
   const sizeClass = modalSizeMap[size] ?? "";
-  const animClass = animation !== "none" ? `modal-dialog--${animation}` : "";
+  const animClass = effectiveAnimation !== "none" ? `modal-dialog--${effectiveAnimation}` : "";
+  const onBeforeCloseRef = useRef(onBeforeClose);
+  onBeforeCloseRef.current = onBeforeClose;
+  const guardPendingRef = useRef(false);
+  const isOpenRef = useRef(isOpen);
+  isOpenRef.current = isOpen;
 
   // When parent closes or opens, sync exit state and cancel pending close animation.
   useEffect(() => {
@@ -108,10 +127,10 @@ export default function Modal({
     return () => popLayer(layerId);
   }, [isOpen, layerId, parentLayerId]);
 
-  const handleClose = useCallback(() => {
+  const performClose = useCallback(() => {
     // Ignore repeat requests while the exit animation is pending (no double onClose).
     if (exitTimeoutRef.current) return;
-    if (closeAfterTransition && animation !== "none") {
+    if (closeAfterTransition && effectiveAnimation !== "none") {
       setIsExiting(true);
       exitTimeoutRef.current = setTimeout(() => {
         onClose();
@@ -120,7 +139,13 @@ export default function Modal({
     } else {
       onClose();
     }
-  }, [closeAfterTransition, animation, animationDuration, onClose]);
+  }, [closeAfterTransition, effectiveAnimation, animationDuration, onClose]);
+
+  // User-initiated close: runs `onBeforeClose` first; a false / rejected result keeps the modal open.
+  const handleClose = useCallback(() => {
+    if (exitTimeoutRef.current) return;
+    runGuardedClose(onBeforeCloseRef.current, performClose, guardPendingRef, () => isOpenRef.current);
+  }, [performClose]);
 
   useEffect(() => {
     return () => {
@@ -237,13 +262,26 @@ export default function Modal({
     "modal",
     scrollOutside ? "modal--scroll-outside" : "",
     fullscreenOnMobile ? "modal--fullscreen-mobile" : "",
+    isFullscreen ? "modal--fullscreen" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
+  // Root pass-through: `rootProps` plus any `data-*` passed directly on <Modal>.
+  const directDataAttrs: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(restProps)) {
+    if (key.startsWith("data-")) directDataAttrs[key] = value;
+  }
+  const { className: rootExtraClassName, ...rootRest } = rootProps ?? {};
+  const labelledById = !hideHeader && !ariaLabel ? `${id}Label` : undefined;
+
   const modalContent = (
     <OverlayLayerContext.Provider value={layerId}>
-      <div className="modal-root">
+      <div
+        {...directDataAttrs}
+        {...rootRest}
+        className={["modal-root", rootExtraClassName].filter(Boolean).join(" ")}
+      >
         {!isStackedBackground && (
           <div
             className={`modal-backdrop ${isExiting ? "modal-backdrop--exiting" : "modal-backdrop--entering"}`}
@@ -267,7 +305,8 @@ export default function Modal({
           className={rootClassName}
           id={id}
           tabIndex={-1}
-          aria-labelledby={!hideHeader ? `${id}Label` : undefined}
+          aria-labelledby={labelledById}
+          aria-label={ariaLabel || undefined}
           aria-describedby={hasDescription ? descriptionId : undefined}
           data-scroll-behavior={scrollBehavior}
           aria-modal="true"
@@ -284,7 +323,7 @@ export default function Modal({
             width: "100dvw",
             height: "100dvh",
             zIndex: dialogZIndex,
-            padding: "1rem",
+            padding: isFullscreen ? 0 : "1rem",
             overflowX: "hidden",
             overflowY: scrollOutside ? "auto" : "hidden",
             pointerEvents: "auto",
@@ -292,11 +331,20 @@ export default function Modal({
           onClick={!isStackedBackground ? handleBackdropClick : undefined}
         >
           <div
-            className={`modal-dialog ${sizeClass} ${animClass} ${isExiting ? "modal-dialog--exiting" : "modal-dialog--entering"}`}
+            className={[
+              "modal-dialog",
+              sizeClass,
+              animClass,
+              animate ? "" : "modal-dialog--static",
+              isExiting ? "modal-dialog--exiting" : "modal-dialog--entering",
+            ]
+              .filter(Boolean)
+              .join(" ")}
             style={{
               boxSizing: "border-box",
               margin: scrollOutside ? "auto" : 0,
-              maxHeight: scrollOutside ? "none" : "calc(100dvh - 2rem)",
+              maxHeight: isFullscreen ? "100dvh" : scrollOutside ? "none" : "calc(100dvh - 2rem)",
+              ...(isFullscreen ? { height: scrollOutside ? undefined : "100dvh", minHeight: "100dvh" } : null),
               width: "100%",
               maxWidth: modalSizeWidths[size] ?? "480px",
               minWidth: 0,
@@ -317,8 +365,8 @@ export default function Modal({
                 maxHeight: scrollOutside ? "none" : "100%",
                 overflow: "hidden",
                 background: "var(--color-bg-surface)",
-                borderRadius: "var(--radius-lg, 8px)",
-                boxShadow: "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))",
+                borderRadius: isFullscreen ? 0 : "var(--radius-lg, 8px)",
+                boxShadow: isFullscreen ? "none" : "var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.12))",
               }}
             >
               {!hideHeader && (
@@ -351,11 +399,19 @@ export default function Modal({
                       {title}
                     </span>
                     {hasDescription && (
-                      <p id={descriptionId} className="modal-description">
+                      <div id={descriptionId} className="modal-description">
                         {description}
-                      </p>
+                      </div>
                     )}
                   </div>
+                  {headerActions != null && headerActions !== false && (
+                    <div
+                      className="modal-header-actions"
+                      style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}
+                    >
+                      {headerActions}
+                    </div>
+                  )}
                   {showCloseButton && (
                     <Button
                       variant="link"
@@ -370,13 +426,17 @@ export default function Modal({
               )}
 
               <div
-                className="modal-body"
+                className={["modal-body", bodyScroll ? "" : "modal-body--fixed", bodyClassName]
+                  .filter(Boolean)
+                  .join(" ")}
+                data-body-scroll={bodyScroll ? undefined : "false"}
                 style={{
-                  overflowY: scrollOutside ? "visible" : "auto",
+                  overflowY: !bodyScroll ? "hidden" : scrollOutside ? "visible" : "auto",
                   overflowX: "hidden",
                   flex: 1,
                   minHeight: 0,
                   padding: "1rem 1.25rem",
+                  ...(bodyScroll ? null : { display: "flex", flexDirection: "column" as const }),
                 }}
               >
                 {children}

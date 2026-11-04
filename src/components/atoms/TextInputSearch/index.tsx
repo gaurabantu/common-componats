@@ -85,7 +85,8 @@ function railKey(inputSize: string): keyof typeof HEADER_SEARCH_LAYOUT {
 /** Corner token for the search shell — trailing action right edge uses the same value (see `roundedToCssCorner`). */
 const SEARCH_SHELL_ROUNDED = "3" as const;
 
-const TextInputSearch: React.FC<TextInputSearchProps> = ({
+/** `ref` is forwarded to the native search `<input>`. */
+const TextInputSearch = React.forwardRef<HTMLInputElement, TextInputSearchProps>(function TextInputSearch({
   id = "search",
   leftIcon = SearchIcon,
   leftIconHeight,
@@ -116,7 +117,7 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
   trailingRail: trailingRailProp,
   pattern,
   autoCorrection = false,
-}) => {
+}, ref) {
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
   const resolvedSize = size || "sm";
@@ -249,9 +250,10 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
 
   return (
     <div
-      className={containerClassName.trim()}
+      className={[containerClassName.trim(), fullWidth ? "ds-input-search--full" : ""].filter(Boolean).join(" ")}
+      // Full width comes from the class (see TextInputSearch.css) so an inline filter row can relax it.
       style={{
-        width: fullWidth ? "100%" : "auto",
+        ...(fullWidth ? null : { width: "auto" }),
         ...containerStyle,
       }}
       role="search"
@@ -262,6 +264,7 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
       </label>
 
       <TextInput
+        ref={ref}
         id={id}
         type="search"
         placeholder={placeholder}
@@ -304,6 +307,8 @@ const TextInputSearch: React.FC<TextInputSearchProps> = ({
       )}
     </div>
   );
-};
+});
+
+TextInputSearch.displayName = "TextInputSearch";
 
 export default TextInputSearch;

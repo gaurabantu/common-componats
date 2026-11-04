@@ -3,11 +3,11 @@ import {
   Icon_default,
   TextInputSearch_default,
   useRipple
-} from "./chunk-AKKWQ6RK.mjs";
+} from "./chunk-QWEACOCP.mjs";
 
 // src/components/molecules/Popover/index.tsx
-import React, {
-  createContext,
+import React2, {
+  createContext as createContext2,
   forwardRef,
   useCallback,
   useContext,
@@ -67,35 +67,225 @@ function computePopoverPosition(triggerRect, contentWidth, contentHeight, placem
   };
 }
 
+// src/components/molecules/Popover/layering.ts
+import { createContext } from "react";
+var DEFAULT_POPOVER_Z = 450;
+var DEFAULT_TOOLTIP_Z = 600;
+function getAncestorZIndex(el) {
+  if (!el || typeof window === "undefined" || typeof window.getComputedStyle !== "function")
+    return 0;
+  let max = 0;
+  let node = el;
+  while (node && node !== document.body && node !== document.documentElement) {
+    let raw = "";
+    try {
+      raw = window.getComputedStyle(node).zIndex;
+    } catch (e) {
+      raw = "";
+    }
+    if (!raw && node instanceof HTMLElement)
+      raw = node.style.zIndex;
+    const z = parseInt(raw, 10);
+    if (Number.isFinite(z) && z > max)
+      max = z;
+    node = node.parentElement;
+  }
+  return max;
+}
+function readZToken(tokenName, fallback) {
+  if (typeof window === "undefined" || typeof document === "undefined")
+    return fallback;
+  try {
+    const raw = window.getComputedStyle(document.documentElement).getPropertyValue(tokenName);
+    const z = parseInt(raw, 10);
+    return Number.isFinite(z) ? z : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+function resolveLayerZIndex(anchor, explicit, tokenName = "--z-popover", fallback = DEFAULT_POPOVER_Z) {
+  if (explicit !== void 0 && explicit !== null && explicit !== "")
+    return explicit;
+  const tokenValue = `var(${tokenName}, ${fallback})`;
+  const ancestorZ = getAncestorZIndex(anchor);
+  if (ancestorZ <= 0)
+    return tokenValue;
+  const tokenZ = readZToken(tokenName, fallback);
+  return ancestorZ + 1 > tokenZ ? ancestorZ + 1 : tokenValue;
+}
+var floatingStack = [];
+var FloatingLayerContext = createContext(null);
+function pushFloatingLayer(id, parent = null) {
+  popFloatingLayer(id);
+  floatingStack.push({ id, parent });
+}
+function popFloatingLayer(id) {
+  const i = floatingStack.findIndex((e) => e.id === id);
+  if (i >= 0)
+    floatingStack.splice(i, 1);
+}
+function isTopFloatingLayer(id) {
+  if (floatingStack.length === 0)
+    return true;
+  const parents = new Set(floatingStack.map((e) => e.parent));
+  const leaves = floatingStack.filter((e) => !parents.has(e.id));
+  const top = leaves[leaves.length - 1];
+  return !top || top.id === id;
+}
+
+// src/components/molecules/Popover/menuNavigation.ts
+var MENU_ITEM_SELECTOR = [
+  '[role="menuitem"]',
+  '[role="menuitemcheckbox"]',
+  '[role="menuitemradio"]'
+].map((r) => `${r}:not([disabled]):not([aria-disabled="true"])`).join(", ");
+var LISTBOX_OPTION_SELECTOR = '[role="option"]:not([aria-disabled="true"])';
+function getMenuItems(root, selector = MENU_ITEM_SELECTOR) {
+  return Array.from(root.querySelectorAll(selector));
+}
+function handleMenuKeyNavigation(e, selector = MENU_ITEM_SELECTOR) {
+  var _a, _b;
+  const root = e.currentTarget;
+  const items = getMenuItems(root, selector);
+  if (items.length === 0)
+    return false;
+  const i = items.indexOf(document.activeElement);
+  let next = -1;
+  switch (e.key) {
+    case "ArrowDown":
+      next = i < 0 ? 0 : (i + 1) % items.length;
+      break;
+    case "ArrowUp":
+      next = i < 0 ? items.length - 1 : (i - 1 + items.length) % items.length;
+      break;
+    case "Home":
+      next = 0;
+      break;
+    case "End":
+      next = items.length - 1;
+      break;
+    default: {
+      if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey || e.key === " ")
+        return false;
+      const t = e.target;
+      if (t.isContentEditable || t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT") {
+        return false;
+      }
+      const ch = e.key.toLowerCase();
+      for (let step = 1; step <= items.length; step += 1) {
+        const candidate = items[(Math.max(i, -1) + step + items.length) % items.length];
+        if (((_a = candidate.textContent) != null ? _a : "").trim().toLowerCase().startsWith(ch)) {
+          next = items.indexOf(candidate);
+          break;
+        }
+      }
+      if (next < 0)
+        return false;
+    }
+  }
+  e.preventDefault();
+  (_b = items[next]) == null ? void 0 : _b.focus();
+  return true;
+}
+
+// src/components/molecules/Popover/slot.tsx
+import React, { cloneElement, isValidElement } from "react";
+function getElementRef(element) {
+  const major = parseInt(React.version, 10);
+  if (major >= 19)
+    return element.props.ref;
+  return element.ref;
+}
+function setRef(ref, value) {
+  if (typeof ref === "function")
+    ref(value);
+  else if (ref && typeof ref === "object")
+    ref.current = value;
+}
+function renderSlot(children, slotProps, ref, component) {
+  const child = React.Children.only(children);
+  if (!isValidElement(child)) {
+    throw new Error(`${component} with asChild expects a single React element child`);
+  }
+  const childProps = child.props;
+  const childRef = getElementRef(child);
+  const merged = { ...childProps };
+  for (const key of Object.keys(slotProps)) {
+    const slotValue = slotProps[key];
+    const childValue = childProps[key];
+    if (slotValue === void 0)
+      continue;
+    if (/^on[A-Z]/.test(key) && typeof slotValue === "function" && typeof childValue === "function") {
+      merged[key] = (event, ...args) => {
+        childValue(event, ...args);
+        if (event && event.defaultPrevented)
+          return;
+        slotValue(event, ...args);
+      };
+    } else if (key === "className") {
+      merged[key] = [childValue, slotValue].filter(Boolean).join(" ") || void 0;
+    } else if (key === "style") {
+      merged[key] = { ...slotValue, ...childValue };
+    } else {
+      merged[key] = slotValue;
+    }
+  }
+  merged.ref = (node) => {
+    setRef(ref, node);
+    setRef(childRef, node);
+  };
+  return cloneElement(child, merged);
+}
+
 // src/components/molecules/Popover/index.tsx
 import { jsx, jsxs } from "react/jsx-runtime";
 function cls(...parts) {
   return parts.filter(Boolean).join(" ");
 }
-var PopoverContext = createContext(null);
+function indentStyle(indent, style) {
+  if (!indent || indent <= 0)
+    return style;
+  return {
+    paddingInlineStart: `calc(0.75rem + ${Math.floor(indent)} * var(--space-2, 16px))`,
+    ...style
+  };
+}
+var PopoverContext = createContext2(null);
 function usePopoverContext(component) {
   const ctx = useContext(PopoverContext);
   if (!ctx) {
-    throw new Error(`${component} must be used within <Popover> or <DropdownMenu>`);
+    throw new Error(`${component} must be used within <Popover>, <DropdownMenu> or <ContextMenu>`);
   }
   return ctx;
 }
-var Popover = React.memo(function Popover2({
+function restoreFocus(el) {
+  if (!el || typeof document === "undefined" || !el.isConnected)
+    return;
+  const active = document.activeElement;
+  if (active && active !== document.body && active !== document.documentElement && active.isConnected)
+    return;
+  el.focus();
+}
+var Popover = React2.memo(function Popover2({
   children,
   open: openProp,
   defaultOpen = false,
   onOpenChange,
-  placement = "bottom-start"
+  placement = "bottom-start",
+  anchorRef: anchorRefProp
 }) {
   const reactId = useId();
   const base = reactId.replace(/:/g, "");
   const triggerId = `popover-trigger-${base}`;
   const contentId = `popover-content-${base}`;
   const triggerRef = useRef(null);
+  const innerAnchorRef = useRef(null);
+  const anchorRef = anchorRefProp != null ? anchorRefProp : innerAnchorRef;
   const isControlled = openProp !== void 0;
   const [innerOpen, setInnerOpen] = useState(defaultOpen);
   const open = isControlled ? Boolean(openProp) : innerOpen;
   const prevOpenRef = useRef(false);
+  const returnFocusRef = useRef(null);
   const setOpen = useCallback(
     (next) => {
       if (!isControlled) {
@@ -105,12 +295,16 @@ var Popover = React.memo(function Popover2({
     },
     [isControlled, onOpenChange]
   );
+  useLayoutEffect(() => {
+    if (!prevOpenRef.current && open && typeof document !== "undefined") {
+      returnFocusRef.current = document.activeElement;
+    }
+  }, [open]);
   useEffect(() => {
-    if (prevOpenRef.current && !open && triggerRef.current) {
-      requestAnimationFrame(() => {
-        var _a;
-        return (_a = triggerRef.current) == null ? void 0 : _a.focus();
-      });
+    var _a;
+    if (prevOpenRef.current && !open) {
+      const target = (_a = triggerRef.current) != null ? _a : returnFocusRef.current;
+      requestAnimationFrame(() => restoreFocus(target));
     }
     prevOpenRef.current = open;
   }, [open]);
@@ -121,13 +315,14 @@ var Popover = React.memo(function Popover2({
       triggerId,
       contentId,
       triggerRef,
+      anchorRef,
       placement
     }),
-    [open, setOpen, triggerId, contentId, placement]
+    [open, setOpen, triggerId, contentId, anchorRef, placement]
   );
   return /* @__PURE__ */ jsx(PopoverContext.Provider, { value: ctx, children });
 });
-var PopoverTrigger = forwardRef(function PopoverTrigger2({ children, className, hasPopup = "dialog", type = "button", onClick, ...rest }, ref) {
+var PopoverTrigger = forwardRef(function PopoverTrigger2({ children, className, hasPopup = "dialog", type = "button", onClick, asChild = false, ...rest }, ref) {
   const ctx = usePopoverContext("PopoverTrigger");
   const open = ctx.open;
   const setRefs = useCallback(
@@ -140,6 +335,27 @@ var PopoverTrigger = forwardRef(function PopoverTrigger2({ children, className, 
     },
     [ctx.triggerRef, ref]
   );
+  if (asChild) {
+    return renderSlot(
+      children,
+      {
+        ...rest,
+        className,
+        id: ctx.triggerId,
+        "aria-expanded": open,
+        "aria-controls": open ? ctx.contentId : void 0,
+        "aria-haspopup": hasPopup,
+        onClick: (e) => {
+          onClick == null ? void 0 : onClick(e);
+          if (e.defaultPrevented)
+            return;
+          ctx.setOpen(!open);
+        }
+      },
+      setRefs,
+      "PopoverTrigger"
+    );
+  }
   return /* @__PURE__ */ jsx(
     "button",
     {
@@ -159,29 +375,58 @@ var PopoverTrigger = forwardRef(function PopoverTrigger2({ children, className, 
     }
   );
 });
+var PopoverAnchor = forwardRef(function PopoverAnchor2({ children, asChild = false, ...rest }, ref) {
+  const ctx = usePopoverContext("PopoverAnchor");
+  const setRefs = useCallback(
+    (el) => {
+      ctx.anchorRef.current = el;
+      if (typeof ref === "function")
+        ref(el);
+      else if (ref)
+        ref.current = el;
+    },
+    [ctx.anchorRef, ref]
+  );
+  if (asChild)
+    return renderSlot(children, rest, setRefs, "PopoverAnchor");
+  return /* @__PURE__ */ jsx("div", { ...rest, ref: setRefs, children });
+});
 var ARROW_EDGE_PAD = 12;
-var PopoverContent = React.memo(function PopoverContent2({
+var PopoverContent = React2.memo(function PopoverContent2({
   children,
   className,
   role: roleProp,
   onKeyDown,
+  onMouseDownCapture,
   style,
   showPointer = true,
+  zIndex,
   ...rest
 }) {
+  var _a;
   const ctx = usePopoverContext("PopoverContent");
   const contentRef = useRef(null);
+  const insideTreeRef = useRef(false);
+  const [layerZ, setLayerZ] = useState("var(--z-popover, 450)");
   const [pos, setPos] = useState({
     top: 0,
     left: 0
   });
+  const { anchorRef, triggerRef, setOpen } = ctx;
+  const getAnchor = useCallback(
+    () => {
+      var _a2;
+      return (_a2 = anchorRef.current) != null ? _a2 : triggerRef.current;
+    },
+    [anchorRef, triggerRef]
+  );
   const updatePosition = useCallback(() => {
-    var _a;
-    const trigger = ctx.triggerRef.current;
+    var _a2;
+    const anchor = getAnchor();
     const panel = contentRef.current;
-    if (!trigger || !panel || typeof window === "undefined")
+    if (!anchor || !panel || typeof window === "undefined")
       return;
-    const tr = trigger.getBoundingClientRect();
+    const tr = anchor.getBoundingClientRect();
     const cw = panel.offsetWidth || 140;
     const ch = Math.max(panel.offsetHeight || 80, 80);
     const result = computePopoverPosition(tr, cw, ch, ctx.placement);
@@ -191,7 +436,7 @@ var PopoverContent = React.memo(function PopoverContent2({
     }
     const below = result.top >= tr.bottom - 4;
     const triggerCx = tr.left + tr.width / 2;
-    const panelW = (_a = result.width) != null ? _a : cw;
+    const panelW = (_a2 = result.width) != null ? _a2 : cw;
     const arrowX = Math.min(
       Math.max(triggerCx - result.left, ARROW_EDGE_PAD),
       panelW - ARROW_EDGE_PAD
@@ -201,7 +446,12 @@ var PopoverContent = React.memo(function PopoverContent2({
       arrowEdge: below ? "top" : "bottom",
       arrowX
     });
-  }, [ctx.placement, ctx.triggerRef, showPointer]);
+  }, [ctx.placement, getAnchor, showPointer]);
+  useLayoutEffect(() => {
+    if (!ctx.open || zIndex !== void 0)
+      return;
+    setLayerZ(resolveLayerZIndex(getAnchor(), void 0));
+  }, [ctx.open, zIndex, getAnchor]);
   useLayoutEffect(() => {
     if (!ctx.open)
       return;
@@ -220,32 +470,49 @@ var PopoverContent = React.memo(function PopoverContent2({
       window.removeEventListener("scroll", onResize, true);
     };
   }, [ctx.open, updatePosition]);
+  const layerId = ctx.contentId;
+  const parentLayerId = useContext(FloatingLayerContext);
+  useEffect(() => {
+    if (!ctx.open)
+      return void 0;
+    pushFloatingLayer(layerId, parentLayerId);
+    return () => popFloatingLayer(layerId);
+  }, [ctx.open, layerId, parentLayerId]);
   useEffect(() => {
     if (!ctx.open)
       return;
     const onDocMouse = (e) => {
-      var _a, _b;
-      const t = e.target;
-      if (((_a = ctx.triggerRef.current) == null ? void 0 : _a.contains(t)) || ((_b = contentRef.current) == null ? void 0 : _b.contains(t)))
+      var _a2, _b, _c;
+      const inside = insideTreeRef.current;
+      insideTreeRef.current = false;
+      if (inside)
         return;
-      ctx.setOpen(false);
+      const t = e.target;
+      if (((_a2 = triggerRef.current) == null ? void 0 : _a2.contains(t)) || ((_b = anchorRef.current) == null ? void 0 : _b.contains(t)) || ((_c = contentRef.current) == null ? void 0 : _c.contains(t))) {
+        return;
+      }
+      setOpen(false);
     };
     const onKey = (e) => {
-      if (e.key === "Escape")
-        ctx.setOpen(false);
+      if (e.key !== "Escape" || e.isComposing || e.defaultPrevented)
+        return;
+      if (!isTopFloatingLayer(layerId))
+        return;
+      e.preventDefault();
+      setOpen(false);
     };
     document.addEventListener("mousedown", onDocMouse);
-    document.addEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey, true);
     return () => {
       document.removeEventListener("mousedown", onDocMouse);
-      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("keydown", onKey, true);
     };
-  }, [ctx]);
+  }, [ctx.open, setOpen, triggerRef, anchorRef, layerId]);
   useEffect(() => {
     if (!ctx.open || !contentRef.current)
       return;
     const el = contentRef.current.querySelector(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
     el == null ? void 0 : el.focus();
   }, [ctx.open]);
@@ -253,6 +520,7 @@ var PopoverContent = React.memo(function PopoverContent2({
   if (!ctx.open)
     return null;
   const pointerStyle = showPointer && pos.arrowX != null ? { ["--popover-arrow-x"]: `${pos.arrowX}px` } : void 0;
+  const labelledBy = (_a = rest["aria-labelledby"]) != null ? _a : rest["aria-label"] || !triggerRef.current ? void 0 : ctx.triggerId;
   const content = /* @__PURE__ */ jsx(
     "div",
     {
@@ -261,7 +529,7 @@ var PopoverContent = React.memo(function PopoverContent2({
       id: ctx.contentId,
       role: role === "none" ? void 0 : role,
       "aria-modal": role === "dialog" ? false : void 0,
-      "aria-labelledby": ctx.triggerId,
+      "aria-labelledby": labelledBy,
       className: cls(
         "ds-popover__content",
         showPointer && "ds-popover__content--with-pointer",
@@ -276,16 +544,22 @@ var PopoverContent = React.memo(function PopoverContent2({
         width: pos.width,
         maxHeight: showPointer ? void 0 : pos.maxHeight,
         overflow: showPointer ? "visible" : "auto",
-        zIndex: "var(--z-dropdown, 100)",
+        zIndex: zIndex != null ? zIndex : layerZ,
         ...pointerStyle,
         ...style
       },
+      onMouseDownCapture: (e) => {
+        insideTreeRef.current = true;
+        onMouseDownCapture == null ? void 0 : onMouseDownCapture(e);
+      },
       onKeyDown: (e) => {
         onKeyDown == null ? void 0 : onKeyDown(e);
-        if (e.key === "Escape")
-          ctx.setOpen(false);
+        if (e.key === "Escape" && !e.defaultPrevented) {
+          e.preventDefault();
+          setOpen(false);
+        }
       },
-      children: showPointer ? /* @__PURE__ */ jsx("div", { className: "ds-popover__content-scroll", style: { maxHeight: pos.maxHeight }, children }) : children
+      children: /* @__PURE__ */ jsx(FloatingLayerContext.Provider, { value: layerId, children: showPointer ? /* @__PURE__ */ jsx("div", { className: "ds-popover__content-scroll", style: { maxHeight: pos.maxHeight }, children }) : children })
     }
   );
   if (typeof document === "undefined")
@@ -298,7 +572,7 @@ var DropdownMenuTrigger = forwardRef(
     return /* @__PURE__ */ jsx(PopoverTrigger, { ...props, ref, hasPopup: "menu" });
   }
 );
-var DropdownMenuContent = React.memo(function DropdownMenuContent2({
+var DropdownMenuContent = React2.memo(function DropdownMenuContent2({
   children,
   className,
   showPointer = false,
@@ -307,32 +581,10 @@ var DropdownMenuContent = React.memo(function DropdownMenuContent2({
 }) {
   const handleMenuKeyDown = useCallback(
     (e) => {
-      var _a;
       onKeyDown == null ? void 0 : onKeyDown(e);
       if (e.defaultPrevented)
         return;
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Home" && e.key !== "End")
-        return;
-      const root = e.currentTarget;
-      const items = Array.from(root.querySelectorAll('[role="menuitem"]:not([disabled])'));
-      if (items.length === 0)
-        return;
-      const i = items.indexOf(document.activeElement);
-      let next = i;
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        next = i < 0 ? 0 : (i + 1) % items.length;
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        next = i < 0 ? items.length - 1 : (i - 1 + items.length) % items.length;
-      } else if (e.key === "Home") {
-        e.preventDefault();
-        next = 0;
-      } else if (e.key === "End") {
-        e.preventDefault();
-        next = items.length - 1;
-      }
-      (_a = items[next]) == null ? void 0 : _a.focus();
+      handleMenuKeyNavigation(e);
     },
     [onKeyDown]
   );
@@ -349,31 +601,44 @@ var DropdownMenuContent = React.memo(function DropdownMenuContent2({
     }
   );
 });
-var DropdownMenuItem = React.memo(function DropdownMenuItem2({
+var MenuRow = forwardRef(function MenuRow2({
   children,
   className,
-  onSelect,
   variant = "default",
   disabled = false,
   ripple = true,
   onClick,
   type = "button",
   onPointerDown,
+  icon,
+  description,
+  shortcut,
+  indent = 0,
+  itemRole,
+  checked,
+  indicator,
+  onActivate,
+  style,
   ...rest
-}) {
-  const ctx = usePopoverContext("DropdownMenuItem");
+}, ref) {
   const rippleEnabled = ripple !== false && !disabled;
   const rippleApi = useRipple(rippleEnabled);
+  const isCheckable = itemRole !== "menuitem";
   return /* @__PURE__ */ jsxs(
     "button",
     {
       ...rest,
+      ref,
       type,
-      role: "menuitem",
+      role: itemRole,
+      "aria-checked": isCheckable ? Boolean(checked) : void 0,
       disabled,
+      "data-state": isCheckable ? checked ? "checked" : "unchecked" : void 0,
+      style: indentStyle(indent, style),
       className: cls(
         "ds-dropdown-menu__item",
         variant === "danger" && "ds-dropdown-menu__item--danger",
+        description != null && "ds-dropdown-menu__item--with-description",
         rippleEnabled && "ucs-ripple-parent",
         className
       ),
@@ -385,19 +650,287 @@ var DropdownMenuItem = React.memo(function DropdownMenuItem2({
         onClick == null ? void 0 : onClick(e);
         if (disabled)
           return;
-        onSelect == null ? void 0 : onSelect();
-        ctx.setOpen(false);
+        onActivate();
       },
       children: [
         rippleApi.RippleOverlay,
-        /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-inner", children })
+        /* @__PURE__ */ jsxs("span", { className: "ds-dropdown-menu__item-inner", children: [
+          isCheckable ? /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__indicator", "aria-hidden": "true", children: checked ? indicator : null }) : null,
+          icon != null ? /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__icon", "aria-hidden": "true", children: icon }) : null,
+          description != null ? /* @__PURE__ */ jsxs("span", { className: "ds-dropdown-menu__item-text", children: [
+            /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-label", children }),
+            /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-description", children: description })
+          ] }) : children,
+          shortcut != null ? /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-shortcut", "aria-hidden": "true", children: shortcut }) : null
+        ] })
       ]
+    }
+  );
+});
+var CheckIndicator = /* @__PURE__ */ jsx("svg", { viewBox: "0 0 16 16", width: "14", height: "14", focusable: "false", children: /* @__PURE__ */ jsx(
+  "path",
+  {
+    d: "M3.5 8.5l3 3 6-7",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }
+) });
+var RadioIndicator = /* @__PURE__ */ jsx("svg", { viewBox: "0 0 16 16", width: "14", height: "14", focusable: "false", children: /* @__PURE__ */ jsx("circle", { cx: "8", cy: "8", r: "3.5", fill: "currentColor" }) });
+var DropdownMenuItem = React2.memo(
+  forwardRef(function DropdownMenuItem2({ onSelect, closeOnSelect = true, ...rest }, ref) {
+    const ctx = usePopoverContext("DropdownMenuItem");
+    return /* @__PURE__ */ jsx(
+      MenuRow,
+      {
+        ...rest,
+        ref,
+        itemRole: "menuitem",
+        onActivate: () => {
+          onSelect == null ? void 0 : onSelect();
+          if (closeOnSelect)
+            ctx.setOpen(false);
+        }
+      }
+    );
+  })
+);
+var DropdownMenuCheckboxItem = React2.memo(
+  forwardRef(function DropdownMenuCheckboxItem2({
+    checked: checkedProp,
+    defaultChecked = false,
+    onCheckedChange,
+    onSelect,
+    closeOnSelect = false,
+    ...rest
+  }, ref) {
+    const ctx = usePopoverContext("DropdownMenuCheckboxItem");
+    const isControlled = checkedProp !== void 0;
+    const [inner, setInner] = useState(defaultChecked);
+    const checked = isControlled ? Boolean(checkedProp) : inner;
+    return /* @__PURE__ */ jsx(
+      MenuRow,
+      {
+        ...rest,
+        ref,
+        itemRole: "menuitemcheckbox",
+        checked,
+        indicator: CheckIndicator,
+        onActivate: () => {
+          const next = !checked;
+          if (!isControlled)
+            setInner(next);
+          onCheckedChange == null ? void 0 : onCheckedChange(next);
+          onSelect == null ? void 0 : onSelect();
+          if (closeOnSelect)
+            ctx.setOpen(false);
+        }
+      }
+    );
+  })
+);
+var DropdownRadioGroupContext = createContext2(null);
+var DropdownMenuGroup = forwardRef(function DropdownMenuGroup2({ children, label, className, ...rest }, ref) {
+  const labelId = `ds-menu-group-${useId().replace(/:/g, "")}`;
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      ...rest,
+      ref,
+      role: "group",
+      "aria-labelledby": label != null ? labelId : rest["aria-labelledby"],
+      className: cls("ds-dropdown-menu__group", className),
+      children: [
+        label != null ? /* @__PURE__ */ jsx(DropdownMenuLabel, { id: labelId, children: label }) : null,
+        children
+      ]
+    }
+  );
+});
+var DropdownMenuRadioGroup = forwardRef(
+  function DropdownMenuRadioGroup2({ children, value: valueProp, defaultValue, onValueChange, label, ...rest }, ref) {
+    const isControlled = valueProp !== void 0;
+    const [inner, setInner] = useState(defaultValue);
+    const value = isControlled ? valueProp : inner;
+    const setValue = useCallback(
+      (v) => {
+        if (!isControlled)
+          setInner(v);
+        onValueChange == null ? void 0 : onValueChange(v);
+      },
+      [isControlled, onValueChange]
+    );
+    const ctxValue = useMemo(() => ({ value, setValue }), [value, setValue]);
+    return /* @__PURE__ */ jsx(DropdownRadioGroupContext.Provider, { value: ctxValue, children: /* @__PURE__ */ jsx(DropdownMenuGroup, { ...rest, ref, label, children }) });
+  }
+);
+var DropdownMenuRadioItem = React2.memo(
+  forwardRef(function DropdownMenuRadioItem2({ value, onSelect, closeOnSelect = false, ...rest }, ref) {
+    const ctx = usePopoverContext("DropdownMenuRadioItem");
+    const group = useContext(DropdownRadioGroupContext);
+    if (!group)
+      throw new Error("DropdownMenuRadioItem must be used within <DropdownMenuRadioGroup>");
+    return /* @__PURE__ */ jsx(
+      MenuRow,
+      {
+        ...rest,
+        ref,
+        itemRole: "menuitemradio",
+        checked: group.value === value,
+        indicator: RadioIndicator,
+        onActivate: () => {
+          group.setValue(value);
+          onSelect == null ? void 0 : onSelect();
+          if (closeOnSelect)
+            ctx.setOpen(false);
+        }
+      }
+    );
+  })
+);
+var DropdownMenuLabel = forwardRef(function DropdownMenuLabel2({ children, className, indent = 0, style, ...rest }, ref) {
+  return /* @__PURE__ */ jsx(
+    "div",
+    {
+      ...rest,
+      ref,
+      className: cls("ds-dropdown-menu__label", className),
+      style: indentStyle(indent, style),
+      children
+    }
+  );
+});
+var DropdownMenuSeparator = forwardRef(
+  function DropdownMenuSeparator2({ className, ...rest }, ref) {
+    return /* @__PURE__ */ jsx(
+      "div",
+      {
+        ...rest,
+        ref,
+        role: "separator",
+        "aria-orientation": "horizontal",
+        className: cls("ds-dropdown-menu__separator", className)
+      }
+    );
+  }
+);
+var Listbox = forwardRef(function Listbox2({ children, className, multiple = false, onKeyDown, onFocus, ...rest }, ref) {
+  const rootRef = useRef(null);
+  useLayoutEffect(() => {
+    var _a;
+    const root = rootRef.current;
+    if (!root)
+      return;
+    const options = Array.from(root.querySelectorAll(LISTBOX_OPTION_SELECTOR));
+    if (options.length === 0)
+      return;
+    const current = options.find((o) => o.getAttribute("tabindex") === "0");
+    const target = (_a = current != null ? current : options.find((o) => o.getAttribute("aria-selected") === "true")) != null ? _a : options[0];
+    for (const o of options)
+      o.setAttribute("tabindex", o === target ? "0" : "-1");
+  });
+  return /* @__PURE__ */ jsx(
+    "div",
+    {
+      ...rest,
+      ref: (el) => {
+        rootRef.current = el;
+        if (typeof ref === "function")
+          ref(el);
+        else if (ref)
+          ref.current = el;
+      },
+      role: "listbox",
+      "aria-multiselectable": multiple || void 0,
+      className: cls("ds-listbox", className),
+      onFocus: (e) => {
+        onFocus == null ? void 0 : onFocus(e);
+        const root = rootRef.current;
+        const t = e.target;
+        if (!root || t.getAttribute("role") !== "option")
+          return;
+        for (const o of Array.from(root.querySelectorAll('[role="option"]'))) {
+          o.setAttribute("tabindex", o === t ? "0" : "-1");
+        }
+      },
+      onKeyDown: (e) => {
+        onKeyDown == null ? void 0 : onKeyDown(e);
+        if (e.defaultPrevented)
+          return;
+        handleMenuKeyNavigation(e, LISTBOX_OPTION_SELECTOR);
+      },
+      children
+    }
+  );
+});
+var ListboxOption = forwardRef(function ListboxOption2({
+  children,
+  className,
+  selected = false,
+  disabled = false,
+  description,
+  icon,
+  trailing,
+  indent = 0,
+  onSelect,
+  role = "option",
+  onClick,
+  onKeyDown,
+  style,
+  ...rest
+}, ref) {
+  const activate = () => {
+    if (!disabled)
+      onSelect == null ? void 0 : onSelect();
+  };
+  return /* @__PURE__ */ jsx(
+    "div",
+    {
+      tabIndex: -1,
+      ...rest,
+      ref,
+      role,
+      "aria-selected": role === "menuitem" ? void 0 : selected,
+      "aria-disabled": disabled || void 0,
+      "data-selected": selected ? "true" : void 0,
+      style: indentStyle(indent, style),
+      className: cls(
+        "ds-dropdown-menu__item",
+        "ds-listbox__option",
+        selected && "ds-listbox__option--selected",
+        description != null && "ds-dropdown-menu__item--with-description",
+        className
+      ),
+      onClick: (e) => {
+        onClick == null ? void 0 : onClick(e);
+        if (!e.defaultPrevented)
+          activate();
+      },
+      onKeyDown: (e) => {
+        onKeyDown == null ? void 0 : onKeyDown(e);
+        if (e.defaultPrevented)
+          return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activate();
+        }
+      },
+      children: /* @__PURE__ */ jsxs("span", { className: "ds-dropdown-menu__item-inner", children: [
+        icon != null ? /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__icon", "aria-hidden": "true", children: icon }) : null,
+        /* @__PURE__ */ jsxs("span", { className: "ds-dropdown-menu__item-text", children: [
+          /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-label", children }),
+          description != null ? /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-description", children: description }) : null
+        ] }),
+        trailing != null ? /* @__PURE__ */ jsx("span", { className: "ds-dropdown-menu__item-shortcut", children: trailing }) : null
+      ] })
     }
   );
 });
 
 // src/components/atoms/Avatar/index.tsx
-import React2 from "react";
+import React3 from "react";
 
 // src/components/atoms/Avatar/Avatar.config.ts
 var defaultAvatarSize = 40;
@@ -492,8 +1025,8 @@ var Avatar = ({
         }
       );
     }
-    if (React2.isValidElement(icon)) {
-      return React2.cloneElement(icon, {
+    if (React3.isValidElement(icon)) {
+      return React3.cloneElement(icon, {
         color: iconColor,
         width: ((_a = icon.props) == null ? void 0 : _a.width) || calculatedIconSize,
         height: ((_b = icon.props) == null ? void 0 : _b.height) || calculatedIconSize,
@@ -611,11 +1144,11 @@ function writeAppSidebarPersist(key, collapsed, expanded) {
 }
 
 // src/components/molecules/AppSidebar/index.tsx
-import React5, { useCallback as useCallback3, useEffect as useEffect2, useId as useId3, useLayoutEffect as useLayoutEffect3, useMemo as useMemo2, useRef as useRef3, useState as useState3 } from "react";
+import React6, { useCallback as useCallback3, useEffect as useEffect2, useId as useId3, useLayoutEffect as useLayoutEffect3, useMemo as useMemo2, useRef as useRef3, useState as useState3 } from "react";
 import { createPortal as createPortal3 } from "react-dom";
 
 // src/components/molecules/AppSidebar/AppSidebar.utils.tsx
-import React3 from "react";
+import React4 from "react";
 import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
 function cls2(...parts) {
   return parts.filter(Boolean).join(" ");
@@ -634,7 +1167,7 @@ function renderTrailingIcon(trailing, size) {
   if (trailing === "check") {
     return /* @__PURE__ */ jsx3(Icon_default, { src: checkSvg, decorative: true, width: size, height: size, color: "currentColor", className: "app-sidebar__trailing-icon" });
   }
-  if (React3.isValidElement(trailing)) {
+  if (React4.isValidElement(trailing)) {
     return /* @__PURE__ */ jsx3("span", { className: "app-sidebar__trailing-custom", children: trailing });
   }
   return /* @__PURE__ */ jsx3(Icon_default, { src: trailing, decorative: true, width: size, height: size, className: "app-sidebar__trailing-icon" });
@@ -694,7 +1227,7 @@ function getInitialExpandedSet(sections) {
 }
 
 // src/components/molecules/AppSidebar/AppSidebarTooltipHost.tsx
-import React4, { useCallback as useCallback2, useId as useId2, useLayoutEffect as useLayoutEffect2, useRef as useRef2, useState as useState2 } from "react";
+import React5, { useCallback as useCallback2, useId as useId2, useLayoutEffect as useLayoutEffect2, useRef as useRef2, useState as useState2 } from "react";
 import { createPortal as createPortal2 } from "react-dom";
 import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
 function AppSidebarTooltipHost({ collapsed, label, children }) {
@@ -730,7 +1263,7 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
   if (!collapsed) {
     return children;
   }
-  const child = React4.cloneElement(children, {
+  const child = React5.cloneElement(children, {
     "aria-describedby": visible ? tipId : void 0
   });
   const tooltip = visible && typeof document !== "undefined" ? createPortal2(
@@ -803,7 +1336,7 @@ var chevronNested = /* @__PURE__ */ jsx5("svg", { viewBox: "0 0 24 24", fill: "n
 function renderItemIcon(icon) {
   if (icon == null)
     return null;
-  if (React5.isValidElement(icon)) {
+  if (React6.isValidElement(icon)) {
     return /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: icon });
   }
   return /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: /* @__PURE__ */ jsx5(Icon_default, { src: icon, decorative: true, width: NAV_ICON, height: NAV_ICON, color: "currentColor" }) });
@@ -1183,7 +1716,7 @@ function AppSidebar({
             className: "app-sidebar__create",
             onClick: item.createAction.onClick,
             children: [
-              item.createAction.icon ? /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: React5.isValidElement(item.createAction.icon) ? item.createAction.icon : /* @__PURE__ */ jsx5(
+              item.createAction.icon ? /* @__PURE__ */ jsx5("span", { className: "app-sidebar__item-icon", children: React6.isValidElement(item.createAction.icon) ? item.createAction.icon : /* @__PURE__ */ jsx5(
                 Icon_default,
                 {
                   src: item.createAction.icon,
@@ -1337,7 +1870,7 @@ function AppSidebar({
                     role: "group",
                     "aria-label": "Utility actions",
                     children: visibleFooterActions.map((action) => {
-                      const iconNode = React5.isValidElement(action.icon) ? action.icon : /* @__PURE__ */ jsx5(
+                      const iconNode = React6.isValidElement(action.icon) ? action.icon : /* @__PURE__ */ jsx5(
                         Icon_default,
                         {
                           src: action.icon,
@@ -1410,7 +1943,7 @@ function mergeTopbarTokensStyle(tokens, base) {
 import { useEffect as useEffect4, useId as useId4, useMemo as useMemo3, useRef as useRef5, useState as useState4 } from "react";
 
 // src/components/molecules/AppTopbar/AppTopbarMenu.tsx
-import React6, { useEffect as useEffect3, useLayoutEffect as useLayoutEffect4, useRef as useRef4 } from "react";
+import React7, { useEffect as useEffect3, useLayoutEffect as useLayoutEffect4, useRef as useRef4 } from "react";
 import { createPortal as createPortal4 } from "react-dom";
 import { Fragment as Fragment2, jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
 function cls3(...parts) {
@@ -1538,7 +2071,7 @@ function AppTopbarMenu({ id, open, onClose, triggerRef, items, theme }) {
               children: content
             }
           );
-          return /* @__PURE__ */ jsx6(React6.Fragment, { children: node }, item.id);
+          return /* @__PURE__ */ jsx6(React7.Fragment, { children: node }, item.id);
         })
       }
     ),
@@ -1870,7 +2403,7 @@ AppTopbar.displayName = "AppTopbar";
 var AppTopbar_default = AppTopbar;
 
 // src/components/molecules/DashboardShell/DashboardShell.tsx
-import React8 from "react";
+import React9 from "react";
 import { jsx as jsx8, jsxs as jsxs8 } from "react/jsx-runtime";
 function cls5(...parts) {
   return parts.filter(Boolean).join(" ");
@@ -1880,10 +2413,10 @@ function isAppTopbarElement(node) {
   return t === AppTopbar_default || (t == null ? void 0 : t.displayName) === "AppTopbar" || (t == null ? void 0 : t.name) === "AppTopbar";
 }
 function prepareTopbar(topbar, pinTopbar) {
-  if (!pinTopbar || !React8.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
+  if (!pinTopbar || !React9.isValidElement(topbar) || !isAppTopbarElement(topbar)) {
     return topbar;
   }
-  return React8.cloneElement(topbar, { sticky: false });
+  return React9.cloneElement(topbar, { sticky: false });
 }
 var DEFAULT_ROOT_CLASSNAME = "flex flex-nowrap h-[100dvh] max-h-[100dvh] min-h-0 w-full min-w-0 max-w-[100vw] items-stretch overflow-hidden bg-[var(--color-bg-page)] text-[var(--color-text-primary)]";
 var DEFAULT_INSET_CLASSNAME = "isolate flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden";
@@ -1954,13 +2487,34 @@ var DashboardShell_default = DashboardShell;
 var AppShell = DashboardShell;
 
 export {
+  DEFAULT_TOOLTIP_Z,
+  getAncestorZIndex,
+  resolveLayerZIndex,
+  FloatingLayerContext,
+  pushFloatingLayer,
+  popFloatingLayer,
+  isTopFloatingLayer,
+  getMenuItems,
+  handleMenuKeyNavigation,
+  renderSlot,
+  PopoverContext,
+  restoreFocus,
   Popover,
   PopoverTrigger,
+  PopoverAnchor,
   PopoverContent,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  Listbox,
+  ListboxOption,
   Avatar_default,
   mergeSidebarTokensStyle,
   readAppSidebarPersist,
@@ -1971,4 +2525,4 @@ export {
   DashboardShell_default,
   AppShell
 };
-//# sourceMappingURL=chunk-OAPTBFQP.mjs.map
+//# sourceMappingURL=chunk-MXH4N6P6.mjs.map

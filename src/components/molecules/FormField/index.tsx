@@ -18,6 +18,8 @@ function hasContent(node: React.ReactNode): boolean {
   return node !== undefined && node !== null && node !== false && node !== "";
 }
 
+const LABELABLE_TAGS = new Set(["input", "select", "textarea", "button", "meter", "output", "progress"]);
+
 const FormFieldContext = createContext<FormFieldContextValue | null>(null);
 
 /**
@@ -75,6 +77,8 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(functi
     optional = false,
     counter,
     layout = FORM_FIELD_DEFAULTS.layout,
+    group = false,
+    hideLabel = false,
     children,
     className,
     ...rest
@@ -100,13 +104,13 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(functi
   const announceError = useAnnounceOnChange(error);
 
   const ctx = useMemo<FormFieldContextValue>(
-    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required }),
-    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required],
+    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required, group }),
+    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required, group],
   );
 
   const controlRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!isDev()) return;
+    if (!isDev() || group) return;
     const root = controlRef.current;
     if (!root) return;
     const target = Array.from(root.querySelectorAll<HTMLElement>("[id]")).find((el) => el.id === controlId);
@@ -121,10 +125,18 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(functi
           "Select / Combobox / a native control, or wire a custom control with useFormField().",
       );
     }
-  }, [controlId, labelId]);
+  }, [controlId, labelId, group]);
+
+  // A non-labelable host wrapper (div/span row around an input + button) with an explicit `htmlFor`:
+  // the id belongs to an inner control, so leave the wrapper alone.
+  const isCompositeWrapper =
+    htmlFor !== undefined &&
+    child !== null &&
+    typeof child.type === "string" &&
+    !LABELABLE_TAGS.has(child.type);
 
   let control: React.ReactNode = children;
-  if (child && !isFormFieldConsumer(child.type)) {
+  if (child && !group && !isCompositeWrapper && !isFormFieldConsumer(child.type)) {
     const inject: Record<string, unknown> = {};
     if (childProps.id === undefined) inject.id = controlId;
     if (childProps["aria-describedby"] === undefined && describedBy) inject["aria-describedby"] = describedBy;
@@ -132,6 +144,8 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(functi
     if (childProps["aria-required"] === undefined && required) inject["aria-required"] = true;
     control = Object.keys(inject).length > 0 ? React.cloneElement(child, inject) : child;
   }
+
+  const LabelTag = (group ? "span" : "label") as "label";
 
   const optionalText =
     !required && optional ? (typeof optional === "string" ? optional : FORM_FIELD_DEFAULTS.optionalLabel) : null;
@@ -143,10 +157,19 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(functi
         className={cls("ds-form-field", className)}
         data-layout={layout}
         data-invalid={invalid ? "true" : undefined}
+        data-group={group ? "true" : undefined}
+        data-hide-label={hideLabel ? "true" : undefined}
+        {...(group
+          ? { role: "group", "aria-labelledby": labelId, "aria-describedby": describedBy }
+          : {})}
         {...rest}
       >
         <div className="ds-form-field__label-col">
-          <label id={labelId} htmlFor={controlId} className="ds-form-field__label">
+          <LabelTag
+            id={labelId}
+            htmlFor={group ? undefined : controlId}
+            className="ds-form-field__label"
+          >
             {label}
             {required ? (
               <>
@@ -157,7 +180,7 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(functi
               </>
             ) : null}
             {optionalText ? <span className="ds-form-field__optional">{optionalText}</span> : null}
-          </label>
+          </LabelTag>
         </div>
         <div className="ds-form-field__control-col">
           <div ref={controlRef} className="ds-form-field__control">

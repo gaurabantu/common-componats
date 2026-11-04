@@ -443,6 +443,8 @@ var ButtonImpl = React3.forwardRef(function Button({
     );
   }
   const buttonRest = { ...restWithoutStyle };
+  if (isExpandable && buttonRest.title == null && typeof children === "string")
+    buttonRest.title = children;
   if (unsafeHref)
     for (const attr of ANCHOR_ONLY_ATTRS)
       delete buttonRest[attr];
@@ -688,7 +690,8 @@ var TextInput = forwardRef(({
   placeholder,
   validation = "none",
   required = false,
-  value = "",
+  value,
+  defaultValue,
   onChange,
   onErrorChange,
   onVerifiedChange,
@@ -728,15 +731,20 @@ var TextInput = forwardRef(({
   spellCheck: spellCheckProp,
   autoCorrect: autoCorrectProp,
   autoCapitalize: autoCapitalizeProp,
+  inputClassName,
+  inputStyle,
+  style: styleProp,
   ...rest
 }, ref) => {
-  var _a, _b;
+  var _a, _b, _c;
+  const isControlled = value !== void 0;
+  const initialValue = (_a = isControlled ? value : defaultValue) != null ? _a : "";
   const [error, setError] = useState2(null);
   const [verified, setVerified] = useState2(isVerified);
   const [showValue, setShowValue] = useState2(false);
-  const [displayValue, setDisplayValue] = useState2(value || "");
+  const [displayValue, setDisplayValue] = useState2(initialValue);
   const [isFocused, setIsFocused] = useState2(false);
-  const actualValueRef = useRef2(value || "");
+  const actualValueRef = useRef2(initialValue);
   const inputRef = useRef2(null);
   useImperativeHandle(ref, () => inputRef.current, []);
   const validationFunctions = {
@@ -759,8 +767,9 @@ var TextInput = forwardRef(({
   const reactId = useId();
   const inputId = (idProp == null ? void 0 : idProp.trim()) ? idProp : `text-input-${reactId}`;
   useEffect2(() => {
-    actualValueRef.current = value || "";
-    updateDisplayValue(value || "");
+    const next = (isControlled ? value : actualValueRef.current) || "";
+    actualValueRef.current = next;
+    updateDisplayValue(next);
   }, [value]);
   useEffect2(() => {
     setVerified(isVerified);
@@ -1157,7 +1166,7 @@ var TextInput = forwardRef(({
       return "password";
     return type;
   };
-  const hasValue = ((_a = displayValue == null ? void 0 : displayValue.trim()) != null ? _a : "") !== "";
+  const hasValue = ((_b = displayValue == null ? void 0 : displayValue.trim()) != null ? _b : "") !== "";
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
@@ -1256,7 +1265,7 @@ var TextInput = forwardRef(({
     }
   ) : null;
   const hasRightAddons = Boolean(resolvedSuffix || allowClear && hasValue && !disabled || shouldShowToggle);
-  const charCount = (_b = displayValue == null ? void 0 : displayValue.length) != null ? _b : 0;
+  const charCount = (_c = displayValue == null ? void 0 : displayValue.length) != null ? _c : 0;
   const countMax = validation === "businessAID" ? resolvedMaxLength + 2 : resolvedMaxLength;
   const fieldWrapperStyle = {
     ...wrapperStyle,
@@ -1362,10 +1371,11 @@ var TextInput = forwardRef(({
               placeholder,
               className: [
                 "disabled:cursor-not-allowed",
-                getInputType() === "search" ? "ucs-text-input--search" : ""
+                getInputType() === "search" ? "ucs-text-input--search" : "",
+                inputClassName
               ].filter(Boolean).join(" "),
-              style: inputElementStyle,
               ...rest,
+              style: styleProp || inputStyle ? { ...inputElementStyle, ...styleProp, ...inputStyle } : inputElementStyle,
               spellCheck: spellCheckProp != null ? spellCheckProp : autoCorrection ? true : false,
               autoCorrect: autoCorrectProp != null ? autoCorrectProp : autoCorrection ? "on" : "off",
               autoCapitalize: autoCapitalizeProp != null ? autoCapitalizeProp : autoCorrection ? void 0 : "none"
@@ -1554,6 +1564,9 @@ var TextInput = forwardRef(({
 });
 var TextInput_default = TextInput;
 
+// src/components/atoms/TextInputSearch/index.tsx
+import React5 from "react";
+
 // src/components/atoms/TextInputSearch/TextInputSearch.utils.ts
 function railButtonSize(inputSize) {
   switch (inputSize) {
@@ -1577,7 +1590,7 @@ function railKey(inputSize) {
   return "sm";
 }
 var SEARCH_SHELL_ROUNDED = "3";
-var TextInputSearch = ({
+var TextInputSearch = React5.forwardRef(function TextInputSearch2({
   id = "search",
   leftIcon = search_default,
   leftIconHeight,
@@ -1609,7 +1622,7 @@ var TextInputSearch = ({
   trailingRail: trailingRailProp,
   pattern,
   autoCorrection = false
-}) => {
+}, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
@@ -1701,9 +1714,9 @@ var TextInputSearch = ({
   return /* @__PURE__ */ jsxs3(
     "div",
     {
-      className: containerClassName.trim(),
+      className: [containerClassName.trim(), fullWidth ? "ds-input-search--full" : ""].filter(Boolean).join(" "),
       style: {
-        width: fullWidth ? "100%" : "auto",
+        ...fullWidth ? null : { width: "auto" },
         ...containerStyle
       },
       role: "search",
@@ -1713,6 +1726,7 @@ var TextInputSearch = ({
         /* @__PURE__ */ jsx5(
           TextInput_default,
           {
+            ref,
             id,
             type: "search",
             placeholder,
@@ -1751,7 +1765,8 @@ var TextInputSearch = ({
       ]
     }
   );
-};
+});
+TextInputSearch.displayName = "TextInputSearch";
 var TextInputSearch_default = TextInputSearch;
 
 export {
@@ -1766,4 +1781,4 @@ export {
   TextInput_default,
   TextInputSearch_default
 };
-//# sourceMappingURL=chunk-AKKWQ6RK.mjs.map
+//# sourceMappingURL=chunk-QWEACOCP.mjs.map

@@ -64,3 +64,15 @@
     background: CanvasText;
   }
 }
+
+/* Full-width wrapper (default). In an inline filter row — a direct child of a wrapping flex row —
+   size to the options instead (each select otherwise takes a whole line). :where keeps this at
+   single-class specificity, so a width utility on `customClass` still wins. */
+.ds-select-root--full {
+  display: block;
+  width: 100%;
+}
+:where(.flex-wrap, .ds-form-row) > .ds-select-root--full {
+  width: auto;
+  min-width: 10rem;
+}

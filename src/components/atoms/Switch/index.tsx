@@ -35,7 +35,7 @@ const SIZE_STYLES = {
  * (same semantics as Radix UI Switch / MUI Switch): `role="switch"`, `aria-checked`,
  * native `<button>` activation (pointer + Space/Enter), visible focus ring.
  */
-const Switch = React.memo<SwitchProps>(function Switch({
+const SwitchBase = React.forwardRef<HTMLButtonElement, SwitchProps>(function Switch({
   checked: checkedProp,
   defaultChecked = false,
   onCheckedChange,
@@ -50,7 +50,11 @@ const Switch = React.memo<SwitchProps>(function Switch({
   className,
   switchClassName,
   size = "md",
-}) {
+  hideLabel = false,
+  onClick,
+  style: styleProp,
+  ...nativeProps
+}, ref) {
   const reactId = useId();
   const switchId = idProp ?? `switch-${reactId.replace(/:/g, "")}`;
   const labelId = `${switchId}-label`;
@@ -69,10 +73,14 @@ const Switch = React.memo<SwitchProps>(function Switch({
     [isControlled, onCheckedChange],
   );
 
-  const toggle = useCallback(() => {
-    if (disabled) return;
-    setChecked(!checked);
-  }, [checked, disabled, setChecked]);
+  const toggle = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      onClick?.(e);
+      if (disabled || e.defaultPrevented) return;
+      setChecked(!checked);
+    },
+    [checked, disabled, onClick, setChecked],
+  );
 
   const s = SIZE_STYLES[size];
   const { width: tw, height: th, padding: pad, thumb: thumbSize } = s.track;
@@ -130,7 +138,7 @@ const Switch = React.memo<SwitchProps>(function Switch({
     [disabled, s.hitPadding, th, tw],
   );
 
-  const labelStyle: React.CSSProperties = {
+  const labelStyle: React.CSSProperties = hideLabel ? {} : {
     color: disabled ? COLORS.textMuted : COLORS.text,
     fontSize: "var(--text-body-size, 16px)",
     lineHeight: 1.5,
@@ -140,6 +148,8 @@ const Switch = React.memo<SwitchProps>(function Switch({
 
   const switchEl = (
     <button
+      {...nativeProps}
+      ref={ref}
       type="button"
       id={switchId}
       role="switch"
@@ -148,7 +158,7 @@ const Switch = React.memo<SwitchProps>(function Switch({
       disabled={disabled}
       aria-label={hasVisibleLabel ? undefined : ariaLabel ?? "Toggle"}
       className={cls("ucs-switch__control", switchClassName)}
-      style={buttonStyle}
+      style={styleProp ? { ...buttonStyle, ...styleProp } : buttonStyle}
       onClick={toggle}
       data-state={checked ? "checked" : "unchecked"}
       data-disabled={disabled ? "" : undefined}
@@ -161,7 +171,12 @@ const Switch = React.memo<SwitchProps>(function Switch({
 
   const labelEl =
     hasVisibleLabel ? (
-      <label id={labelId} htmlFor={switchId} style={labelStyle}>
+      <label
+        id={labelId}
+        htmlFor={switchId}
+        style={labelStyle}
+        className={hideLabel ? "ucs-switch__label ucs-switch__label--hidden" : "ucs-switch__label"}
+      >
         {label}
       </label>
     ) : null;
@@ -174,7 +189,7 @@ const Switch = React.memo<SwitchProps>(function Switch({
   };
 
   return (
-    <div className={cls("ucs-switch", className)} style={rowStyle}>
+    <div className={cls("ucs-switch", className)} style={rowStyle} data-hide-label={hideLabel ? "true" : undefined}>
       {name ? (
         <input type="hidden" name={name} value={checked ? value : uncheckedValue} readOnly aria-hidden />
       ) : null}
@@ -185,6 +200,9 @@ const Switch = React.memo<SwitchProps>(function Switch({
   );
 });
 
+SwitchBase.displayName = "Switch";
+
+const Switch = React.memo(SwitchBase);
 Switch.displayName = "Switch";
 
 export default Switch;

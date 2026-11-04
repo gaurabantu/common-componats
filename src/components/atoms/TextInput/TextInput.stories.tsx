@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Input from "./index";
 import Icon from "../Icon";
 import Button from "../Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SearchIcon from "../../../assets/search.svg";
 
 const meta: Meta<typeof Input> = {
@@ -269,5 +269,37 @@ export const OnPressEnter: Story = {
     label: "Press Enter to submit",
     placeholder: "Type and press Enter...",
     value: "",
+  },
+};
+
+/**
+ * Uncontrolled edit-in-place cell: no `value`, starts from `defaultValue`, `ref` reaches the native
+ * `<input>` (focus / select). `inputStyle` / `inputClassName` target the `<input>` itself so an overlay
+ * can share its padding and font.
+ */
+export const UncontrolledWithRef: Story = {
+  render: () => {
+    const ref = useRef<HTMLInputElement>(null);
+    const [committed, setCommitted] = useState("1,250.00");
+    return (
+      <div style={{ display: "grid", gap: "var(--space-1)", maxWidth: 320 }}>
+        <Input
+          ref={ref}
+          ariaLabel="Amount"
+          size="sm"
+          defaultValue={committed}
+          inputStyle={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}
+          onPressEnter={() => setCommitted(ref.current?.value ?? "")}
+        />
+        <div>
+          <Button size="sm" variant="outlineSecondary" onClick={() => ref.current?.select()}>
+            Select text
+          </Button>
+        </div>
+        <span style={{ fontSize: "var(--text-small-size)", color: "var(--color-text-secondary)" }}>
+          Committed: {committed}
+        </span>
+      </div>
+    );
   },
 };

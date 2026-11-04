@@ -179,3 +179,62 @@ describe("Checkbox — upgrade (indeterminate, description, size, error, require
     expect(handleChange).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("Checkbox — 0.0.4 (node label, hideLabel, native passthrough)", () => {
+  it("accepts a ReactNode label as the accessible name", () => {
+    render(
+      <Checkbox
+        name="n"
+        value="v"
+        label={
+          <>
+            Accept <strong>terms</strong>
+          </>
+        }
+      />,
+    );
+    expect(screen.getByRole("checkbox", { name: "Accept terms" })).toBeInTheDocument();
+  });
+
+  it("hideLabel keeps the accessible name but marks the label visually hidden", () => {
+    const { container } = render(<Checkbox label="Select row 1" hideLabel />);
+    expect(screen.getByRole("checkbox", { name: "Select row 1" })).toBeInTheDocument();
+    expect(container.querySelector("label")).toHaveAttribute("data-hide-label", "true");
+    expect(screen.getByText("Select row 1")).toHaveClass("sr-only");
+  });
+
+  it("works without label, name or value when ariaLabel is given", () => {
+    render(<Checkbox ariaLabel="Select all" />);
+    expect(screen.getByRole("checkbox", { name: "Select all" })).not.toHaveAttribute("name");
+  });
+
+  it("forwards data-*, aria-* and native props to the input", async () => {
+    const onBlur = vi.fn();
+    const onChange = vi.fn();
+    render(
+      <Checkbox
+        label="Row"
+        data-testid="row-cb"
+        aria-controls="panel-1"
+        form="f1"
+        tabIndex={-1}
+        onBlur={onBlur}
+        onChange={onChange}
+        checked
+      />,
+    );
+    const input = screen.getByTestId("row-cb");
+    expect(input.tagName).toBe("INPUT");
+    expect(input).toHaveAttribute("aria-controls", "panel-1");
+    expect(input).toHaveAttribute("form", "f1");
+    expect(input).toHaveAttribute("tabindex", "-1");
+    await userEvent.click(input);
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("native aria-label works like ariaLabel and aria-describedby is merged", () => {
+    render(<Checkbox aria-label="Pick me" aria-describedby="ext" description="More" />);
+    const input = screen.getByRole("checkbox", { name: "Pick me" });
+    expect(input.getAttribute("aria-describedby")?.split(" ")[0]).toBe("ext");
+  });
+});

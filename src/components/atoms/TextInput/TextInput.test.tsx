@@ -61,4 +61,46 @@ describe("TextInput", () => {
     expect(el.getAttribute("autocorrect")).toBe("on");
     expect(el.getAttribute("autocapitalize")).toBeNull();
   });
+
+  it("forwards ref to the native input", () => {
+    const ref = React.createRef<HTMLInputElement>();
+    render(<TextInput ref={ref} ariaLabel="Name" />);
+    expect(ref.current).toBe(screen.getByRole("textbox", { name: "Name" }));
+  });
+
+  it("supports uncontrolled use with defaultValue", async () => {
+    const handleChange = vi.fn();
+    render(<TextInput ariaLabel="Cell" defaultValue="42" onChange={handleChange} />);
+    const el = screen.getByRole("textbox") as HTMLInputElement;
+    expect(el.value).toBe("42");
+    await userEvent.type(el, "7");
+    expect(el.value).toBe("427");
+    expect(handleChange).toHaveBeenLastCalledWith("427");
+  });
+
+  it("ignores defaultValue when value is set", () => {
+    render(<TextInput ariaLabel="Cell" value="controlled" defaultValue="preset" onChange={() => {}} />);
+    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe("controlled");
+  });
+
+  it("applies inputClassName and merges inputStyle / style onto the native input", () => {
+    render(
+      <TextInput
+        ariaLabel="Styled"
+        className="outer"
+        inputClassName="inner"
+        style={{ letterSpacing: "1px" }}
+        inputStyle={{ paddingLeft: "20px" }}
+      />,
+    );
+    const el = screen.getByRole("textbox");
+    expect(el).toHaveClass("inner");
+    expect(el).not.toHaveClass("outer");
+    expect(el).toHaveStyle({ paddingLeft: "20px", letterSpacing: "1px", width: "100%" });
+  });
+
+  it("passes data-* attributes to the native input", () => {
+    render(<TextInput ariaLabel="T" data-testid="the-input" />);
+    expect(screen.getByTestId("the-input").tagName).toBe("INPUT");
+  });
 });

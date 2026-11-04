@@ -7,8 +7,10 @@
 
 const defaultConfig = {
   defaultRows: 3,
-  defaultMaxLength: 500,
+  /** No limit by default — pass `maxLength` to cap input (0.0.4: was 500, which silently truncated). */
+  defaultMaxLength: undefined as number | undefined,
   defaultRemoveChars: '/<>@#',
+  /** Only applies when `sanitize` is true (sanitize is off by default, so text is never altered implicitly). */
   defaultRemoveEmojis: true,
   defaultNormalizeAccents: true,
   defaultToCase: '' as '' | 'U' | 'L' | 'C',

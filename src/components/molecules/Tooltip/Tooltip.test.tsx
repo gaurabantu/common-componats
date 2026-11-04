@@ -289,3 +289,26 @@ describe("tooltipPosition", () => {
     expect(edge.left).toBe(8);
   });
 });
+
+describe("Tooltip — layering", () => {
+  it("defaults to the --z-tooltip-top token (no inline z-index)", () => {
+    setup({ defaultOpen: true });
+    expect(screen.getByRole("tooltip").style.zIndex).toBe("");
+  });
+
+  it("honours an explicit zIndex prop", () => {
+    setup({ defaultOpen: true, zIndex: 15000 });
+    expect(screen.getByRole("tooltip").style.zIndex).toBe("15000");
+  });
+
+  it("lifts above a stacked host overlay around the trigger", () => {
+    render(
+      <div style={{ position: "fixed", zIndex: 10000 }}>
+        <Tooltip content="Inside dialog" defaultOpen>
+          <button type="button">In dialog</button>
+        </Tooltip>
+      </div>,
+    );
+    expect(screen.getByRole("tooltip").style.zIndex).toBe("10001");
+  });
+});

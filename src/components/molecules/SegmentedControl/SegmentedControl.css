@@ -113,7 +113,19 @@
 
 .ds-segmented__label {
   min-width: 0;
-  overflow-wrap: anywhere;
+  /* Never break a label mid-word ("Statuto|ry"): keep it on one line, ellipsis only when a
+     full-width control is genuinely too narrow. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Intrinsic-width control (the default): don't let a flex toolbar squeeze it below its labels. */
+.ds-segmented:not([data-full-width="true"]) {
+  flex-shrink: 0;
+}
+.ds-segmented:not([data-full-width="true"]) .ds-segmented__item {
+  flex-shrink: 0;
 }
 
 /* Sliding indicator (positioned from JS measurement of the selected segment). */

@@ -113,13 +113,13 @@ export const ChartTooltip = React.memo(function ChartTooltip({
         {label}
       </div>
       <div className="ds-chart-tooltip__rows">
-        {items.map((item) => (
-          <div key={item.name} className="ds-chart-tooltip__row">
+        {items.map((item, i) => (
+          <div key={`${item.name}-${i}`} className="ds-chart-tooltip__row">
             <span className="ds-chart-tooltip__dot" style={{ background: item.color }} aria-hidden />
             <span className="ds-chart-tooltip__name" style={{ color: themeColors.legendText }}>
               {item.name}
             </span>
-            <span className="ds-chart-tooltip__value">{item.value}</span>
+            <span className="ds-chart-tooltip__value">{item.displayValue ?? item.value}</span>
           </div>
         ))}
       </div>

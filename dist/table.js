@@ -43,7 +43,7 @@ __export(table_exports, {
 module.exports = __toCommonJS(table_exports);
 
 // src/components/molecules/Table/Table.tsx
-var import_react10 = require("react");
+var import_react11 = require("react");
 
 // src/components/atoms/Select/index.tsx
 var import_react2 = require("react");
@@ -92,6 +92,7 @@ function cls(...parts) {
 function hasContent(node) {
   return node !== void 0 && node !== null && node !== false && node !== "";
 }
+var LABELABLE_TAGS = /* @__PURE__ */ new Set(["input", "select", "textarea", "button", "meter", "output", "progress"]);
 var FormFieldContext = (0, import_react.createContext)(null);
 function useFormField() {
   return (0, import_react.useContext)(FormFieldContext);
@@ -120,6 +121,8 @@ var FormField = import_react.default.forwardRef(function FormField2({
   optional = false,
   counter,
   layout = FORM_FIELD_DEFAULTS.layout,
+  group = false,
+  hideLabel = false,
   children,
   className,
   ...rest
@@ -141,13 +144,13 @@ var FormField = import_react.default.forwardRef(function FormField2({
   const overLimit = counter ? counter.value > counter.max : false;
   const announceError = useAnnounceOnChange(error);
   const ctx = (0, import_react.useMemo)(
-    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required }),
-    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required]
+    () => ({ id: controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required, group }),
+    [controlId, labelId, hintId, errorId, counterId, describedBy, invalid, required, group]
   );
   const controlRef = (0, import_react.useRef)(null);
   (0, import_react.useEffect)(() => {
     var _a2;
-    if (!isDev())
+    if (!isDev() || group)
       return;
     const root = controlRef.current;
     if (!root)
@@ -165,9 +168,10 @@ var FormField = import_react.default.forwardRef(function FormField2({
         `[FormField] No labelable focusable element with id="${controlId}" (and no aria-labelledby="${labelId}") was found inside the field, so the label is not associated with the control. Use Input / TextArea / Select / Combobox / a native control, or wire a custom control with useFormField().`
       );
     }
-  }, [controlId, labelId]);
+  }, [controlId, labelId, group]);
+  const isCompositeWrapper = htmlFor !== void 0 && child !== null && typeof child.type === "string" && !LABELABLE_TAGS.has(child.type);
   let control = children;
-  if (child && !isFormFieldConsumer(child.type)) {
+  if (child && !group && !isCompositeWrapper && !isFormFieldConsumer(child.type)) {
     const inject = {};
     if (childProps.id === void 0)
       inject.id = controlId;
@@ -179,6 +183,7 @@ var FormField = import_react.default.forwardRef(function FormField2({
       inject["aria-required"] = true;
     control = Object.keys(inject).length > 0 ? import_react.default.cloneElement(child, inject) : child;
   }
+  const LabelTag = group ? "span" : "label";
   const optionalText = !required && optional ? typeof optional === "string" ? optional : FORM_FIELD_DEFAULTS.optionalLabel : null;
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormFieldContext.Provider, { value: ctx, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
     "div",
@@ -187,19 +192,30 @@ var FormField = import_react.default.forwardRef(function FormField2({
       className: cls("ds-form-field", className),
       "data-layout": layout,
       "data-invalid": invalid ? "true" : void 0,
+      "data-group": group ? "true" : void 0,
+      "data-hide-label": hideLabel ? "true" : void 0,
+      ...group ? { role: "group", "aria-labelledby": labelId, "aria-describedby": describedBy } : {},
       ...rest,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ds-form-field__label-col", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { id: labelId, htmlFor: controlId, className: "ds-form-field__label", children: [
-          label,
-          required ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "ds-form-field__required", "aria-hidden": "true", children: "*" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "sr-only", children: [
-              " ",
-              FORM_FIELD_REQUIRED_SR_TEXT
-            ] })
-          ] }) : null,
-          optionalText ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "ds-form-field__optional", children: optionalText }) : null
-        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ds-form-field__label-col", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          LabelTag,
+          {
+            id: labelId,
+            htmlFor: group ? void 0 : controlId,
+            className: "ds-form-field__label",
+            children: [
+              label,
+              required ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "ds-form-field__required", "aria-hidden": "true", children: "*" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "sr-only", children: [
+                  " ",
+                  FORM_FIELD_REQUIRED_SR_TEXT
+                ] })
+              ] }) : null,
+              optionalText ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "ds-form-field__optional", children: optionalText }) : null
+            ]
+          }
+        ) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ds-form-field__control-col", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref: controlRef, className: "ds-form-field__control", children: control }),
           showHint || showError || counter ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ds-form-field__messages", children: [
@@ -374,10 +390,8 @@ var Select = (0, import_react2.forwardRef)((props, ref) => {
   };
   const currentSize = sizeConfig[size];
   const radiusValue = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
-  const wrapperStyle = {
-    width: fullWidth ? "100%" : "auto",
-    display: fullWidth ? "block" : "inline-block"
-  };
+  const wrapperStyle = fullWidth ? void 0 : { width: "auto", display: "inline-block" };
+  const wrapperClass = [customClass, fullWidth ? "ds-select-root--full" : ""].filter(Boolean).join(" ");
   const labelStyle = {
     display: "block",
     marginBottom: 8,
@@ -413,7 +427,7 @@ var Select = (0, import_react2.forwardRef)((props, ref) => {
     fontSize: "var(--text-small-size, 12px)",
     lineHeight: 1.5
   };
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: customClass, style: wrapperStyle, children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: wrapperClass || void 0, style: wrapperStyle, children: [
     label && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("label", { htmlFor: selectId, style: labelStyle, children: [
       label,
       required ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-select__required", "aria-hidden": "true", children: "*" }) : null
@@ -654,6 +668,9 @@ var TextView = import_react3.default.memo(function TextView2({
   );
 });
 var TextView_default = TextView;
+
+// src/components/atoms/TextInputSearch/index.tsx
+var import_react8 = __toESM(require("react"));
 
 // src/components/atoms/Icon/index.tsx
 var import_react4 = __toESM(require("react"));
@@ -956,7 +973,8 @@ var TextInput = (0, import_react5.forwardRef)(({
   placeholder,
   validation = "none",
   required = false,
-  value = "",
+  value,
+  defaultValue,
   onChange,
   onErrorChange,
   onVerifiedChange,
@@ -996,15 +1014,20 @@ var TextInput = (0, import_react5.forwardRef)(({
   spellCheck: spellCheckProp,
   autoCorrect: autoCorrectProp,
   autoCapitalize: autoCapitalizeProp,
+  inputClassName,
+  inputStyle,
+  style: styleProp,
   ...rest
 }, ref) => {
-  var _a, _b;
+  var _a, _b, _c;
+  const isControlled = value !== void 0;
+  const initialValue = (_a = isControlled ? value : defaultValue) != null ? _a : "";
   const [error, setError] = (0, import_react5.useState)(null);
   const [verified, setVerified] = (0, import_react5.useState)(isVerified);
   const [showValue, setShowValue] = (0, import_react5.useState)(false);
-  const [displayValue, setDisplayValue] = (0, import_react5.useState)(value || "");
+  const [displayValue, setDisplayValue] = (0, import_react5.useState)(initialValue);
   const [isFocused, setIsFocused] = (0, import_react5.useState)(false);
-  const actualValueRef = (0, import_react5.useRef)(value || "");
+  const actualValueRef = (0, import_react5.useRef)(initialValue);
   const inputRef = (0, import_react5.useRef)(null);
   (0, import_react5.useImperativeHandle)(ref, () => inputRef.current, []);
   const validationFunctions = {
@@ -1027,8 +1050,9 @@ var TextInput = (0, import_react5.forwardRef)(({
   const reactId = (0, import_react5.useId)();
   const inputId = (idProp == null ? void 0 : idProp.trim()) ? idProp : `text-input-${reactId}`;
   (0, import_react5.useEffect)(() => {
-    actualValueRef.current = value || "";
-    updateDisplayValue(value || "");
+    const next = (isControlled ? value : actualValueRef.current) || "";
+    actualValueRef.current = next;
+    updateDisplayValue(next);
   }, [value]);
   (0, import_react5.useEffect)(() => {
     setVerified(isVerified);
@@ -1425,7 +1449,7 @@ var TextInput = (0, import_react5.forwardRef)(({
       return "password";
     return type;
   };
-  const hasValue = ((_a = displayValue == null ? void 0 : displayValue.trim()) != null ? _a : "") !== "";
+  const hasValue = ((_b = displayValue == null ? void 0 : displayValue.trim()) != null ? _b : "") !== "";
   const resolvedStatus = statusProp != null ? statusProp : error ? "error" : verified ? "success" : void 0;
   const baseSizeTokens = {
     sm: {
@@ -1524,7 +1548,7 @@ var TextInput = (0, import_react5.forwardRef)(({
     }
   ) : null;
   const hasRightAddons = Boolean(resolvedSuffix || allowClear && hasValue && !disabled || shouldShowToggle);
-  const charCount = (_b = displayValue == null ? void 0 : displayValue.length) != null ? _b : 0;
+  const charCount = (_c = displayValue == null ? void 0 : displayValue.length) != null ? _c : 0;
   const countMax = validation === "businessAID" ? resolvedMaxLength + 2 : resolvedMaxLength;
   const fieldWrapperStyle = {
     ...wrapperStyle,
@@ -1630,10 +1654,11 @@ var TextInput = (0, import_react5.forwardRef)(({
               placeholder,
               className: [
                 "disabled:cursor-not-allowed",
-                getInputType() === "search" ? "ucs-text-input--search" : ""
+                getInputType() === "search" ? "ucs-text-input--search" : "",
+                inputClassName
               ].filter(Boolean).join(" "),
-              style: inputElementStyle,
               ...rest,
+              style: styleProp || inputStyle ? { ...inputElementStyle, ...styleProp, ...inputStyle } : inputElementStyle,
               spellCheck: spellCheckProp != null ? spellCheckProp : autoCorrection ? true : false,
               autoCorrect: autoCorrectProp != null ? autoCorrectProp : autoCorrection ? "on" : "off",
               autoCapitalize: autoCapitalizeProp != null ? autoCapitalizeProp : autoCorrection ? void 0 : "none"
@@ -2150,6 +2175,8 @@ var ButtonImpl = import_react7.default.forwardRef(function Button({
     );
   }
   const buttonRest = { ...restWithoutStyle };
+  if (isExpandable && buttonRest.title == null && typeof children === "string")
+    buttonRest.title = children;
   if (unsafeHref)
     for (const attr of ANCHOR_ONLY_ATTRS)
       delete buttonRest[attr];
@@ -2210,7 +2237,7 @@ function railKey(inputSize) {
   return "sm";
 }
 var SEARCH_SHELL_ROUNDED = "3";
-var TextInputSearch = ({
+var TextInputSearch = import_react8.default.forwardRef(function TextInputSearch2({
   id = "search",
   leftIcon = search_default,
   leftIconHeight,
@@ -2242,7 +2269,7 @@ var TextInputSearch = ({
   trailingRail: trailingRailProp,
   pattern,
   autoCorrection = false
-}) => {
+}, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
@@ -2334,9 +2361,9 @@ var TextInputSearch = ({
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
     "div",
     {
-      className: containerClassName.trim(),
+      className: [containerClassName.trim(), fullWidth ? "ds-input-search--full" : ""].filter(Boolean).join(" "),
       style: {
-        width: fullWidth ? "100%" : "auto",
+        ...fullWidth ? null : { width: "auto" },
         ...containerStyle
       },
       role: "search",
@@ -2346,6 +2373,7 @@ var TextInputSearch = ({
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           TextInput_default,
           {
+            ref,
             id,
             type: "search",
             placeholder,
@@ -2384,7 +2412,8 @@ var TextInputSearch = ({
       ]
     }
   );
-};
+});
+TextInputSearch.displayName = "TextInputSearch";
 var TextInputSearch_default = TextInputSearch;
 
 // src/components/molecules/Table/Table.config.ts
@@ -2418,7 +2447,7 @@ var cls3 = (...classes) => {
 };
 
 // src/components/atoms/Checkbox/index.tsx
-var import_react8 = __toESM(require("react"));
+var import_react9 = __toESM(require("react"));
 
 // src/components/atoms/Checkbox/Checkbox.config.ts
 var defaultCheckboxColorClass = "";
@@ -2435,10 +2464,10 @@ function cls4(...classes) {
 
 // src/components/atoms/Checkbox/index.tsx
 var import_jsx_runtime8 = require("react/jsx-runtime");
-var useIsomorphicLayoutEffect = typeof window !== "undefined" ? import_react8.useLayoutEffect : import_react8.useEffect;
+var useIsomorphicLayoutEffect = typeof window !== "undefined" ? import_react9.useLayoutEffect : import_react9.useEffect;
 var CheckboxGlyph = () => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("svg", { className: "ucs-cc-checkbox-check", "aria-hidden": true, viewBox: "0 0 12 12", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { className: "ucs-cc-checkbox-checkpath", d: "M2.75 6.05 L5.15 9.05 L9.95 3.25" }) });
 var DashGlyph = () => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("svg", { className: "ucs-cc-checkbox-dash", "aria-hidden": true, viewBox: "0 0 12 12", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { className: "ucs-cc-checkbox-dashpath", d: "M3 6 H9" }) });
-var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
+var CheckboxBase = import_react9.default.forwardRef(function Checkbox({
   label,
   name,
   value,
@@ -2459,17 +2488,24 @@ var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
   rounded = "3",
   withShadow = false,
   ariaLabel,
-  ariaLabelledBy
+  ariaLabelledBy,
+  hideLabel = false,
+  "aria-label": ariaLabelAttr,
+  "aria-labelledby": ariaLabelledByAttr,
+  "aria-describedby": ariaDescribedByAttr,
+  ...nativeProps
 }, forwardedRef) {
-  const generatedId = (0, import_react8.useId)();
+  const generatedId = (0, import_react9.useId)();
   const checkboxId = id != null ? id : `ucs-cb-${generatedId}`;
   const labelId = `${checkboxId}-label`;
   const descriptionId = description ? `${checkboxId}-description` : void 0;
   const errorId = error ? `${checkboxId}-error` : void 0;
-  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || void 0;
-  const hasVisibleLabel = label.trim().length > 0;
-  const inputRef = (0, import_react8.useRef)(null);
-  const setRefs = (0, import_react8.useCallback)(
+  const describedBy = [ariaDescribedByAttr, descriptionId, errorId].filter(Boolean).join(" ") || void 0;
+  const hasVisibleLabel = label !== void 0 && label !== null && label !== false && !(typeof label === "string" && label.trim().length === 0);
+  const resolvedAriaLabel = ariaLabel != null ? ariaLabel : ariaLabelAttr;
+  const resolvedAriaLabelledBy = ariaLabelledBy != null ? ariaLabelledBy : ariaLabelledByAttr;
+  const inputRef = (0, import_react9.useRef)(null);
+  const setRefs = (0, import_react9.useCallback)(
     (node) => {
       inputRef.current = node;
       if (typeof forwardedRef === "function")
@@ -2521,7 +2557,7 @@ var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
     "span",
     {
       id: labelId,
-      className: cls4("ucs-cc-checkbox-label", labelColorClass),
+      className: cls4("ucs-cc-checkbox-label", labelColorClass, hideLabel && "sr-only"),
       style: labelStyle,
       "aria-hidden": !hasVisibleLabel ? true : void 0,
       children: [
@@ -2537,10 +2573,12 @@ var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
       className: cls4("ucs-cc-checkbox-root", className),
       style: wrapperStyle,
       "data-size": size,
+      "data-hide-label": hideLabel ? "true" : void 0,
       children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "input",
           {
+            ...nativeProps,
             ref: setRefs,
             type: "checkbox",
             id: checkboxId,
@@ -2551,8 +2589,8 @@ var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
             required: required || void 0,
             onChange,
             readOnly: onChange ? void 0 : true,
-            "aria-label": !hasVisibleLabel && ariaLabel ? ariaLabel : void 0,
-            "aria-labelledby": hasVisibleLabel ? labelId : !ariaLabel && ariaLabelledBy ? ariaLabelledBy : void 0,
+            "aria-label": !hasVisibleLabel && resolvedAriaLabel ? resolvedAriaLabel : void 0,
+            "aria-labelledby": hasVisibleLabel ? labelId : !resolvedAriaLabel && resolvedAriaLabelledBy ? resolvedAriaLabelledBy : void 0,
             "aria-describedby": describedBy,
             "aria-invalid": error ? true : void 0,
             "data-indeterminate": indeterminate ? "true" : void 0,
@@ -2587,7 +2625,7 @@ var CheckboxBase = import_react8.default.forwardRef(function Checkbox({
   ] });
 });
 CheckboxBase.displayName = "Checkbox";
-var Checkbox2 = import_react8.default.memo(CheckboxBase);
+var Checkbox2 = import_react9.default.memo(CheckboxBase);
 Checkbox2.displayName = "Checkbox";
 var Checkbox_default = Checkbox2;
 
@@ -2652,7 +2690,7 @@ function TableHeader({
 }
 
 // src/components/molecules/Table/parts/TableRow.tsx
-var import_react9 = __toESM(require("react"));
+var import_react10 = __toESM(require("react"));
 
 // src/components/molecules/Table/parts/TableCell.tsx
 var import_jsx_runtime10 = require("react/jsx-runtime");
@@ -2687,7 +2725,7 @@ function TableRow({
   renderCell
 }) {
   var _a, _b, _c, _d;
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_react9.default.Fragment, { children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_react10.default.Fragment, { children: [
     /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "tr",
       {
@@ -2831,26 +2869,26 @@ function TableInner({
 }) {
   var _a, _b, _c, _d;
   const config = tableConfig.default;
-  const [searchValue, setSearchValue] = (0, import_react10.useState)("");
-  const [sortState, setSortState] = (0, import_react10.useState)({ key: "", dir: null });
-  const [currentPage, setCurrentPage] = (0, import_react10.useState)(1);
+  const [searchValue, setSearchValue] = (0, import_react11.useState)("");
+  const [sortState, setSortState] = (0, import_react11.useState)({ key: "", dir: null });
+  const [currentPage, setCurrentPage] = (0, import_react11.useState)(1);
   const paginationConfig = typeof pagination === "object" ? pagination : {};
   const pageSizeOptions = (_a = paginationConfig.pageSizeOptions) != null ? _a : [5, 10, 15, 25, 50];
-  const [itemsPerPage, setItemsPerPage] = (0, import_react10.useState)((_b = paginationConfig.pageSize) != null ? _b : 10);
-  const selectedSet = (0, import_react10.useMemo)(() => {
+  const [itemsPerPage, setItemsPerPage] = (0, import_react11.useState)((_b = paginationConfig.pageSize) != null ? _b : 10);
+  const selectedSet = (0, import_react11.useMemo)(() => {
     const keys = selectedRowKeys != null ? selectedRowKeys : selectedRow;
     if (!keys)
       return /* @__PURE__ */ new Set();
     const arr = Array.isArray(keys) ? keys : [keys];
     return new Set(arr);
   }, [selectedRowKeys, selectedRow]);
-  const expandedSet = (0, import_react10.useMemo)(() => {
+  const expandedSet = (0, import_react11.useMemo)(() => {
     if (!(expandable == null ? void 0 : expandable.expandedRowKeys))
       return /* @__PURE__ */ new Set();
     return new Set(expandable.expandedRowKeys);
   }, [expandable == null ? void 0 : expandable.expandedRowKeys]);
-  const visibleColumns = (0, import_react10.useMemo)(() => columns.filter((c) => !c.hidden), [columns]);
-  const filteredData = (0, import_react10.useMemo)(() => {
+  const visibleColumns = (0, import_react11.useMemo)(() => columns.filter((c) => !c.hidden), [columns]);
+  const filteredData = (0, import_react11.useMemo)(() => {
     if (!searchValue.trim())
       return data;
     const lower = searchValue.toLowerCase();
@@ -2862,7 +2900,7 @@ function TableInner({
       })
     );
   }, [data, searchValue, searchColumns, visibleColumns]);
-  const sortedData = (0, import_react10.useMemo)(() => {
+  const sortedData = (0, import_react11.useMemo)(() => {
     var _a2;
     if (!sortState.key || !sortState.dir)
       return filteredData;
@@ -2887,10 +2925,10 @@ function TableInner({
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = pagination ? sortedData.slice(startIndex, startIndex + itemsPerPage) : sortedData;
-  (0, import_react10.useEffect)(() => {
+  (0, import_react11.useEffect)(() => {
     setCurrentPage((p) => p > totalPages ? totalPages : p < 1 ? 1 : p);
   }, [totalPages]);
-  const handleSort = (0, import_react10.useCallback)(
+  const handleSort = (0, import_react11.useCallback)(
     (key) => {
       const col = visibleColumns.find((c) => c.key === key);
       if (!(col == null ? void 0 : col.sortable))
@@ -2902,7 +2940,7 @@ function TableInner({
     },
     [visibleColumns]
   );
-  const handleSelectRow = (0, import_react10.useCallback)(
+  const handleSelectRow = (0, import_react11.useCallback)(
     (key, row) => {
       if (selectionMode === "single") {
         const keys = [key];
@@ -2921,7 +2959,7 @@ function TableInner({
     },
     [selectionMode, selectedSet, data, rowKey, onSelectionChange, onRowSelect]
   );
-  const handleSelectAll = (0, import_react10.useCallback)(
+  const handleSelectAll = (0, import_react11.useCallback)(
     (checked) => {
       if (selectionMode !== "multiple")
         return;
@@ -2932,7 +2970,7 @@ function TableInner({
     [selectionMode, paginatedData, startIndex, rowKey, onSelectionChange]
   );
   const allSelected = selectionMode === "multiple" && paginatedData.length > 0 && paginatedData.every((r, i) => selectedSet.has(getRowKey(r, startIndex + i, rowKey)));
-  const handleExpand = (0, import_react10.useCallback)(
+  const handleExpand = (0, import_react11.useCallback)(
     (key) => {
       if (!(expandable == null ? void 0 : expandable.onExpandedRowsChange))
         return;
@@ -3166,43 +3204,98 @@ function Table(props) {
 }
 
 // src/components/molecules/Table/TablePrimitives.tsx
-var import_react11 = require("react");
+var import_react12 = require("react");
 var import_jsx_runtime13 = require("react/jsx-runtime");
-var TableRoot = (0, import_react11.forwardRef)(function TableRoot2({ className, containerClassName, children, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cls3("table-ui-wrap", containerClassName), children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("table", { ref, className: cls3("table-ui", className), ...rest, children }) });
+var TableRoot = (0, import_react12.forwardRef)(function TableRoot2({
+  className,
+  containerClassName,
+  scroll = true,
+  stickyHeader = false,
+  stickyFirstColumn = false,
+  maxHeight,
+  flush = false,
+  children,
+  ...rest
+}, ref) {
+  const table = /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    "table",
+    {
+      ref,
+      className: cls3(
+        "table-ui",
+        stickyHeader && "table-ui--sticky-header",
+        stickyFirstColumn && "table-ui--sticky-first-col",
+        className
+      ),
+      ...rest,
+      children
+    }
+  );
+  if (!scroll)
+    return table;
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    "div",
+    {
+      className: cls3("table-ui-wrap", flush && "table-ui-wrap--flush", containerClassName),
+      style: maxHeight !== void 0 ? { maxHeight: typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight, overflowY: "auto" } : void 0,
+      children: table
+    }
+  );
 });
 TableRoot.displayName = "TableRoot";
-var TableCaption = (0, import_react11.forwardRef)(
+var TableCaption = (0, import_react12.forwardRef)(
   function TableCaption2({ className, ...rest }, ref) {
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("caption", { ref, className: cls3("table-ui-caption", className), ...rest });
   }
 );
 TableCaption.displayName = "TableCaption";
-var TableHeader2 = (0, import_react11.forwardRef)(
+var TableHeader2 = (0, import_react12.forwardRef)(
   function TableHeader3({ className, ...rest }, ref) {
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("thead", { ref, className: cls3("table-ui-thead", className), ...rest });
   }
 );
 TableHeader2.displayName = "TableHeader";
-var TableBody = (0, import_react11.forwardRef)(function TableBody2({ className, ...rest }, ref) {
+var TableBody = (0, import_react12.forwardRef)(function TableBody2({ className, ...rest }, ref) {
   return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tbody", { ref, className: cls3("table-ui-tbody", className), ...rest });
 });
 TableBody.displayName = "TableBody";
-var TableFooter = (0, import_react11.forwardRef)(
+var TableFooter = (0, import_react12.forwardRef)(
   function TableFooter2({ className, ...rest }, ref) {
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tfoot", { ref, className: cls3("table-ui-tfoot", className), ...rest });
   }
 );
 TableFooter.displayName = "TableFooter";
-var TableRow2 = (0, import_react11.forwardRef)(function TableRow3({ className, ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("tr", { ref, className: cls3("table-ui-tr", className), ...rest });
+var TableRow2 = (0, import_react12.forwardRef)(function TableRow3({ className, selected, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    "tr",
+    {
+      ref,
+      className: cls3("table-ui-tr", selected && "table-ui-tr--selected", className),
+      "aria-selected": selected === void 0 ? void 0 : selected,
+      "data-state": selected ? "selected" : void 0,
+      ...rest
+    }
+  );
 });
 TableRow2.displayName = "TableRow";
-var TableHead = (0, import_react11.forwardRef)(function TableHead2({ className, scope = "col", ...rest }, ref) {
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("th", { ref, className: cls3("table-ui-th", className), scope, ...rest });
+var TableHead = (0, import_react12.forwardRef)(function TableHead2({ className, scope = "col", casing = "upper", wrap = false, ...rest }, ref) {
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    "th",
+    {
+      ref,
+      className: cls3(
+        "table-ui-th",
+        casing === "none" && "table-ui-th--casing-none",
+        wrap && "table-ui-th--wrap",
+        className
+      ),
+      scope,
+      ...rest
+    }
+  );
 });
 TableHead.displayName = "TableHead";
-var TableCell2 = (0, import_react11.forwardRef)(function TableCell3({ className, ...rest }, ref) {
+var TableCell2 = (0, import_react12.forwardRef)(function TableCell3({ className, ...rest }, ref) {
   return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("td", { ref, className: cls3("table-ui-td", className), ...rest });
 });
 TableCell2.displayName = "TableCell";

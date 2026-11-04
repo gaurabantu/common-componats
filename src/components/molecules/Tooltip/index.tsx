@@ -13,6 +13,7 @@ import React, {
 import { createPortal } from "react-dom";
 import { TOOLTIP_DEFAULTS } from "./Tooltip.config";
 import { computeTooltipPosition } from "./tooltipPosition";
+import { DEFAULT_TOOLTIP_Z, resolveLayerZIndex, type LayerZIndex } from "../Popover/layering";
 import type { TooltipProps, TooltipSide } from "./Tooltip.types";
 import "./Tooltip.css";
 
@@ -74,6 +75,7 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(function T
     disabled = false,
     maxWidth = TOOLTIP_DEFAULTS.maxWidth,
     variant = TOOLTIP_DEFAULTS.variant,
+    zIndex,
     className,
     style,
     id: idProp,
@@ -90,6 +92,8 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(function T
   const open = !disabled && (isControlled ? Boolean(openProp) : innerOpen);
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState<{ top: number; left: number; side: TooltipSide } | null>(null);
+  /** Auto layer (only set when the trigger sits inside something stacked above --z-tooltip-top). */
+  const [autoZ, setAutoZ] = useState<LayerZIndex | undefined>(undefined);
 
   const triggerRef = useRef<HTMLElement | null>(null);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
@@ -203,13 +207,17 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(function T
       return undefined;
     }
     updatePosition();
+    if (zIndex === undefined) {
+      const z = resolveLayerZIndex(triggerRef.current, undefined, "--z-tooltip-top", DEFAULT_TOOLTIP_Z);
+      setAutoZ(typeof z === "number" ? z : undefined);
+    }
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
     return () => {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };
-  }, [open, updatePosition, content]);
+  }, [open, updatePosition, content, zIndex]);
 
   const child = React.Children.only(children);
   if (!isValidElement(child)) return null;
@@ -276,6 +284,7 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(function T
             data-state={open ? "open" : "closed"}
             data-positioned={position ? "true" : "false"}
             style={{
+              ...(zIndex !== undefined ? { zIndex } : autoZ !== undefined ? { zIndex: autoZ } : null),
               ...style,
               top: position?.top ?? 0,
               left: position?.left ?? 0,

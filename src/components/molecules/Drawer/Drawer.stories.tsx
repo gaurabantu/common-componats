@@ -18,7 +18,9 @@ const meta: Meta<typeof Drawer> = {
           "By default it is modal, with a backdrop, body scroll lock, focus trap, `aria-modal`, and focus returned to the " +
           "trigger on close. Set `modal={false}` for a non-blocking side panel that Escape still closes. `title` names the dialog, " +
           "`description` describes it, the body scrolls between a fixed header and a sticky `footer`, and at 480px or narrower " +
-          "left and right drawers go full width. Use `Modal` for short, centred confirmations.",
+          "left and right drawers go full width. Use `Modal` for short, centred confirmations. " +
+          "Since 0.0.4: `headerActions` in the header, block `description` content, `bodyScroll={false}` so a child owns the scroll " +
+          "(sticky table headers), and `onBeforeClose` to veto Escape / backdrop / close-button closes.",
       },
     },
   },
@@ -37,6 +39,9 @@ const meta: Meta<typeof Drawer> = {
     onOpenChange: { action: "onOpenChange" },
     footer: { control: false },
     initialFocusRef: { control: false },
+    headerActions: { control: false },
+    onBeforeClose: { control: false },
+    bodyScroll: { control: "boolean" },
   },
 };
 
@@ -200,4 +205,88 @@ export const BottomSheet: Story = {
     }
     return <Demo />;
   },
+};
+
+/** `headerActions` render in the header, before the close button. */
+export const HeaderActions: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Cell drill-down",
+    headerActions: (
+      <Button variant="outlineSecondary" size="sm">
+        Export
+      </Button>
+    ),
+    children: <p className="text-body text-text-primary">Drill-down detail.</p>,
+  },
+};
+
+/** `bodyScroll={false}` — the child owns the scroll so its sticky header works. */
+export const FixedBodyStickyTable: Story = {
+  render: (args) => <WithTrigger {...args} />,
+  args: {
+    title: "Line items",
+    side: "bottom",
+    size: "lg",
+    bodyScroll: false,
+    children: (
+      <div style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto" }} tabIndex={0} aria-label="Line items table">
+        <table style={{ width: "100%", borderCollapse: "collapse" }} className="text-body text-text-primary">
+          <thead>
+            <tr>
+              {["Line", "Amount"].map((h) => (
+                <th
+                  key={h}
+                  style={{
+                    position: "sticky",
+                    top: 0,
+                    textAlign: "left",
+                    padding: "var(--space-0) var(--space-1)",
+                    background: "var(--color-bg-surface)",
+                    borderBottom: "1px solid var(--color-border-subtle)",
+                  }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 40 }, (_, i) => (
+              <tr key={i}>
+                <td style={{ padding: "var(--space-0) var(--space-1)" }}>Line {i + 1}</td>
+                <td style={{ padding: "var(--space-0) var(--space-1)" }}>{(i * 125).toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ),
+  },
+};
+
+function GuardedDrawerDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="primary" onClick={() => setOpen(true)}>
+        Open guarded drawer
+      </Button>
+      <Drawer
+        open={open}
+        onOpenChange={setOpen}
+        title="Edit integration"
+        onBeforeClose={() =>
+          new Promise<boolean>((resolve) => resolve(window.confirm("Discard unsaved changes?")))
+        }
+      >
+        <p className="text-body text-text-primary">Escape, the backdrop and X all ask first.</p>
+      </Drawer>
+    </>
+  );
+}
+
+/** `onBeforeClose` can be async — the close waits for it, and `false` keeps the drawer open. */
+export const GuardedClose: Story = {
+  render: () => <GuardedDrawerDemo />,
 };

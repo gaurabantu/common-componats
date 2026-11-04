@@ -54,4 +54,5 @@ export type {
   TableRowProps,
   TableHeadProps,
   TableCellProps,
+  TableHeadCasing,
 } from "./TablePrimitives.types";

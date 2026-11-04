@@ -59,21 +59,21 @@
   /* TYPOGRAPHY — default UI font: Inter (see Google Fonts @import). Host app: `:root { --font-family: … }` */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-sans: var(--font-family);
-  --text-h1-size: 1.5rem;
+  --text-h1-size: 1.375rem;
   --text-h1-weight: 800;
   --text-h1-line-height: 1.5;
-  --text-h2-size: 1.25rem;
+  --text-h2-size: 1.125rem;
   --text-h2-weight: 800;
   --text-h2-line-height: 1.5;
-  --text-h3-size: 1rem;
+  --text-h3-size: 0.9375rem;
   --text-h3-weight: 500;
-  --text-h4-size: 0.875rem;
+  --text-h4-size: 0.8125rem;
   --text-h4-weight: 500;
-  --text-body-size: 0.875rem;
+  --text-body-size: 0.8125rem;
   --text-body-weight: 400;
   --text-body-line-height: 1.5;
-  --text-secondary-size: 0.8125rem;
-  --text-small-size: 0.75rem;
+  --text-secondary-size: 0.75rem;
+  --text-small-size: 0.6875rem;
   --text-micro-size: 0.625rem;
   --text-micro-weight: 600;
 
@@ -155,6 +155,8 @@
   --z-sticky: 200;
   --z-drawer: 300;
   --z-modal: 400;
+  /* Popover / DropdownMenu / ContextMenu panels — above Modal (dialog = modal + 1) and Drawer. */
+  --z-popover: 450;
   --z-toast: 500;
   --z-tooltip-top: 600;
 
@@ -338,6 +340,8 @@ select {
   --color-border-default: #8a8a8a;
   /* Decorative / softer hairlines — modals, dividers, tabs baseline (see DESIGN_SYSTEM.md) */
   --color-border-subtle: var(--color-mist-60);
+  /* Table / grid row + column hairlines — lighter than the 3:1 control border, a touch firmer than subtle. */
+  --color-border-divider: color-mix(in srgb, var(--color-border-default) 25%, var(--color-bg-surface));
 
   /* v2.0.0 text roles (classic blue surfaces) */
   --color-text-disabled: #b3b3b3;
@@ -818,13 +822,22 @@ select {
 }
 
 /* Button base (shared) — use button selector so we override Tailwind/base resets */
+/* Border width at single-class specificity (:where) so consumer side utilities (border-b-2,
+   border-l…) can shape it; ghost buttons start with no border so a tab underline or segment
+   divider draws one side only instead of outlining the whole button. */
+:where(button, a).btn-base {
+  border-width: 1.5px;
+}
+:where(button, a).btn-ghost {
+  border-width: 0;
+}
+
 :is(button, a).btn-base {
   font-family: var(--font-family);
   font-weight: 500;
   line-height: 1.5;
   border-radius: var(--radius-md);
   border-style: solid;
-  border-width: 1.5px;
   cursor: pointer;
   transition:
     background-color var(--duration-fast, 200ms) var(--easing-default),
@@ -1024,7 +1037,11 @@ a.btn-base:not(.btn-link):hover {
 }
 
 /* Variant: ghost (transparent, no border) */
-:is(button, a).btn-ghost {
+/* Ghost is the "bring your own look" variant: its resting colours use :where() (specificity of a
+   single class) so a consumer's utility classes (bg-tint-*, text-*, border-*) apply — with :is()
+   they were silently overridden and tinted chips/toggles rendered as plain text. Hover/disabled
+   states below keep their normal specificity. */
+:where(button, a).btn-ghost {
   background-color: transparent;
   color: var(--color-text-primary);
   border-color: transparent;
@@ -1231,6 +1248,19 @@ a.btn-base:not(.btn-link):hover {
 }
 .btn-expand-on-hover:is(:hover, :focus-visible) .btn-icon-left { margin-right: 8px; }
 .btn-expand-on-hover:is(:hover, :focus-visible) .btn-icon-right { margin-left: 8px; }
+/* Inside a table cell an expand-on-hover button stays icon-only (its label is the title tooltip
+   + accessible name): expanding there made rows jump and pushed neighbouring actions around. */
+:is(td, th) :is(button, a).btn-expand-on-hover:is(:hover, :focus-visible) {
+  padding-left: var(--btn-expand-pad);
+  padding-right: var(--btn-expand-pad);
+}
+:is(td, th) .btn-expand-on-hover:is(:hover, :focus-visible) .btn-expand-label {
+  max-width: 0;
+  opacity: 0;
+}
+:is(td, th) .btn-expand-on-hover:is(:hover, :focus-visible) :is(.btn-icon-left, .btn-icon-right) {
+  margin: 0;
+}
 @media (prefers-reduced-motion: reduce) {
   :is(button, a).btn-expand-on-hover,
   .btn-expand-on-hover .btn-expand-label,
@@ -1401,7 +1431,9 @@ a.ucs-ripple-parent:not([aria-disabled="true"]),
 
 .btn-ripple-inner--full {
   width: 100%;
-  justify-content: center;
+  /* Follow the button's own justify-content (centered by default) so a full-width trigger
+     styled `justify-content: space-between` (combobox: label left, chevron right) keeps it. */
+  justify-content: inherit;
 }
 
 a.ucs-ripple-parent.btn-base {

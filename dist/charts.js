@@ -35,8 +35,10 @@ __export(charts_exports, {
   CHART_COLORS: () => CHART_COLORS,
   CHART_THEME_COLORS: () => CHART_THEME_COLORS,
   ChartTooltip: () => ChartTooltip,
+  ComposedChart: () => ComposedChart_default,
   LineChart: () => LineChart_default,
-  PieChart: () => PieChart_default
+  PieChart: () => PieChart_default,
+  pieLabelNamePercent: () => pieLabelNamePercent
 });
 module.exports = __toCommonJS(charts_exports);
 
@@ -213,11 +215,14 @@ var ChartTooltip = import_react2.default.memo(function ChartTooltip2({
             children: label
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "ds-chart-tooltip__rows", children: items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "ds-chart-tooltip__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-chart-tooltip__dot", style: { background: item.color }, "aria-hidden": true }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-chart-tooltip__name", style: { color: themeColors.legendText }, children: item.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-chart-tooltip__value", children: item.value })
-        ] }, item.name)) })
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "ds-chart-tooltip__rows", children: items.map((item, i) => {
+          var _a;
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "ds-chart-tooltip__row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-chart-tooltip__dot", style: { background: item.color }, "aria-hidden": true }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-chart-tooltip__name", style: { color: themeColors.legendText }, children: item.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "ds-chart-tooltip__value", children: (_a = item.displayValue) != null ? _a : item.value })
+          ] }, `${item.name}-${i}`);
+        }) })
       ]
     }
   );
@@ -341,12 +346,6 @@ function getValueExtent(data, series, stacked = false) {
     max = min + 1;
   return [min, max];
 }
-function scaleLinear(domain, range) {
-  const [d0, d1] = domain;
-  const [r0, r1] = range;
-  const k = (r1 - r0) / (d1 - d0);
-  return (v) => r0 + (v - d0) * k;
-}
 function linePath(points, curve) {
   if (points.length === 0)
     return "";
@@ -420,8 +419,204 @@ function arcPath(cx, cy, r, startAngleDeg, endAngleDeg, innerRadius = 0) {
   return `M ${innerStart.x} ${innerStart.y} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} ${sweep} ${end.x} ${end.y} L ${innerEnd.x} ${innerEnd.y} A ${innerRadius} ${innerRadius} 0 ${innerLargeArc} 0 ${innerStart.x} ${innerStart.y} Z`;
 }
 
-// src/components/charts/LineChart.tsx
+// src/components/charts/cartesian.tsx
 var import_jsx_runtime3 = require("react/jsx-runtime");
+var AXIS_FONT_SIZE = 11;
+var APPROX_CHAR_W = 6.5;
+var defaultNumberFormat = typeof Intl !== "undefined" ? new Intl.NumberFormat(void 0, { maximumFractionDigits: 2 }) : null;
+function defaultFormatNumber(v) {
+  if (!Number.isFinite(v))
+    return "";
+  return defaultNumberFormat ? defaultNumberFormat.format(v) : String(Math.round(v * 100) / 100);
+}
+function num(row, key) {
+  const v = row == null ? void 0 : row[key];
+  if (typeof v === "number")
+    return Number.isFinite(v) ? v : 0;
+  if (typeof v === "string" && v.trim() !== "") {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+  return 0;
+}
+function niceNum(range, round) {
+  const exp = Math.floor(Math.log10(range));
+  const f = range / 10 ** exp;
+  let nf;
+  if (round)
+    nf = f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10;
+  else
+    nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10;
+  return nf * 10 ** exp;
+}
+function niceTicks(min, max, count = 5) {
+  let lo = Math.min(min, max);
+  let hi = Math.max(min, max);
+  if (lo === hi) {
+    hi = lo === 0 ? 1 : lo + Math.abs(lo) * 0.5;
+    if (lo > 0)
+      lo = 0;
+  }
+  const n = Math.max(2, Math.round(count));
+  const step = niceNum(niceNum(hi - lo, false) / (n - 1), true);
+  const nLo = Math.floor(lo / step) * step;
+  const nHi = Math.ceil(hi / step) * step;
+  const ticks = [];
+  const decimals = Math.max(0, -Math.floor(Math.log10(step)) + 1);
+  for (let t = nLo; t <= nHi + step / 2; t += step) {
+    ticks.push(Number(t.toFixed(decimals)));
+  }
+  return { domain: [nLo, nHi], ticks };
+}
+function resolveAxes(props, series) {
+  var _a, _b, _c, _d;
+  const hasRight = series.some((s) => s.yAxis === "right");
+  const vf = props.valueFormatter;
+  const leftTickFormat = (_a = props.yTickFormatter) != null ? _a : vf ? (v) => vf(v) : defaultFormatNumber;
+  const rightTickFormat = (_b = props.rightYTickFormatter) != null ? _b : leftTickFormat;
+  const showYAxis = (_c = props.showYAxis) != null ? _c : Boolean(vf) || Boolean(props.yTickFormatter) || hasRight;
+  return {
+    showYAxis,
+    hasRight,
+    leftTickFormat,
+    rightTickFormat,
+    labelFormat: (_d = props.labelFormatter) != null ? _d : props.tooltipLabelFormatter,
+    valueFormatter: vf
+  };
+}
+function tooltipLabel(row, index, xAxisKey, labelFormat) {
+  const raw = row[xAxisKey];
+  return labelFormat ? labelFormat(raw, row, index) : String(raw != null ? raw : "");
+}
+function tooltipValue(vf, value, dataKey) {
+  return vf ? vf(value, dataKey) : void 0;
+}
+function xTickIndices(labels, interval, slotWidth, angle = 0) {
+  const n = labels.length;
+  if (n === 0)
+    return [];
+  let step = 1;
+  if (interval === "auto") {
+    const maxChars = labels.reduce((m, l) => Math.max(m, l.length), 0);
+    const textW = maxChars * APPROX_CHAR_W;
+    const rad = Math.abs(angle) * Math.PI / 180;
+    const footprint = rad > 0.05 ? Math.min(textW, (AXIS_FONT_SIZE + 3) / Math.sin(rad)) : textW;
+    step = Math.max(1, Math.ceil((footprint + 4) / Math.max(1, slotWidth)));
+  } else if (typeof interval === "number" && interval > 0) {
+    step = Math.floor(interval) + 1;
+  }
+  const out = [];
+  for (let i = 0; i < n; i += step)
+    out.push(i);
+  return out;
+}
+function XAxisLabels({
+  positions,
+  labels,
+  indices,
+  y,
+  angle = 0,
+  color
+}) {
+  const rotated = Math.abs(angle) > 0.01;
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    "g",
+    {
+      className: "ds-chart-x-axis",
+      fill: color,
+      fontSize: AXIS_FONT_SIZE,
+      textAnchor: rotated ? angle < 0 ? "end" : "start" : "middle",
+      children: indices.map((i) => {
+        const x = positions[i];
+        if (x === void 0)
+          return null;
+        if (!rotated) {
+          return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("text", { x, y, children: labels[i] }, i);
+        }
+        const ry = y - 6;
+        return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("text", { x, y: ry, dy: "0.71em", transform: `rotate(${angle} ${x} ${ry})`, children: labels[i] }, i);
+      })
+    }
+  );
+}
+function YAxisLabels({
+  ticks,
+  scale,
+  x,
+  side,
+  format,
+  color
+}) {
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    "g",
+    {
+      className: `ds-chart-y-axis ds-chart-y-axis--${side}`,
+      fill: color,
+      fontSize: AXIS_FONT_SIZE,
+      textAnchor: side === "left" ? "end" : "start",
+      children: ticks.map((t) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("text", { x: side === "left" ? x - 6 : x + 6, y: scale(t), dominantBaseline: "middle", children: format(t) }, t))
+    }
+  );
+}
+function ChartLegend({
+  items,
+  position,
+  textColor
+}) {
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    "div",
+    {
+      className: "ds-chart-legend",
+      style: {
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 12,
+        justifyContent: position === "left" ? "flex-start" : position === "right" ? "flex-end" : "center",
+        marginTop: position === "top" ? 0 : 8,
+        marginBottom: position === "bottom" ? 0 : 8,
+        fontSize: 12
+      },
+      children: items.map((it) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          "span",
+          {
+            "aria-hidden": true,
+            style: {
+              width: 12,
+              height: it.shape === "line" ? 3 : 12,
+              borderRadius: 2,
+              background: it.color,
+              opacity: it.shape === "band" ? 0.35 : 1
+            }
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { style: { color: textColor }, children: it.label })
+      ] }, it.key))
+    }
+  );
+}
+function buildValueAxis(extent, range, visible, tickCount = 5) {
+  let domain = extent;
+  let ticks = [];
+  if (visible) {
+    const nice = niceTicks(extent[0], extent[1], tickCount);
+    domain = nice.domain;
+    ticks = nice.ticks;
+  }
+  const [d0, d1] = domain;
+  const span = d1 - d0 || 1;
+  const k = (range[1] - range[0]) / span;
+  return { domain, ticks, scale: (v) => range[0] + (v - d0) * k };
+}
+function seriesOnSide(series, side) {
+  return series.filter((s) => {
+    var _a;
+    return ((_a = s.yAxis) != null ? _a : "left") === side;
+  });
+}
+
+// src/components/charts/LineChart.tsx
+var import_jsx_runtime4 = require("react/jsx-runtime");
 var DEFAULT_COLORS = [
   "var(--button-primary-default-bg)",
   "var(--color-state-success)",
@@ -429,43 +624,44 @@ var DEFAULT_COLORS = [
   "var(--color-state-error)",
   "var(--color-accent-lavender-40)"
 ];
-var LineChartComponent = ({
-  data,
-  xAxisKey = "name",
-  series,
-  colors = DEFAULT_COLORS,
-  curve = "monotone",
-  dotSize = 4,
-  showDots = true,
-  strokeWidth = 2,
-  width = "100%",
-  height = 300,
-  margin = { top: 10, right: 20, left: 40, bottom: 30 },
-  showGrid = true,
-  gridColor,
-  showTooltip = true,
-  showLegend = true,
-  legendPosition = "bottom",
-  theme = "light",
-  tooltipFollowPointer = true,
-  tooltipAnimation = true,
-  showCrosshair = true,
-  chartAnimation = true,
-  className = "",
-  style = {}
-}) => {
+var LineChartComponent = (props) => {
   var _a, _b, _c, _d;
+  const {
+    data,
+    xAxisKey = "name",
+    series,
+    colors = DEFAULT_COLORS,
+    curve = "monotone",
+    dotSize = 4,
+    showDots = true,
+    strokeWidth = 2,
+    width = "100%",
+    height = 300,
+    margin,
+    showGrid = true,
+    gridColor,
+    showTooltip = true,
+    showLegend = true,
+    legendPosition = "bottom",
+    theme = "light",
+    tooltipFollowPointer = true,
+    tooltipAnimation = true,
+    showCrosshair = true,
+    chartAnimation = true,
+    className = "",
+    style = {},
+    xTickAngle = 0,
+    xTickInterval = 0,
+    yTickCount = 5,
+    xTickFormatter
+  } = props;
+  const axes = resolveAxes(props, series);
   const animCfg = resolveChartAnimation(chartAnimation, "line");
   const animKey = (0, import_react4.useMemo)(
     () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${curve}`,
     [data.length, series, xAxisKey, curve]
   );
-  const animProgress = useChartAnimationProgress(
-    animCfg.enabled,
-    animCfg.durationMs,
-    animCfg.easing,
-    animKey
-  );
+  const animProgress = useChartAnimationProgress(animCfg.enabled, animCfg.durationMs, animCfg.easing, animKey);
   const themeColors = CHART_THEME_COLORS[theme];
   const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
   const [tooltip, setTooltip] = (0, import_react4.useState)(null);
@@ -473,53 +669,62 @@ var LineChartComponent = ({
   const h = typeof height === "number" ? height : 300;
   const m = {
     top: (_a = margin == null ? void 0 : margin.top) != null ? _a : 10,
-    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : 20,
+    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : axes.hasRight && axes.showYAxis ? 48 : 20,
     bottom: (_c = margin == null ? void 0 : margin.bottom) != null ? _c : 30,
     left: (_d = margin == null ? void 0 : margin.left) != null ? _d : 40
   };
   const innerW = w - m.left - m.right;
   const innerH = h - m.top - m.bottom;
-  const xLabels = (0, import_react4.useMemo)(() => data.map((d) => {
+  const colorOf = (s, i) => {
     var _a2;
-    return String((_a2 = d[xAxisKey]) != null ? _a2 : "");
-  }), [data, xAxisKey]);
-  const [yMin, yMax] = (0, import_react4.useMemo)(() => getValueExtent(data, series), [data, series]);
-  const xScale = (0, import_react4.useMemo)(
-    () => scaleLinear([0, Math.max(1, data.length - 1)], [0, innerW]),
-    [data.length, innerW]
+    return (_a2 = s.color) != null ? _a2 : colors[i % colors.length];
+  };
+  const xLabels = (0, import_react4.useMemo)(
+    () => data.map((d, i) => {
+      var _a2;
+      return xTickFormatter ? xTickFormatter(d[xAxisKey], i) : String((_a2 = d[xAxisKey]) != null ? _a2 : "");
+    }),
+    [data, xAxisKey, xTickFormatter]
   );
-  const yScale = (0, import_react4.useMemo)(
-    () => scaleLinear([yMin, yMax], [innerH, 0]),
-    [yMin, yMax, innerH]
-  );
-  const paths = (0, import_react4.useMemo)(() => {
-    return series.map((s, si) => {
-      var _a2, _b2;
-      const points = data.map((d, i) => {
-        const v = d[s.dataKey];
-        const num = typeof v === "number" ? v : 0;
-        return { x: m.left + xScale(i), y: m.top + yScale(num) };
-      }).filter((p) => !Number.isNaN(p.y));
-      return { path: linePath(points, curve), points, color: (_a2 = s.color) != null ? _a2 : colors[si % colors.length], name: (_b2 = s.name) != null ? _b2 : s.dataKey };
-    });
-  }, [data, series, colors, curve, xScale, yScale, m]);
+  const leftSeries = axes.hasRight ? seriesOnSide(series, "left") : series;
+  const rightSeries = axes.hasRight ? seriesOnSide(series, "right") : [];
+  const leftAxis = buildValueAxis(getValueExtent(data, leftSeries), [innerH, 0], axes.showYAxis, yTickCount);
+  const rightAxis = axes.hasRight ? buildValueAxis(getValueExtent(data, rightSeries), [innerH, 0], axes.showYAxis, yTickCount) : leftAxis;
+  const yScaleFor = (s) => s.yAxis === "right" && axes.hasRight ? rightAxis.scale : leftAxis.scale;
+  const xScale = (i) => i / Math.max(1, data.length - 1) * innerW;
+  const xPositions = data.map((_, i) => m.left + xScale(i));
+  const paths = series.map((s, si) => {
+    var _a2;
+    const ys = yScaleFor(s);
+    const points = data.map((d, i) => ({ x: m.left + xScale(i), y: m.top + ys(num(d, s.dataKey)) }));
+    return {
+      key: s.dataKey,
+      path: linePath(points, curve),
+      points,
+      color: colorOf(s, si),
+      width: (_a2 = s.strokeWidth) != null ? _a2 : strokeWidth,
+      dash: s.strokeDasharray
+    };
+  });
+  const { valueFormatter, labelFormat } = axes;
   const handleMouseMove = (0, import_react4.useCallback)(
     (e) => {
-      var _a2;
-      if (!showTooltip)
+      if (!showTooltip || data.length === 0)
         return;
       const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left - m.left;
+      const scaleX = rect.width > 0 ? w / rect.width : 1;
+      const x = (e.clientX - rect.left) * scaleX - m.left;
       const idx = Math.round(x / innerW * (data.length - 1));
       const clamped = Math.max(0, Math.min(idx, data.length - 1));
       const row = data[clamped];
-      const label = String((_a2 = row[xAxisKey]) != null ? _a2 : "");
       const items = series.map((s, i) => {
-        var _a3, _b2, _c2;
+        var _a2, _b2;
+        const v = num(row, s.dataKey);
         return {
-          name: (_a3 = s.name) != null ? _a3 : s.dataKey,
-          value: (_b2 = Number(row[s.dataKey])) != null ? _b2 : 0,
-          color: (_c2 = s.color) != null ? _c2 : colors[i % colors.length]
+          name: (_a2 = s.name) != null ? _a2 : s.dataKey,
+          value: v,
+          color: (_b2 = s.color) != null ? _b2 : colors[i % colors.length],
+          displayValue: tooltipValue(valueFormatter, v, s.dataKey)
         };
       });
       setTooltip({
@@ -527,292 +732,19 @@ var LineChartComponent = ({
         pointerY: e.clientY - rect.top,
         cw: rect.width,
         ch: rect.height,
-        label,
+        label: tooltipLabel(row, clamped, xAxisKey, labelFormat),
         items,
         activeIndex: clamped
       });
     },
-    [showTooltip, data, series, xAxisKey, colors, innerW, m.left]
+    [showTooltip, data, series, xAxisKey, colors, innerW, m.left, w, valueFormatter, labelFormat]
   );
   const handleMouseLeave = (0, import_react4.useCallback)(() => setTooltip(null), []);
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-    "div",
-    {
-      className,
-      style: {
-        width: typeof width === "string" ? width : w,
-        height: typeof height === "string" ? height : h,
-        position: "relative",
-        ...style
-      },
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-          "svg",
-          {
-            width: "100%",
-            height: "100%",
-            viewBox: `0 0 ${w} ${h}`,
-            preserveAspectRatio: "xMidYMid meet",
-            onMouseMove: handleMouseMove,
-            onMouseLeave: handleMouseLeave,
-            children: [
-              showGrid && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [
-                [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  "line",
-                  {
-                    x1: m.left,
-                    y1: m.top + innerH * t,
-                    x2: m.left + innerW,
-                    y2: m.top + innerH * t
-                  },
-                  t
-                )),
-                xLabels.slice(0, 6).map((_, i) => {
-                  const idx = Math.floor(i / 5 * (data.length - 1));
-                  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                    "line",
-                    {
-                      x1: m.left + xScale(idx),
-                      y1: m.top,
-                      x2: m.left + xScale(idx),
-                      y2: m.top + innerH
-                    },
-                    i
-                  );
-                })
-              ] }),
-              paths.map(({ path: pathD, points, color, name }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("g", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  AnimatedLineStroke,
-                  {
-                    pathD,
-                    progress: animProgress,
-                    color,
-                    strokeWidth
-                  }
-                ),
-                showDots && points.map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  "circle",
-                  {
-                    cx: p.x,
-                    cy: p.y,
-                    r: dotSize,
-                    fill: color,
-                    stroke: themeColors.tooltipBg,
-                    strokeWidth: 1,
-                    opacity: Math.min(1, animProgress * 2.5)
-                  },
-                  i
-                ))
-              ] }, name)),
-              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  "line",
-                  {
-                    x1: m.left + xScale(tooltip.activeIndex),
-                    y1: m.top,
-                    x2: m.left + xScale(tooltip.activeIndex),
-                    y2: m.top + innerH,
-                    stroke: themeColors.gridColor,
-                    strokeWidth: 1,
-                    strokeDasharray: "4 6",
-                    opacity: 0.85
-                  }
-                ),
-                series.map((s, si) => {
-                  var _a2, _b2;
-                  const row = data[tooltip.activeIndex];
-                  const num = (_a2 = Number(row[s.dataKey])) != null ? _a2 : 0;
-                  const cx = m.left + xScale(tooltip.activeIndex);
-                  const cy = m.top + yScale(num);
-                  const color = (_b2 = s.color) != null ? _b2 : colors[si % colors.length];
-                  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                    "circle",
-                    {
-                      cx,
-                      cy,
-                      r: dotSize + 3,
-                      fill: color,
-                      stroke: themeColors.tooltipBg,
-                      strokeWidth: 2,
-                      opacity: 0.95
-                    },
-                    `hit-${s.dataKey}`
-                  );
-                })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: xLabels.map((label, i) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                "text",
-                {
-                  x: m.left + xScale(i),
-                  y: m.top + innerH + 16,
-                  children: label
-                },
-                i
-              )) })
-            ]
-          }
-        ),
-        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-          ChartTooltip,
-          {
-            theme,
-            open: true,
-            pointerX: tooltip.pointerX,
-            pointerY: tooltip.pointerY,
-            containerWidth: tooltip.cw,
-            containerHeight: tooltip.ch,
-            label: tooltip.label,
-            items: tooltip.items,
-            animation: tooltipAnimation,
-            followPointer: tooltipFollowPointer
-          }
-        ),
-        showLegend && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-          "div",
-          {
-            style: {
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              justifyContent: legendPosition === "left" ? "flex-start" : legendPosition === "right" ? "flex-end" : "center",
-              marginTop: legendPosition === "top" ? 0 : 8,
-              marginBottom: legendPosition === "bottom" ? 0 : 8,
-              fontSize: 12
-            },
-            children: series.map((s, i) => {
-              var _a2, _b2;
-              return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  "span",
-                  {
-                    style: {
-                      width: 12,
-                      height: 3,
-                      borderRadius: 2,
-                      background: (_a2 = s.color) != null ? _a2 : colors[i % colors.length]
-                    }
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
-              ] }, s.dataKey);
-            })
-          }
-        )
-      ]
-    }
-  );
-};
-var LineChart_default = import_react4.default.memo(LineChartComponent);
-
-// src/components/charts/BarChart.tsx
-var import_react5 = __toESM(require("react"));
-var import_jsx_runtime4 = require("react/jsx-runtime");
-var DEFAULT_COLORS2 = [
-  "var(--button-primary-default-bg)",
-  "var(--color-state-success)",
-  "var(--color-state-warning)",
-  "var(--color-state-error)",
-  "var(--color-accent-lavender-40)"
-];
-var BarChartComponent = ({
-  data,
-  xAxisKey = "name",
-  series,
-  colors = DEFAULT_COLORS2,
-  layout = "vertical",
-  barSize = 24,
-  barGap = 4,
-  barCategoryGap = "10%",
-  radius = 4,
-  width = "100%",
-  height = 300,
-  margin = { top: 10, right: 20, left: 40, bottom: 30 },
-  showGrid = true,
-  gridColor,
-  showTooltip = true,
-  showLegend = true,
-  legendPosition = "bottom",
-  theme = "light",
-  tooltipFollowPointer = true,
-  tooltipAnimation = true,
-  chartAnimation = true,
-  className = "",
-  style = {}
-}) => {
-  var _a, _b, _c, _d;
-  const animCfg = resolveChartAnimation(chartAnimation, "bar");
-  const animKey = (0, import_react5.useMemo)(
-    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${layout}`,
-    [data.length, series, xAxisKey, layout]
-  );
-  const animProgress = useChartAnimationProgress(
-    animCfg.enabled,
-    animCfg.durationMs,
-    animCfg.easing,
-    animKey
-  );
-  const themeColors = CHART_THEME_COLORS[theme];
-  const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
-  const containerRef = (0, import_react5.useRef)(null);
-  const [tooltip, setTooltip] = (0, import_react5.useState)(null);
-  const w = typeof width === "number" ? width : 400;
-  const h = typeof height === "number" ? height : 300;
-  const m = {
-    top: (_a = margin == null ? void 0 : margin.top) != null ? _a : 10,
-    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : 20,
-    bottom: (_c = margin == null ? void 0 : margin.bottom) != null ? _c : 30,
-    left: (_d = margin == null ? void 0 : margin.left) != null ? _d : 40
-  };
-  const innerW = w - m.left - m.right;
-  const innerH = h - m.top - m.bottom;
-  const catGap = typeof barCategoryGap === "string" && barCategoryGap.endsWith("%") ? innerW / Math.max(1, data.length) * (parseFloat(barCategoryGap) / 100) : typeof barCategoryGap === "number" ? barCategoryGap : 8;
-  const groupWidth = innerW / Math.max(1, data.length) - catGap;
-  const barCount = series.length;
-  const totalBarWidth = barCount * barSize + (barCount - 1) * barGap;
-  const barWidth = Math.min(
-    barSize,
-    Math.max(2, (groupWidth - (barCount - 1) * barGap) / barCount)
-  );
-  const groupOffset = Math.max(0, (groupWidth - totalBarWidth) / 2);
-  const [yMin, yMax] = (0, import_react5.useMemo)(() => getValueExtent(data, series), [data, series]);
-  const yScale = (0, import_react5.useMemo)(
-    () => scaleLinear([yMin, yMax], [innerH, 0]),
-    [yMin, yMax, innerH]
-  );
-  const handleMouseMove = (0, import_react5.useCallback)(
-    (e, idx) => {
-      var _a2;
-      if (!showTooltip || !containerRef.current)
-        return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const row = data[idx];
-      const label = String((_a2 = row[xAxisKey]) != null ? _a2 : "");
-      const items = series.map((s, i) => {
-        var _a3, _b2, _c2;
-        return {
-          name: (_a3 = s.name) != null ? _a3 : s.dataKey,
-          value: (_b2 = Number(row[s.dataKey])) != null ? _b2 : 0,
-          color: (_c2 = s.color) != null ? _c2 : colors[i % colors.length]
-        };
-      });
-      setTooltip({
-        pointerX: e.clientX - rect.left,
-        pointerY: e.clientY - rect.top,
-        cw: rect.width,
-        ch: rect.height,
-        label,
-        items
-      });
-    },
-    [showTooltip, data, series, xAxisKey, colors]
-  );
-  const handleMouseLeave = (0, import_react5.useCallback)(() => setTooltip(null), []);
-  const r = Array.isArray(radius) ? radius[0] : radius;
+  const gridYs = axes.showYAxis ? leftAxis.ticks.map((t) => leftAxis.scale(t)) : [0.25, 0.5, 0.75].map((t) => innerH * t);
+  const tickIdx = xTickIndices(xLabels, xTickInterval, innerW / Math.max(1, data.length - 1), xTickAngle);
   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
     "div",
     {
-      ref: containerRef,
       className,
       style: {
         width: typeof width === "string" ? width : w,
@@ -828,81 +760,110 @@ var BarChartComponent = ({
             height: "100%",
             viewBox: `0 0 ${w} ${h}`,
             preserveAspectRatio: "xMidYMid meet",
+            onMouseMove: handleMouseMove,
             onMouseLeave: handleMouseLeave,
             children: [
-              showGrid && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                "line",
-                {
-                  x1: m.left,
-                  y1: m.top + innerH * t,
-                  x2: m.left + innerW,
-                  y2: m.top + innerH * t
-                },
-                t
-              )) }),
-              layout === "vertical" && data.map((row, idx) => {
-                const barGrowth = animCfg.barStagger ? barProgressForIndex(animProgress, idx, Math.max(1, data.length), true) : animProgress;
-                const groupX = m.left + idx / Math.max(1, data.length) * innerW + catGap / 2 + groupOffset;
-                return series.map((s, si) => {
-                  var _a2, _b2;
-                  const v = (_a2 = Number(row[s.dataKey])) != null ? _a2 : 0;
-                  const barH = innerH - yScale(v);
-                  const shownH = Math.max(0, barH * barGrowth);
-                  const x = groupX + si * (barWidth + barGap);
-                  const y = m.top + innerH - shownH;
-                  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("g", { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                    "rect",
-                    {
-                      x,
-                      y,
-                      width: barWidth,
-                      height: shownH,
-                      fill: (_b2 = s.color) != null ? _b2 : colors[si % colors.length],
-                      rx: r,
-                      ry: r,
-                      onMouseMove: (e) => handleMouseMove(e, idx)
-                    }
-                  ) }, `${idx}-${s.dataKey}`);
-                });
-              }),
-              layout === "horizontal" && data.map((row, idx) => {
-                const barGrowth = animCfg.barStagger ? barProgressForIndex(animProgress, idx, Math.max(1, data.length), true) : animProgress;
-                const groupY = m.top + (idx + 0.5) / data.length * innerH;
-                return series.map((s, si) => {
-                  var _a2, _b2;
-                  const v = (_a2 = Number(row[s.dataKey])) != null ? _a2 : 0;
-                  const len = v / (yMax - yMin || 1) * innerW;
-                  const shownLen = len * barGrowth;
-                  const x = m.left;
-                  const y = groupY - barCount * barWidth / 2 + si * (barWidth + barGap);
-                  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                    "rect",
-                    {
-                      x,
-                      y,
-                      width: shownLen,
-                      height: barWidth,
-                      fill: (_b2 = s.color) != null ? _b2 : colors[si % colors.length],
-                      rx: r,
-                      ry: r,
-                      onMouseMove: (e) => handleMouseMove(e, idx)
-                    },
-                    `${idx}-${s.dataKey}`
-                  );
-                });
-              }),
-              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: data.map((row, i) => {
-                var _a2;
-                return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                  "text",
+              showGrid && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [
+                gridYs.map((gy) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("line", { x1: m.left, y1: m.top + gy, x2: m.left + innerW, y2: m.top + gy }, gy)),
+                xLabels.slice(0, 6).map((_, i) => {
+                  const idx = Math.floor(i / 5 * (data.length - 1));
+                  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("line", { x1: m.left + xScale(idx), y1: m.top, x2: m.left + xScale(idx), y2: m.top + innerH }, i);
+                })
+              ] }),
+              paths.map(({ key, path: pathD, points, color, width: sw, dash }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("g", { children: [
+                dash ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                  "path",
                   {
-                    x: m.left + (i + 0.5) / Math.max(1, data.length) * innerW,
-                    y: m.top + innerH + 16,
-                    children: String((_a2 = row[xAxisKey]) != null ? _a2 : "")
+                    d: pathD,
+                    fill: "none",
+                    stroke: color,
+                    strokeWidth: sw,
+                    strokeDasharray: dash,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                    opacity: animProgress
+                  }
+                ) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(AnimatedLineStroke, { pathD, progress: animProgress, color, strokeWidth: sw }),
+                showDots && points.map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                  "circle",
+                  {
+                    cx: p.x,
+                    cy: p.y,
+                    r: dotSize,
+                    fill: color,
+                    stroke: themeColors.tooltipBg,
+                    strokeWidth: 1,
+                    opacity: Math.min(1, animProgress * 2.5)
                   },
                   i
-                );
-              }) })
+                ))
+              ] }, key)),
+              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                  "line",
+                  {
+                    x1: m.left + xScale(tooltip.activeIndex),
+                    y1: m.top,
+                    x2: m.left + xScale(tooltip.activeIndex),
+                    y2: m.top + innerH,
+                    stroke: themeColors.gridColor,
+                    strokeWidth: 1,
+                    strokeDasharray: "4 6",
+                    opacity: 0.85
+                  }
+                ),
+                series.map((s, si) => {
+                  const row = data[tooltip.activeIndex];
+                  const cx = m.left + xScale(tooltip.activeIndex);
+                  const cy = m.top + yScaleFor(s)(num(row, s.dataKey));
+                  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                    "circle",
+                    {
+                      cx,
+                      cy,
+                      r: dotSize + 3,
+                      fill: colorOf(s, si),
+                      stroke: themeColors.tooltipBg,
+                      strokeWidth: 2,
+                      opacity: 0.95
+                    },
+                    `hit-${s.dataKey}`
+                  );
+                })
+              ] }),
+              axes.showYAxis && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                YAxisLabels,
+                {
+                  ticks: leftAxis.ticks,
+                  scale: (v) => m.top + leftAxis.scale(v),
+                  x: m.left,
+                  side: "left",
+                  format: axes.leftTickFormat,
+                  color: themeColors.axisText
+                }
+              ),
+              axes.showYAxis && axes.hasRight && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                YAxisLabels,
+                {
+                  ticks: rightAxis.ticks,
+                  scale: (v) => m.top + rightAxis.scale(v),
+                  x: m.left + innerW,
+                  side: "right",
+                  format: axes.rightTickFormat,
+                  color: themeColors.axisText
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                XAxisLabels,
+                {
+                  positions: xPositions,
+                  labels: xLabels,
+                  indices: tickIdx,
+                  y: m.top + innerH + 16,
+                  angle: xTickAngle,
+                  color: themeColors.axisText
+                }
+              )
             ]
           }
         ),
@@ -922,33 +883,332 @@ var BarChartComponent = ({
           }
         ),
         showLegend && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "div",
+          ChartLegend,
           {
-            style: {
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              justifyContent: legendPosition === "left" ? "flex-start" : legendPosition === "right" ? "flex-end" : "center",
-              marginTop: legendPosition === "top" ? 0 : 8,
-              marginBottom: legendPosition === "bottom" ? 0 : 8,
-              fontSize: 12
-            },
-            children: series.map((s, i) => {
-              var _a2, _b2;
-              return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                  "span",
+            position: legendPosition,
+            textColor: themeColors.legendText,
+            items: series.map((s, i) => {
+              var _a2;
+              return { key: s.dataKey, label: (_a2 = s.name) != null ? _a2 : s.dataKey, color: colorOf(s, i), shape: "line" };
+            })
+          }
+        )
+      ]
+    }
+  );
+};
+var LineChart_default = import_react4.default.memo(LineChartComponent);
+
+// src/components/charts/BarChart.tsx
+var import_react5 = __toESM(require("react"));
+var import_jsx_runtime5 = require("react/jsx-runtime");
+var DEFAULT_COLORS2 = [
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
+];
+function valueExtent(data, series, stacked) {
+  let lo = 0;
+  let hi = 0;
+  for (const row of data) {
+    if (stacked) {
+      let pos = 0;
+      let neg = 0;
+      for (const s of series) {
+        const v = num(row, s.dataKey);
+        if (v >= 0)
+          pos += v;
+        else
+          neg += v;
+      }
+      hi = Math.max(hi, pos);
+      lo = Math.min(lo, neg);
+    } else {
+      for (const s of series) {
+        const v = num(row, s.dataKey);
+        hi = Math.max(hi, v);
+        lo = Math.min(lo, v);
+      }
+    }
+  }
+  if (lo === hi)
+    hi = lo + 1;
+  return [lo, hi];
+}
+var BarChartComponent = (props) => {
+  var _a, _b, _c, _d;
+  const {
+    data,
+    xAxisKey = "name",
+    series,
+    colors = DEFAULT_COLORS2,
+    layout = "vertical",
+    orientation,
+    barSize = 24,
+    barGap = 4,
+    barCategoryGap = "10%",
+    radius = 4,
+    stacked = false,
+    getBarColor,
+    colorKey,
+    width = "100%",
+    height = 300,
+    margin,
+    showGrid = true,
+    gridColor,
+    showTooltip = true,
+    showLegend = true,
+    legendPosition = "bottom",
+    theme = "light",
+    tooltipFollowPointer = true,
+    tooltipAnimation = true,
+    chartAnimation = true,
+    className = "",
+    style = {},
+    xTickAngle = 0,
+    xTickInterval = 0,
+    yTickCount = 5,
+    xTickFormatter
+  } = props;
+  const horizontal = orientation ? orientation === "horizontal-bars" : layout === "horizontal";
+  const axisSeries = horizontal ? series.map((s) => ({ ...s, yAxis: "left" })) : series;
+  const axes = resolveAxes(props, axisSeries);
+  const animCfg = resolveChartAnimation(chartAnimation, "bar");
+  const animKey = (0, import_react5.useMemo)(
+    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${horizontal}-${stacked}`,
+    [data.length, series, xAxisKey, horizontal, stacked]
+  );
+  const animProgress = useChartAnimationProgress(animCfg.enabled, animCfg.durationMs, animCfg.easing, animKey);
+  const themeColors = CHART_THEME_COLORS[theme];
+  const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
+  const containerRef = (0, import_react5.useRef)(null);
+  const [tooltip, setTooltip] = (0, import_react5.useState)(null);
+  const w = typeof width === "number" ? width : 400;
+  const h = typeof height === "number" ? height : 300;
+  const m = {
+    top: (_a = margin == null ? void 0 : margin.top) != null ? _a : 10,
+    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : axes.hasRight && axes.showYAxis ? 48 : 20,
+    bottom: (_c = margin == null ? void 0 : margin.bottom) != null ? _c : 30,
+    left: (_d = margin == null ? void 0 : margin.left) != null ? _d : 40
+  };
+  const innerW = w - m.left - m.right;
+  const innerH = h - m.top - m.bottom;
+  const n = Math.max(1, data.length);
+  const sideOf = (s) => axes.hasRight && s.yAxis === "right" ? "right" : "left";
+  const valueRange = horizontal ? [0, innerW] : [innerH, 0];
+  const leftAxis = buildValueAxis(
+    valueExtent(data, axes.hasRight ? axisSeries.filter((s) => sideOf(s) === "left") : axisSeries, stacked),
+    valueRange,
+    axes.showYAxis,
+    yTickCount
+  );
+  const rightAxis = axes.hasRight ? buildValueAxis(valueExtent(data, axisSeries.filter((s) => sideOf(s) === "right"), stacked), valueRange, axes.showYAxis, yTickCount) : leftAxis;
+  const scaleFor = (s) => sideOf(s) === "right" ? rightAxis.scale : leftAxis.scale;
+  const bandLen = horizontal ? innerH : innerW;
+  const slot = bandLen / n;
+  const catGap = typeof barCategoryGap === "string" && barCategoryGap.endsWith("%") ? slot * (parseFloat(barCategoryGap) / 100) : typeof barCategoryGap === "number" ? barCategoryGap : 8;
+  const groupWidth = slot - catGap;
+  const stackSides = axes.hasRight ? ["left", "right"] : ["left"];
+  const barsPerGroup = stacked ? stackSides.length : series.length;
+  const barWidth = Math.min(barSize, Math.max(2, (groupWidth - (barsPerGroup - 1) * barGap) / Math.max(1, barsPerGroup)));
+  const totalBarWidth = barsPerGroup * barWidth + (barsPerGroup - 1) * barGap;
+  const colorOf = (row, idx, s, si) => {
+    var _a2;
+    const custom = getBarColor == null ? void 0 : getBarColor(row, idx, s.dataKey);
+    if (custom)
+      return custom;
+    if (colorKey) {
+      const c = row[colorKey];
+      if (typeof c === "string" && c)
+        return c;
+    }
+    return (_a2 = s.color) != null ? _a2 : colors[si % colors.length];
+  };
+  const rects = [];
+  data.forEach((row, idx) => {
+    const growth = animCfg.barStagger ? barProgressForIndex(animProgress, idx, n, true) : animProgress;
+    const groupStart = idx * slot + (slot - totalBarWidth) / 2;
+    const cumPos = { left: 0, right: 0 };
+    const cumNeg = { left: 0, right: 0 };
+    series.forEach((s, si) => {
+      const v = num(row, s.dataKey);
+      const side = sideOf(s);
+      let v0 = 0;
+      let v1 = v;
+      let pos = si;
+      if (stacked) {
+        pos = stackSides.indexOf(side);
+        if (v >= 0) {
+          v0 = cumPos[side];
+          cumPos[side] += v;
+        } else {
+          v0 = cumNeg[side];
+          cumNeg[side] += v;
+        }
+        v1 = v0 + v;
+      }
+      const sc = scaleFor(s);
+      const a = sc(v0 * growth);
+      const b = sc(v1 * growth);
+      const offset = groupStart + pos * (barWidth + barGap);
+      const fill = colorOf(row, idx, s, si);
+      if (horizontal) {
+        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + Math.min(a, b), y: m.top + offset, w: Math.abs(b - a), h: barWidth, fill, idx });
+      } else {
+        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + offset, y: m.top + Math.min(a, b), w: barWidth, h: Math.abs(b - a), fill, idx });
+      }
+    });
+  });
+  const categoryLabels = (0, import_react5.useMemo)(
+    () => data.map((d, i) => {
+      var _a2;
+      return xTickFormatter ? xTickFormatter(d[xAxisKey], i) : String((_a2 = d[xAxisKey]) != null ? _a2 : "");
+    }),
+    [data, xAxisKey, xTickFormatter]
+  );
+  const { valueFormatter, labelFormat } = axes;
+  const handleMouseMove = (0, import_react5.useCallback)(
+    (e, idx) => {
+      if (!showTooltip || !containerRef.current)
+        return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const row = data[idx];
+      const items = series.map((s, i) => {
+        var _a2;
+        const v = num(row, s.dataKey);
+        const custom = getBarColor == null ? void 0 : getBarColor(row, idx, s.dataKey);
+        const keyed = colorKey && typeof row[colorKey] === "string" ? row[colorKey] : void 0;
+        return {
+          name: (_a2 = s.name) != null ? _a2 : s.dataKey,
+          value: v,
+          color: custom || keyed || s.color || colors[i % colors.length],
+          displayValue: tooltipValue(valueFormatter, v, s.dataKey)
+        };
+      });
+      setTooltip({
+        pointerX: e.clientX - rect.left,
+        pointerY: e.clientY - rect.top,
+        cw: rect.width,
+        ch: rect.height,
+        label: tooltipLabel(row, idx, xAxisKey, labelFormat),
+        items
+      });
+    },
+    [showTooltip, data, series, xAxisKey, colors, getBarColor, colorKey, valueFormatter, labelFormat]
+  );
+  const handleMouseLeave = (0, import_react5.useCallback)(() => setTooltip(null), []);
+  const r = Array.isArray(radius) ? radius[0] : radius;
+  const bandCenters = data.map((_, i) => (horizontal ? m.top : m.left) + (i + 0.5) * slot);
+  const tickIdx = horizontal ? data.map((_, i) => i) : xTickIndices(categoryLabels, xTickInterval, slot, xTickAngle);
+  const gridLines = axes.showYAxis ? leftAxis.ticks.map((t) => leftAxis.scale(t)) : [0.25, 0.5, 0.75].map((t) => (horizontal ? innerW : innerH) * t);
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+    "div",
+    {
+      ref: containerRef,
+      className,
+      style: {
+        width: typeof width === "string" ? width : w,
+        height: typeof height === "string" ? height : h,
+        position: "relative",
+        ...style
+      },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+          "svg",
+          {
+            width: "100%",
+            height: "100%",
+            viewBox: `0 0 ${w} ${h}`,
+            preserveAspectRatio: "xMidYMid meet",
+            onMouseLeave: handleMouseLeave,
+            children: [
+              showGrid && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: gridLines.map(
+                (g) => horizontal ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("line", { x1: m.left + g, y1: m.top, x2: m.left + g, y2: m.top + innerH }, g) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("line", { x1: m.left, y1: m.top + g, x2: m.left + innerW, y2: m.top + g }, g)
+              ) }),
+              showTooltip && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("g", { className: "ds-chart-bar-bands", fill: "transparent", children: data.map(
+                (_, idx) => horizontal ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("rect", { x: m.left, y: m.top + idx * slot, width: innerW, height: slot, onMouseMove: (e) => handleMouseMove(e, idx) }, idx) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("rect", { x: m.left + idx * slot, y: m.top, width: slot, height: innerH, onMouseMove: (e) => handleMouseMove(e, idx) }, idx)
+              ) }),
+              rects.map((b) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                "rect",
+                {
+                  x: b.x,
+                  y: b.y,
+                  width: Math.max(0, b.w),
+                  height: Math.max(0, b.h),
+                  fill: b.fill,
+                  rx: r,
+                  ry: r,
+                  "data-testid": "ds-chart-bar",
+                  onMouseMove: (e) => handleMouseMove(e, b.idx)
+                },
+                b.key
+              )),
+              horizontal ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("g", { className: "ds-chart-category-axis", fill: themeColors.axisText, fontSize: 11, textAnchor: "end", children: data.map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("text", { x: m.left - 6, y: bandCenters[i], dominantBaseline: "middle", children: categoryLabels[i] }, i)) }),
+                axes.showYAxis && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("g", { className: "ds-chart-value-axis", fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: leftAxis.ticks.map((t) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("text", { x: m.left + leftAxis.scale(t), y: m.top + innerH + 16, children: axes.leftTickFormat(t) }, t)) })
+              ] }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+                axes.showYAxis && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                  YAxisLabels,
                   {
-                    style: {
-                      width: 12,
-                      height: 12,
-                      borderRadius: 2,
-                      background: (_a2 = s.color) != null ? _a2 : colors[i % colors.length]
-                    }
+                    ticks: leftAxis.ticks,
+                    scale: (v) => m.top + leftAxis.scale(v),
+                    x: m.left,
+                    side: "left",
+                    format: axes.leftTickFormat,
+                    color: themeColors.axisText
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
-              ] }, s.dataKey);
+                axes.showYAxis && axes.hasRight && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                  YAxisLabels,
+                  {
+                    ticks: rightAxis.ticks,
+                    scale: (v) => m.top + rightAxis.scale(v),
+                    x: m.left + innerW,
+                    side: "right",
+                    format: axes.rightTickFormat,
+                    color: themeColors.axisText
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                  XAxisLabels,
+                  {
+                    positions: bandCenters,
+                    labels: categoryLabels,
+                    indices: tickIdx,
+                    y: m.top + innerH + 16,
+                    angle: xTickAngle,
+                    color: themeColors.axisText
+                  }
+                )
+              ] })
+            ]
+          }
+        ),
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          ChartTooltip,
+          {
+            theme,
+            open: true,
+            pointerX: tooltip.pointerX,
+            pointerY: tooltip.pointerY,
+            containerWidth: tooltip.cw,
+            containerHeight: tooltip.ch,
+            label: tooltip.label,
+            items: tooltip.items,
+            animation: tooltipAnimation,
+            followPointer: tooltipFollowPointer
+          }
+        ),
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          ChartLegend,
+          {
+            position: legendPosition,
+            textColor: themeColors.legendText,
+            items: series.map((s, i) => {
+              var _a2, _b2;
+              return { key: s.dataKey, label: (_a2 = s.name) != null ? _a2 : s.dataKey, color: (_b2 = s.color) != null ? _b2 : colors[i % colors.length], shape: "square" };
             })
           }
         )
@@ -960,7 +1220,7 @@ var BarChart_default = import_react5.default.memo(BarChartComponent);
 
 // src/components/charts/PieChart.tsx
 var import_react6 = __toESM(require("react"));
-var import_jsx_runtime5 = require("react/jsx-runtime");
+var import_jsx_runtime6 = require("react/jsx-runtime");
 var DEFAULT_COLORS3 = [
   "var(--button-primary-default-bg)",
   "var(--color-state-success)",
@@ -971,6 +1231,7 @@ var DEFAULT_COLORS3 = [
   "var(--color-accent-mint-10)",
   "var(--color-accent-amber-10)"
 ];
+var pieLabelNamePercent = ({ name, percent }) => `${name} (${Math.round(percent)}%)`;
 var PieChartComponent = ({
   data,
   innerRadius = 0,
@@ -979,6 +1240,12 @@ var PieChartComponent = ({
   showLabels = false,
   showLabelLine = true,
   paddingAngle = 0,
+  startAngle = 0,
+  endAngle = 360,
+  centerLabel,
+  labelFormatter,
+  labelPosition = "inside",
+  valueFormatter,
   width = "100%",
   height = 300,
   margin = { top: 10, right: 10, left: 10, bottom: 10 },
@@ -1023,24 +1290,37 @@ var PieChartComponent = ({
   const ir = typeof innerRadius === "string" && innerRadius.endsWith("%") ? size / 2 * (parseFloat(innerRadius) / 100) : typeof innerRadius === "number" ? innerRadius : 0;
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
   const n = data.length;
+  const sweep = Math.min(360, Math.abs(endAngle - startAngle)) || 360;
+  const dir = endAngle < startAngle ? -1 : 1;
   const totalPaddingDeg = paddingAngle * Math.max(0, n - 1);
-  const totalSliceDeg = 360 - totalPaddingDeg;
-  const startAngleOffset = 0;
-  let currentDeg = startAngleOffset;
+  const totalSliceDeg = Math.max(0, sweep - totalPaddingDeg);
+  const colorAt = (i) => {
+    var _a2, _b2;
+    return (_b2 = (_a2 = data[i]) == null ? void 0 : _a2.color) != null ? _b2 : colors[i % colors.length];
+  };
+  let currentDeg = startAngle;
   const slices = data.map((d, i) => {
     const pct = d.value / total;
     const spanDeg = Math.max(0.5, pct * totalSliceDeg);
-    const startDeg = currentDeg;
-    currentDeg += spanDeg + (i < n - 1 ? paddingAngle : 0);
+    const a = currentDeg;
+    const b = currentDeg + dir * spanDeg;
+    currentDeg = b + dir * (i < n - 1 ? paddingAngle : 0);
     return {
       ...d,
-      startDeg,
-      endDeg: startDeg + spanDeg,
-      color: colors[i % colors.length]
+      startDeg: Math.min(a, b),
+      endDeg: Math.max(a, b),
+      color: colorAt(i)
     };
   });
+  const labelText = (i) => {
+    const d = data[i];
+    const percent = d.value / total * 100;
+    return labelFormatter ? labelFormatter({ name: d.name, value: d.value, percent, index: i }) : `${percent.toFixed(0)}%`;
+  };
+  const fmtValue = (v, name) => valueFormatter ? valueFormatter(v, name) : String(v);
   const handleSlicePointer = (0, import_react6.useCallback)(
     (e, i) => {
+      var _a2, _b2;
       setHovered(i);
       if (!showTooltip || !containerRef.current)
         return;
@@ -1057,18 +1337,19 @@ var PieChartComponent = ({
           {
             name: "Value",
             value: slice.value,
-            color: colors[i % colors.length]
+            color: (_b2 = (_a2 = data[i]) == null ? void 0 : _a2.color) != null ? _b2 : colors[i % colors.length],
+            displayValue: valueFormatter ? valueFormatter(slice.value, slice.name) : void 0
           }
         ]
       });
     },
-    [showTooltip, data, colors, total]
+    [showTooltip, data, colors, total, valueFormatter]
   );
   const handleMouseLeave = (0, import_react6.useCallback)(() => {
     setHovered(null);
     setTooltip(null);
   }, []);
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
     "div",
     {
       ref: containerRef,
@@ -1085,371 +1366,103 @@ var PieChartComponent = ({
         ...style
       },
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: { display: "flex", alignItems: "center", flex: 1, minHeight: 260 }, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "svg",
-          {
-            width: "100%",
-            height: "100%",
-            viewBox: `0 0 ${chartW} ${chartH}`,
-            preserveAspectRatio: "xMidYMid meet",
-            onMouseLeave: handleMouseLeave,
-            children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("g", { transform: `translate(${cx} ${cy}) scale(${scaleFactor}) translate(${-cx} ${-cy})`, children: [
-              slices.map((slice, i) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-                "path",
-                {
-                  d: arcPath(cx, cy, or, slice.startDeg, slice.endDeg, ir),
-                  fill: slice.color,
-                  stroke: themeColors.tooltipBg,
-                  strokeWidth: 2,
-                  opacity: hovered !== null && hovered !== i ? 0.5 : 1,
-                  onMouseEnter: (e) => handleSlicePointer(e, i),
-                  onMouseMove: (e) => handleSlicePointer(e, i),
-                  style: { cursor: "pointer" },
-                  children: !showTooltip && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("title", { children: [
-                    slice.name,
-                    ": ",
-                    slice.value,
-                    " (",
-                    (slice.value / total * 100).toFixed(1),
-                    "%)"
-                  ] })
-                },
-                i
-              )),
-              showLabels && slices.map((slice, i) => {
-                const midDeg = (slice.startDeg + slice.endDeg) / 2;
-                const labelR = ir + (or - ir) * 0.5;
-                const { x: lx, y: ly } = polarToCartesian(cx, cy, labelR, midDeg);
-                return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-                  "text",
-                  {
-                    x: lx,
-                    y: ly,
-                    textAnchor: "middle",
-                    dominantBaseline: "middle",
-                    fontSize: 11,
-                    fill: themeColors.tooltipText,
-                    opacity: animProgress,
-                    style: { pointerEvents: "none" },
-                    children: [
-                      (slice.value / total * 100).toFixed(0),
-                      "%"
-                    ]
-                  },
-                  i
-                );
-              })
-            ] })
-          }
-        ) }),
-        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          ChartTooltip,
-          {
-            theme,
-            open: true,
-            pointerX: tooltip.pointerX,
-            pointerY: tooltip.pointerY,
-            containerWidth: tooltip.cw,
-            containerHeight: tooltip.ch,
-            label: tooltip.label,
-            items: tooltip.items,
-            animation: tooltipAnimation,
-            followPointer: tooltipFollowPointer
-          }
-        ),
-        showLegend && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-          "div",
-          {
-            style: {
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              justifyContent: legendPosition === "left" ? "flex-start" : legendPosition === "right" ? "flex-end" : "center",
-              marginTop: 8,
-              fontSize: 12
-            },
-            children: data.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-                "span",
-                {
-                  style: {
-                    width: 12,
-                    height: 12,
-                    borderRadius: 2,
-                    background: colors[i % colors.length]
-                  }
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { style: { color: themeColors.legendText }, children: [
-                d.name,
-                ": ",
-                d.value
-              ] })
-            ] }, d.name))
-          }
-        )
-      ]
-    }
-  );
-};
-var PieChart_default = import_react6.default.memo(PieChartComponent);
-
-// src/components/charts/AreaChart.tsx
-var import_react7 = __toESM(require("react"));
-var import_jsx_runtime6 = require("react/jsx-runtime");
-var DEFAULT_COLORS4 = [
-  "var(--button-primary-default-bg)",
-  "var(--color-state-success)",
-  "var(--color-state-warning)",
-  "var(--color-state-error)",
-  "var(--color-accent-lavender-40)"
-];
-var AreaChartComponent = ({
-  data,
-  xAxisKey = "name",
-  series,
-  colors = DEFAULT_COLORS4,
-  stacked = false,
-  curve = "monotone",
-  strokeWidth = 2,
-  width = "100%",
-  height = 300,
-  margin = { top: 10, right: 20, left: 40, bottom: 30 },
-  showGrid = true,
-  gridColor,
-  showTooltip = true,
-  showLegend = true,
-  legendPosition = "bottom",
-  theme = "light",
-  tooltipFollowPointer = true,
-  tooltipAnimation = true,
-  showCrosshair = true,
-  chartAnimation = true,
-  className = "",
-  style = {}
-}) => {
-  var _a, _b, _c, _d;
-  const animCfg = resolveChartAnimation(chartAnimation, "area");
-  const animKey = (0, import_react7.useMemo)(
-    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${stacked}-${curve}`,
-    [data.length, series, xAxisKey, stacked, curve]
-  );
-  const animProgress = useChartAnimationProgress(
-    animCfg.enabled,
-    animCfg.durationMs,
-    animCfg.easing,
-    animKey
-  );
-  const themeColors = CHART_THEME_COLORS[theme];
-  const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
-  const [tooltip, setTooltip] = (0, import_react7.useState)(null);
-  const w = typeof width === "number" ? width : 400;
-  const h = typeof height === "number" ? height : 300;
-  const m = {
-    top: (_a = margin == null ? void 0 : margin.top) != null ? _a : 10,
-    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : 20,
-    bottom: (_c = margin == null ? void 0 : margin.bottom) != null ? _c : 30,
-    left: (_d = margin == null ? void 0 : margin.left) != null ? _d : 40
-  };
-  const innerW = w - m.left - m.right;
-  const innerH = h - m.top - m.bottom;
-  const [yMin, yMax] = (0, import_react7.useMemo)(
-    () => getValueExtent(data, series, stacked),
-    [data, series, stacked]
-  );
-  const xScale = (0, import_react7.useMemo)(
-    () => scaleLinear([0, Math.max(1, data.length - 1)], [0, innerW]),
-    [data.length, innerW]
-  );
-  const yScale = (0, import_react7.useMemo)(
-    () => scaleLinear([yMin, yMax], [innerH, 0]),
-    [yMin, yMax, innerH]
-  );
-  const finalPaths = (0, import_react7.useMemo)(() => {
-    if (stacked) {
-      const cum = new Array(data.length).fill(0);
-      return series.map((s, si) => {
-        var _a2, _b2;
-        const basePoints = data.map((_, i) => ({
-          x: m.left + xScale(i),
-          y: si === 0 ? m.top + innerH : m.top + yScale(cum[i])
-        }));
-        const topPoints = data.map((row, i) => {
-          var _a3;
-          const v = (_a3 = Number(row[s.dataKey])) != null ? _a3 : 0;
-          cum[i] += v;
-          return { x: m.left + xScale(i), y: m.top + yScale(cum[i]) };
-        });
-        const areaD = "M " + topPoints.map((p) => `${p.x} ${p.y}`).join(" L ") + " L " + [...basePoints].reverse().map((p) => `${p.x} ${p.y}`).join(" L ") + " Z";
-        return {
-          areaPath: areaD,
-          linePath: linePath(topPoints, curve),
-          points: topPoints,
-          color: (_a2 = s.color) != null ? _a2 : colors[si % colors.length],
-          name: (_b2 = s.name) != null ? _b2 : s.dataKey
-        };
-      });
-    }
-    return series.map((s, si) => {
-      var _a2, _b2;
-      const points = data.map((d, i) => {
-        const v = d[s.dataKey];
-        const num = typeof v === "number" ? v : 0;
-        return { x: m.left + xScale(i), y: m.top + yScale(num) };
-      }).filter((p) => !Number.isNaN(p.y));
-      const baseY = m.top + innerH;
-      return {
-        areaPath: areaPath(points, baseY, curve),
-        linePath: linePath(points, curve),
-        points,
-        color: (_a2 = s.color) != null ? _a2 : colors[si % colors.length],
-        name: (_b2 = s.name) != null ? _b2 : s.dataKey
-      };
-    });
-  }, [data, series, colors, stacked, curve, xScale, yScale, m, innerH]);
-  const handleMouseMove = (0, import_react7.useCallback)(
-    (e) => {
-      var _a2;
-      if (!showTooltip)
-        return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left - m.left;
-      const idx = Math.round(x / innerW * (data.length - 1));
-      const clamped = Math.max(0, Math.min(idx, data.length - 1));
-      const row = data[clamped];
-      const label = String((_a2 = row[xAxisKey]) != null ? _a2 : "");
-      const items = series.map((s, i) => {
-        var _a3, _b2, _c2;
-        return {
-          name: (_a3 = s.name) != null ? _a3 : s.dataKey,
-          value: (_b2 = Number(row[s.dataKey])) != null ? _b2 : 0,
-          color: (_c2 = s.color) != null ? _c2 : colors[i % colors.length]
-        };
-      });
-      setTooltip({
-        pointerX: e.clientX - rect.left,
-        pointerY: e.clientY - rect.top,
-        cw: rect.width,
-        ch: rect.height,
-        label,
-        items,
-        activeIndex: clamped
-      });
-    },
-    [showTooltip, data, series, xAxisKey, colors, innerW, m.left]
-  );
-  const handleMouseLeave = (0, import_react7.useCallback)(() => setTooltip(null), []);
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
-    "div",
-    {
-      className,
-      style: {
-        width: typeof width === "string" ? width : w,
-        height: typeof height === "string" ? height : h,
-        position: "relative",
-        ...style
-      },
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
-          "svg",
-          {
-            width: "100%",
-            height: "100%",
-            viewBox: `0 0 ${w} ${h}`,
-            preserveAspectRatio: "xMidYMid meet",
-            onMouseMove: handleMouseMove,
-            onMouseLeave: handleMouseLeave,
-            children: [
-              showGrid && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: [0.25, 0.5, 0.75].map((t) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-                "line",
-                {
-                  x1: m.left,
-                  y1: m.top + innerH * t,
-                  x2: m.left + innerW,
-                  y2: m.top + innerH * t
-                },
-                t
-              )) }),
-              finalPaths.map(({ areaPath: ap, linePath: lp, color, name }) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("g", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: "flex", alignItems: "center", flex: 1, minHeight: 260, position: "relative" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            "svg",
+            {
+              width: "100%",
+              height: "100%",
+              viewBox: `0 0 ${chartW} ${chartH}`,
+              preserveAspectRatio: "xMidYMid meet",
+              style: { overflow: "visible" },
+              onMouseLeave: handleMouseLeave,
+              children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("g", { transform: `translate(${cx} ${cy}) scale(${scaleFactor}) translate(${-cx} ${-cy})`, children: [
+                slices.map((slice, i) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
                   "path",
                   {
-                    d: ap,
-                    fill: color,
-                    fillOpacity: (stacked ? 0.8 : 0.3) * animProgress,
-                    stroke: "none"
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-                  AnimatedLineStroke,
-                  {
-                    pathD: lp,
-                    progress: animProgress,
-                    color,
-                    strokeWidth
-                  }
-                )
-              ] }, name)),
-              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-                  "line",
-                  {
-                    x1: m.left + xScale(tooltip.activeIndex),
-                    y1: m.top,
-                    x2: m.left + xScale(tooltip.activeIndex),
-                    y2: m.top + innerH,
-                    stroke: themeColors.gridColor,
-                    strokeWidth: 1,
-                    strokeDasharray: "4 6",
-                    opacity: 0.85
-                  }
-                ),
-                stacked ? finalPaths.map(({ points, color, name }) => {
-                  const p = points[tooltip.activeIndex];
-                  if (!p)
-                    return null;
+                    d: arcPath(cx, cy, or, slice.startDeg, slice.endDeg, ir),
+                    fill: slice.color,
+                    stroke: themeColors.tooltipBg,
+                    strokeWidth: 2,
+                    opacity: hovered !== null && hovered !== i ? 0.5 : 1,
+                    onMouseEnter: (e) => handleSlicePointer(e, i),
+                    onMouseMove: (e) => handleSlicePointer(e, i),
+                    style: { cursor: "pointer" },
+                    children: !showTooltip && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("title", { children: [
+                      slice.name,
+                      ": ",
+                      fmtValue(slice.value, slice.name),
+                      " (",
+                      (slice.value / total * 100).toFixed(1),
+                      "%)"
+                    ] })
+                  },
+                  i
+                )),
+                showLabels && labelPosition === "inside" && slices.map((slice, i) => {
+                  const midDeg = (slice.startDeg + slice.endDeg) / 2;
+                  const labelR = ir + (or - ir) * 0.5;
+                  const { x: lx, y: ly } = polarToCartesian(cx, cy, labelR, midDeg);
                   return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-                    "circle",
+                    "text",
                     {
-                      cx: p.x,
-                      cy: p.y,
-                      r: 6,
-                      fill: color,
-                      stroke: themeColors.tooltipBg,
-                      strokeWidth: 2,
-                      opacity: 0.92 * animProgress
+                      x: lx,
+                      y: ly,
+                      textAnchor: "middle",
+                      dominantBaseline: "middle",
+                      fontSize: 11,
+                      fill: themeColors.tooltipText,
+                      opacity: animProgress,
+                      style: { pointerEvents: "none" },
+                      children: labelText(i)
                     },
-                    `hit-${name}`
+                    i
                   );
-                }) : series.map((s, si) => {
-                  var _a2, _b2;
-                  const row = data[tooltip.activeIndex];
-                  const num = (_a2 = Number(row[s.dataKey])) != null ? _a2 : 0;
-                  const cx = m.left + xScale(tooltip.activeIndex);
-                  const cy = m.top + yScale(num);
-                  const color = (_b2 = s.color) != null ? _b2 : colors[si % colors.length];
-                  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-                    "circle",
-                    {
-                      cx,
-                      cy,
-                      r: 6,
-                      fill: color,
-                      stroke: themeColors.tooltipBg,
-                      strokeWidth: 2,
-                      opacity: 0.92 * animProgress
-                    },
-                    `hit-${s.dataKey}`
-                  );
+                }),
+                showLabels && labelPosition === "outside" && slices.map((slice, i) => {
+                  const midDeg = (slice.startDeg + slice.endDeg) / 2;
+                  const p0 = polarToCartesian(cx, cy, or, midDeg);
+                  const p1 = polarToCartesian(cx, cy, or + 10, midDeg);
+                  const pt = polarToCartesian(cx, cy, or + 14, midDeg);
+                  const norm = (midDeg % 360 + 360) % 360;
+                  const anchor = norm > 5 && norm < 175 ? "start" : norm > 185 && norm < 355 ? "end" : "middle";
+                  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("g", { opacity: animProgress, style: { pointerEvents: "none" }, children: [
+                    showLabelLine && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("line", { x1: p0.x, y1: p0.y, x2: p1.x, y2: p1.y, stroke: slice.color, strokeWidth: 1 }),
+                    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+                      "text",
+                      {
+                        x: pt.x,
+                        y: pt.y,
+                        textAnchor: anchor,
+                        dominantBaseline: "middle",
+                        fontSize: 11,
+                        fill: themeColors.axisText,
+                        children: labelText(i)
+                      }
+                    )
+                  ] }, i);
                 })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("g", { fill: themeColors.axisText, fontSize: 11, textAnchor: "middle", children: data.map((row, i) => {
-                var _a2;
-                return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("text", { x: m.left + xScale(i), y: m.top + innerH + 16, children: String((_a2 = row[xAxisKey]) != null ? _a2 : "") }, i);
-              }) })
-            ]
-          }
-        ),
+              ] })
+            }
+          ),
+          centerLabel != null && centerLabel !== false && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            "div",
+            {
+              className: "ds-chart-pie-center",
+              style: {
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                pointerEvents: "none",
+                color: themeColors.tooltipText
+              },
+              children: centerLabel
+            }
+          )
+        ] }),
         showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
           ChartTooltip,
           {
@@ -1473,26 +1486,297 @@ var AreaChartComponent = ({
               flexWrap: "wrap",
               gap: 12,
               justifyContent: legendPosition === "left" ? "flex-start" : legendPosition === "right" ? "flex-end" : "center",
-              marginTop: legendPosition === "top" ? 0 : 8,
-              marginBottom: legendPosition === "bottom" ? 0 : 8,
+              marginTop: 8,
               fontSize: 12
             },
-            children: series.map((s, i) => {
-              var _a2, _b2;
-              return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-                  "span",
+            children: data.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+                "span",
+                {
+                  style: {
+                    width: 12,
+                    height: 12,
+                    borderRadius: 2,
+                    background: colorAt(i)
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { style: { color: themeColors.legendText }, children: [
+                d.name,
+                ": ",
+                fmtValue(d.value, d.name)
+              ] })
+            ] }, d.name))
+          }
+        )
+      ]
+    }
+  );
+};
+var PieChart_default = import_react6.default.memo(PieChartComponent);
+
+// src/components/charts/AreaChart.tsx
+var import_react7 = __toESM(require("react"));
+var import_jsx_runtime7 = require("react/jsx-runtime");
+var DEFAULT_COLORS4 = [
+  "var(--button-primary-default-bg)",
+  "var(--color-state-success)",
+  "var(--color-state-warning)",
+  "var(--color-state-error)",
+  "var(--color-accent-lavender-40)"
+];
+var AreaChartComponent = (props) => {
+  var _a, _b, _c, _d;
+  const {
+    data,
+    xAxisKey = "name",
+    series,
+    colors = DEFAULT_COLORS4,
+    stacked = false,
+    curve = "monotone",
+    strokeWidth = 2,
+    width = "100%",
+    height = 300,
+    margin,
+    showGrid = true,
+    gridColor,
+    showTooltip = true,
+    showLegend = true,
+    legendPosition = "bottom",
+    theme = "light",
+    tooltipFollowPointer = true,
+    tooltipAnimation = true,
+    showCrosshair = true,
+    chartAnimation = true,
+    className = "",
+    style = {},
+    xTickAngle = 0,
+    xTickInterval = 0,
+    yTickCount = 5,
+    xTickFormatter
+  } = props;
+  const axisSeries = stacked ? series.map((s) => ({ ...s, yAxis: "left" })) : series;
+  const axes = resolveAxes(props, axisSeries);
+  const animCfg = resolveChartAnimation(chartAnimation, "area");
+  const animKey = (0, import_react7.useMemo)(
+    () => `${data.length}-${series.map((s) => s.dataKey).join(",")}-${xAxisKey}-${stacked}-${curve}`,
+    [data.length, series, xAxisKey, stacked, curve]
+  );
+  const animProgress = useChartAnimationProgress(animCfg.enabled, animCfg.durationMs, animCfg.easing, animKey);
+  const themeColors = CHART_THEME_COLORS[theme];
+  const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
+  const [tooltip, setTooltip] = (0, import_react7.useState)(null);
+  const w = typeof width === "number" ? width : 400;
+  const h = typeof height === "number" ? height : 300;
+  const m = {
+    top: (_a = margin == null ? void 0 : margin.top) != null ? _a : 10,
+    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : axes.hasRight && axes.showYAxis ? 48 : 20,
+    bottom: (_c = margin == null ? void 0 : margin.bottom) != null ? _c : 30,
+    left: (_d = margin == null ? void 0 : margin.left) != null ? _d : 40
+  };
+  const innerW = w - m.left - m.right;
+  const innerH = h - m.top - m.bottom;
+  const colorOf = (s, i) => {
+    var _a2;
+    return (_a2 = s.color) != null ? _a2 : colors[i % colors.length];
+  };
+  const xLabels = (0, import_react7.useMemo)(
+    () => data.map((d, i) => {
+      var _a2;
+      return xTickFormatter ? xTickFormatter(d[xAxisKey], i) : String((_a2 = d[xAxisKey]) != null ? _a2 : "");
+    }),
+    [data, xAxisKey, xTickFormatter]
+  );
+  const leftSeries = axes.hasRight ? seriesOnSide(axisSeries, "left") : series;
+  const rightSeries = axes.hasRight ? seriesOnSide(axisSeries, "right") : [];
+  const leftAxis = buildValueAxis(getValueExtent(data, leftSeries, stacked), [innerH, 0], axes.showYAxis, yTickCount);
+  const rightAxis = axes.hasRight ? buildValueAxis(getValueExtent(data, rightSeries), [innerH, 0], axes.showYAxis, yTickCount) : leftAxis;
+  const yScaleFor = (s) => !stacked && s.yAxis === "right" && axes.hasRight ? rightAxis.scale : leftAxis.scale;
+  const xScale = (i) => i / Math.max(1, data.length - 1) * innerW;
+  const xPositions = data.map((_, i) => m.left + xScale(i));
+  const finalPaths = (() => {
+    if (stacked) {
+      const cum = new Array(data.length).fill(0);
+      return series.map((s, si) => {
+        const basePoints = data.map((_, i) => ({
+          x: m.left + xScale(i),
+          y: si === 0 ? m.top + innerH : m.top + leftAxis.scale(cum[i])
+        }));
+        const topPoints = data.map((row, i) => {
+          cum[i] += num(row, s.dataKey);
+          return { x: m.left + xScale(i), y: m.top + leftAxis.scale(cum[i]) };
+        });
+        const areaD = "M " + topPoints.map((p) => `${p.x} ${p.y}`).join(" L ") + " L " + [...basePoints].reverse().map((p) => `${p.x} ${p.y}`).join(" L ") + " Z";
+        return { key: s.dataKey, areaPath: areaD, linePath: linePath(topPoints, curve), points: topPoints, color: colorOf(s, si) };
+      });
+    }
+    return series.map((s, si) => {
+      const ys = yScaleFor(s);
+      const points = data.map((d, i) => ({ x: m.left + xScale(i), y: m.top + ys(num(d, s.dataKey)) }));
+      const baseY = m.top + innerH;
+      return {
+        key: s.dataKey,
+        areaPath: areaPath(points, baseY, curve),
+        linePath: linePath(points, curve),
+        points,
+        color: colorOf(s, si)
+      };
+    });
+  })();
+  const { valueFormatter, labelFormat } = axes;
+  const handleMouseMove = (0, import_react7.useCallback)(
+    (e) => {
+      if (!showTooltip || data.length === 0)
+        return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const scaleX = rect.width > 0 ? w / rect.width : 1;
+      const x = (e.clientX - rect.left) * scaleX - m.left;
+      const idx = Math.round(x / innerW * (data.length - 1));
+      const clamped = Math.max(0, Math.min(idx, data.length - 1));
+      const row = data[clamped];
+      const items = series.map((s, i) => {
+        var _a2, _b2;
+        const v = num(row, s.dataKey);
+        return {
+          name: (_a2 = s.name) != null ? _a2 : s.dataKey,
+          value: v,
+          color: (_b2 = s.color) != null ? _b2 : colors[i % colors.length],
+          displayValue: tooltipValue(valueFormatter, v, s.dataKey)
+        };
+      });
+      setTooltip({
+        pointerX: e.clientX - rect.left,
+        pointerY: e.clientY - rect.top,
+        cw: rect.width,
+        ch: rect.height,
+        label: tooltipLabel(row, clamped, xAxisKey, labelFormat),
+        items,
+        activeIndex: clamped
+      });
+    },
+    [showTooltip, data, series, xAxisKey, colors, innerW, m.left, w, valueFormatter, labelFormat]
+  );
+  const handleMouseLeave = (0, import_react7.useCallback)(() => setTooltip(null), []);
+  const gridYs = axes.showYAxis ? leftAxis.ticks.map((t) => leftAxis.scale(t)) : [0.25, 0.5, 0.75].map((t) => innerH * t);
+  const tickIdx = xTickIndices(xLabels, xTickInterval, innerW / Math.max(1, data.length - 1), xTickAngle);
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+    "div",
+    {
+      className,
+      style: {
+        width: typeof width === "string" ? width : w,
+        height: typeof height === "string" ? height : h,
+        position: "relative",
+        ...style
+      },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+          "svg",
+          {
+            width: "100%",
+            height: "100%",
+            viewBox: `0 0 ${w} ${h}`,
+            preserveAspectRatio: "xMidYMid meet",
+            onMouseMove: handleMouseMove,
+            onMouseLeave: handleMouseLeave,
+            children: [
+              showGrid && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: gridYs.map((gy) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("line", { x1: m.left, y1: m.top + gy, x2: m.left + innerW, y2: m.top + gy }, gy)) }),
+              finalPaths.map(({ key, areaPath: ap, linePath: lp, color }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("g", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("path", { d: ap, fill: color, fillOpacity: (stacked ? 0.8 : 0.3) * animProgress, stroke: "none" }),
+                /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(AnimatedLineStroke, { pathD: lp, progress: animProgress, color, strokeWidth })
+              ] }, key)),
+              showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                  "line",
                   {
-                    style: {
-                      width: 12,
-                      height: 12,
-                      borderRadius: 2,
-                      background: (_a2 = s.color) != null ? _a2 : colors[i % colors.length]
-                    }
+                    x1: m.left + xScale(tooltip.activeIndex),
+                    y1: m.top,
+                    x2: m.left + xScale(tooltip.activeIndex),
+                    y2: m.top + innerH,
+                    stroke: themeColors.gridColor,
+                    strokeWidth: 1,
+                    strokeDasharray: "4 6",
+                    opacity: 0.85
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { color: themeColors.legendText }, children: (_b2 = s.name) != null ? _b2 : s.dataKey })
-              ] }, s.dataKey);
+                finalPaths.map(({ key, points, color }) => {
+                  const p = points[tooltip.activeIndex];
+                  if (!p)
+                    return null;
+                  return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                    "circle",
+                    {
+                      cx: p.x,
+                      cy: p.y,
+                      r: 6,
+                      fill: color,
+                      stroke: themeColors.tooltipBg,
+                      strokeWidth: 2,
+                      opacity: 0.92 * animProgress
+                    },
+                    `hit-${key}`
+                  );
+                })
+              ] }),
+              axes.showYAxis && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                YAxisLabels,
+                {
+                  ticks: leftAxis.ticks,
+                  scale: (v) => m.top + leftAxis.scale(v),
+                  x: m.left,
+                  side: "left",
+                  format: axes.leftTickFormat,
+                  color: themeColors.axisText
+                }
+              ),
+              axes.showYAxis && axes.hasRight && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                YAxisLabels,
+                {
+                  ticks: rightAxis.ticks,
+                  scale: (v) => m.top + rightAxis.scale(v),
+                  x: m.left + innerW,
+                  side: "right",
+                  format: axes.rightTickFormat,
+                  color: themeColors.axisText
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                XAxisLabels,
+                {
+                  positions: xPositions,
+                  labels: xLabels,
+                  indices: tickIdx,
+                  y: m.top + innerH + 16,
+                  angle: xTickAngle,
+                  color: themeColors.axisText
+                }
+              )
+            ]
+          }
+        ),
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          ChartTooltip,
+          {
+            theme,
+            open: true,
+            pointerX: tooltip.pointerX,
+            pointerY: tooltip.pointerY,
+            containerWidth: tooltip.cw,
+            containerHeight: tooltip.ch,
+            label: tooltip.label,
+            items: tooltip.items,
+            animation: tooltipAnimation,
+            followPointer: tooltipFollowPointer
+          }
+        ),
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          ChartLegend,
+          {
+            position: legendPosition,
+            textColor: themeColors.legendText,
+            items: series.map((s, i) => {
+              var _a2;
+              return { key: s.dataKey, label: (_a2 = s.name) != null ? _a2 : s.dataKey, color: colorOf(s, i), shape: "square" };
             })
           }
         )
@@ -1501,6 +1785,369 @@ var AreaChartComponent = ({
   );
 };
 var AreaChart_default = import_react7.default.memo(AreaChartComponent);
+
+// src/components/charts/ComposedChart.tsx
+var import_react8 = __toESM(require("react"));
+var import_jsx_runtime8 = require("react/jsx-runtime");
+var ComposedChartComponent = (props) => {
+  var _a, _b, _c, _d;
+  const {
+    data,
+    xAxisKey = "name",
+    series,
+    colors = CHART_COLORS,
+    curve = "monotone",
+    showDots = true,
+    dotSize = 3,
+    strokeWidth = 2,
+    barSize = 24,
+    barGap = 4,
+    barCategoryGap = "10%",
+    radius = 4,
+    stackedBars = false,
+    width = "100%",
+    height = 300,
+    margin,
+    showGrid = true,
+    gridColor,
+    showTooltip = true,
+    showLegend = true,
+    legendPosition = "bottom",
+    theme = "light",
+    tooltipFollowPointer = true,
+    tooltipAnimation = true,
+    showCrosshair = true,
+    chartAnimation = true,
+    className = "",
+    style = {},
+    xTickAngle = 0,
+    xTickInterval = 0,
+    yTickCount = 5,
+    xTickFormatter
+  } = props;
+  const axes = resolveAxes(props, series);
+  const animCfg = resolveChartAnimation(chartAnimation, "line");
+  const animKey = (0, import_react8.useMemo)(
+    () => `${data.length}-${series.map((s) => `${s.type}:${s.dataKey}`).join(",")}-${xAxisKey}`,
+    [data.length, series, xAxisKey]
+  );
+  const progress = useChartAnimationProgress(animCfg.enabled, animCfg.durationMs, animCfg.easing, animKey);
+  const themeColors = CHART_THEME_COLORS[theme];
+  const gridStroke = gridColor != null ? gridColor : themeColors.gridColor;
+  const containerRef = (0, import_react8.useRef)(null);
+  const [tooltip, setTooltip] = (0, import_react8.useState)(null);
+  const w = typeof width === "number" ? width : 400;
+  const h = typeof height === "number" ? height : 300;
+  const m = {
+    top: (_a = margin == null ? void 0 : margin.top) != null ? _a : 10,
+    right: (_b = margin == null ? void 0 : margin.right) != null ? _b : axes.hasRight && axes.showYAxis ? 48 : 20,
+    bottom: (_c = margin == null ? void 0 : margin.bottom) != null ? _c : 30,
+    left: (_d = margin == null ? void 0 : margin.left) != null ? _d : 40
+  };
+  const innerW = w - m.left - m.right;
+  const innerH = h - m.top - m.bottom;
+  const n = Math.max(1, data.length);
+  const slot = innerW / n;
+  const centers = data.map((_, i) => m.left + (i + 0.5) * slot);
+  const sideOf = (s) => axes.hasRight && s.yAxis === "right" ? "right" : "left";
+  const colorOf = (s, i) => {
+    var _a2;
+    return (_a2 = s.color) != null ? _a2 : colors[i % colors.length];
+  };
+  const extentFor = (side) => {
+    let lo = Infinity;
+    let hi = -Infinity;
+    const ss = series.filter((s) => sideOf(s) === side);
+    if (ss.length === 0)
+      return [0, 1];
+    const push = (v) => {
+      if (v < lo)
+        lo = v;
+      if (v > hi)
+        hi = v;
+    };
+    if (ss.some((s) => s.type === "bar" || s.type === "area"))
+      push(0);
+    for (const row of data) {
+      let pos = 0;
+      let neg = 0;
+      for (const s of ss) {
+        const v = num(row, s.dataKey);
+        if (s.type === "bar" && stackedBars) {
+          if (v >= 0)
+            pos += v;
+          else
+            neg += v;
+        } else
+          push(v);
+        if (s.type === "range" && s.upperDataKey)
+          push(num(row, s.upperDataKey));
+      }
+      if (stackedBars) {
+        push(pos);
+        push(neg);
+      }
+    }
+    if (lo === Infinity)
+      return [0, 1];
+    if (lo === hi)
+      hi = lo + 1;
+    return [lo, hi];
+  };
+  const leftAxis = buildValueAxis(extentFor("left"), [innerH, 0], axes.showYAxis, yTickCount);
+  const rightAxis = axes.hasRight ? buildValueAxis(extentFor("right"), [innerH, 0], axes.showYAxis, yTickCount) : leftAxis;
+  const axisOf = (s) => sideOf(s) === "right" ? rightAxis : leftAxis;
+  const yOf = (s, v) => m.top + axisOf(s).scale(v);
+  const zeroY = (s) => {
+    const [d0, d1] = axisOf(s).domain;
+    return yOf(s, Math.min(Math.max(0, d0), d1));
+  };
+  const barSeries = series.map((s, i) => ({ s, i })).filter(({ s }) => s.type === "bar");
+  const stackSides = Array.from(new Set(barSeries.map(({ s }) => sideOf(s))));
+  const barsPerGroup = stackedBars ? stackSides.length : barSeries.length;
+  const catGap = typeof barCategoryGap === "string" && barCategoryGap.endsWith("%") ? slot * (parseFloat(barCategoryGap) / 100) : typeof barCategoryGap === "number" ? barCategoryGap : 8;
+  const barWidth = Math.min(barSize, Math.max(2, (slot - catGap - (barsPerGroup - 1) * barGap) / Math.max(1, barsPerGroup)));
+  const totalBarWidth = barsPerGroup * barWidth + Math.max(0, barsPerGroup - 1) * barGap;
+  const bars = [];
+  data.forEach((row, idx) => {
+    const cumPos = {};
+    const cumNeg = {};
+    barSeries.forEach(({ s, i }, bi) => {
+      var _a2, _b2;
+      const v = num(row, s.dataKey);
+      const side = sideOf(s);
+      let v0 = 0;
+      let pos = bi;
+      if (stackedBars) {
+        pos = stackSides.indexOf(side);
+        if (v >= 0) {
+          v0 = (_a2 = cumPos[side]) != null ? _a2 : 0;
+          cumPos[side] = v0 + v;
+        } else {
+          v0 = (_b2 = cumNeg[side]) != null ? _b2 : 0;
+          cumNeg[side] = v0 + v;
+        }
+      }
+      const a = yOf(s, v0 * progress);
+      const b = yOf(s, (v0 + v) * progress);
+      bars.push({
+        key: `${idx}-${s.dataKey}`,
+        idx,
+        x: m.left + idx * slot + (slot - totalBarWidth) / 2 + pos * (barWidth + barGap),
+        y: Math.min(a, b),
+        w: barWidth,
+        h: Math.abs(b - a),
+        fill: colorOf(s, i)
+      });
+    });
+  });
+  const pts = (s, key) => data.map((row, i) => ({ x: centers[i], y: yOf(s, num(row, key)) }));
+  const xLabels = (0, import_react8.useMemo)(
+    () => data.map((d, i) => {
+      var _a2;
+      return xTickFormatter ? xTickFormatter(d[xAxisKey], i) : String((_a2 = d[xAxisKey]) != null ? _a2 : "");
+    }),
+    [data, xAxisKey, xTickFormatter]
+  );
+  const { valueFormatter, labelFormat } = axes;
+  const fmt = (0, import_react8.useCallback)(
+    (v, key) => valueFormatter ? valueFormatter(v, key) : void 0,
+    [valueFormatter]
+  );
+  const handleMove = (0, import_react8.useCallback)(
+    (e, idx) => {
+      if (!showTooltip || !containerRef.current)
+        return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const row = data[idx];
+      const items = series.map((s, i) => {
+        var _a2, _b2, _c2, _d2;
+        const v = num(row, s.dataKey);
+        if (s.type === "range" && s.upperDataKey) {
+          const hi = num(row, s.upperDataKey);
+          return {
+            name: (_a2 = s.name) != null ? _a2 : `${s.dataKey}\u2013${s.upperDataKey}`,
+            value: v,
+            color: colorOf(s, i),
+            displayValue: `${(_b2 = fmt(v, s.dataKey)) != null ? _b2 : v} \u2013 ${(_c2 = fmt(hi, s.upperDataKey)) != null ? _c2 : hi}`
+          };
+        }
+        return { name: (_d2 = s.name) != null ? _d2 : s.dataKey, value: v, color: colorOf(s, i), displayValue: fmt(v, s.dataKey) };
+      });
+      setTooltip({
+        pointerX: e.clientX - rect.left,
+        pointerY: e.clientY - rect.top,
+        cw: rect.width,
+        ch: rect.height,
+        label: tooltipLabel(row, idx, xAxisKey, labelFormat),
+        items,
+        activeIndex: idx
+      });
+    },
+    // colorOf is derived from series/colors
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [showTooltip, data, series, colors, xAxisKey, labelFormat, fmt]
+  );
+  const gridYs = axes.showYAxis ? leftAxis.ticks.map((t) => leftAxis.scale(t)) : [0.25, 0.5, 0.75].map((t) => innerH * t);
+  const tickIdx = xTickIndices(xLabels, xTickInterval, slot, xTickAngle);
+  const ordered = (type) => series.map((s, i) => ({ s, i })).filter(({ s }) => s.type === type);
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    "div",
+    {
+      ref: containerRef,
+      className,
+      style: {
+        width: typeof width === "string" ? width : w,
+        height: typeof height === "string" ? height : h,
+        position: "relative",
+        ...style
+      },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("svg", { width: "100%", height: "100%", viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: "xMidYMid meet", onMouseLeave: () => setTooltip(null), children: [
+          showGrid && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("g", { stroke: gridStroke, strokeDasharray: "3 3", strokeOpacity: 0.6, children: gridYs.map((gy) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("line", { x1: m.left, y1: m.top + gy, x2: m.left + innerW, y2: m.top + gy }, gy)) }),
+          showTooltip && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("g", { fill: "transparent", children: data.map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("rect", { x: m.left + idx * slot, y: m.top, width: slot, height: innerH, onMouseMove: (e) => handleMove(e, idx) }, idx)) }),
+          ordered("range").map(({ s, i }) => {
+            var _a2, _b2;
+            if (!s.upperDataKey)
+              return null;
+            const c = (_a2 = s.curve) != null ? _a2 : curve;
+            const upper = pts(s, s.upperDataKey);
+            const lower = pts(s, s.dataKey);
+            const upperD = linePath(upper, c);
+            const lowerRev = linePath([...lower].reverse(), c).replace(/^M/, "L");
+            return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+              "path",
+              {
+                "data-series-type": "range",
+                d: `${upperD} ${lowerRev} Z`,
+                fill: colorOf(s, i),
+                fillOpacity: ((_b2 = s.fillOpacity) != null ? _b2 : 0.2) * progress,
+                stroke: "none",
+                pointerEvents: "none"
+              },
+              `range-${s.dataKey}`
+            );
+          }),
+          ordered("area").map(({ s, i }) => {
+            var _a2, _b2, _c2;
+            const c = (_a2 = s.curve) != null ? _a2 : curve;
+            const p = pts(s, s.dataKey);
+            if (p.length === 0)
+              return null;
+            const base = zeroY(s);
+            const d = `${linePath(p, c)} L ${p[p.length - 1].x} ${base} L ${p[0].x} ${base} Z`;
+            return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("g", { "data-series-type": "area", pointerEvents: "none", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { d, fill: colorOf(s, i), fillOpacity: ((_b2 = s.fillOpacity) != null ? _b2 : 0.3) * progress, stroke: "none" }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AnimatedLineStroke, { pathD: linePath(p, c), progress, color: colorOf(s, i), strokeWidth: (_c2 = s.strokeWidth) != null ? _c2 : strokeWidth })
+            ] }, `area-${s.dataKey}`);
+          }),
+          bars.map((b) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            "rect",
+            {
+              "data-series-type": "bar",
+              x: b.x,
+              y: b.y,
+              width: b.w,
+              height: Math.max(0, b.h),
+              fill: b.fill,
+              rx: radius,
+              ry: radius,
+              onMouseMove: (e) => handleMove(e, b.idx)
+            },
+            b.key
+          )),
+          ordered("line").map(({ s, i }) => {
+            var _a2, _b2, _c2;
+            const p = pts(s, s.dataKey);
+            const d = linePath(p, (_a2 = s.curve) != null ? _a2 : curve);
+            const color = colorOf(s, i);
+            const sw = (_b2 = s.strokeWidth) != null ? _b2 : strokeWidth;
+            return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("g", { "data-series-type": "line", pointerEvents: "none", children: [
+              s.strokeDasharray ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("path", { d, fill: "none", stroke: color, strokeWidth: sw, strokeDasharray: s.strokeDasharray, opacity: progress }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AnimatedLineStroke, { pathD: d, progress, color, strokeWidth: sw }),
+              ((_c2 = s.showDots) != null ? _c2 : showDots) && p.map((pt, k) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("circle", { cx: pt.x, cy: pt.y, r: dotSize, fill: color, stroke: themeColors.tooltipBg, strokeWidth: 1, opacity: Math.min(1, progress * 2.5) }, k))
+            ] }, `line-${s.dataKey}`);
+          }),
+          showTooltip && showCrosshair && tooltip !== null && data.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("g", { className: "ds-chart-crosshair", pointerEvents: "none", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+              "line",
+              {
+                x1: centers[tooltip.activeIndex],
+                y1: m.top,
+                x2: centers[tooltip.activeIndex],
+                y2: m.top + innerH,
+                stroke: themeColors.gridColor,
+                strokeWidth: 1,
+                strokeDasharray: "4 6",
+                opacity: 0.85
+              }
+            ),
+            series.map(
+              (s, i) => s.type === "line" || s.type === "area" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+                "circle",
+                {
+                  cx: centers[tooltip.activeIndex],
+                  cy: yOf(s, num(data[tooltip.activeIndex], s.dataKey)),
+                  r: dotSize + 3,
+                  fill: colorOf(s, i),
+                  stroke: themeColors.tooltipBg,
+                  strokeWidth: 2
+                },
+                `hit-${s.dataKey}`
+              ) : null
+            )
+          ] }),
+          axes.showYAxis && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(YAxisLabels, { ticks: leftAxis.ticks, scale: (v) => m.top + leftAxis.scale(v), x: m.left, side: "left", format: axes.leftTickFormat, color: themeColors.axisText }),
+          axes.showYAxis && axes.hasRight && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            YAxisLabels,
+            {
+              ticks: rightAxis.ticks,
+              scale: (v) => m.top + rightAxis.scale(v),
+              x: m.left + innerW,
+              side: "right",
+              format: axes.rightTickFormat,
+              color: themeColors.axisText
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(XAxisLabels, { positions: centers, labels: xLabels, indices: tickIdx, y: m.top + innerH + 16, angle: xTickAngle, color: themeColors.axisText })
+        ] }),
+        showTooltip && tooltip && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          ChartTooltip,
+          {
+            theme,
+            open: true,
+            pointerX: tooltip.pointerX,
+            pointerY: tooltip.pointerY,
+            containerWidth: tooltip.cw,
+            containerHeight: tooltip.ch,
+            label: tooltip.label,
+            items: tooltip.items,
+            animation: tooltipAnimation,
+            followPointer: tooltipFollowPointer
+          }
+        ),
+        showLegend && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          ChartLegend,
+          {
+            position: legendPosition,
+            textColor: themeColors.legendText,
+            items: series.map((s, i) => {
+              var _a2;
+              return {
+                key: `${s.type}-${s.dataKey}`,
+                label: (_a2 = s.name) != null ? _a2 : s.dataKey,
+                color: colorOf(s, i),
+                shape: s.type === "line" ? "line" : s.type === "range" ? "band" : "square"
+              };
+            })
+          }
+        )
+      ]
+    }
+  );
+};
+var ComposedChart = import_react8.default.memo(ComposedChartComponent);
+ComposedChart.displayName = "ComposedChart";
+var ComposedChart_default = ComposedChart;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AreaChart,
@@ -1508,7 +2155,9 @@ var AreaChart_default = import_react7.default.memo(AreaChartComponent);
   CHART_COLORS,
   CHART_THEME_COLORS,
   ChartTooltip,
+  ComposedChart,
   LineChart,
-  PieChart
+  PieChart,
+  pieLabelNamePercent
 });
 //# sourceMappingURL=charts.js.map

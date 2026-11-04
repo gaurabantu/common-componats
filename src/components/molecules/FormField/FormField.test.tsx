@@ -318,3 +318,82 @@ describe("FormField + Combobox", () => {
     expect(onValueChange).toHaveBeenCalledWith("eu", options[0]);
   });
 });
+
+describe("FormField — 0.0.4 (group, hideLabel, composite htmlFor)", () => {
+  it("group mode renders role=group labelled by the label and described by hint/error", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <FormField label="Amount range" group hint="Inclusive" error="Min must be below max">
+        <div>
+          <input aria-label="Minimum" />
+          <input aria-label="Maximum" />
+        </div>
+      </FormField>,
+    );
+    const group = screen.getByRole("group", { name: "Amount range" });
+    expect(group).toHaveAccessibleDescription("Inclusive Min must be below max");
+    expect(screen.getByText("Amount range").tagName).toBe("SPAN");
+    expect(screen.getByRole("textbox", { name: "Minimum" })).not.toHaveAttribute("id");
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("group mode does not inject id / aria into the child", () => {
+    render(
+      <FormField label="Status" group required>
+        <div data-testid="chips" />
+      </FormField>,
+    );
+    const chips = screen.getByTestId("chips");
+    expect(chips).not.toHaveAttribute("id");
+    expect(chips).not.toHaveAttribute("aria-required");
+  });
+
+  it("htmlFor points the label at an inner control of a composite wrapper (not the wrapper)", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <FormField label="Application" htmlFor="app-input">
+        <div data-testid="row">
+          <input id="app-input" />
+          <button type="button">Browse</button>
+        </div>
+      </FormField>,
+    );
+    expect(screen.getByTestId("row")).not.toHaveAttribute("id");
+    expect(screen.getByRole("textbox", { name: "Application" })).toHaveAttribute("id", "app-input");
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("htmlFor on a labelable child still injects the id (unchanged)", () => {
+    render(
+      <FormField label="Name" htmlFor="nm">
+        <input />
+      </FormField>,
+    );
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute("id", "nm");
+  });
+
+  it("hideLabel keeps the accessible name and flags the root", () => {
+    const { container } = render(
+      <FormField label="Search members" hideLabel layout="horizontal">
+        <input />
+      </FormField>,
+    );
+    expect(screen.getByRole("textbox", { name: "Search members" })).toBeInTheDocument();
+    expect(container.firstElementChild).toHaveAttribute("data-hide-label", "true");
+  });
+
+  it("exposes group in useFormField()", () => {
+    function Probe() {
+      const f = useFormField();
+      return <span data-testid="probe">{String(f?.group)}</span>;
+    }
+    render(
+      <FormField label="G" group>
+        <Probe />
+      </FormField>,
+    );
+    expect(screen.getByTestId("probe")).toHaveTextContent("true");
+  });
+});

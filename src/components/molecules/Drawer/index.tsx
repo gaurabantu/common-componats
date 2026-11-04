@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useId, useRef, useState } fr
 import { createPortal } from "react-dom";
 import { acquireBodyScrollLock, releaseBodyScrollLock } from "../Modal/bodyScrollLock";
 import { OverlayLayerContext, isTopLayer, popLayer, pushLayer } from "../Modal/overlayStack";
+import { runGuardedClose } from "../Modal/closeGuard";
 import {
   DRAWER_DEFAULTS,
   DRAWER_EXIT_FALLBACK_MS,
@@ -41,6 +42,10 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
     size = DRAWER_DEFAULTS.size,
     title,
     description,
+    headerActions,
+    onBeforeClose,
+    bodyScroll = true,
+    bodyClassName,
     children,
     footer,
     showCloseButton = DRAWER_DEFAULTS.showCloseButton,
@@ -89,7 +94,21 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
     [forwardedRef],
   );
 
-  const requestClose = useCallback(() => onOpenChangeRef.current(false), []);
+  const onBeforeCloseRef = useRef(onBeforeClose);
+  onBeforeCloseRef.current = onBeforeClose;
+  const guardPendingRef = useRef(false);
+  const openRef = useRef(open);
+  openRef.current = open;
+
+  // User-initiated close: `onBeforeClose` may veto (false / rejected promise keeps the drawer open).
+  const requestClose = useCallback(() => {
+    runGuardedClose(
+      onBeforeCloseRef.current,
+      () => onOpenChangeRef.current(false),
+      guardPendingRef,
+      () => openRef.current,
+    );
+  }, []);
 
   // Exit: unmount once the slide-out finishes (immediately when there is no animation, e.g. reduced motion).
   useEffect(() => {
@@ -264,11 +283,14 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
                 {title}
               </h2>
               {description != null ? (
-                <p id={descriptionId} className="ds-drawer__description">
+                <div id={descriptionId} className="ds-drawer__description">
                   {description}
-                </p>
+                </div>
               ) : null}
             </div>
+            {headerActions != null && headerActions !== false ? (
+              <div className="ds-drawer__header-actions">{headerActions}</div>
+            ) : null}
             {showCloseButton ? (
               <button
                 type="button"
@@ -282,9 +304,10 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
           </div>
           <div
             ref={bodyRef}
-            className="ds-drawer__body"
-            tabIndex={bodyScrollable ? 0 : undefined}
-            data-scrollable={bodyScrollable ? "true" : undefined}
+            className={["ds-drawer__body", bodyClassName].filter(Boolean).join(" ")}
+            tabIndex={bodyScroll && bodyScrollable ? 0 : undefined}
+            data-scrollable={bodyScroll && bodyScrollable ? "true" : undefined}
+            data-body-scroll={bodyScroll ? undefined : "false"}
           >
             {children}
           </div>

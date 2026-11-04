@@ -17,8 +17,24 @@ export interface DrawerProps {
   size?: DrawerSize;
   /** Heading rendered as the dialog's accessible name (`aria-labelledby`). Rendered as text, never parsed as HTML. */
   title: ReactNode;
-  /** Supporting text under the title, wired to `aria-describedby`. */
+  /** Supporting content under the title (block `<div>`, so rich content is fine), wired to `aria-describedby`. */
   description?: ReactNode;
+  /** Extra controls rendered in the header, before the close (X) button (e.g. Export, Refresh). */
+  headerActions?: ReactNode;
+  /**
+   * Guard run before any user-initiated close (Escape, backdrop click, close button). Return `false`
+   * (or a promise resolving to `false`) to keep the drawer open — e.g. an unsaved-changes check.
+   * Repeat close requests are ignored while a returned promise is pending. Not called when the
+   * parent sets `open={false}` itself.
+   */
+  onBeforeClose?: () => boolean | Promise<boolean>;
+  /**
+   * `false` makes the body a fixed, non-scrolling flex column (`overflow: hidden`) so a child owns the
+   * scroll (e.g. a table with a sticky header). @default true
+   */
+  bodyScroll?: boolean;
+  /** Extra class on the body element. */
+  bodyClassName?: string;
   /** Scrollable body content. The header and footer stay fixed while this scrolls. */
   children?: ReactNode;
   /** Sticky footer area (actions). */

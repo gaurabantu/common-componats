@@ -193,10 +193,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                 ? "var(--radius-lg, 8px)"
                 : "9999px";
 
-  const wrapperStyle: React.CSSProperties = {
-    width: fullWidth ? "100%" : "auto",
-    display: fullWidth ? "block" : "inline-block",
-  };
+  // Full width is a class (not an inline style) so a host row can relax it: directly inside a
+  // wrapping flex row the select sizes to its options instead of taking a whole line (Select.css).
+  const wrapperStyle: React.CSSProperties | undefined = fullWidth
+    ? undefined
+    : { width: "auto", display: "inline-block" };
+  const wrapperClass = [customClass, fullWidth ? "ds-select-root--full" : ""].filter(Boolean).join(" ");
 
   const labelStyle: React.CSSProperties = {
     display: "block",
@@ -244,7 +246,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
   };
 
   return (
-    <div className={customClass} style={wrapperStyle}>
+    <div className={wrapperClass || undefined} style={wrapperStyle}>
       {label && (
         <label htmlFor={selectId} style={labelStyle}>
           {label}

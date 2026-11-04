@@ -249,3 +249,191 @@ describe("Modal — Escape and the overlay stack", () => {
     expect(onOuter).not.toHaveBeenCalled();
   });
 });
+
+describe("Modal — 0.0.4 additions", () => {
+  it('size="fullscreen" adds the fullscreen class and fills the viewport', () => {
+    render(<Modal isOpen onClose={() => {}} title="Editor" size="fullscreen">Body</Modal>);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveClass("modal--fullscreen");
+    const panel = dialog.querySelector(".modal-dialog") as HTMLElement;
+    expect(panel).toHaveClass("modal-fullscreen");
+    expect(panel.style.maxWidth).toBe("100%");
+    expect((dialog.querySelector(".modal-content") as HTMLElement).style.borderRadius).toBe("0px");
+  });
+
+  it("renders headerActions in the title bar before the close button", () => {
+    render(
+      <Modal isOpen onClose={() => {}} title="Report" headerActions={<button type="button">Export</button>}>
+        Body
+      </Modal>,
+    );
+    const header = screen.getByRole("dialog").querySelector(".modal-header") as HTMLElement;
+    const buttons = Array.from(header.querySelectorAll("button"));
+    expect(buttons.map((b) => b.textContent || b.getAttribute("aria-label"))).toEqual(["Export", "Close dialog"]);
+  });
+
+  it("accepts a ReactNode title (labelled by the title element)", () => {
+    render(
+      <Modal isOpen onClose={() => {}} title={<><code>ACC-1</code> Cash</>} id="rn">
+        Body
+      </Modal>,
+    );
+    expect(screen.getByRole("dialog", { name: "ACC-1 Cash" })).toHaveAttribute("aria-labelledby", "rnLabel");
+  });
+
+  it("ariaLabel names the dialog instead of aria-labelledby", () => {
+    render(
+      <Modal isOpen onClose={() => {}} title={<span>Fancy</span>} ariaLabel="Account details">
+        Body
+      </Modal>,
+    );
+    const dialog = screen.getByRole("dialog", { name: "Account details" });
+    expect(dialog).not.toHaveAttribute("aria-labelledby");
+  });
+
+  it("ariaLabel names a dialog with hideHeader", () => {
+    render(<Modal isOpen onClose={() => {}} title="x" hideHeader ariaLabel="Custom">Body</Modal>);
+    expect(screen.getByRole("dialog", { name: "Custom" })).toBeInTheDocument();
+  });
+
+  it("description holds block content (rendered in a div, not a p)", () => {
+    render(
+      <Modal
+        isOpen
+        onClose={() => {}}
+        title="T"
+        id="blk"
+        description={
+          <>
+            <p>First paragraph.</p>
+            <ul><li>Item</li></ul>
+          </>
+        }
+      >
+        Body
+      </Modal>,
+    );
+    const desc = document.getElementById("blkDescription")!;
+    expect(desc.tagName).toBe("DIV");
+    expect(desc.querySelector("ul")).not.toBeNull();
+    expect(screen.getByRole("dialog")).toHaveAccessibleDescription("First paragraph. Item");
+  });
+
+  it("forwards data-* props and rootProps to the root", () => {
+    render(
+      <Modal
+        isOpen
+        onClose={() => {}}
+        title="T"
+        data-anchored-popover=""
+        rootProps={{ className: "extra-root", "data-testid": "modal-root", title: "root-title" }}
+      >
+        Body
+      </Modal>,
+    );
+    const root = screen.getByTestId("modal-root");
+    expect(root).toHaveClass("modal-root", "extra-root");
+    expect(root).toHaveAttribute("data-anchored-popover", "");
+    expect(root).toHaveAttribute("title", "root-title");
+    expect(root).toContainElement(screen.getByRole("dialog"));
+  });
+
+  it("bodyScroll={false} makes the body a non-scrolling flex column; bodyClassName is applied", () => {
+    render(
+      <Modal isOpen onClose={() => {}} title="T" bodyScroll={false} bodyClassName="panes">
+        Body
+      </Modal>,
+    );
+    const body = screen.getByRole("dialog").querySelector(".modal-body") as HTMLElement;
+    expect(body).toHaveClass("modal-body--fixed", "panes");
+    expect(body).toHaveAttribute("data-body-scroll", "false");
+    expect(body.style.overflowY).toBe("hidden");
+    expect(body.style.display).toBe("flex");
+  });
+
+  it("bodyScroll defaults to a scrolling body", () => {
+    render(<Modal isOpen onClose={() => {}} title="T">Body</Modal>);
+    const body = screen.getByRole("dialog").querySelector(".modal-body") as HTMLElement;
+    expect(body.style.overflowY).toBe("auto");
+    expect(body).not.toHaveClass("modal-body--fixed");
+  });
+
+  it("zIndex sets the backdrop and dialog layers", () => {
+    const { baseElement } = render(<Modal isOpen onClose={() => {}} title="T" zIndex={10000}>Body</Modal>);
+    expect((baseElement.querySelector(".modal-backdrop") as HTMLElement).style.zIndex).toBe("10000");
+    expect(screen.getByRole("dialog").style.zIndex).toBe("10001");
+  });
+
+  it("animate={false} drops animation classes and closes immediately", () => {
+    const onClose = vi.fn();
+    render(<Modal isOpen onClose={onClose} title="T" animation="slide" animate={false}>Body</Modal>);
+    const panel = screen.getByRole("dialog").querySelector(".modal-dialog") as HTMLElement;
+    expect(panel).toHaveClass("modal-dialog--static");
+    expect(panel).not.toHaveClass("modal-dialog--slide");
+    fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  describe("onBeforeClose", () => {
+    it("false keeps the modal open on Escape, backdrop and close button", () => {
+      const onClose = vi.fn();
+      const guard = vi.fn(() => false);
+      const { baseElement } = render(
+        <Modal isOpen onClose={onClose} title="T" animation="none" onBeforeClose={guard}>
+          Body
+        </Modal>,
+      );
+      fireEvent.keyDown(document, { key: "Escape" });
+      fireEvent.click(screen.getByRole("dialog"));
+      fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+      expect(guard).toHaveBeenCalledTimes(3);
+      expect(onClose).not.toHaveBeenCalled();
+      expect(baseElement.querySelector('[role="dialog"]')).toBeInTheDocument();
+    });
+
+    it("true closes synchronously", () => {
+      const onClose = vi.fn();
+      render(
+        <Modal isOpen onClose={onClose} title="T" animation="none" onBeforeClose={() => true}>
+          Body
+        </Modal>,
+      );
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("awaits a promise; resolves true → closes, false → stays; ignores repeats while pending", async () => {
+      const onClose = vi.fn();
+      let resolve!: (v: boolean) => void;
+      const guard = vi.fn(() => new Promise<boolean>((r) => (resolve = r)));
+      render(
+        <Modal isOpen onClose={onClose} title="T" animation="none" onBeforeClose={guard}>
+          Body
+        </Modal>,
+      );
+      fireEvent.keyDown(document, { key: "Escape" });
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(guard).toHaveBeenCalledTimes(1);
+      resolve(false);
+      await waitFor(() => expect(guard).toHaveBeenCalledTimes(1));
+      await Promise.resolve();
+      expect(onClose).not.toHaveBeenCalled();
+
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(guard).toHaveBeenCalledTimes(2);
+      resolve(true);
+      await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
+    });
+
+    it("also guards the Cancel footer button", () => {
+      const onClose = vi.fn();
+      render(
+        <Modal isOpen onClose={onClose} title="T" animation="none" onConfirm={() => {}} onBeforeClose={() => false}>
+          Body
+        </Modal>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+      expect(onClose).not.toHaveBeenCalled();
+    });
+  });
+});

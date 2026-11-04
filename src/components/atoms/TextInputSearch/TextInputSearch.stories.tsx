@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import InputSearch from "./index";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../../assets/search.svg";
 
 const meta: Meta<typeof InputSearch> = {
@@ -203,5 +203,17 @@ export const Disabled: Story = {
     value: "disabled",
     disabled: true,
     fullWidth: true,
+  },
+};
+
+/** `ref` reaches the native search `<input>` — e.g. focus it when a panel opens. */
+export const FocusViaRef: Story = {
+  render: () => {
+    const ref = useRef<HTMLInputElement>(null);
+    const [value, setValue] = useState("");
+    useEffect(() => {
+      ref.current?.focus();
+    }, []);
+    return <InputSearch ref={ref} id="search-ref" value={value} onChange={setValue} />;
   },
 };

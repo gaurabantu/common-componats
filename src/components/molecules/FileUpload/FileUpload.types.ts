@@ -1,10 +1,34 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { ButtonProps } from "../../atoms/Button/Button.types";
 
 export type FileUploadSize = "sm" | "md";
 
+/** `dropzone` (default) — dashed drop area; `button` — a library `Button` that opens the picker (no drop area). */
+export type FileUploadVariant = "dropzone" | "button";
+
+type ButtonOnlyProps = Extract<ButtonProps, { href?: undefined }>;
+
 export interface FileUploadProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "onError"> {
-  /** Visible title inside the dropzone (also used for the control’s accessible name) */
+  /** Visible title inside the dropzone, or the button text when `variant="button"` (accessible name). */
   label: string;
+  /**
+   * `dropzone` (default) or `button` — renders a library `Button` that opens the native picker
+   * (same validation; `description` / errors render below it). In button mode `id` goes on the
+   * `Button` (so `FormField htmlFor` / `<label for>` target it) and the hidden input gets `${id}-input`.
+   * @default "dropzone"
+   */
+  variant?: FileUploadVariant;
+  /** `variant="button"`: Button variant. @default "outlineSecondary" */
+  buttonVariant?: ButtonOnlyProps["variant"];
+  /** `variant="button"`: Button size. @default "md" */
+  buttonSize?: ButtonOnlyProps["size"];
+  /**
+   * `variant="button"`: extra props for the `Button` (e.g. `data-testid`, `ariaLabel`, `className`,
+   * `iconPosition`). `onClick`, `disabled`, `id` and `children` are managed.
+   */
+  buttonProps?: Omit<ButtonOnlyProps, "onClick" | "disabled" | "id" | "children" | "href" | "type"> & {
+    [dataAttr: `data-${string}`]: string | undefined;
+  };
   /** Secondary line under the label */
   description?: string;
   /** Shown below the zone; use with `aria-invalid` via `errorMessage` */
@@ -49,7 +73,8 @@ export interface FileUploadProps extends Omit<HTMLAttributes<HTMLDivElement>, "o
   clearInputAfterSelect?: boolean;
   size?: FileUploadSize;
   /**
-   * Icon above the label. Omit for default upload glyph; pass `null` to hide.
+   * Icon above the label (dropzone) or inside the button (`variant="button"`). Omit for the default
+   * upload glyph; pass `null` to hide. In button mode it is passed to `Button` `icon` (element / src).
    */
   icon?: ReactNode | null;
   id?: string;
