@@ -112,7 +112,7 @@ const SwitchBase = React.forwardRef<HTMLButtonElement, SwitchProps>(function Swi
       height: thumbSize,
       borderRadius: "50%",
       backgroundColor: COLORS.thumb,
-      boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+      boxShadow: "var(--shadow-thumb, 0 1px 3px rgba(0, 0, 0, 0.2))",
       transform: `translateX(${thumbX}px)`,
       transition: "transform 160ms ease",
     }),

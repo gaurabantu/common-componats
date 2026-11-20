@@ -49,7 +49,7 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       description:
-        'Sets data-theme on <html> — classic (none), blue, dark, green, mist, custom, blue-mist, green-mist (tokens.css)',
+        'Sets data-theme on <html> — classic (none), blue, dark, green, mist, custom, blue-mist, green-mist, infinia-light, infinia-dark (tokens.css)',
       defaultValue: "light",
       toolbar: {
         title: "Theme",
@@ -63,6 +63,8 @@ const preview: Preview = {
           { value: "custom", title: "Custom (rose)", icon: "heart" },
           { value: "blue-mist", title: "Blue + mist", icon: "bookmark" },
           { value: "green-mist", title: "Green + mist", icon: "component" },
+          { value: "infinia-light", title: "Infinia (Forma) light", icon: "sun" },
+          { value: "infinia-dark", title: "Infinia (Forma) dark", icon: "moon" },
         ],
         dynamicTitle: true,
       },

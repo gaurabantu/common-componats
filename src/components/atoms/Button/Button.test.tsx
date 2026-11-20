@@ -276,4 +276,29 @@ describe("Button", () => {
       expect(warn).not.toHaveBeenCalled();
     });
   });
+
+  describe("unstyled", () => {
+    it("drops the design-system surface and keeps the caller's className", () => {
+      render(
+        <Button unstyled variant="ghost" size="xs" className="flex w-full justify-start px-3">
+          Row
+        </Button>,
+      );
+      const btn = screen.getByRole("button", { name: "Row" });
+      expect(btn).toHaveClass("btn-unstyled", "flex", "w-full", "justify-start", "px-3");
+      expect(btn).not.toHaveClass("btn-base");
+      expect(btn).not.toHaveClass("btn-ghost");
+      expect(btn).not.toHaveClass("btn-size-xs");
+      expect(btn).not.toHaveClass("btn-rounded-md");
+    });
+
+    it("renders children directly (no ripple wrapper) and still handles clicks", async () => {
+      const onClick = vi.fn();
+      render(<Button unstyled onClick={onClick}><span data-testid="kid">Item</span></Button>);
+      const btn = screen.getByRole("button", { name: "Item" });
+      expect(screen.getByTestId("kid").parentElement).toBe(btn);
+      await userEvent.click(btn);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
 });

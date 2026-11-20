@@ -176,30 +176,34 @@
 
 .app-topbar__badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  /* Sits on the icon's top-right corner (icon is 20px centred in a 44px button), not over it. */
+  top: 7px;
+  right: 7px;
   min-width: 8px;
   height: 8px;
-  padding: 0 4px;
+  padding: 0;
   border-radius: 9999px;
   font-size: 10px;
   font-weight: 600;
-  line-height: 8px;
-  color: var(--color-text-on-accent);
-  background: var(--color-state-error);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-badge-fg, var(--color-text-on-accent));
+  background: var(--color-badge-bg, var(--color-state-error));
+  /* Cut-out ring in the bar colour so the badge never blends into the icon stroke. */
+  box-shadow: 0 0 0 2px var(--app-topbar-bg, var(--color-bg-surface));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 .app-topbar__badge--count {
   min-width: 16px;
   height: 16px;
-  line-height: 16px;
-  top: 4px;
-  right: 4px;
+  padding: 0 4px;
+  top: 3px;
+  right: 1px;
 }
 
 .app-topbar__profile {

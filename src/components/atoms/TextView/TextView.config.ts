@@ -12,26 +12,26 @@ import {
 } from "./TextView.types";
 
 export const variantClassMap: Record<TextVariant, string> = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro",
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro",
 };
 
 /** Same as variant for fontSize override (design token scale). */
 export const fontSizeClassMap: Record<FontSize, string> = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro",
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro",
 };
 
 export const fontWeightClassMap: Record<FontWeight, string> = {
@@ -72,13 +72,13 @@ export const defaultTagByVariant: Record<TextVariant, TextTag> = {
 };
 
 export const colorClassMap: Record<TextColor, string> = {
-  primary: "text-text-primary",
-  secondary: "text-text-secondary",
-  hint: "text-text-secondary",
-  disabled: "text-text-secondary",
-  success: "text-state-success",
-  warning: "text-state-warning",
-  error: "text-state-error",
+  primary: "tv-color-primary",
+  secondary: "tv-color-secondary",
+  hint: "tv-color-secondary",
+  disabled: "tv-color-secondary",
+  success: "tv-color-success",
+  warning: "tv-color-warning",
+  error: "tv-color-error",
   inherit: "",
 };
 

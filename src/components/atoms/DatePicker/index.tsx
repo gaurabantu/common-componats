@@ -463,7 +463,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     border: "1px solid var(--color-border-default)",
     background: "var(--color-bg-surface)",
     boxShadow:
-      "0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 10px 24px -4px rgba(15, 23, 42, 0.1)",
+      "var(--shadow-popover, 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 10px 24px -4px rgba(15, 23, 42, 0.1))",
     transformOrigin: "top left",
     opacity: 1,
     transition: "opacity 150ms ease-out, transform 150ms ease-out",

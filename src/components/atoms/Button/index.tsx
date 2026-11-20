@@ -78,6 +78,7 @@ const ButtonImpl = React.forwardRef<ButtonElement, ButtonProps>(function Button(
   preserveIconColor = false,
   ripple = true,
   expandOnHover = false,
+  unstyled = false,
   loadingText = "Loading",
   href,
   ...rest
@@ -143,7 +144,9 @@ const ButtonImpl = React.forwardRef<ButtonElement, ButtonProps>(function Button(
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
 
-  const baseClass = [
+  const baseClass = unstyled
+    ? ["btn-unstyled", loading ? "btn-loading" : "", className].filter(Boolean).join(" ")
+    : [
     "btn-base",
     variantClassNames,
     sizeClassNames,
@@ -157,8 +160,8 @@ const ButtonImpl = React.forwardRef<ButtonElement, ButtonProps>(function Button(
     isExpandable ? "btn-expand-on-hover" : "",
     className,
   ]
-    .filter(Boolean)
-    .join(" ");
+      .filter(Boolean)
+      .join(" ");
 
   const iconSizeDefaults =
     isIconOnly
@@ -244,7 +247,8 @@ const ButtonImpl = React.forwardRef<ButtonElement, ButtonProps>(function Button(
   const ariaBusy = loading ? true : restAria["aria-busy"];
   const describedBy =
     [restAria["aria-describedby"], loading ? loadingId : undefined].filter(Boolean).join(" ") || undefined;
-  const rippleEnabled = ripple !== false && !isDisabled;
+  // `unstyled` controls own their layout; the ripple wrapper span would break flex rows.
+  const rippleEnabled = ripple !== false && !isDisabled && !unstyled;
   const rippleApi = useRipple(rippleEnabled);
 
   const pointerDown =

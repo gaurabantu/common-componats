@@ -56,7 +56,7 @@
 }
 .app-sidebar--narrow.app-sidebar--drawer-open.app-sidebar--fixed {
   z-index: 100;
-  box-shadow: 8px 0 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var( --shadow-drawer, 8px 0 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06) );
 }
 .app-sidebar__backdrop {
   position: fixed;
@@ -66,7 +66,7 @@
   padding: 0;
   border: none;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.48);
+  background: var(--color-scrim, rgba(0, 0, 0, 0.48));
   -webkit-tap-highlight-color: transparent;
 }
 .app-sidebar__backdrop:focus {
@@ -588,8 +588,42 @@
   color: var(--sidebar-text);
   background: var(--noir-3);
   border: 1px solid var(--sidebar-border-strong);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-drawer, 0 4px 20px rgba(0, 0, 0, 0.45));
   white-space: nowrap;
+}
+.app-sidebar--compact {
+  --sidebar-icon: 18px;
+  --sidebar-item-gap: 2px;
+  --sidebar-section-gap: 20px;
+}
+.app-sidebar--compact .app-sidebar__link,
+.app-sidebar--compact .app-sidebar__parent {
+  gap: 12px;
+  min-height: 32px;
+  padding: 6px var(--sidebar-pad-x);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--sidebar-text);
+}
+.app-sidebar--compact .app-sidebar__section-label {
+  letter-spacing: 0.1em;
+}
+.app-sidebar--compact .app-sidebar__link:hover:not(:disabled),
+.app-sidebar--compact .app-sidebar__parent:hover:not(:disabled),
+.app-sidebar--compact .app-sidebar__link--active,
+.app-sidebar--compact .app-sidebar__parent--active {
+  color: var(--sidebar-text);
+}
+.app-sidebar--compact .app-sidebar__link--active,
+.app-sidebar--compact .app-sidebar__parent--active {
+  font-weight: 500;
+}
+.app-sidebar--compact .app-sidebar__item-icon svg {
+  stroke-width: 1.75;
+}
+.app-sidebar--compact.app-sidebar--collapsed .app-sidebar__link,
+.app-sidebar--compact.app-sidebar--collapsed .app-sidebar__parent {
+  padding: 6px;
 }
 
 /* src/components/atoms/Button/Button.css */
@@ -604,6 +638,16 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+}
+:where(button, a).btn-unstyled {
+  cursor: pointer;
+}
+:where(button, a).btn-unstyled:is(:disabled, [aria-disabled="true"]) {
+  cursor: not-allowed;
+}
+:where(button, a).btn-unstyled:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring);
+  outline-offset: 2px;
 }
 
 /* src/components/atoms/TextInputSearch/TextInputSearch.css */
@@ -1015,29 +1059,31 @@
 }
 .app-topbar__badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 7px;
+  right: 7px;
   min-width: 8px;
   height: 8px;
-  padding: 0 4px;
+  padding: 0;
   border-radius: 9999px;
   font-size: 10px;
   font-weight: 600;
-  line-height: 8px;
-  color: var(--color-text-on-accent);
-  background: var(--color-state-error);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-badge-fg, var(--color-text-on-accent));
+  background: var(--color-badge-bg, var(--color-state-error));
+  box-shadow: 0 0 0 2px var(--app-topbar-bg, var(--color-bg-surface));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 .app-topbar__badge--count {
   min-width: 16px;
   height: 16px;
-  line-height: 16px;
-  top: 4px;
-  right: 4px;
+  padding: 0 4px;
+  top: 3px;
+  right: 1px;
 }
 .app-topbar__profile {
   display: inline-flex;

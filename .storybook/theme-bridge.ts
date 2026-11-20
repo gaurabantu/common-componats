@@ -20,7 +20,9 @@ export type ToolbarTheme =
   | "mist"
   | "custom"
   | "blue-mist"
-  | "green-mist";
+  | "green-mist"
+  | "infinia-light"
+  | "infinia-dark";
 
 export const TOOLBAR_THEMES: readonly ToolbarTheme[] = [
   "light",
@@ -31,6 +33,8 @@ export const TOOLBAR_THEMES: readonly ToolbarTheme[] = [
   "custom",
   "blue-mist",
   "green-mist",
+  "infinia-light",
+  "infinia-dark",
 ] as const;
 
 /**
@@ -60,9 +64,9 @@ export function readToolbarTheme(globals: Record<string, unknown> | undefined): 
   return typeof t === "string" && t.length ? t : "light";
 }
 
-/** Storybook manager `create({ base })` — only `dark` uses SB dark math. */
+/** Storybook manager `create({ base })` — `dark` and `infinia-dark` use SB dark math. */
 export function storybookChromeBase(toolbarTheme: string): "light" | "dark" {
-  return toolbarTheme === "dark" ? "dark" : "light";
+  return toolbarTheme === "dark" || toolbarTheme === "infinia-dark" ? "dark" : "light";
 }
 
 export function isMistSurfaceFamily(toolbarTheme: string): boolean {

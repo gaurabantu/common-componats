@@ -1,0 +1,20 @@
+/* TextView — type scale + semantic colours as real CSS.
+   Before 0.0.5 these came from the Tailwind preset (`text-small`, `text-text-secondary`…),
+   so an app that did not load the preset rendered every TextView at 16px body colour.
+   Single-class selectors (specificity 0,1,0) loaded before the consumer's utilities,
+   so a `className` such as `text-xs` or `text-fg-muted` still overrides them. */
+
+.tv-h1 { font-size: var(--text-h1-size); line-height: var(--text-h1-line-height, 1.5); font-weight: var(--text-h1-weight); }
+.tv-h2 { font-size: var(--text-h2-size); line-height: var(--text-h2-line-height, 1.5); font-weight: var(--text-h2-weight); }
+.tv-h3 { font-size: var(--text-h3-size); line-height: 1.5; font-weight: var(--text-h3-weight); }
+.tv-h4 { font-size: var(--text-h4-size); line-height: 1.5; font-weight: var(--text-h4-weight); }
+.tv-body { font-size: var(--text-body-size); line-height: var(--text-body-line-height, 1.5); font-weight: var(--text-body-weight); }
+.tv-secondary { font-size: var(--text-secondary-size); line-height: 1.5; }
+.tv-small { font-size: var(--text-small-size); line-height: 1.5; }
+.tv-micro { font-size: var(--text-micro-size); line-height: 1.4; font-weight: var(--text-micro-weight); }
+
+.tv-color-primary { color: var(--color-text-primary); }
+.tv-color-secondary { color: var(--color-text-secondary); }
+.tv-color-success { color: var(--color-state-success); }
+.tv-color-warning { color: var(--color-state-warning); }
+.tv-color-error { color: var(--color-state-error); }

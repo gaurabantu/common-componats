@@ -88,12 +88,12 @@ const CheckboxBase = React.forwardRef<HTMLInputElement, CheckboxProps>(function 
   });
 
   const colors = {
-    brand: "var(--color-brand-primary)",
+    brand: "var(--color-control-checked-border, var(--color-brand-primary))",
     textPrimary: "var(--color-text-primary)",
     textSecondary: "var(--color-text-secondary)",
     bgSurface: "var(--color-bg-surface)",
     borderDefault: "var(--color-border-default)",
-    accentLavender: "var(--color-accent-lavender-10)",
+    accentLavender: "var(--color-selected-bg, var(--color-accent-lavender-10))",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))",
   } as const;
 

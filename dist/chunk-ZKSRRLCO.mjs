@@ -1,31 +1,31 @@
 import {
   TextInputSearch_default,
   search_default
-} from "./chunk-QWEACOCP.mjs";
+} from "./chunk-EHTTS7LB.mjs";
 
 // src/components/atoms/TextView/index.tsx
 import React from "react";
 
 // src/components/atoms/TextView/TextView.config.ts
 var variantClassMap = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro"
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro"
 };
 var fontSizeClassMap = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro"
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro"
 };
 var fontWeightClassMap = {
   normal: "font-normal",
@@ -61,13 +61,13 @@ var defaultTagByVariant = {
   micro: "small"
 };
 var colorClassMap = {
-  primary: "text-text-primary",
-  secondary: "text-text-secondary",
-  hint: "text-text-secondary",
-  disabled: "text-text-secondary",
-  success: "text-state-success",
-  warning: "text-state-warning",
-  error: "text-state-error",
+  primary: "tv-color-primary",
+  secondary: "tv-color-secondary",
+  hint: "tv-color-secondary",
+  disabled: "tv-color-secondary",
+  success: "tv-color-success",
+  warning: "tv-color-warning",
+  error: "tv-color-error",
   inherit: ""
 };
 var alignClassMap = {
@@ -238,12 +238,12 @@ var CheckboxBase = React2.forwardRef(function Checkbox({
       inputRef.current.indeterminate = indeterminate;
   });
   const colors = {
-    brand: "var(--color-brand-primary)",
+    brand: "var(--color-control-checked-border, var(--color-brand-primary))",
     textPrimary: "var(--color-text-primary)",
     textSecondary: "var(--color-text-secondary)",
     bgSurface: "var(--color-bg-surface)",
     borderDefault: "var(--color-border-default)",
-    accentLavender: "var(--color-accent-lavender-10)",
+    accentLavender: "var(--color-selected-bg, var(--color-accent-lavender-10))",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const isOn = checked || indeterminate;
@@ -1546,4 +1546,4 @@ export {
   TableCell,
   Table_default
 };
-//# sourceMappingURL=chunk-VZX4BVBH.mjs.map
+//# sourceMappingURL=chunk-ZKSRRLCO.mjs.map

@@ -272,6 +272,7 @@ var ButtonImpl = React3.forwardRef(function Button({
   preserveIconColor = false,
   ripple = true,
   expandOnHover = false,
+  unstyled = false,
   loadingText = "Loading",
   href,
   ...rest
@@ -324,7 +325,7 @@ var ButtonImpl = React3.forwardRef(function Button({
     styleOverrides["--button-gradient-hover-bg"] = gradientHover || gradient;
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
-  const baseClass = [
+  const baseClass = unstyled ? ["btn-unstyled", loading ? "btn-loading" : "", className].filter(Boolean).join(" ") : [
     "btn-base",
     variantClassNames,
     sizeClassNames,
@@ -396,7 +397,7 @@ var ButtonImpl = React3.forwardRef(function Button({
   const isDisabled = nativeDisabled || loading;
   const ariaBusy = loading ? true : restAria["aria-busy"];
   const describedBy = [restAria["aria-describedby"], loading ? loadingId : void 0].filter(Boolean).join(" ") || void 0;
-  const rippleEnabled = ripple !== false && !isDisabled;
+  const rippleEnabled = ripple !== false && !isDisabled && !unstyled;
   const rippleApi = useRipple(rippleEnabled);
   const pointerDown = (e) => {
     rippleApi.onPointerDown(e);
@@ -1621,7 +1622,8 @@ var TextInputSearch = React5.forwardRef(function TextInputSearch2({
   suffix,
   trailingRail: trailingRailProp,
   pattern,
-  autoCorrection = false
+  autoCorrection = false,
+  autoComplete = "off"
 }, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
@@ -1733,6 +1735,7 @@ var TextInputSearch = React5.forwardRef(function TextInputSearch2({
             validation: "headerSearch",
             pattern,
             autoCorrection,
+            autoComplete,
             value,
             onChange,
             errorMessage,
@@ -1781,4 +1784,4 @@ export {
   TextInput_default,
   TextInputSearch_default
 };
-//# sourceMappingURL=chunk-QWEACOCP.mjs.map
+//# sourceMappingURL=chunk-EHTTS7LB.mjs.map

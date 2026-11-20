@@ -80,9 +80,9 @@
 }
 
 .ucs-cc-checkbox-native:checked + .ucs-cc-checkbox-face {
-  border-color: var(--color-brand-primary);
-  background-color: var(--color-brand-primary);
-  color: var(--color-bg-surface);
+  border-color: var(--color-control-checked-border, var(--color-brand-primary));
+  background-color: var(--color-control-checked-bg, var(--color-brand-primary));
+  color: var(--color-control-checked-fg, var(--color-bg-surface));
   animation: ucs-cc-checkbox-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -129,7 +129,7 @@
 @keyframes ucs-cc-radio-ring {
   0% {
     transform: scale(0.92);
-    box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.25);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-focus-ring) 25%, transparent);
   }
   100% {
     transform: scale(1);
@@ -171,7 +171,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--color-brand-primary);
+  background-color: var(--color-control-checked-fg, var(--color-brand-primary));
   transform: scale(0);
   opacity: 0;
   transition:
@@ -180,7 +180,8 @@
 }
 
 .ucs-cc-radio-native:checked + .ucs-cc-radio-face {
-  border-color: var(--color-brand-primary);
+  border-color: var(--color-control-checked-border, var(--color-brand-primary));
+  background-color: var(--color-control-checked-bg-radio, var(--color-bg-surface));
   animation: ucs-cc-radio-ring 0.38s ease-out;
 }
 

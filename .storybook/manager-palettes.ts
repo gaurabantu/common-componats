@@ -97,6 +97,56 @@ export const DARK: ManagerPalette = {
   booleanSelectedBg: "#2563eb",
 };
 
+/** tokens.css — `[data-theme="infinia-light"]` (Forma UI v1.1.0) */
+export const INFINIA_LIGHT: ManagerPalette = {
+  sbBase: "light",
+  appBg: "#ffffff",
+  appContentBg: "#ffffff",
+  appPreviewBg: "#ffffff",
+  appBorderColor: "#e5e5e5",
+  textColor: "#111111",
+  textMutedColor: "#454545",
+  textInverseColor: "#111111",
+  barBg: "#ffffff",
+  barTextColor: "#111111",
+  barHoverColor: "#6b5900",
+  barSelectedColor: "#6b5900",
+  colorPrimary: "#ffd400",
+  colorSecondary: "#6b5900",
+  inputBg: "#ffffff",
+  inputBorder: "#bdbdbd",
+  inputTextColor: "#111111",
+  buttonBg: "#ffffff",
+  buttonBorder: "#bdbdbd",
+  booleanBg: "#f5f5f5",
+  booleanSelectedBg: "#ffd400",
+};
+
+/** tokens.css — `[data-theme="infinia-dark"]` (Forma UI v1.1.0) */
+export const INFINIA_DARK: ManagerPalette = {
+  sbBase: "dark",
+  appBg: "#111111",
+  appContentBg: "#191919",
+  appPreviewBg: "#111111",
+  appBorderColor: "#363636",
+  textColor: "#ffffff",
+  textMutedColor: "#d0d0d0",
+  textInverseColor: "#111111",
+  barBg: "#191919",
+  barTextColor: "#ffffff",
+  barHoverColor: "#ffd400",
+  barSelectedColor: "#ffd400",
+  colorPrimary: "#ffd400",
+  colorSecondary: "#ffd400",
+  inputBg: "#191919",
+  inputBorder: "#5b5b5b",
+  inputTextColor: "#ffffff",
+  buttonBg: "#191919",
+  buttonBorder: "#5b5b5b",
+  booleanBg: "#202020",
+  booleanSelectedBg: "#ffd400",
+};
+
 /** tokens.css §42 interaction accents — `--color-theme-primary` per named theme */
 const ACCENT_PRIMARY: Partial<Record<ToolbarTheme, string>> = {
   green: "#15803d",
@@ -107,6 +157,8 @@ const ACCENT_PRIMARY: Partial<Record<ToolbarTheme, string>> = {
 
 export function resolveManagerPalette(toolbarTheme: string): ManagerPalette {
   if (toolbarTheme === "dark") return DARK;
+  if (toolbarTheme === "infinia-light") return INFINIA_LIGHT;
+  if (toolbarTheme === "infinia-dark") return INFINIA_DARK;
 
   const base =
     toolbarTheme === "mist" ||

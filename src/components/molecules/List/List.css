@@ -42,8 +42,8 @@
 }
 
 .ds-list-item[data-selected="true"] {
-  background: var(--color-interactive-row-hover);
-  box-shadow: inset 3px 0 0 var(--color-text-primary);
+  background: var(--color-selected-bg, var(--color-interactive-row-hover));
+  box-shadow: inset 3px 0 0 var(--color-selected-indicator, var(--color-text-primary));
 }
 
 .ds-list-item[data-disabled="true"] {

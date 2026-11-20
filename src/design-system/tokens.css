@@ -33,8 +33,13 @@
  * Foundations used by every theme (and by the Tailwind preset: gap-*, p-*, rounded-*, text-h2, …).
  * Theme blocks below only override semantic colours / button mappings.
  * Inter loads above; override `--font-family` in the host app to use a different UI font.
+ *
+ * `[data-theme="classic"]` re-declares the classic (default) palette on a nested element, so a
+ * region can keep the classic look while the document runs another theme (e.g. a public page
+ * inside an infinia app). On the root itself classic is simply "no data-theme".
  */
-:root {
+:root,
+[data-theme="classic"] {
   /* SPACING (8pt Grid) — micro gap only inside components (§7) */
   --space-0: 4px;
   --space-1: 8px;
@@ -322,6 +327,11 @@ select {
 [data-theme="blue"],
 .theme-blue {
   --color-brand-primary: #0d0d0d;
+  /* Inverse surface (strong header bar, chip, chat bubble) and the text on it. Default: the brand
+     colour with on-primary text, as before. A dark theme can set a raised dark surface instead of a
+     white bar (see infinia-dark). */
+  --color-surface-inverse: var(--color-brand-primary);
+  --color-text-on-inverse: var(--color-text-on-primary);
   --color-brand-secondary: #ff4d00;
   --color-brand-link: #002475;
 
@@ -467,10 +477,34 @@ select {
   --app-shell-topbar-active-bg: rgba(0, 0, 0, 0.07);
   --app-shell-topbar-focus-ring: var(--color-focus-ring);
   --app-shell-topbar-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+
+  /* Secondary fill (light table header, pagination hover) — was referenced but never defined */
+  --color-bg-secondary: var(--color-mist-40);
+
+  /*
+   * App sidebar rail — Noir governance rail (DESIGN_SYSTEM.md). Every theme sets the full
+   * `--app-sidebar-*` set, so AppSidebar never needs a `tokens` prop for colour.
+   */
+  --app-sidebar-tone-0: #0d0d0d;
+  --app-sidebar-tone-1: #1a1a1a;
+  --app-sidebar-tone-2: #262626;
+  --app-sidebar-tone-3: #323232;
+  --app-sidebar-fg: #ffffff;
+  --app-sidebar-fg-muted: rgba(255, 255, 255, 0.6);
+  --app-sidebar-hover: rgba(255, 255, 255, 0.08);
+  --app-sidebar-active-bg: rgba(255, 255, 255, 0.12);
+  --app-sidebar-active-tint: rgba(255, 255, 255, 0.04);
+  --app-sidebar-focus: var(--color-focus-ring);
+  --app-sidebar-border: rgba(255, 255, 255, 0.08);
+  --app-sidebar-border-strong: rgba(255, 255, 255, 0.1);
+  --app-sidebar-nav-icon: rgba(255, 255, 255, 0.6);
+  --app-sidebar-nav-icon-active: #ffffff;
+  --app-sidebar-utility-icon: rgba(255, 255, 255, 0.6);
+  --app-sidebar-create-dash: rgba(255, 255, 255, 0.12);
 }
 
 /* ========== DARK MODE ========== */
-[data-theme="dark"],
+:is([data-theme="dark"], [data-theme="infinia-dark"]),
 .dark {
   --color-brand-primary: #FFFFFF;
   --color-brand-secondary: #FF6B35;
@@ -493,6 +527,12 @@ select {
   --color-state-info: #60a5fa;
 
   --color-surface-mist: #374151;
+  /* Mist scale = neutral fills — dark steps above the #1F2937 surface so no fill turns white. */
+  --color-mist-20: #1a2230;
+  --color-mist-40: #243041;
+  --color-mist-60: #2d3a4d;
+  --color-mist-80: #374151;
+  --color-mist-100: #4b5563;
   --color-border-subtle: var(--color-surface-mist);
 
   --color-fill-muted: var(--color-surface-mist);
@@ -528,6 +568,7 @@ select {
 
   --color-bg-elevated: #1f2937;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  --color-bg-secondary: var(--color-surface-mist);
 
   /* White label needs 4.5:1 — #3b82f6 was 3.68:1. Button fills only; --color-theme-* (links, accents) unchanged. */
   --button-primary-default-bg: #2563eb; /* 5.17:1 */
@@ -727,6 +768,455 @@ select {
   --app-shell-topbar-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
+/* ========== INFINIA (Xalion "Forma UI" v1.1.0 palette on our token names) ==========
+ * <html data-theme="infinia-light"> / <html data-theme="infinia-dark">.
+ * Values come from the Forma tokens; keys stay ours so no component API changes.
+ * Scope: colour, shadow, motion and gradient only — spacing, sizes, radii and type are untouched.
+ * Yellow primary always carries near-black text (#111111). Forma has no info hue, link colour or
+ * orange accent: info maps to Forma neutrals, links to primary-text (#6B5900 / #FFD400) and the
+ * orange brand-secondary to primary yellow. Selection (lavender / sky / selected border) maps to
+ * Forma primary-subtle (#FFFBE5 / #2A250B) with a #FFD400 edge.
+ * infinia-dark also matches every `[data-theme="dark"]` rule, then overrides colours here. */
+
+/* Shared by both infinia modes: neutral reference scales (Forma gray), brand, motion, gradient. */
+:root[data-theme="infinia-light"],
+[data-theme="infinia-light"],
+.theme-infinia-light,
+:root[data-theme="infinia-dark"],
+[data-theme="infinia-dark"],
+.theme-infinia-dark {
+  /* Core Noir → Forma gray */
+  /* Count / dot badges (AppTopbar…) — Forma yellow pill with ink text, both modes */
+  --color-badge-bg: #ffd400;
+  --color-badge-fg: #111111;
+
+  --color-noir-100: #111111;
+  --color-noir-80: #262626;
+  --color-noir-60: #737373;
+  --color-noir-40: #a3a3a3;
+  --color-noir-20: #d4d4d4;
+
+  /* Neutron Ash → Forma gray */
+  --color-gray-100: #525252;
+  --color-gray-80: #737373;
+  --color-gray-60: #a3a3a3;
+  --color-gray-40: #d4d4d4;
+  --color-gray-20: #e8e8e8;
+
+  /* Brand: Forma has no orange — secondary accent is primary yellow */
+  --color-brand-secondary: #ffd400;
+
+  /* Primary filled button */
+  --color-bg-button-primary: var(--color-theme-primary);
+  --button-primary-default-bg: var(--color-theme-primary);
+  --button-primary-default-text: var(--color-theme-text);
+  --button-primary-hover-bg: var(--color-theme-hover);
+  --button-primary-active-bg: var(--color-theme-active);
+  --button-primary-disabled-bg: var(--color-theme-disabled);
+  --button-primary-disabled-text: #8f7700;
+  --button-primary-focus-ring: var(--color-focus-ring);
+
+  /* Gradient button default = Forma brand gradient (per-instance props still win) */
+  --button-gradient-bg: linear-gradient(135deg, #ffe86b 0%, #ffd400 65%, #d6af00 100%);
+
+  /* Switch */
+  --switch-track-on: var(--color-theme-primary);
+  --switch-border-on: var(--color-theme-primary);
+  --switch-focus-ring: var(--color-focus-ring);
+
+  /* Motion (Forma) */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --easing-default: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:root[data-theme="infinia-light"],
+[data-theme="infinia-light"],
+.theme-infinia-light {
+  color-scheme: light;
+  /* Ion Mist → Forma gray */
+  --color-mist-20: #fafafa;
+  --color-mist-40: #f5f5f5;
+  --color-mist-60: #e8e8e8;
+  --color-mist-80: #e5e5e5;
+  --color-mist-100: #d4d4d4;
+
+  /* Text */
+  --color-brand-primary: #111111;
+  --color-text-primary: #111111;
+  --color-text-secondary: #454545;
+  --color-text-disabled: #a3a3a3;
+  --color-text-on-accent: #111111;
+  --color-text-on-primary: #ffffff; /* on noir / green / red fills */
+  --color-text-on-primary-inverse: #111111;
+
+  /* Links (Forma primary-text) */
+  --color-brand-link: #6b5900;
+  --color-text-link: #6b5900;
+  --button-link-color: #6b5900;
+  --button-link-hover-color: #574900;
+
+  /* Surfaces */
+  --color-bg-page: #ffffff;
+  --color-bg-surface: #ffffff;
+  --color-bg-sidebar: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-bg-secondary: #fafafa;
+  --color-surface-mist: #e8e8e8;
+  --color-fill-muted: #f5f5f5;
+  --color-fill-surface: #ffffff;
+  --color-interactive-row-hover: #f5f5f5;
+
+  /* Borders + focus */
+  --color-border-default: #bdbdbd;
+  --color-border-subtle: #e5e5e5;
+  --color-border-interactive: #626262;
+  --color-border-strong: #626262;
+  --color-border-selected: #ffd400;
+  --color-border-error: #b42318;
+  --color-border-focus: #6b5900;
+  --color-focus-ring: #6b5900;
+
+  /* Interaction theme = Forma primary yellow */
+  --color-theme-primary: #ffd400;
+  --color-theme-hover: #ebc400;
+  --color-theme-active: #c7a600;
+  --color-theme-disabled: #fff0a3;
+  --color-theme-text: #111111;
+  --color-theme-surface-hover: #f5f5f5;
+
+  /* Status */
+  --color-state-success: #039855;
+  --color-state-warning: #f79009;
+  --color-state-error: #d92d20;
+  --color-state-info: #525252;
+  --color-accent-mint-fg: #027a48;
+  --color-accent-mint-10: #ecfdf3;
+  --color-accent-mint-40: #a6f4c5;
+  --color-accent-amber-fg: #93370d;
+  --color-accent-amber-10: #fffaeb;
+  --color-accent-amber-40: #fedf89;
+  --color-accent-rose-fg: #b42318;
+  --color-accent-rose-10: #fef3f2;
+  --color-accent-rose-40: #fecdca;
+  /* Info → Forma neutrals (no info hue in Forma) */
+  --color-accent-sky-fg: #525252;
+  --color-accent-sky-10: #f5f5f5;
+  --color-accent-sky-40: #d4d4d4;
+  /* Selection → Forma primary-subtle / primary-text */
+  --color-accent-lavender-fg: #6b5900;
+  --color-accent-lavender-10: #fffbe5;
+  --color-accent-lavender-40: #ffe775;
+
+  /* Secondary — Forma secondary: white fill + #BDBDBD border */
+  --button-secondary-bg: #ffffff;
+  --button-secondary-text: #111111;
+  --button-secondary-border-color: #bdbdbd;
+  --button-secondary-hover-bg: #f5f5f5;
+  --button-secondary-hover-border-color: #9e9e9e;
+  --button-secondary-active-bg: #e8e8e8;
+  --button-secondary-active-border-color: #9e9e9e;
+  --button-secondary-disabled-bg: #ffffff;
+  --button-secondary-disabled-text: #a3a3a3;
+  --button-secondary-disabled-border-color: #e5e5e5;
+
+  /* Outline buttons */
+  --button-outline-primary-border: #111111;
+  --button-outline-primary-text: #111111;
+  --button-outline-primary-hover-bg: #f5f5f5;
+  --button-outline-primary-active-bg: #e8e8e8;
+  --button-outline-secondary-border: #bdbdbd;
+  --button-outline-secondary-text: #454545;
+  --button-outline-secondary-hover-bg: #f5f5f5;
+  --button-outline-secondary-active-bg: #e8e8e8;
+
+  /* Status buttons — Forma success / warning / error scales */
+  --button-success-bg: #039855;
+  --button-success-text: #ffffff;
+  --button-success-hover-bg: #027a48;
+  --button-success-active-bg: #05603a;
+  --button-success-disabled-bg: #a6f4c5;
+  --button-success-disabled-text: #027a48;
+  --button-warning-bg: #f79009;
+  --button-warning-text: #111111;
+  --button-warning-hover-bg: #dc6803;
+  --button-warning-active-bg: #b54708;
+  --button-warning-disabled-bg: #fedf89;
+  --button-warning-disabled-text: #93370d;
+  --button-danger-bg: #d92d20;
+  --button-danger-text: #ffffff;
+  --button-danger-hover-bg: #b42318;
+  --button-danger-active-bg: #912018;
+  --button-danger-disabled-bg: #fecdca;
+  --button-danger-disabled-text: #b42318;
+  --button-destructive-bg: #d92d20;
+  --button-destructive-hover-bg: #b42318;
+
+  /* Switch */
+  --switch-track-off: #e8e8e8;
+  --switch-border-off: #bdbdbd;
+  --switch-thumb: #ffffff;
+
+  /* App shell — top bar (same soft gray as the sidebar rail, so the chrome reads as one frame) */
+  --app-shell-topbar-bg: #f7f7f7;
+  --app-shell-topbar-bg-elevated: #ededed;
+  --app-shell-topbar-search-shell: #ededed;
+  --app-shell-topbar-text: #111111;
+  --app-shell-topbar-text-muted: #454545;
+  --app-shell-topbar-border: #e5e5e5;
+  --app-shell-topbar-hover: #ededed;
+  --app-shell-topbar-active-bg: #fffbe5;
+  --app-shell-topbar-focus-ring: #6b5900;
+  --app-shell-topbar-shadow: 0 1px 0 #e5e5e5;
+
+  /* App shell — sidebar (Forma nav: soft gray rail #f7f7f7, text #3d3d3d, headings/icons #5c5c5c,
+     hover one step darker, active primary-subtle + primary-text) */
+  --app-sidebar-tone-0: #f7f7f7;
+  --app-sidebar-tone-1: #f7f7f7;
+  --app-sidebar-tone-2: #ededed;
+  --app-sidebar-tone-3: #e8e8e8;
+  --app-sidebar-fg: #3d3d3d;
+  --app-sidebar-fg-muted: #5c5c5c;
+  --app-sidebar-hover: #ededed;
+  --app-sidebar-active-bg: #fffbe5;
+  --app-sidebar-active-tint: #fff0a3;
+  --app-sidebar-focus: #6b5900;
+  --app-sidebar-border: #e5e5e5;
+  --app-sidebar-border-strong: #bdbdbd;
+  --app-sidebar-nav-icon: #5c5c5c;
+  --app-sidebar-nav-icon-active: #6b5900;
+  --app-sidebar-utility-icon: #5c5c5c;
+  --app-sidebar-create-dash: #bdbdbd;
+
+  /* Role tokens — selection / controls / feedback (consumed by components with classic fallbacks) */
+  --color-selected-bg: #fffbe5;
+  --color-selected-indicator: #ffd400;
+  --color-selected-text: #6b5900;
+  --color-tab-indicator: #ffd400;
+  --color-control-checked-bg: #ffd400;
+  --color-control-checked-border: #ffd400;
+  --color-control-checked-fg: #111111;
+  --color-control-checked-bg-radio: #ffd400;
+  --color-page-current-bg: #ffd400;
+  --color-page-current-fg: #111111;
+  --color-step-current-ring: #ffd400;
+  --color-today-ring: #ffd400;
+  --color-progress-glow: rgba(255, 212, 0, 0.45);
+  --color-border-soft: #e5e5e5;
+  --color-scrim: rgba(17, 17, 17, 0.5);
+  --shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-tab-active: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-popover: 0 12px 16px -4px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.06);
+  --shadow-drawer: 0 12px 16px -4px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.06);
+
+  /* Shadows (Forma) — xl extends Forma lg one step */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 16px -4px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 20px 24px -4px rgba(0, 0, 0, 0.14), 0 8px 8px -4px rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="infinia-dark"],
+[data-theme="infinia-dark"],
+.theme-infinia-dark {
+  color-scheme: dark;
+  /* Mist scale = neutral fills (Tailwind surface-faint/muted/sunken/strong, Table header, Tabs,
+     Accordion, Card…). Dark steps rising from the #111111 page so no fill turns white. */
+  --color-mist-20: #1d1d1d;
+  --color-mist-40: #202020;
+  --color-mist-60: #2c2c2c;
+  --color-mist-80: #363636;
+  --color-mist-100: #474747;
+
+  /* Text */
+  --color-brand-primary: #ffffff;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d0d0d0;
+  --color-text-disabled: #737373;
+  --color-text-on-accent: #111111;
+  --color-text-on-primary: #111111; /* dark-mode fills are light (white / #6ce9a6 / #fda29b / yellow) */
+  --color-text-on-primary-inverse: #ffffff;
+  /* Inverse surface stays dark in dark mode: a raised #363636 bar with white text, not a white bar. */
+  --color-surface-inverse: #363636;
+  --color-text-on-inverse: #ffffff;
+
+  /* Links */
+  --color-brand-link: #ffd400;
+  --color-text-link: #ffd400;
+  --button-link-color: #ffd400;
+  --button-link-hover-color: #ffe04d;
+
+  /* Surfaces */
+  --color-bg-page: #111111;
+  --color-bg-surface: #191919;
+  --color-bg-sidebar: #191919;
+  --color-bg-elevated: #191919;
+  --color-bg-secondary: #202020;
+  --color-surface-mist: #202020;
+  --color-fill-muted: #202020;
+  --color-fill-surface: #191919;
+  --color-interactive-row-hover: #2c2c2c;
+
+  /* Borders + focus */
+  --color-border-default: #5b5b5b;
+  --color-border-subtle: #363636;
+  --color-border-interactive: #b0b0b0;
+  --color-border-strong: #b0b0b0;
+  --color-border-selected: #ffd400;
+  --color-border-error: #fda29b;
+  --color-border-focus: #ffd400;
+  --color-focus-ring: #ffd400;
+
+  /* Interaction theme */
+  --color-theme-primary: #ffd400;
+  --color-theme-hover: #ffe04d;
+  --color-theme-active: #ebc400;
+  --color-theme-disabled: #574900;
+  --color-theme-text: #111111;
+  --color-theme-surface-hover: #2c2c2c;
+
+  /* Status */
+  --color-state-success: #6ce9a6;
+  --color-state-warning: #fec84b;
+  --color-state-error: #fda29b;
+  --color-state-info: #d0d0d0;
+  --color-danger-strong: #fda29b;
+  --color-danger-fill: #3d1916;
+  --color-success-strong: #6ce9a6;
+  --color-success-fill: #0b3021;
+  --color-warning-strong: #fec84b;
+  --color-warning-fill: #37250b;
+  --color-info-strong: #d0d0d0;
+  --color-info-fill: #202020;
+  --color-accent-mint-fg: #6ce9a6;
+  --color-accent-mint-10: #0b3021;
+  --color-accent-mint-40: #176644;
+  --color-accent-amber-fg: #fec84b;
+  --color-accent-amber-10: #37250b;
+  --color-accent-amber-40: #78520f;
+  --color-accent-rose-fg: #fda29b;
+  --color-accent-rose-10: #3d1916;
+  --color-accent-rose-40: #87352d;
+  --color-accent-sky-fg: #d0d0d0;
+  --color-accent-sky-10: #202020;
+  --color-accent-sky-40: #5b5b5b;
+  --color-accent-lavender-fg: #ffd400;
+  --color-accent-lavender-10: #2a250b;
+  --color-accent-lavender-40: #ffd400;
+
+  /* Primary disabled text on #574900 */
+  --button-primary-disabled-text: #c7a600;
+
+  /* Secondary — Forma secondary (dark): surface fill + border */
+  --button-secondary-bg: #191919;
+  --button-secondary-text: #ffffff;
+  --button-secondary-border: #5b5b5b;
+  --button-secondary-border-color: #5b5b5b;
+  --button-secondary-hover-bg: #2c2c2c;
+  --button-secondary-hover-border-color: #737373;
+  --button-secondary-active-bg: #363636;
+  --button-secondary-active-border-color: #737373;
+  --button-secondary-disabled-bg: #191919;
+  --button-secondary-disabled-text: #737373;
+  --button-secondary-disabled-border-color: #363636;
+
+  /* Outline buttons */
+  --button-outline-primary-border: #ffffff;
+  --button-outline-primary-text: #ffffff;
+  --button-outline-primary-hover-bg: #2c2c2c;
+  --button-outline-primary-active-bg: #363636;
+  --button-outline-secondary-border: #5b5b5b;
+  --button-outline-secondary-text: #d0d0d0;
+  --button-outline-secondary-hover-bg: #2c2c2c;
+  --button-outline-secondary-active-bg: #363636;
+
+  /* Status buttons */
+  --button-success-bg: #039855;
+  --button-success-text: #ffffff;
+  --button-success-hover-bg: #027a48;
+  --button-success-active-bg: #05603a;
+  --button-success-disabled-bg: #0b3021;
+  --button-success-disabled-text: #176644;
+  --button-warning-bg: #f79009;
+  --button-warning-text: #111111;
+  --button-warning-hover-bg: #fdb022;
+  --button-warning-active-bg: #dc6803;
+  --button-warning-disabled-bg: #37250b;
+  --button-warning-disabled-text: #78520f;
+  --button-danger-bg: #d92d20;
+  --button-danger-text: #ffffff;
+  --button-danger-hover-bg: #b42318;
+  --button-danger-active-bg: #912018;
+  --button-danger-disabled-bg: #3d1916;
+  --button-danger-disabled-text: #87352d;
+  --button-destructive-bg: #d92d20;
+  --button-destructive-hover-bg: #b42318;
+
+  /* Switch */
+  --switch-track-off: #363636;
+  --switch-border-off: #5b5b5b;
+  --switch-thumb: #ffffff;
+
+  /* App shell — top bar */
+  --app-shell-topbar-bg: #191919;
+  --app-shell-topbar-bg-elevated: #202020;
+  --app-shell-topbar-search-shell: #202020;
+  --app-shell-topbar-text: #ffffff;
+  --app-shell-topbar-text-muted: #d0d0d0;
+  --app-shell-topbar-border: #363636;
+  --app-shell-topbar-hover: #2c2c2c;
+  --app-shell-topbar-active-bg: #2a250b;
+  --app-shell-topbar-focus-ring: #ffd400;
+  --app-shell-topbar-shadow: 0 1px 0 #363636;
+
+  /* App shell — sidebar (mirrors light: labels a step softer than page text, headings/icons dimmer) */
+  --app-sidebar-tone-0: #191919;
+  --app-sidebar-tone-1: #191919;
+  --app-sidebar-tone-2: #202020;
+  --app-sidebar-tone-3: #363636;
+  --app-sidebar-fg: #e8e8e8;
+  --app-sidebar-fg-muted: #a3a3a3;
+  --app-sidebar-hover: #2c2c2c;
+  --app-sidebar-active-bg: #2a250b;
+  --app-sidebar-active-tint: #574900;
+  --app-sidebar-focus: #ffd400;
+  --app-sidebar-border: #363636;
+  --app-sidebar-border-strong: #5b5b5b;
+  --app-sidebar-nav-icon: #a3a3a3;
+  --app-sidebar-nav-icon-active: #ffd400;
+  --app-sidebar-utility-icon: #a3a3a3;
+  --app-sidebar-create-dash: #5b5b5b;
+
+  /* Role tokens — selection / controls / feedback */
+  --color-selected-bg: #2a250b;
+  --color-selected-indicator: #ffd400;
+  --color-selected-text: #ffd400;
+  --color-tab-indicator: #ffd400;
+  --color-control-checked-bg: #ffd400;
+  --color-control-checked-border: #ffd400;
+  --color-control-checked-fg: #111111;
+  --color-control-checked-bg-radio: #ffd400;
+  --color-page-current-bg: #ffd400;
+  --color-page-current-fg: #111111;
+  --color-step-current-ring: #ffd400;
+  --color-today-ring: #ffd400;
+  --color-progress-glow: rgba(255, 212, 0, 0.45);
+  --color-border-soft: #363636;
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --shadow-thumb: 0 2px 4px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-tab-active: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-popover: 0 16px 24px -4px rgba(0, 0, 0, 0.45), 0 6px 10px -2px rgba(0, 0, 0, 0.3);
+  --shadow-drawer: 0 16px 24px -4px rgba(0, 0, 0, 0.45), 0 6px 10px -2px rgba(0, 0, 0, 0.3);
+
+  /* Shadows (Forma dark) — xl extends Forma lg one step */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 24px -4px rgba(0, 0, 0, 0.45), 0 6px 10px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 24px 32px -4px rgba(0, 0, 0, 0.5), 0 8px 12px -4px rgba(0, 0, 0, 0.35);
+}
+
 /* To enable dark mode: add data-theme="dark" to <html> or a parent wrapper. */
 
 /* ========== HIGH CONTRAST ========== */
@@ -771,7 +1261,7 @@ select {
 :is(button, a).btn-base.btn-secondary {
   background-color: var(--button-secondary-bg) !important;
   color: var(--button-secondary-text) !important;
-  border-color: var(--button-secondary-bg) !important;
+  border-color: var(--button-secondary-border-color, var(--button-secondary-bg)) !important;
 }
 :is(button, a).btn-outline-primary,
 #storybook-root :is(button, a).btn-outline-primary,
@@ -916,20 +1406,22 @@ a.btn-base:not(.btn-link):hover {
 :is(button, a).btn-secondary {
   background-color: var(--button-secondary-bg);
   color: var(--button-secondary-text);
-  border-color: var(--button-secondary-bg);
+  border-color: var(--button-secondary-border-color, var(--button-secondary-bg));
 }
+/* Border role tokens (--button-secondary-*-border-color) default to the fill, so themes with a
+   filled secondary are unchanged; a theme sets them for an outlined (white + border) secondary. */
 :is(button, a).btn-secondary:hover:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-hover-bg);
-  border-color: var(--button-secondary-hover-bg);
+  border-color: var(--button-secondary-hover-border-color, var(--button-secondary-hover-bg));
 }
 :is(button, a).btn-secondary:active:not(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-active-bg);
-  border-color: var(--button-secondary-active-bg);
+  border-color: var(--button-secondary-active-border-color, var(--button-secondary-active-bg));
 }
 :is(button, a).btn-secondary:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-disabled-bg) !important;
   color: var(--button-secondary-disabled-text) !important;
-  border-color: var(--button-secondary-disabled-bg) !important;
+  border-color: var(--button-secondary-disabled-border-color, var(--button-secondary-disabled-bg)) !important;
 }
 
 /* Variant: outlinePrimary — outline is primary color, inner is NOT fill (transparent) */

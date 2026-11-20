@@ -2,12 +2,12 @@
 
 .ds-code {
   --code-bg: var(--color-noir-100);
-  --code-fg: var(--color-mist-40);
+  --code-fg: var(--color-code-fg, #f5f5f5); /* panel is always dark */
   --code-muted: var(--color-noir-40);
   --code-border: var(--color-noir-80);
   --code-header-bg: var(--color-noir-80);
   /* Dark panel: light ring (≥ 3:1 on noir-80/100); light tone uses the theme focus ring. */
-  --code-focus: var(--color-mist-40);
+  --code-focus: var(--color-code-fg, #f5f5f5);
   --code-copied: var(--color-accent-mint-40);
   box-sizing: border-box;
   min-width: 0;

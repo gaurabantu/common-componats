@@ -22,6 +22,12 @@ export type SearchActionButtonProps = Omit<
 
 /** Search field with optional trailing action powered by `Button` (colors, variants, icon/text). */
 export interface TextInputSearchProps {
+  /**
+   * Native `autocomplete`. Defaults to `"off"`: the browser's saved-entry dropdown is drawn by the
+   * browser/OS (it ignores `data-theme` and shows light in dark themes) and past queries add noise.
+   * @default "off"
+   */
+  autoComplete?: string;
   id?: string;
   /** Left icon (default: magnifier). Set to `null` to hide. */
   leftIcon?: IconSource | null;
@@ -117,6 +123,7 @@ const TextInputSearch = React.forwardRef<HTMLInputElement, TextInputSearchProps>
   trailingRail: trailingRailProp,
   pattern,
   autoCorrection = false,
+  autoComplete = "off",
 }, ref) {
   const errorId = `${id}-error`;
   const labelId = `${id}-label`;
@@ -271,6 +278,7 @@ const TextInputSearch = React.forwardRef<HTMLInputElement, TextInputSearchProps>
         validation="headerSearch"
         pattern={pattern}
         autoCorrection={autoCorrection}
+        autoComplete={autoComplete}
         value={value}
         onChange={onChange}
         errorMessage={errorMessage}

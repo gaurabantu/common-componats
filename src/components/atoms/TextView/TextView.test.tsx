@@ -18,4 +18,11 @@ describe("TextView", () => {
     const { container } = render(<TextView variant="h1">Title</TextView>);
     expect(container.firstChild).toBeInTheDocument();
   });
+
+  it("styles variant and colour with the library's own tv-* classes (no Tailwind preset needed)", () => {
+    render(<TextView variant="small" color="secondary">Label</TextView>);
+    const el = screen.getByText("Label");
+    expect(el).toHaveClass("tv-small", "tv-color-secondary");
+    expect(el).not.toHaveClass("text-small");
+  });
 });

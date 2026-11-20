@@ -513,24 +513,24 @@ var import_react3 = __toESM(require("react"));
 
 // src/components/atoms/TextView/TextView.config.ts
 var variantClassMap = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro"
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro"
 };
 var fontSizeClassMap = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro"
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro"
 };
 var fontWeightClassMap = {
   normal: "font-normal",
@@ -566,13 +566,13 @@ var defaultTagByVariant = {
   micro: "small"
 };
 var colorClassMap = {
-  primary: "text-text-primary",
-  secondary: "text-text-secondary",
-  hint: "text-text-secondary",
-  disabled: "text-text-secondary",
-  success: "text-state-success",
-  warning: "text-state-warning",
-  error: "text-state-error",
+  primary: "tv-color-primary",
+  secondary: "tv-color-secondary",
+  hint: "tv-color-secondary",
+  disabled: "tv-color-secondary",
+  success: "tv-color-success",
+  warning: "tv-color-warning",
+  error: "tv-color-error",
   inherit: ""
 };
 var alignClassMap = {
@@ -2004,6 +2004,7 @@ var ButtonImpl = import_react7.default.forwardRef(function Button({
   preserveIconColor = false,
   ripple = true,
   expandOnHover = false,
+  unstyled = false,
   loadingText = "Loading",
   href,
   ...rest
@@ -2056,7 +2057,7 @@ var ButtonImpl = import_react7.default.forwardRef(function Button({
     styleOverrides["--button-gradient-hover-bg"] = gradientHover || gradient;
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
-  const baseClass = [
+  const baseClass = unstyled ? ["btn-unstyled", loading ? "btn-loading" : "", className].filter(Boolean).join(" ") : [
     "btn-base",
     variantClassNames,
     sizeClassNames,
@@ -2128,7 +2129,7 @@ var ButtonImpl = import_react7.default.forwardRef(function Button({
   const isDisabled = nativeDisabled || loading;
   const ariaBusy = loading ? true : restAria["aria-busy"];
   const describedBy = [restAria["aria-describedby"], loading ? loadingId : void 0].filter(Boolean).join(" ") || void 0;
-  const rippleEnabled = ripple !== false && !isDisabled;
+  const rippleEnabled = ripple !== false && !isDisabled && !unstyled;
   const rippleApi = useRipple(rippleEnabled);
   const pointerDown = (e) => {
     rippleApi.onPointerDown(e);
@@ -2268,7 +2269,8 @@ var TextInputSearch = import_react8.default.forwardRef(function TextInputSearch2
   suffix,
   trailingRail: trailingRailProp,
   pattern,
-  autoCorrection = false
+  autoCorrection = false,
+  autoComplete = "off"
 }, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
@@ -2380,6 +2382,7 @@ var TextInputSearch = import_react8.default.forwardRef(function TextInputSearch2
             validation: "headerSearch",
             pattern,
             autoCorrection,
+            autoComplete,
             value,
             onChange,
             errorMessage,
@@ -2520,12 +2523,12 @@ var CheckboxBase = import_react9.default.forwardRef(function Checkbox({
       inputRef.current.indeterminate = indeterminate;
   });
   const colors = {
-    brand: "var(--color-brand-primary)",
+    brand: "var(--color-control-checked-border, var(--color-brand-primary))",
     textPrimary: "var(--color-text-primary)",
     textSecondary: "var(--color-text-secondary)",
     bgSurface: "var(--color-bg-surface)",
     borderDefault: "var(--color-border-default)",
-    accentLavender: "var(--color-accent-lavender-10)",
+    accentLavender: "var(--color-selected-bg, var(--color-accent-lavender-10))",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const isOn = checked || indeterminate;

@@ -73,9 +73,11 @@
 /* Narrow viewports: drawer sits above page when expanded */
 .app-sidebar--narrow.app-sidebar--drawer-open.app-sidebar--fixed {
   z-index: 100;
-  box-shadow:
+  box-shadow: var(
+    --shadow-drawer,
     8px 0 24px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+    0 0 0 1px rgba(255, 255, 255, 0.06)
+  );
 }
 
 .app-sidebar__backdrop {
@@ -86,7 +88,7 @@
   padding: 0;
   border: none;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.48);
+  background: var(--color-scrim, rgba(0, 0, 0, 0.48));
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -697,6 +699,52 @@
   color: var(--sidebar-text);
   background: var(--noir-3);
   border: 1px solid var(--sidebar-border-strong);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-drawer, 0 4px 20px rgba(0, 0, 0, 0.45));
   white-space: nowrap;
+}
+
+/* ---------- Density: compact (density="compact") ----------
+ * 14px regular labels in the sidebar text colour, 18px icons with a lighter stroke, 32px rows 2px apart,
+ * headings with wider tracking. The active row adds a medium weight on the active background. Only spacing/type change here —
+ * colours stay the theme's sidebar tokens. */
+.app-sidebar--compact {
+  --sidebar-icon: 18px;
+  --sidebar-item-gap: 2px;
+  --sidebar-section-gap: 20px;
+}
+
+.app-sidebar--compact .app-sidebar__link,
+.app-sidebar--compact .app-sidebar__parent {
+  gap: 12px;
+  min-height: 32px;
+  padding: 6px var(--sidebar-pad-x);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--sidebar-text);
+}
+
+/* Headings: wider tracking, as in docs-style navigation. */
+.app-sidebar--compact .app-sidebar__section-label {
+  letter-spacing: 0.1em;
+}
+
+.app-sidebar--compact .app-sidebar__link:hover:not(:disabled),
+.app-sidebar--compact .app-sidebar__parent:hover:not(:disabled),
+.app-sidebar--compact .app-sidebar__link--active,
+.app-sidebar--compact .app-sidebar__parent--active {
+  color: var(--sidebar-text);
+}
+
+.app-sidebar--compact .app-sidebar__link--active,
+.app-sidebar--compact .app-sidebar__parent--active {
+  font-weight: 500;
+}
+
+.app-sidebar--compact .app-sidebar__item-icon svg {
+  stroke-width: 1.75;
+}
+
+.app-sidebar--compact.app-sidebar--collapsed .app-sidebar__link,
+.app-sidebar--compact.app-sidebar--collapsed .app-sidebar__parent {
+  padding: 6px;
 }

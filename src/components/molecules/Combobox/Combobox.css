@@ -198,7 +198,7 @@
 }
 
 .ds-combobox__option[data-selected="true"] {
-  background: color-mix(in srgb, var(--color-brand-secondary) 12%, transparent);
+  background: var(--color-selected-bg, color-mix(in srgb, var(--color-brand-secondary) 12%, transparent));
   font-weight: 600;
 }
 

@@ -88,9 +88,9 @@
 
 .ucs-cc-checkbox-root .ucs-cc-checkbox-native[data-indeterminate="true"] + .ucs-cc-checkbox-face,
 .ucs-cc-checkbox-root:hover .ucs-cc-checkbox-native[data-indeterminate="true"]:enabled ~ .ucs-cc-checkbox-face {
-  border-color: var(--color-brand-primary);
-  background-color: var(--color-brand-primary);
-  color: var(--color-bg-surface);
+  border-color: var(--color-control-checked-border, var(--color-brand-primary));
+  background-color: var(--color-control-checked-bg, var(--color-brand-primary));
+  color: var(--color-control-checked-fg, var(--color-bg-surface));
   box-shadow: none;
 }
 

@@ -19,8 +19,8 @@ button.ucs-toggle:hover:not(:disabled) {
 
 /* Pressed: tinted fill + selected border (state also exposed via aria-pressed). */
 button.ucs-toggle.ucs-toggle[aria-pressed="true"] {
-  background-color: var(--color-accent-lavender-10);
-  border-color: var(--color-border-selected);
+  background-color: var(--color-selected-bg, var(--color-accent-lavender-10));
+  border-color: var(--color-selected-indicator, var(--color-border-selected));
   color: var(--color-text-primary);
 }
 

@@ -41,6 +41,7 @@ __export(src_exports, {
   AppTopbar: () => AppTopbar_default,
   AreaChart: () => AreaChart_default,
   Avtar: () => Avatar_default,
+  BUILT_IN_THEMES: () => BUILT_IN_THEMES,
   Badge: () => Badge_default,
   BarChart: () => BarChart_default,
   Breadcrumb: () => Breadcrumb,
@@ -137,6 +138,7 @@ __export(src_exports, {
   RadioGroup: () => RadioGroup_default,
   SEGMENTED_CONTROL_DEFAULTS: () => SEGMENTED_CONTROL_DEFAULTS,
   SEGMENTED_CONTROL_SIZES: () => SEGMENTED_CONTROL_SIZES,
+  SYSTEM_THEME: () => SYSTEM_THEME,
   SegmentedControl: () => SegmentedControl_default,
   Select: () => Select_default,
   Sheet: () => Sheet,
@@ -165,6 +167,10 @@ __export(src_exports, {
   Tag: () => Tag,
   TextArea: () => TextArea_default,
   TextView: () => TextView_default,
+  ThemeModeIcon: () => ThemeModeIcon,
+  ThemePicker: () => ThemePicker,
+  ThemeProvider: () => ThemeProvider,
+  ThemeToggle: () => ThemeToggle,
   Toast: () => Toast_default,
   ToastProvider: () => ToastProvider,
   ToggleButton: () => ToggleButton_default,
@@ -177,12 +183,17 @@ __export(src_exports, {
   createDefaultRangePresets: () => createDefaultRangePresets,
   detectFileKindFromBuffer: () => detectFileKindFromBuffer,
   detectIsMac: () => detectIsMac,
+  enableThemedTitles: () => enableThemedTitles,
   escapeCsvCell: () => escapeCsvCell,
   formatLocaleNumber: () => formatLocaleNumber,
   formatShortcut: () => formatShortcut,
   getItemRange: () => getItemRange,
   getPageCount: () => getPageCount,
   getPaginationRange: () => getPaginationRange,
+  getThemeState: () => getThemeState,
+  getThemes: () => getThemes,
+  getToggleTarget: () => getToggleTarget,
+  initTheme: () => initTheme,
   mergeSidebarTokensStyle: () => mergeSidebarTokensStyle,
   mergeTopbarTokensStyle: () => mergeTopbarTokensStyle,
   normalizeHex: () => normalizeHex,
@@ -190,10 +201,15 @@ __export(src_exports, {
   parseLocaleNumber: () => parseLocaleNumber,
   pieLabelNamePercent: () => pieLabelNamePercent,
   readAppSidebarPersist: () => readAppSidebarPersist,
+  registerTheme: () => registerTheme,
+  setTheme: () => setTheme,
+  subscribeTheme: () => subscribeTheme,
   toAriaKeyShortcuts: () => toAriaKeyShortcuts,
   toCsv: () => toCsv,
+  toggleThemeMode: () => toggleThemeMode,
   useFilePicker: () => useFilePicker,
   useFormField: () => useFormField,
+  useTheme: () => useTheme,
   useToast: () => useToast,
   validateFileSecurity: () => validateFileSecurity,
   validateFilename: () => validateFilename,
@@ -476,6 +492,7 @@ var ButtonImpl = import_react3.default.forwardRef(function Button({
   preserveIconColor = false,
   ripple = true,
   expandOnHover = false,
+  unstyled = false,
   loadingText = "Loading",
   href,
   ...rest
@@ -528,7 +545,7 @@ var ButtonImpl = import_react3.default.forwardRef(function Button({
     styleOverrides["--button-gradient-hover-bg"] = gradientHover || gradient;
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
-  const baseClass = [
+  const baseClass = unstyled ? ["btn-unstyled", loading ? "btn-loading" : "", className].filter(Boolean).join(" ") : [
     "btn-base",
     variantClassNames,
     sizeClassNames,
@@ -600,7 +617,7 @@ var ButtonImpl = import_react3.default.forwardRef(function Button({
   const isDisabled = nativeDisabled || loading;
   const ariaBusy = loading ? true : restAria["aria-busy"];
   const describedBy = [restAria["aria-describedby"], loading ? loadingId : void 0].filter(Boolean).join(" ") || void 0;
-  const rippleEnabled = ripple !== false && !isDisabled;
+  const rippleEnabled = ripple !== false && !isDisabled && !unstyled;
   const rippleApi = useRipple(rippleEnabled);
   const pointerDown = (e) => {
     rippleApi.onPointerDown(e);
@@ -691,24 +708,24 @@ var import_react4 = __toESM(require("react"));
 
 // src/components/atoms/TextView/TextView.config.ts
 var variantClassMap = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro"
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro"
 };
 var fontSizeClassMap = {
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
-  h4: "text-h4",
-  body: "text-body",
-  secondary: "text-secondary",
-  small: "text-small",
-  micro: "text-micro"
+  h1: "tv-h1",
+  h2: "tv-h2",
+  h3: "tv-h3",
+  h4: "tv-h4",
+  body: "tv-body",
+  secondary: "tv-secondary",
+  small: "tv-small",
+  micro: "tv-micro"
 };
 var fontWeightClassMap = {
   normal: "font-normal",
@@ -744,13 +761,13 @@ var defaultTagByVariant = {
   micro: "small"
 };
 var colorClassMap = {
-  primary: "text-text-primary",
-  secondary: "text-text-secondary",
-  hint: "text-text-secondary",
-  disabled: "text-text-secondary",
-  success: "text-state-success",
-  warning: "text-state-warning",
-  error: "text-state-error",
+  primary: "tv-color-primary",
+  secondary: "tv-color-secondary",
+  hint: "tv-color-secondary",
+  disabled: "tv-color-secondary",
+  success: "tv-color-success",
+  warning: "tv-color-warning",
+  error: "tv-color-error",
   inherit: ""
 };
 var alignClassMap = {
@@ -1995,12 +2012,12 @@ var CheckboxBase = import_react6.default.forwardRef(function Checkbox({
       inputRef.current.indeterminate = indeterminate;
   });
   const colors = {
-    brand: "var(--color-brand-primary)",
+    brand: "var(--color-control-checked-border, var(--color-brand-primary))",
     textPrimary: "var(--color-text-primary)",
     textSecondary: "var(--color-text-secondary)",
     bgSurface: "var(--color-bg-surface)",
     borderDefault: "var(--color-border-default)",
-    accentLavender: "var(--color-accent-lavender-10)",
+    accentLavender: "var(--color-selected-bg, var(--color-accent-lavender-10))",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const isOn = checked || indeterminate;
@@ -2199,7 +2216,7 @@ var SwitchBase = import_react7.default.forwardRef(function Switch({
       height: thumbSize,
       borderRadius: "50%",
       backgroundColor: COLORS.thumb,
-      boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+      boxShadow: "var(--shadow-thumb, 0 1px 3px rgba(0, 0, 0, 0.2))",
       transform: `translateX(${thumbX}px)`,
       transition: "transform 160ms ease"
     }),
@@ -3106,12 +3123,12 @@ var RadioButton = ({
   const isBox = shape === "box";
   const id = `${name}-${value}`;
   const colors = {
-    brand: "var(--color-brand-primary)",
+    brand: "var(--color-control-checked-border, var(--color-brand-primary))",
     textPrimary: "var(--color-text-primary)",
     textSecondary: "var(--color-text-secondary)",
     bgSurface: "var(--color-bg-surface)",
     borderDefault: "var(--color-border-default)",
-    accentLavender: "var(--color-accent-lavender-10)",
+    accentLavender: "var(--color-selected-bg, var(--color-accent-lavender-10))",
     shadow: "var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08))"
   };
   const roundedStyle = rounded === "0" ? 0 : rounded === "1" ? "var(--radius-xs, 2px)" : rounded === "2" ? "var(--radius-sm, 3px)" : rounded === "3" ? "var(--radius-base, 4px)" : rounded === "4" ? "var(--radius-md, 6px)" : rounded === "5" ? "var(--radius-lg, 8px)" : "9999px";
@@ -3646,13 +3663,13 @@ var TabsList = import_react15.default.memo(function TabsList2({
     const list = listRef.current;
     if (!list || ctx.variant !== "segmented")
       return;
-    const active = list.querySelector('[role="tab"][aria-selected="true"]');
-    if (!active || active.getAttribute("data-disabled") === "true") {
+    const active2 = list.querySelector('[role="tab"][aria-selected="true"]');
+    if (!active2 || active2.getAttribute("data-disabled") === "true") {
       setSegmentPill((p) => ({ ...p, visible: false }));
       return;
     }
     const lr = list.getBoundingClientRect();
-    const tr = active.getBoundingClientRect();
+    const tr = active2.getBoundingClientRect();
     setSegmentPill({
       left: tr.left - lr.left,
       top: tr.top - lr.top,
@@ -3688,8 +3705,8 @@ var TabsList = import_react15.default.memo(function TabsList2({
       if (tabs.length === 0)
         return;
       const n = tabs.length;
-      const active = document.activeElement;
-      let idx = tabs.indexOf(active);
+      const active2 = document.activeElement;
+      let idx = tabs.indexOf(active2);
       if (idx < 0) {
         idx = tabs.findIndex((t) => t.getAttribute("aria-selected") === "true");
       }
@@ -4357,7 +4374,7 @@ var StepperStep = import_react18.default.memo(function StepperStep2({
   const ctx = useStepperContext("StepperStep");
   const index = stepIndexProp != null ? stepIndexProp : 0;
   const labelId = `${ctx.baseId}-step-${index}-heading`;
-  const state = index < ctx.activeIndex ? "complete" : index === ctx.activeIndex ? "current" : "upcoming";
+  const state2 = index < ctx.activeIndex ? "complete" : index === ctx.activeIndex ? "current" : "upcoming";
   const blockedByLinear = ctx.linear && index > ctx.activeIndex;
   const isDisabled = Boolean(disabled || blockedByLinear);
   const handleMarkerClick = (e) => {
@@ -4373,7 +4390,7 @@ var StepperStep = import_react18.default.memo(function StepperStep2({
       return;
     ctx.setActiveIndex(index);
   };
-  const showCheck = state === "complete" && showCheckWhenComplete;
+  const showCheck = state2 === "complete" && showCheckWhenComplete;
   const markerContent = showCheck ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("svg", { className: "ds-stepper__check", viewBox: "0 0 16 16", fill: "none", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
     "path",
     {
@@ -4390,7 +4407,7 @@ var StepperStep = import_react18.default.memo(function StepperStep2({
       {
         id: labelId,
         className: cls14("ds-stepper__label-block", className),
-        "data-state": state,
+        "data-state": state2,
         "data-interactive": !isDisabled ? "true" : void 0,
         onClick: handleLabelClick,
         children: [
@@ -4408,11 +4425,11 @@ var StepperStep = import_react18.default.memo(function StepperStep2({
       "aria-labelledby": `${labelId}-pos ${labelId}`,
       disabled: isDisabled,
       className: cls14("ds-stepper__marker-btn", className),
-      "data-state": state,
-      "aria-current": state === "current" ? "step" : void 0,
+      "data-state": state2,
+      "aria-current": state2 === "current" ? "step" : void 0,
       onClick: handleMarkerClick,
       children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { id: `${labelId}-pos`, className: "ds-stepper__sr", children: `Step ${index + 1} of ${ctx.stepCount}${state === "complete" ? ", completed" : ""}:` }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { id: `${labelId}-pos`, className: "ds-stepper__sr", children: `Step ${index + 1} of ${ctx.stepCount}${state2 === "complete" ? ", completed" : ""}:` }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "ds-stepper__marker", "aria-hidden": "true", children: markerContent })
       ]
     }
@@ -5208,8 +5225,8 @@ function usePopoverContext(component) {
 function restoreFocus(el) {
   if (!el || typeof document === "undefined" || !el.isConnected)
     return;
-  const active = document.activeElement;
-  if (active && active !== document.body && active !== document.documentElement && active.isConnected)
+  const active2 = document.activeElement;
+  if (active2 && active2 !== document.body && active2 !== document.documentElement && active2.isConnected)
     return;
   el.focus();
 }
@@ -5941,8 +5958,8 @@ function ContextMenu({
   (0, import_react24.useLayoutEffect)(() => {
     if (!prevOpenRef.current && open && typeof document !== "undefined") {
       if (!returnFocusRef.current) {
-        const active = document.activeElement;
-        returnFocusRef.current = active && active !== document.body ? active : triggerRef.current;
+        const active2 = document.activeElement;
+        returnFocusRef.current = active2 && active2 !== document.body ? active2 : triggerRef.current;
       }
       restoreOnCloseRef.current = true;
     }
@@ -6001,8 +6018,8 @@ var ContextMenuTrigger = (0, import_react24.forwardRef)(function ContextMenuTrig
   const openAt = (point, invoker) => {
     var _a;
     ctx.setPosition(point);
-    const active = typeof document !== "undefined" ? document.activeElement : null;
-    ctx.returnFocusRef.current = active && active !== document.body && ((_a = ctx.triggerRef.current) == null ? void 0 : _a.contains(active)) ? active : invoker != null ? invoker : ctx.triggerRef.current;
+    const active2 = typeof document !== "undefined" ? document.activeElement : null;
+    ctx.returnFocusRef.current = active2 && active2 !== document.body && ((_a = ctx.triggerRef.current) == null ? void 0 : _a.contains(active2)) ? active2 : invoker != null ? invoker : ctx.triggerRef.current;
     ctx.setOpen(true);
   };
   const handlers = {
@@ -6646,7 +6663,7 @@ var ProgressBar = ({
                       transition: resolvedAnimation === "none" ? "none" : "stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)",
                       transform: "rotate(-90deg)",
                       transformOrigin: "center",
-                      filter: resolvedAnimation === "pulse" ? "drop-shadow(0 0 6px rgba(59,130,246,0.35))" : void 0
+                      filter: resolvedAnimation === "pulse" ? "drop-shadow(0 0 6px var(--color-progress-glow, rgba(59, 130, 246, 0.35)))" : void 0
                     }
                   }
                 )
@@ -6791,7 +6808,7 @@ var TooltipIcon = ({
   const [arrowStyle, setArrowStyle] = (0, import_react28.useState)({});
   const tooltipBackground = variant === "light" ? "var(--color-bg-surface)" : "var(--color-text-primary)";
   const tooltipForeground = variant === "light" ? "var(--color-text-primary)" : "var(--color-bg-surface)";
-  const tooltipBorder = variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
+  const tooltipBorder = variant === "light" ? "1px solid var(--color-border-soft, rgba(153, 153, 153, 0.3))" : "1px solid transparent";
   const clearTimers = () => {
     if (openTimerRef.current)
       clearTimeout(openTimerRef.current);
@@ -7411,7 +7428,7 @@ var Avatar = ({
   iconSize: iconSize2,
   preserveColors = false,
   bordered = false,
-  borderColor = "rgba(153, 153, 153, 0.35)",
+  borderColor = "var(--color-border-soft, rgba(153, 153, 153, 0.35))",
   className = "",
   style
 }) => {
@@ -8540,7 +8557,7 @@ var Calendar = ({
     maxWidth: (_d = theme.maxWidth) != null ? _d : 336,
     padding: (_e = theme.padding) != null ? _e : 20,
     borderRadius: resolvedRadius,
-    border: bordered ? `1px solid ${(_f = theme.border) != null ? _f : "rgba(153, 153, 153, 0.3)"}` : "1px solid transparent",
+    border: bordered ? `1px solid ${(_f = theme.border) != null ? _f : "var(--color-border-soft, rgba(153, 153, 153, 0.3))"}` : "1px solid transparent",
     background: resolvedBackground,
     boxShadow: (_g = theme.boxShadow) != null ? _g : boxShadow,
     fontFamily: theme.fontFamily,
@@ -8576,7 +8593,7 @@ var Calendar = ({
   const selectStyle = {
     flex: 1,
     padding: "8px 12px",
-    border: `1px solid ${(_l = theme.selectBorder) != null ? _l : "rgba(0,0,0,0.1)"}`,
+    border: `1px solid ${(_l = theme.selectBorder) != null ? _l : "var(--color-border-soft, rgba(0, 0, 0, 0.1))"}`,
     borderRadius: (_m = theme.cellRadius) != null ? _m : 10,
     fontSize: (_n = theme.cellFontSize) != null ? _n : 14,
     fontWeight: 600,
@@ -8832,10 +8849,10 @@ var Calendar = ({
                   const cellStyle = {
                     ...cellBaseStyle,
                     cursor: isSelectable ? "pointer" : "default",
-                    color: isDisabled ? (_a3 = theme.textDisabled) != null ? _a3 : "var(--color-text-disabled)" : !day.inCurrentMonth ? (_b3 = theme.textSecondary) != null ? _b3 : "var(--color-text-secondary)" : isSelected ? (_c2 = theme.primaryText) != null ? _c2 : "var(--color-text-on-primary)" : (_d2 = theme.text) != null ? _d2 : "var(--color-text-primary)",
+                    color: isDisabled ? (_a3 = theme.textDisabled) != null ? _a3 : "var(--color-text-disabled)" : !day.inCurrentMonth ? (_b3 = theme.textSecondary) != null ? _b3 : "var(--color-text-secondary)" : isSelected ? (_c2 = theme.primaryText) != null ? _c2 : "var(--button-primary-default-text)" : (_d2 = theme.text) != null ? _d2 : "var(--color-text-primary)",
                     background: isSelected ? (_e2 = theme.primary) != null ? _e2 : "var(--button-primary-default-bg)" : isInRange ? (_f2 = theme.rangeBackground) != null ? _f2 : "var(--color-accent-sky-10)" : isToday ? (_g2 = theme.todayBackground) != null ? _g2 : "var(--color-accent-amber-10)" : "transparent",
                     fontWeight: isSelected ? 700 : isToday ? 600 : 500,
-                    boxShadow: isToday && !isSelected ? `inset 0 0 0 2px ${(_h2 = theme.todayRing) != null ? _h2 : "rgba(245, 158, 11, 0.5)"}` : void 0
+                    boxShadow: isToday && !isSelected ? `inset 0 0 0 2px ${(_h2 = theme.todayRing) != null ? _h2 : "var(--color-today-ring, rgba(245, 158, 11, 0.5))"}` : void 0
                   };
                   return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
                     "button",
@@ -9252,7 +9269,7 @@ var DatePicker = ({
     borderRadius: "var(--radius-md, 8px)",
     border: "1px solid var(--color-border-default)",
     background: "var(--color-bg-surface)",
-    boxShadow: "0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 10px 24px -4px rgba(15, 23, 42, 0.1)",
+    boxShadow: "var(--shadow-popover, 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 10px 24px -4px rgba(15, 23, 42, 0.1))",
     transformOrigin: "top left",
     opacity: 1,
     transition: "opacity 150ms ease-out, transform 150ms ease-out"
@@ -12132,9 +12149,9 @@ function VariantIcon({
   variant,
   animated
 }) {
-  const config = alertDialogVariantConfig[variant];
-  const color = config.iconColor;
-  const bgColor = config.bgColor;
+  const config2 = alertDialogVariantConfig[variant];
+  const color = config2.iconColor;
+  const bgColor = config2.bgColor;
   if (variant === "success") {
     return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(SuccessIconSvg, { animated, color, bgColor });
   }
@@ -12155,11 +12172,11 @@ function VariantIcon({
         width: 56,
         height: 56,
         borderRadius: "50%",
-        backgroundColor: config.bgColor,
-        color: config.iconColor,
+        backgroundColor: config2.bgColor,
+        color: config2.iconColor,
         fontSize: 24
       },
-      children: config.icon
+      children: config2.icon
     }
   );
 }
@@ -12344,7 +12361,8 @@ var TextInputSearch = import_react41.default.forwardRef(function TextInputSearch
   suffix,
   trailingRail: trailingRailProp,
   pattern,
-  autoCorrection = false
+  autoCorrection = false,
+  autoComplete = "off"
 }, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
@@ -12456,6 +12474,7 @@ var TextInputSearch = import_react41.default.forwardRef(function TextInputSearch
             validation: "headerSearch",
             pattern,
             autoCorrection,
+            autoComplete,
             value,
             onChange,
             errorMessage,
@@ -12761,7 +12780,7 @@ function TableInner({
   theme = "light"
 }) {
   var _a, _b, _c, _d;
-  const config = tableConfig.default;
+  const config2 = tableConfig.default;
   const [searchValue, setSearchValue] = (0, import_react43.useState)("");
   const [sortState, setSortState] = (0, import_react43.useState)({ key: "", dir: null });
   const [currentPage, setCurrentPage] = (0, import_react43.useState)(1);
@@ -12876,7 +12895,7 @@ function TableInner({
     },
     [expandable, expandedSet]
   );
-  const getHeaderClass = () => customHeaderClass || config.thead[headerColor] || config.thead.light;
+  const getHeaderClass = () => customHeaderClass || config2.thead[headerColor] || config2.thead.light;
   const renderCell = (column, row, rowIndex) => {
     if (column.render) {
       const val2 = row[column.key];
@@ -12919,14 +12938,14 @@ function TableInner({
     "table",
     {
       className: cls21(
-        config.table,
+        config2.table,
         tableLayout === "fixed" && "table-layout-fixed",
         variant === "minimal" && "table-variant-minimal",
         (bordered || variant === "bordered") && "table-bordered",
         verticalDivider && "table-vertical-divider",
         stickyHeader && "table-sticky-header",
-        striped && config.striped,
-        hover && config.hover,
+        striped && config2.striped,
+        hover && config2.hover,
         compact && "table-compact",
         size === "sm" && "table-size-sm",
         size === "lg" && "table-size-lg",
@@ -13464,6 +13483,7 @@ function AppSidebar({
   showCollapseToggle = true,
   collapseToggleLabel = "Toggle sidebar",
   widthExpanded = 320,
+  density = "comfortable",
   widthCollapsed = 64,
   fixed = false,
   responsive = true,
@@ -13916,6 +13936,7 @@ function AppSidebar({
           "app-sidebar",
           useViewportFixedChrome && "app-sidebar--fixed",
           collapsed && "app-sidebar--collapsed",
+          density === "compact" && "app-sidebar--compact",
           responsive && isNarrow && "app-sidebar--narrow",
           showDrawerOverlay && "app-sidebar--drawer-open",
           classNames == null ? void 0 : classNames.root,
@@ -15345,9 +15366,9 @@ function ToastProvider({
       if (e.key !== TOAST_HOTKEY || !regionRef.current)
         return;
       e.preventDefault();
-      const active = document.activeElement;
-      if (active && !regionRef.current.contains(active))
-        restoreFocusRef.current = active;
+      const active2 = document.activeElement;
+      if (active2 && !regionRef.current.contains(active2))
+        restoreFocusRef.current = active2;
       regionRef.current.focus();
     };
     document.addEventListener("keydown", onKeyDown);
@@ -15455,14 +15476,14 @@ function trapTabKey(e, container) {
   }
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
-  const active = document.activeElement;
-  const inside = active instanceof Node && container.contains(active);
-  if (e.shiftKey && (active === first || active === container || !inside)) {
+  const active2 = document.activeElement;
+  const inside = active2 instanceof Node && container.contains(active2);
+  if (e.shiftKey && (active2 === first || active2 === container || !inside)) {
     e.preventDefault();
     last.focus();
     return true;
   }
-  if (!e.shiftKey && (active === last || !inside)) {
+  if (!e.shiftKey && (active2 === last || !inside)) {
     e.preventDefault();
     first.focus();
     return true;
@@ -15649,7 +15670,7 @@ var Drawer = import_react59.default.forwardRef(function Drawer2({
   }, [present, children]);
   if (!present || typeof document === "undefined")
     return null;
-  const state = open ? "open" : "closed";
+  const state2 = open ? "open" : "closed";
   const extent = side === "left" || side === "right" ? DRAWER_WIDTHS[size] : DRAWER_HEIGHTS[size];
   const handlePanelKeyDown = (e) => {
     if (modal && panelRef.current)
@@ -15673,7 +15694,7 @@ var Drawer = import_react59.default.forwardRef(function Drawer2({
             "div",
             {
               className: "ds-drawer__backdrop",
-              "data-state": state,
+              "data-state": state2,
               "aria-hidden": "true",
               onMouseDown: (e) => e.preventDefault(),
               onClick: closeOnBackdropClick && open ? () => {
@@ -15695,7 +15716,7 @@ var Drawer = import_react59.default.forwardRef(function Drawer2({
               className: ["ds-drawer", className].filter(Boolean).join(" "),
               "data-side": side,
               "data-size": size,
-              "data-state": state,
+              "data-state": state2,
               style: { "--ds-drawer-extent": extent },
               onKeyDown: handlePanelKeyDown,
               onAnimationEnd: handleAnimationEnd,
@@ -16666,12 +16687,12 @@ var PageHeader = import_react65.default.forwardRef(function PageHeader2({
     var _a;
     if (typeof document === "undefined")
       return;
-    const active = document.activeElement;
-    if (!active || !((_a = actionsRef.current) == null ? void 0 : _a.contains(active)))
+    const active2 = document.activeElement;
+    if (!active2 || !((_a = actionsRef.current) == null ? void 0 : _a.contains(active2)))
       return;
-    if (next && active.closest(".ds-page-header__secondary"))
+    if (next && active2.closest(".ds-page-header__secondary"))
       pendingFocus.current = "more";
-    else if (!next && active === moreRef.current)
+    else if (!next && active2 === moreRef.current)
       pendingFocus.current = "inline";
   });
   const [menuOpen, setMenuOpen] = (0, import_react65.useState)(false);
@@ -17045,13 +17066,13 @@ var FilterBar = import_react66.default.forwardRef(function FilterBar2({
       return;
     prevNarrow.current = narrow;
     const root = rootRef.current;
-    const active = document.activeElement;
-    const focusLost = !active || active === document.body || !(root == null ? void 0 : root.contains(active));
+    const active2 = document.activeElement;
+    const focusLost = !active2 || active2 === document.body || !(root == null ? void 0 : root.contains(active2));
     const last = lastFocus.current;
     if (narrow && (last == null ? void 0 : last.kind) === "filter" && focusLost) {
       restoreFilterId.current = last.id;
       (_a2 = triggerRef.current) == null ? void 0 : _a2.focus();
-    } else if (!narrow && (last == null ? void 0 : last.kind) === "trigger" && (focusLost || active === triggerRef.current)) {
+    } else if (!narrow && (last == null ? void 0 : last.kind) === "trigger" && (focusLost || active2 === triggerRef.current)) {
       const id = restoreFilterId.current;
       const scopes = Array.from((_b2 = root == null ? void 0 : root.querySelectorAll("[data-filter-id]")) != null ? _b2 : []);
       const scope = (_c = scopes.find((el) => el.dataset.filterId === id)) != null ? _c : scopes[0];
@@ -18022,8 +18043,8 @@ var SegmentedControl = import_react68.default.forwardRef(function SegmentedContr
     var _a;
     if (!focusWithin.current || typeof document === "undefined")
       return;
-    const active = document.activeElement;
-    if (active && active !== document.body)
+    const active2 = document.activeElement;
+    if (active2 && active2 !== document.body)
       return;
     if (tabStop >= 0)
       (_a = itemRefs.current[tabStop]) == null ? void 0 : _a.focus();
@@ -18185,10 +18206,10 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
   const isControlled = activeStepProp !== void 0;
   const [inner, setInner] = (0, import_react69.useState)(defaultActiveStep);
   const rawActive = isControlled ? activeStepProp : inner;
-  const active = Math.min(Math.max(0, rawActive), lastIndex);
-  const isReview = active === reviewIndex;
-  const isLast = active === lastIndex;
-  const [furthest, setFurthest] = (0, import_react69.useState)(active);
+  const active2 = Math.min(Math.max(0, rawActive), lastIndex);
+  const isReview = active2 === reviewIndex;
+  const isLast = active2 === lastIndex;
+  const [furthest, setFurthest] = (0, import_react69.useState)(active2);
   const [error, setError] = (0, import_react69.useState)(null);
   const [validating, setValidating] = (0, import_react69.useState)(false);
   const [focusTick, setFocusTick] = (0, import_react69.useState)(0);
@@ -18200,8 +18221,8 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
   const pending = (0, import_react69.useRef)(false);
   const errorSeq = (0, import_react69.useRef)(0);
   const mounted = (0, import_react69.useRef)(false);
-  const activeRef = (0, import_react69.useRef)(active);
-  activeRef.current = active;
+  const activeRef = (0, import_react69.useRef)(active2);
+  activeRef.current = active2;
   (0, import_react69.useEffect)(() => {
     mounted.current = true;
     return () => {
@@ -18209,16 +18230,16 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
     };
   }, []);
   (0, import_react69.useEffect)(() => {
-    setFurthest((f) => active > f ? active : f);
-  }, [active]);
-  const prevActive = (0, import_react69.useRef)(active);
+    setFurthest((f) => active2 > f ? active2 : f);
+  }, [active2]);
+  const prevActive = (0, import_react69.useRef)(active2);
   useIsoLayoutEffect3(() => {
     var _a;
-    if (prevActive.current === active)
+    if (prevActive.current === active2)
       return;
-    prevActive.current = active;
+    prevActive.current = active2;
     (_a = headingRef.current) == null ? void 0 : _a.focus();
-  }, [active]);
+  }, [active2]);
   useIsoLayoutEffect3(() => {
     var _a;
     if (focusTick > 0)
@@ -18238,17 +18259,17 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
     (index) => {
       const next = Math.min(Math.max(0, index), lastIndex);
       setError(null);
-      if (next === active)
+      if (next === active2)
         return;
       if (!isControlled)
         setInner(next);
       onStepChange == null ? void 0 : onStepChange(next);
     },
-    [active, isControlled, lastIndex, onStepChange]
+    [active2, isControlled, lastIndex, onStepChange]
   );
   const fail = (index, message) => {
     errorSeq.current += 1;
-    if (index !== active)
+    if (index !== active2)
       goTo(index);
     else
       setFocusTick((t) => t + 1);
@@ -18268,7 +18289,7 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
       return;
     pending.current = true;
     const id = ++runId.current;
-    const startedAt = active;
+    const startedAt = active2;
     setValidating(true);
     try {
       const failure = await validateRange(from, to);
@@ -18309,25 +18330,25 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
       void finish();
       return;
     }
-    void guarded(active, active + 1, () => goTo(active + 1));
+    void guarded(active2, active2 + 1, () => goTo(active2 + 1));
   };
   const handleBack = () => {
-    if (loading || active === 0)
+    if (loading || active2 === 0)
       return;
     runId.current += 1;
-    goTo(active - 1);
+    goTo(active2 - 1);
   };
   const handleStepper = (index) => {
-    if (loading || index === active)
+    if (loading || index === active2)
       return;
-    if (index < active || !linear) {
+    if (index < active2 || !linear) {
       runId.current += 1;
       goTo(index);
       return;
     }
     if (index > furthest)
       return;
-    void guarded(active, index, () => goTo(index));
+    void guarded(active2, index, () => goTo(index));
   };
   if (total === 0) {
     return /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("div", { ref, className: ["ds-wizard", className].filter(Boolean).join(" "), ...rest });
@@ -18335,11 +18356,11 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
   const Heading = `h${headingLevel}`;
   const headingId = `${baseId}-heading`;
   const descId = `${baseId}-desc`;
-  const current = isReview ? null : steps[active];
+  const current = isReview ? null : steps[active2];
   const title = isReview ? reviewTitle : current == null ? void 0 : current.title;
   const description = isReview ? reviewDescription : current == null ? void 0 : current.description;
   const hasDescription = description !== void 0 && description !== null && description !== false;
-  const showError = error !== null && error.index === active;
+  const showError = error !== null && error.index === active2;
   const stepperDescription = (s) => {
     if (!s.optional)
       return s.description;
@@ -18356,14 +18377,14 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
     {
       ref,
       className: ["ds-wizard", className].filter(Boolean).join(" "),
-      "data-step": active,
+      "data-step": active2,
       ...rest,
       children: [
         /* @__PURE__ */ (0, import_jsx_runtime73.jsxs)(
           Stepper,
           {
             className: "ds-wizard__stepper",
-            value: active,
+            value: active2,
             onValueChange: handleStepper,
             linear: false,
             ariaLabel: stepperAriaLabel,
@@ -18399,12 +18420,12 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
             "aria-busy": validating || loading || void 0,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime73.jsxs)(Heading, { ref: headingRef, id: headingId, tabIndex: -1, className: "ds-wizard__heading", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("span", { className: "ds-wizard__counter", children: formatStepCounter(active + 1, total) }),
+                /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("span", { className: "ds-wizard__counter", children: formatStepCounter(active2 + 1, total) }),
                 /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("span", { className: "ds-wizard__title", children: title })
               ] }),
               hasDescription ? /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("p", { id: descId, className: "ds-wizard__description", children: description }) : null,
               showError ? /* @__PURE__ */ (0, import_jsx_runtime73.jsx)(Alert_default, { className: "ds-wizard__alert", variant: "danger", live: "assertive", title: validationTitle, children: error.message }, error.key) : null,
-              steps.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("div", { className: "ds-wizard__content", hidden: i !== active, "data-step-id": s.id, children: s.content }, s.id)),
+              steps.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("div", { className: "ds-wizard__content", hidden: i !== active2, "data-step-id": s.id, children: s.content }, s.id)),
               isReview ? /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("ol", { className: "ds-wizard__review", children: steps.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime73.jsxs)("li", { className: "ds-wizard__review-item", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime73.jsxs)("div", { className: "ds-wizard__review-text", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime73.jsxs)("span", { className: "ds-wizard__review-title", children: [
@@ -18426,7 +18447,7 @@ var Wizard = import_react69.default.forwardRef(function Wizard2({
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime73.jsxs)("div", { ref: footerRef, className: "ds-wizard__footer", children: [
-          active > 0 ? /* @__PURE__ */ (0, import_jsx_runtime73.jsx)(Button_default, { variant: "outlineSecondary", onClick: handleBack, disabled: loading, "data-wizard-action": "back", children: backLabel }) : null,
+          active2 > 0 ? /* @__PURE__ */ (0, import_jsx_runtime73.jsx)(Button_default, { variant: "outlineSecondary", onClick: handleBack, disabled: loading, "data-wizard-action": "back", children: backLabel }) : null,
           /* @__PURE__ */ (0, import_jsx_runtime73.jsx)("div", { className: "ds-wizard__footer-end", children: /* @__PURE__ */ (0, import_jsx_runtime73.jsx)(
             Button_default,
             {
@@ -19038,8 +19059,8 @@ var CommandPalette = import_react72.default.forwardRef(function CommandPalette2(
         return;
       if (!previous.isConnected || typeof previous.focus !== "function")
         return;
-      const active = document.activeElement;
-      const focusLost = !active || active === document.body || panel != null && panel.contains(active);
+      const active2 = document.activeElement;
+      const focusLost = !active2 || active2 === document.body || panel != null && panel.contains(active2);
       if (focusLost)
         previous.focus({ preventScroll: true });
     };
@@ -19237,20 +19258,20 @@ var CommandPalette = import_react72.default.forwardRef(function CommandPalette2(
                               /* @__PURE__ */ (0, import_jsx_runtime75.jsx)("div", { role: "presentation", id: headingId, className: "ds-command-palette__group-label", children: group.label }),
                               groupOptions.map((option) => {
                                 const { item } = option;
-                                const active = (activeOption == null ? void 0 : activeOption.key) === option.key;
+                                const active2 = (activeOption == null ? void 0 : activeOption.key) === option.key;
                                 return /* @__PURE__ */ (0, import_jsx_runtime75.jsxs)(
                                   "div",
                                   {
                                     id: optionDomId(option.key),
                                     role: "option",
-                                    "aria-selected": active,
+                                    "aria-selected": active2,
                                     "aria-disabled": item.disabled ? true : void 0,
                                     "aria-keyshortcuts": item.shortcut && item.shortcut.length > 0 ? toAriaKeyShortcuts(item.shortcut, isMac) : void 0,
-                                    "data-active": active ? "true" : void 0,
+                                    "data-active": active2 ? "true" : void 0,
                                     className: "ds-command-palette__option",
                                     onMouseDown: (e) => e.preventDefault(),
                                     onMouseMove: () => {
-                                      if (!item.disabled && !active)
+                                      if (!item.disabled && !active2)
                                         setActiveKey(option.key);
                                     },
                                     onClick: () => selectOption(option),
@@ -20319,8 +20340,8 @@ var DateRangePicker = import_react74.default.forwardRef(function DateRangePicker
       clearTimeout(refocusTimerRef.current);
       refocusTimerRef.current = setTimeout(() => {
         var _a3;
-        const active = document.activeElement;
-        if (!active || active === document.body)
+        const active2 = document.activeElement;
+        if (!active2 || active2 === document.body)
           (_a3 = triggerRef.current) == null ? void 0 : _a3.focus({ preventScroll: true });
       }, 0);
     };
@@ -20359,8 +20380,8 @@ var DateRangePicker = import_react74.default.forwardRef(function DateRangePicker
     const dialog = dialogRef.current;
     if (!dialog)
       return;
-    const active = document.activeElement;
-    if (active && active !== document.body && dialog.contains(active))
+    const active2 = document.activeElement;
+    if (active2 && active2 !== document.body && dialog.contains(active2))
       return;
     const iso = lastFocusDayRef.current;
     const sameDay = iso ? dialog.querySelector(`[data-day="${iso}"] button`) : null;
@@ -20404,11 +20425,11 @@ var DateRangePicker = import_react74.default.forwardRef(function DateRangePicker
     }
     const first = tabbable[0];
     const last = tabbable[tabbable.length - 1];
-    const active = document.activeElement;
-    if (e.shiftKey && (active === first || active === dialogRef.current)) {
+    const active2 = document.activeElement;
+    if (e.shiftKey && (active2 === first || active2 === dialogRef.current)) {
       e.preventDefault();
       last.focus();
-    } else if (!e.shiftKey && active === last) {
+    } else if (!e.shiftKey && active2 === last) {
       e.preventDefault();
       first.focus();
     }
@@ -20574,13 +20595,13 @@ var DateRangePicker = import_react74.default.forwardRef(function DateRangePicker
                       className: "ds-date-range-picker__presets",
                       children: presets.map((preset) => {
                         const range2 = clampRange(preset.range(), min, max);
-                        const active = Boolean(range2 && isCompleteRange(current) && isSameRange(range2, current));
+                        const active2 = Boolean(range2 && isCompleteRange(current) && isSameRange(range2, current));
                         return /* @__PURE__ */ (0, import_jsx_runtime77.jsx)(
                           "button",
                           {
                             type: "button",
                             className: "ds-date-range-picker__preset",
-                            "aria-pressed": active,
+                            "aria-pressed": active2,
                             disabled: !range2,
                             onClick: () => pickPreset(preset),
                             children: preset.label
@@ -22735,6 +22756,413 @@ var ComposedChartComponent = (props) => {
 var ComposedChart = import_react82.default.memo(ComposedChartComponent);
 ComposedChart.displayName = "ComposedChart";
 var ComposedChart_default = ComposedChart;
+
+// src/theme/themeController.ts
+var BUILT_IN_THEMES = [
+  { id: "classic", label: "Classic", mode: "light", dataTheme: null, pair: "dark", family: "Governance", description: "Noir CTA, blue interaction (tokens.css :root)" },
+  { id: "blue", label: "Blue", mode: "light", dataTheme: "blue", pair: "dark", family: "Governance" },
+  { id: "dark", label: "Dark", mode: "dark", dataTheme: "dark", pair: "classic", family: "Governance" },
+  { id: "green", label: "Green", mode: "light", dataTheme: "green", pair: "dark", family: "Governance" },
+  { id: "mist", label: "Ion mist", mode: "light", dataTheme: "mist", pair: "dark", family: "Governance" },
+  { id: "custom", label: "Custom (rose)", mode: "light", dataTheme: "custom", pair: "dark", family: "Governance" },
+  { id: "blue-mist", label: "Blue + mist", mode: "light", dataTheme: "blue-mist", pair: "dark", family: "Governance" },
+  { id: "green-mist", label: "Green + mist", mode: "light", dataTheme: "green-mist", pair: "dark", family: "Governance" },
+  { id: "infinia-light", label: "Infinia light", mode: "light", dataTheme: "infinia-light", pair: "infinia-dark", family: "Infinia", description: "Xalion Forma UI v1.1.0 \u2014 white, black, #FFD400" },
+  { id: "infinia-dark", label: "Infinia dark", mode: "dark", dataTheme: "infinia-dark", pair: "infinia-light", family: "Infinia", description: "Xalion Forma UI v1.1.0 \u2014 dark" }
+];
+var SYSTEM_THEME = "system";
+var registry = new Map(BUILT_IN_THEMES.map((t) => [t.id, t]));
+var listeners = /* @__PURE__ */ new Set();
+var config = {
+  defaultTheme: "classic",
+  storageKey: "ucs-theme",
+  system: { light: "classic", dark: "dark" },
+  syncMetaThemeColor: true
+};
+var preference = "classic";
+var state = null;
+var mediaQuery = null;
+var detachMedia = null;
+var hasDom = () => typeof document !== "undefined";
+function rootEl() {
+  if (config.root)
+    return config.root;
+  return hasDom() ? document.documentElement : null;
+}
+function isAllowed(id) {
+  if (id === SYSTEM_THEME)
+    return !config.allowed || config.allowed.includes(SYSTEM_THEME);
+  if (!registry.has(id))
+    return false;
+  return !config.allowed || config.allowed.includes(id);
+}
+function prefersDark() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function")
+    return false;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+function resolve(pref) {
+  var _a, _b;
+  const id = pref === SYSTEM_THEME ? prefersDark() ? config.system.dark : config.system.light : pref;
+  return (_b = (_a = registry.get(id)) != null ? _a : registry.get(config.defaultTheme)) != null ? _b : registry.get("classic");
+}
+function readStored() {
+  if (!config.storageKey || typeof window === "undefined")
+    return null;
+  try {
+    return window.localStorage.getItem(config.storageKey);
+  } catch (e) {
+    return null;
+  }
+}
+function writeStored(value) {
+  if (!config.storageKey || typeof window === "undefined")
+    return;
+  try {
+    window.localStorage.setItem(config.storageKey, value);
+  } catch (e) {
+  }
+}
+function syncMeta(root) {
+  if (!config.syncMetaThemeColor || !hasDom())
+    return;
+  const value = getComputedStyle(root).getPropertyValue("--color-bg-surface").trim();
+  if (!value)
+    return;
+  let meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.name = "theme-color";
+    document.head.appendChild(meta);
+  }
+  meta.content = value;
+}
+function buildState() {
+  const theme = resolve(preference);
+  const themes = [...registry.values()].filter((t) => !config.allowed || config.allowed.includes(t.id));
+  return { preference, theme, mode: theme.mode, themes, systemAllowed: isAllowed(SYSTEM_THEME) };
+}
+function apply() {
+  state = buildState();
+  const root = rootEl();
+  if (root) {
+    if (state.theme.dataTheme)
+      root.setAttribute("data-theme", state.theme.dataTheme);
+    else
+      root.removeAttribute("data-theme");
+    root.style.colorScheme = state.theme.mode;
+    syncMeta(root);
+  }
+  listeners.forEach((l) => l(state));
+}
+function watchSystem() {
+  detachMedia == null ? void 0 : detachMedia();
+  detachMedia = null;
+  if (preference !== SYSTEM_THEME || typeof window === "undefined" || typeof window.matchMedia !== "function")
+    return;
+  mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const onChange = () => apply();
+  mediaQuery.addEventListener("change", onChange);
+  detachMedia = () => mediaQuery == null ? void 0 : mediaQuery.removeEventListener("change", onChange);
+}
+function initTheme(options = {}) {
+  var _a, _b, _c;
+  config = {
+    defaultTheme: (_a = options.defaultTheme) != null ? _a : "classic",
+    storageKey: options.storageKey === void 0 ? "ucs-theme" : options.storageKey,
+    system: (_b = options.system) != null ? _b : { light: "classic", dark: "dark" },
+    syncMetaThemeColor: (_c = options.syncMetaThemeColor) != null ? _c : true,
+    root: options.root,
+    allowed: options.allowed
+  };
+  const stored = readStored();
+  preference = stored && isAllowed(stored) ? stored : config.defaultTheme;
+  watchSystem();
+  apply();
+  return state;
+}
+function setTheme(next, opts = {}) {
+  if (!isAllowed(next))
+    return getThemeState();
+  preference = next;
+  if (opts.persist !== false)
+    writeStored(next);
+  watchSystem();
+  apply();
+  return state;
+}
+function getToggleTarget() {
+  var _a, _b;
+  const current = getThemeState().theme;
+  const id = (_a = current.pair) != null ? _a : current.mode === "dark" ? config.system.light : config.system.dark;
+  if (!isAllowed(id))
+    return null;
+  return (_b = registry.get(id)) != null ? _b : null;
+}
+function toggleThemeMode(opts = {}) {
+  const target = getToggleTarget();
+  return target ? setTheme(target.id, opts) : getThemeState();
+}
+function getThemeState() {
+  if (!state)
+    state = buildState();
+  return state;
+}
+function subscribeTheme(listener) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+function registerTheme(def) {
+  registry.set(def.id, def);
+  state = null;
+  if (preference === def.id)
+    apply();
+}
+function getThemes() {
+  return [...registry.values()];
+}
+
+// src/theme/themedTitles.ts
+var PARKED = "data-ucs-title";
+var TIP_ID = "ucs-title-tip";
+var active = null;
+function enableThemedTitles(options = {}) {
+  var _a;
+  if (typeof document === "undefined")
+    return () => {
+    };
+  active == null ? void 0 : active();
+  const delay = (_a = options.delay) != null ? _a : 400;
+  const exclude = options.exclude;
+  const tip = document.createElement("div");
+  tip.id = TIP_ID;
+  tip.className = "ucs-title-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.hidden = true;
+  document.body.appendChild(tip);
+  let owner = null;
+  let timer = null;
+  let prevDescribedBy = null;
+  const restore = () => {
+    if (timer)
+      clearTimeout(timer);
+    timer = null;
+    tip.hidden = true;
+    if (!owner)
+      return;
+    const text = owner.getAttribute(PARKED);
+    if (text !== null && !owner.hasAttribute("title"))
+      owner.setAttribute("title", text);
+    owner.removeAttribute(PARKED);
+    if (prevDescribedBy)
+      owner.setAttribute("aria-describedby", prevDescribedBy);
+    else
+      owner.removeAttribute("aria-describedby");
+    owner = null;
+    prevDescribedBy = null;
+  };
+  const place = (x, y, below) => {
+    const pad = 8;
+    const { innerWidth: vw, innerHeight: vh } = window;
+    const r = tip.getBoundingClientRect();
+    let left = Math.min(Math.max(pad, x), vw - r.width - pad);
+    let top = below;
+    if (top + r.height + pad > vh)
+      top = y - r.height - 8;
+    left = Math.max(pad, left);
+    tip.style.left = `${left}px`;
+    tip.style.top = `${Math.max(pad, top)}px`;
+  };
+  const claim = (el, show) => {
+    if (owner === el)
+      return;
+    restore();
+    const text = el.getAttribute("title");
+    if (!text || !text.trim())
+      return;
+    owner = el;
+    el.setAttribute(PARKED, text);
+    el.removeAttribute("title");
+    prevDescribedBy = el.getAttribute("aria-describedby");
+    el.setAttribute("aria-describedby", prevDescribedBy ? `${prevDescribedBy} ${TIP_ID}` : TIP_ID);
+    tip.textContent = text;
+    timer = setTimeout(() => {
+      tip.hidden = false;
+      show();
+    }, delay);
+  };
+  const target = (node) => {
+    if (!(node instanceof Element))
+      return null;
+    const el = node.closest("[title]");
+    if (!el || el === tip)
+      return null;
+    if (exclude && el.closest(exclude))
+      return null;
+    return el;
+  };
+  const onOver = (e) => {
+    if (e.pointerType === "touch")
+      return;
+    const el = target(e.target);
+    if (!el)
+      return;
+    const { clientX, clientY } = e;
+    claim(el, () => place(clientX, clientY, clientY + 18));
+  };
+  const onOut = (e) => {
+    if (!owner)
+      return;
+    const to = e.relatedTarget;
+    if (to instanceof Node && owner.contains(to))
+      return;
+    restore();
+  };
+  const onFocus = (e) => {
+    const el = target(e.target);
+    if (!el)
+      return;
+    claim(el, () => {
+      const r = el.getBoundingClientRect();
+      place(r.left, r.top, r.bottom + 6);
+    });
+  };
+  const onBlur = () => restore();
+  const onKey = (e) => {
+    if (e.key === "Escape")
+      restore();
+  };
+  const onDismiss = () => restore();
+  document.addEventListener("pointerover", onOver, true);
+  document.addEventListener("pointerout", onOut, true);
+  document.addEventListener("focusin", onFocus, true);
+  document.addEventListener("focusout", onBlur, true);
+  document.addEventListener("keydown", onKey, true);
+  document.addEventListener("pointerdown", onDismiss, true);
+  window.addEventListener("scroll", onDismiss, true);
+  const dispose = () => {
+    restore();
+    document.removeEventListener("pointerover", onOver, true);
+    document.removeEventListener("pointerout", onOut, true);
+    document.removeEventListener("focusin", onFocus, true);
+    document.removeEventListener("focusout", onBlur, true);
+    document.removeEventListener("keydown", onKey, true);
+    document.removeEventListener("pointerdown", onDismiss, true);
+    window.removeEventListener("scroll", onDismiss, true);
+    tip.remove();
+    if (active === dispose)
+      active = null;
+  };
+  active = dispose;
+  return dispose;
+}
+
+// src/theme/ThemeProvider.tsx
+var import_react83 = require("react");
+var import_jsx_runtime86 = require("react/jsx-runtime");
+function useTheme() {
+  const state2 = (0, import_react83.useSyncExternalStore)(subscribeTheme, getThemeState, getThemeState);
+  return (0, import_react83.useMemo)(
+    () => ({
+      ...state2,
+      setTheme: (next) => void setTheme(next),
+      toggleMode: () => void toggleThemeMode(),
+      toggleTarget: getToggleTarget()
+    }),
+    [state2]
+  );
+}
+function ThemeProvider({ children, ...config2 }) {
+  (0, import_react83.useState)(() => initTheme(config2));
+  return /* @__PURE__ */ (0, import_jsx_runtime86.jsx)(import_jsx_runtime86.Fragment, { children });
+}
+function ThemePicker({
+  themes,
+  includeSystem = false,
+  systemLabel = "System",
+  onThemeChange,
+  label = "Theme",
+  placeholder = "",
+  ...selectProps
+}) {
+  const state2 = useTheme();
+  const options = (0, import_react83.useMemo)(() => {
+    const list = themes ? themes.map((id) => state2.themes.find((t) => t.id === id)).filter((t) => !!t) : state2.themes;
+    const opts = list.map((t) => ({ label: t.label, value: t.id }));
+    if (includeSystem && state2.systemAllowed)
+      opts.unshift({ label: systemLabel, value: SYSTEM_THEME });
+    return opts;
+  }, [themes, includeSystem, systemLabel, state2.themes, state2.systemAllowed]);
+  return /* @__PURE__ */ (0, import_jsx_runtime86.jsx)(
+    Select_default,
+    {
+      ...selectProps,
+      label,
+      placeholder,
+      options,
+      value: state2.preference,
+      onValueChange: (value) => {
+        const next = setTheme(value);
+        onThemeChange == null ? void 0 : onThemeChange(next);
+      }
+    }
+  );
+}
+var SunGlyph = /* @__PURE__ */ (0, import_jsx_runtime86.jsxs)(import_jsx_runtime86.Fragment, { children: [
+  /* @__PURE__ */ (0, import_jsx_runtime86.jsx)("circle", { cx: "12", cy: "12", r: "4" }),
+  /* @__PURE__ */ (0, import_jsx_runtime86.jsx)("path", { d: "M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" })
+] });
+var MoonGlyph = /* @__PURE__ */ (0, import_jsx_runtime86.jsx)("path", { d: "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" });
+function ThemeModeIcon({ size = 20, show = "action", ...svgProps2 }) {
+  const { mode } = useTheme();
+  const sun = show === "action" ? mode === "dark" : mode === "light";
+  return /* @__PURE__ */ (0, import_jsx_runtime86.jsx)(
+    "svg",
+    {
+      width: size,
+      height: size,
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: 2,
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      "aria-hidden": "true",
+      focusable: "false",
+      "data-theme-icon": sun ? "sun" : "moon",
+      ...svgProps2,
+      children: sun ? SunGlyph : MoonGlyph
+    }
+  );
+}
+function ThemeToggle({
+  size = "md",
+  getLabel = (m) => m === "dark" ? "Switch to dark theme" : "Switch to light theme",
+  className,
+  onToggle
+}) {
+  const { toggleTarget } = useTheme();
+  if (!toggleTarget)
+    return null;
+  const label = getLabel(toggleTarget.mode);
+  return /* @__PURE__ */ (0, import_jsx_runtime86.jsx)(
+    Button_default,
+    {
+      variant: "ghost",
+      size,
+      className,
+      ariaLabel: label,
+      title: label,
+      icon: /* @__PURE__ */ (0, import_jsx_runtime86.jsx)(ThemeModeIcon, {}),
+      onClick: () => {
+        const next = toggleThemeMode();
+        onToggle == null ? void 0 : onToggle(next);
+      }
+    }
+  );
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Accordion,
@@ -22748,6 +23176,7 @@ var ComposedChart_default = ComposedChart;
   AppTopbar,
   AreaChart,
   Avtar,
+  BUILT_IN_THEMES,
   Badge,
   BarChart,
   Breadcrumb,
@@ -22844,6 +23273,7 @@ var ComposedChart_default = ComposedChart;
   RadioGroup,
   SEGMENTED_CONTROL_DEFAULTS,
   SEGMENTED_CONTROL_SIZES,
+  SYSTEM_THEME,
   SegmentedControl,
   Select,
   Sheet,
@@ -22872,6 +23302,10 @@ var ComposedChart_default = ComposedChart;
   Tag,
   TextArea,
   TextView,
+  ThemeModeIcon,
+  ThemePicker,
+  ThemeProvider,
+  ThemeToggle,
   Toast,
   ToastProvider,
   ToggleButton,
@@ -22884,12 +23318,17 @@ var ComposedChart_default = ComposedChart;
   createDefaultRangePresets,
   detectFileKindFromBuffer,
   detectIsMac,
+  enableThemedTitles,
   escapeCsvCell,
   formatLocaleNumber,
   formatShortcut,
   getItemRange,
   getPageCount,
   getPaginationRange,
+  getThemeState,
+  getThemes,
+  getToggleTarget,
+  initTheme,
   mergeSidebarTokensStyle,
   mergeTopbarTokensStyle,
   normalizeHex,
@@ -22897,10 +23336,15 @@ var ComposedChart_default = ComposedChart;
   parseLocaleNumber,
   pieLabelNamePercent,
   readAppSidebarPersist,
+  registerTheme,
+  setTheme,
+  subscribeTheme,
   toAriaKeyShortcuts,
   toCsv,
+  toggleThemeMode,
   useFilePicker,
   useFormField,
+  useTheme,
   useToast,
   validateFileSecurity,
   validateFilename,

@@ -57,7 +57,7 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
       ? "var(--color-text-primary)"
       : "var(--color-bg-surface)";
   const tooltipBorder =
-    variant === "light" ? "1px solid rgba(153, 153, 153, 0.3)" : "1px solid transparent";
+    variant === "light" ? "1px solid var(--color-border-soft, rgba(153, 153, 153, 0.3))" : "1px solid transparent";
 
   const clearTimers = () => {
     if (openTimerRef.current) clearTimeout(openTimerRef.current);

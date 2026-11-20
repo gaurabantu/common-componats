@@ -307,6 +307,7 @@ export type {
   AppSidebarNavItem,
   AppSidebarSection,
   AppSidebarTier,
+  AppSidebarDensity,
   AppSidebarSectionGrouping,
   AppSidebarHeader,
   AppSidebarUser,
@@ -394,3 +395,35 @@ export type { KbdProps, KbdSize, KbdPlatform, KbdKeyLabel } from "./components/a
 export type { CommandPaletteProps, CommandGroup, CommandItem, CommandSearchContext } from "./components/molecules/CommandPalette";
 export type { NumberInputProps, NumberInputSize } from "./components/atoms/NumberInput";
 export type { DateRange, CompleteDateRange, DateRangePreset, DateRangePickerProps, DateRangeWeekStart } from "./components/molecules/DateRangePicker";
+
+// Theming runtime — pick a `tokens.css` theme (data-theme) without hard-coding it in the host app.
+export {
+  BUILT_IN_THEMES,
+  SYSTEM_THEME,
+  initTheme,
+  setTheme,
+  getThemeState,
+  subscribeTheme,
+  registerTheme,
+  getThemes,
+  toggleThemeMode,
+  getToggleTarget,
+  enableThemedTitles,
+  ThemeProvider,
+  ThemePicker,
+  ThemeToggle,
+  ThemeModeIcon,
+  useTheme,
+} from "./theme";
+export type {
+  ThemeConfig,
+  ThemeDefinition,
+  ThemeMode,
+  ThemeState,
+  ThemeProviderProps,
+  ThemePickerProps,
+  ThemeToggleProps,
+  ThemeModeIconProps,
+  ThemedTitlesOptions,
+  UseThemeResult,
+} from "./theme";

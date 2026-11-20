@@ -82,8 +82,8 @@
 }
 
 .table-theme-dark .table-pagination-page.active {
-  background: var(--table-accent, var(--predictstreet-accent)) !important;
-  border-color: var(--table-accent, var(--predictstreet-accent)) !important;
+  background: var(--table-accent, var(--color-theme-primary)) !important;
+  border-color: var(--table-accent, var(--color-theme-primary)) !important;
   color: var(--color-text-on-primary-inverse) !important;
 }
 
@@ -297,7 +297,7 @@
 
 /* Selected row */
 .table-row-selected td {
-  background: var(--color-accent-sky-10) !important;
+  background: var(--color-selected-bg, var(--color-accent-sky-10)) !important;
 }
 
 /* Sticky header */
@@ -535,8 +535,8 @@
 }
 
 .table-pagination-page.active {
-  background: var(--color-brand-primary);
-  color: var(--color-bg-surface);
+  background: var(--color-page-current-bg, var(--color-brand-primary));
+  color: var(--color-page-current-fg, var(--color-bg-surface));
   font-weight: 600;
 }
 
@@ -634,19 +634,19 @@
   border-bottom: none;
 }
 
-[data-theme="dark"] .table-ui-wrap,
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-wrap,
 .dark .table-ui-wrap {
   background: var(--color-bg-surface);
   border-color: var(--table-ui-divider);
 }
 
-[data-theme="dark"] .table-ui-thead,
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-thead,
 .dark .table-ui-thead {
   background: var(--color-bg-secondary);
 }
 
-[data-theme="dark"] .table-ui-td,
-[data-theme="dark"] .table-ui-th,
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-td,
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-th,
 .dark .table-ui-td,
 .dark .table-ui-th {
   border-color: var(--table-ui-divider);
@@ -708,15 +708,15 @@
 /* TableRow selected */
 .table-ui-tr--selected > .table-ui-td,
 .table-ui-tr--selected > .table-ui-th {
-  background: var(--color-accent-lavender-10);
+  background: var(--color-selected-bg, var(--color-accent-lavender-10));
 }
 
 .table-ui-tbody .table-ui-tr--selected:hover > .table-ui-td {
-  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-accent-lavender-10));
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-selected-bg, var(--color-accent-lavender-10)));
 }
 
 .table-ui-tr--selected > :first-child {
-  box-shadow: inset 3px 0 0 var(--color-border-selected);
+  box-shadow: inset 3px 0 0 var(--color-selected-indicator, var(--color-border-selected));
 }
 
 /* Sticky first column keeps the row's hover / selected tint. */
@@ -725,11 +725,11 @@
 }
 
 .table-ui--sticky-first-col .table-ui-tr.table-ui-tr--selected > :first-child {
-  background: var(--color-accent-lavender-10);
+  background: var(--color-selected-bg, var(--color-accent-lavender-10));
 }
 
 .table-ui--sticky-first-col .table-ui-tbody .table-ui-tr.table-ui-tr--selected:hover > :first-child {
-  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-accent-lavender-10));
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-selected-bg, var(--color-accent-lavender-10)));
 }
 
 /* —— In-cell editors (0.0.4) ——

@@ -7,6 +7,8 @@ export default defineConfig({
     charts: "src/entries/charts.ts",
     shell: "src/entries/shell.ts",
     table: "src/entries/table.ts",
+    // AI entry (OpenUI). @openuidev/react-lang + zod are dependencies, kept external.
+    openui: "src/entries/openui.ts",
   },
   tsconfig: "tsconfig.build.json",
   format: ["cjs", "esm"],

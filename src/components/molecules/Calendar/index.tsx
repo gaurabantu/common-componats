@@ -302,7 +302,7 @@ const Calendar: React.FC<CalendarProps> = ({
     maxWidth: theme.maxWidth ?? 336,
     padding: theme.padding ?? 20,
     borderRadius: resolvedRadius,
-    border: bordered ? `1px solid ${theme.border ?? "rgba(153, 153, 153, 0.3)"}` : "1px solid transparent",
+    border: bordered ? `1px solid ${theme.border ?? "var(--color-border-soft, rgba(153, 153, 153, 0.3))"}` : "1px solid transparent",
     background: resolvedBackground,
     boxShadow: theme.boxShadow ?? boxShadow,
     fontFamily: theme.fontFamily,
@@ -341,7 +341,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const selectStyle: React.CSSProperties = {
     flex: 1,
     padding: "8px 12px",
-    border: `1px solid ${theme.selectBorder ?? "rgba(0,0,0,0.1)"}`,
+    border: `1px solid ${theme.selectBorder ?? "var(--color-border-soft, rgba(0, 0, 0, 0.1))"}`,
     borderRadius: theme.cellRadius ?? 10,
     fontSize: theme.cellFontSize ?? 14,
     fontWeight: 600,
@@ -635,7 +635,7 @@ const Calendar: React.FC<CalendarProps> = ({
               : !day.inCurrentMonth
                 ? (theme.textSecondary ?? "var(--color-text-secondary)")
                 : isSelected
-                  ? (theme.primaryText ?? "var(--color-text-on-primary)")
+                  ? (theme.primaryText ?? "var(--button-primary-default-text)")
                   : (theme.text ?? "var(--color-text-primary)"),
             background: isSelected
               ? (theme.primary ?? "var(--button-primary-default-bg)")
@@ -646,7 +646,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   : "transparent",
             fontWeight: isSelected ? 700 : isToday ? 600 : 500,
             boxShadow: isToday && !isSelected
-              ? `inset 0 0 0 2px ${theme.todayRing ?? "rgba(245, 158, 11, 0.5)"}`
+              ? `inset 0 0 0 2px ${theme.todayRing ?? "var(--color-today-ring, rgba(245, 158, 11, 0.5))"}`
               : undefined,
           };
 

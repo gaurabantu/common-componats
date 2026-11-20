@@ -84,9 +84,9 @@
 /* brand-primary + bg-surface flips with the theme: 19.4:1 classic, 14.7:1 dark.
    (--button-primary-* gives only 3.68:1 in dark theme.) */
 .ds-pagination__control[aria-current="page"] {
-  background: var(--color-brand-primary);
-  border-color: var(--color-brand-primary);
-  color: var(--color-bg-surface);
+  background: var(--color-page-current-bg, var(--color-brand-primary));
+  border-color: var(--color-page-current-bg, var(--color-brand-primary));
+  color: var(--color-page-current-fg, var(--color-bg-surface));
   font-weight: 600;
   cursor: default;
 }
@@ -100,7 +100,7 @@
 .ds-pagination__control[aria-current="page"]:disabled,
 .ds-pagination__control[aria-current="page"][aria-disabled="true"] {
   opacity: var(--opacity-disabled);
-  color: var(--color-bg-surface);
+  color: var(--color-page-current-fg, var(--color-bg-surface));
 }
 
 .ds-pagination__ellipsis {

@@ -179,13 +179,13 @@
   border-color: var(--color-brand-primary);
   background: var(--color-bg-elevated);
   color: var(--color-text-primary);
-  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-brand-secondary);
+  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-step-current-ring, var(--color-brand-secondary));
 }
 
 .ds-stepper[data-appearance="emphasized"] .ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
   box-shadow:
     0 0 0 2px var(--color-bg-elevated),
-    0 0 0 5px color-mix(in srgb, var(--color-brand-secondary) 65%, transparent);
+    0 0 0 5px color-mix(in srgb, var(--color-step-current-ring, var(--color-brand-secondary)) 65%, transparent);
 }
 
 .ds-stepper__check {

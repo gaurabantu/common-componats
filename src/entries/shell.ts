@@ -7,6 +7,7 @@ export type {
   AppSidebarNavItem,
   AppSidebarSection,
   AppSidebarTier,
+  AppSidebarDensity,
   AppSidebarSectionGrouping,
   AppSidebarHeader,
   AppSidebarUser,

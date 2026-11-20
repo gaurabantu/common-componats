@@ -13,6 +13,7 @@ import {
   variantClassMap,
 } from "./TextView.config";
 import { cls } from "./TextView.utils";
+import "./TextView.css";
 
 const SEMANTIC_COLORS: TextColor[] = [
   "primary", "secondary", "hint", "disabled", "success", "warning", "error", "inherit",

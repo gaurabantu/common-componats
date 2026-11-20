@@ -28,6 +28,12 @@ interface AvatarProps {
 }
 
 type AppSidebarTier = "primary" | "secondary" | "tertiary";
+/**
+ * Row density. `comfortable` (default): 15px medium labels, 24px icons, 44px rows.
+ * `compact`: 14px regular labels (active row medium weight), headings with wider tracking, 18px icons with a
+ * lighter stroke, 32px rows — a dense, docs-style navigation.
+ */
+type AppSidebarDensity = "comfortable" | "compact";
 /** One grouping method per section (UX Governance). */
 type AppSidebarSectionGrouping = "label" | "spacing" | "divider";
 type AppSidebarTrailingPreset = "lock" | "check" | "none";
@@ -140,6 +146,8 @@ interface AppSidebarProps extends Omit<React__default.HTMLAttributes<HTMLElement
     collapseToggleLabel?: string;
     /** Expanded width — default 320 (governance). */
     widthExpanded?: number;
+    /** Row density — default `comfortable` (see {@link AppSidebarDensity}). */
+    density?: AppSidebarDensity;
     /** Collapsed — default 64. */
     widthCollapsed?: number;
     /**
@@ -206,7 +214,7 @@ interface AppSidebarProps extends Omit<React__default.HTMLAttributes<HTMLElement
     onExpandedChange?: (ids: string[]) => void;
 }
 
-declare function AppSidebar({ sections: sectionsProp, items: itemsProp, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, showCollapseToggle, collapseToggleLabel, widthExpanded, widthCollapsed, fixed, responsive, collapseBelowWidth, drawerOverlayBelowWidth, publishLayoutOffsetVar, closeOnNavigateWhenNarrow, backdropCloseLabel, lockBodyScrollWhenDrawer, header, activeItemId: activeItemIdProp, defaultActiveItemId, onItemSelect, navLabel, user, footerActions, maxFooterActions, footerLayout, footerSlot, tokens, classNames, persistenceKey, expandedIds: expandedIdsProp, defaultExpandedIds, onExpandedChange, className, style, ...rest }: AppSidebarProps): react_jsx_runtime.JSX.Element;
+declare function AppSidebar({ sections: sectionsProp, items: itemsProp, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, showCollapseToggle, collapseToggleLabel, widthExpanded, density, widthCollapsed, fixed, responsive, collapseBelowWidth, drawerOverlayBelowWidth, publishLayoutOffsetVar, closeOnNavigateWhenNarrow, backdropCloseLabel, lockBodyScrollWhenDrawer, header, activeItemId: activeItemIdProp, defaultActiveItemId, onItemSelect, navLabel, user, footerActions, maxFooterActions, footerLayout, footerSlot, tokens, classNames, persistenceKey, expandedIds: expandedIdsProp, defaultExpandedIds, onExpandedChange, className, style, ...rest }: AppSidebarProps): react_jsx_runtime.JSX.Element;
 
 type DashboardShellProps = {
     /**
@@ -378,4 +386,4 @@ declare function writeAppSidebarPersist(key: string, collapsed: boolean, expande
 
 declare function mergeTopbarTokensStyle(tokens: AppTopbarTokens | undefined, base?: React__default.CSSProperties): React__default.CSSProperties;
 
-export { AvatarProps as A, readAppSidebarPersist as B, writeAppSidebarPersist as C, DashboardShell as D, AppSidebarPersistPayload as E, mergeTopbarTokensStyle as F, AppSidebar as a, AppShell as b, AppTopbar as c, DashboardShellProps as d, AppShellProps as e, AppSidebarProps as f, AppSidebarNavItem as g, AppSidebarSection as h, AppSidebarTier as i, AppSidebarSectionGrouping as j, AppSidebarHeader as k, AppSidebarUser as l, AppSidebarFooterAction as m, AppSidebarTrailingPreset as n, AppSidebarTokens as o, AppSidebarClassNames as p, AppSidebarFooterLayout as q, AppTopbarProps as r, AppTopbarTheme as s, AppTopbarSearchConfig as t, AppTopbarAction as u, AppTopbarProfile as v, AppTopbarTokens as w, AppTopbarClassNames as x, AppTopbarMenuItem as y, mergeSidebarTokensStyle as z };
+export { AvatarProps as A, mergeSidebarTokensStyle as B, readAppSidebarPersist as C, DashboardShell as D, writeAppSidebarPersist as E, AppSidebarPersistPayload as F, mergeTopbarTokensStyle as G, AppSidebar as a, AppShell as b, AppTopbar as c, DashboardShellProps as d, AppShellProps as e, AppSidebarProps as f, AppSidebarNavItem as g, AppSidebarSection as h, AppSidebarTier as i, AppSidebarDensity as j, AppSidebarSectionGrouping as k, AppSidebarHeader as l, AppSidebarUser as m, AppSidebarFooterAction as n, AppSidebarTrailingPreset as o, AppSidebarTokens as p, AppSidebarClassNames as q, AppSidebarFooterLayout as r, AppTopbarProps as s, AppTopbarTheme as t, AppTopbarSearchConfig as u, AppTopbarAction as v, AppTopbarProfile as w, AppTopbarTokens as x, AppTopbarClassNames as y, AppTopbarMenuItem as z };

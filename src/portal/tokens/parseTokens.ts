@@ -77,7 +77,8 @@ export function parseTokenBlocks(css: string): TokenBlock[] {
       tokens.push({ name: d[2], value: d[3].trim().replace(/\s+/g, " "), section });
     }
     if (!tokens.length) continue;
-    const themes = [...selector.matchAll(THEME_RE)].map((m) => m[1]);
+    // `[data-theme="classic"]` is the base palette re-applied to a subtree — not a named theme.
+    const themes = [...selector.matchAll(THEME_RE)].map((m) => m[1]).filter((t) => t !== "classic");
     blocks.push({ selector, themes: [...new Set(themes)], tokens });
   }
   return blocks;

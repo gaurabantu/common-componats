@@ -13,3 +13,12 @@
   height: 100%;
   box-sizing: border-box;
 }
+
+/* Button — `unstyled`: no variant/size/radius surface; the consumer's className styles it.
+   Only behaviour-level rules remain (pointer, disabled cursor, keyboard focus ring). */
+:where(button, a).btn-unstyled { cursor: pointer; }
+:where(button, a).btn-unstyled:is(:disabled, [aria-disabled="true"]) { cursor: not-allowed; }
+:where(button, a).btn-unstyled:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring);
+  outline-offset: 2px;
+}

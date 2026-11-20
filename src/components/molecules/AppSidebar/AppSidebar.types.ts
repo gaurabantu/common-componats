@@ -3,6 +3,12 @@ import type { IconSource } from "../../atoms/Icon";
 import type { AvatarProps } from "../../atoms/Avatar/Avatar.types";
 
 export type AppSidebarTier = "primary" | "secondary" | "tertiary";
+/**
+ * Row density. `comfortable` (default): 15px medium labels, 24px icons, 44px rows.
+ * `compact`: 14px regular labels (active row medium weight), headings with wider tracking, 18px icons with a
+ * lighter stroke, 32px rows — a dense, docs-style navigation.
+ */
+export type AppSidebarDensity = "comfortable" | "compact";
 
 /** One grouping method per section (UX Governance). */
 export type AppSidebarSectionGrouping = "label" | "spacing" | "divider";
@@ -126,6 +132,8 @@ export interface AppSidebarProps extends Omit<React.HTMLAttributes<HTMLElement>,
   collapseToggleLabel?: string;
   /** Expanded width — default 320 (governance). */
   widthExpanded?: number;
+  /** Row density — default `comfortable` (see {@link AppSidebarDensity}). */
+  density?: AppSidebarDensity;
   /** Collapsed — default 64. */
   widthCollapsed?: number;
   /**

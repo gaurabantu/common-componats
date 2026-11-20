@@ -52,12 +52,41 @@ Smaller JS graphs are available via subpath imports (`ui-common-components/chart
 | `custom` / `.theme-custom` | Rose example (§42 slots). |
 | `blue-mist` / `.theme-blue-mist` | Blue interaction + Mist backgrounds; theme **focus** (`--color-focus-ring`). |
 | `green-mist` / `.theme-green-mist` | Green interaction + Mist backgrounds; theme **focus** (`--color-focus-ring`). |
+| `infinia-light` / `.theme-infinia-light` | Xalion **Forma UI v1.1.0**: white surfaces, `#FFD400` primary with `#111111` text, `#FFFBE5` selection, Forma shadows + motion. |
+| `infinia-dark` / `.theme-infinia-dark` | Forma dark: `#111111` page, `#191919` surface, `#FFD400` primary / focus / selection edge, `#2A250B` selection fill. Also matches `[data-theme="dark"]` rules. |
 
 **Dashboard shell (`AppTopbar`, `AppSidebar`):** Named themes set **`--app-shell-topbar-*`** and **`--app-sidebar-*`** on the document root so the left rail and header track **`data-theme`** automatically. Prefer importing **`tokens.css`** once on `<html>` and omitting `tokens` / `mergeTopbarTokensStyle` overrides unless you must support a bespoke host palette.
 
 Do **not** set conflicting `data-theme` on the same root. The header of **`src/design-system/tokens.css`** also documents `data-theme` values.
 
 **Storybook only:** the manager sidebar uses a hex snapshot adapter (`.storybook/manager-palettes.ts`) because Storybook's JS theme API cannot parse `var(--token)`. Preview iframe and all consumer apps use **`tokens.css` directly** — see [`THEMES.md`](./THEMES.md) § Theming architecture.
+
+### Role tokens — the theming contract (v2.1)
+
+Components read a **role** token with today's value as the fallback: `var(--color-selected-bg, var(--color-accent-lavender-10))`.
+Themes that do not set a role keep their current look; a theme restyles a whole interaction (selection, checked, current page…)
+by setting the role — never by adding `[data-theme] .component` rules or literal colours in components.
+
+| Role token | Consumed by | Fallback (themes that don't set it) |
+|---|---|---|
+| `--color-selected-bg` | List selected, Table selected rows, ToggleButton pressed, Combobox selected option, Calendar month selected, Checkbox/Radio box card | per site (lavender-10 / sky-10 / row-hover / brand-secondary 12% / cal-primary 12%) |
+| `--color-selected-indicator` | List bar, Table row edge, ToggleButton border, Calendar month border | `--color-border-selected` / `--color-text-primary` |
+| `--color-selected-text` | Tabs active label, Calendar month selected label | tab indicator / cal-primary |
+| `--color-tab-indicator` | Tabs underline | `--color-text-primary` |
+| `--color-control-checked-bg` / `-border` / `-fg` | Checkbox checked & indeterminate, Radio border & dot | `--color-brand-primary` / `--color-bg-surface` |
+| `--color-control-checked-bg-radio` | Radio checked face | `--color-bg-surface` |
+| `--color-page-current-bg` / `-fg` | Pagination current, Table pagination active | `--color-brand-primary` / `--color-bg-surface` |
+| `--color-step-current-ring` | Stepper current marker | `--color-brand-secondary` |
+| `--color-today-ring` | Calendar today | `rgba(245, 158, 11, 0.5)` |
+| `--color-progress-glow` | ProgressBar pulse | `rgba(59, 130, 246, 0.35)` |
+| `--color-border-soft` | ToolTip (light), Avatar, Calendar bordered/select | `rgba(153,153,153,.3)` |
+| `--color-scrim` | AppSidebar narrow drawer backdrop | `rgba(0, 0, 0, 0.48)` |
+| `--shadow-thumb` / `--shadow-tab-active` / `--shadow-popover` / `--shadow-drawer` | Slider+Switch thumb / Tabs active pill / DatePicker+ChartTooltip / AppSidebar drawer+flyout | the previous literal shadows |
+| `--button-secondary-border-color` / `-hover-` / `-active-` / `-disabled-border-color` | Secondary Button border per state (infinia: Forma white + `#BDBDBD` border) | the matching `--button-secondary-*-bg` (filled secondary) |
+| `--color-badge-bg` / `--color-badge-fg` | AppTopbar count / dot badge (infinia: `#FFD400` / `#111111`) | `--color-state-error` / `--color-text-on-accent` |
+| `--color-code-fg` | CodeBlock text + focus on its always-dark panel | `#f5f5f5` |
+
+Set by: `infinia-light`, `infinia-dark`.
 
 ### Feedback / status token map (v2.0.0)
 

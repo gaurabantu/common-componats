@@ -28,7 +28,7 @@ const Avatar: React.FC<AvatarProps> = ({
   iconSize,
   preserveColors = false,
   bordered = false,
-  borderColor = "rgba(153, 153, 153, 0.35)",
+  borderColor = "var(--color-border-soft, rgba(153, 153, 153, 0.35))",
   className = '',
   style,
 }) => {

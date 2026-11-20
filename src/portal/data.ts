@@ -7,7 +7,7 @@ export const PRODUCT = {
   name: "Infinia Design System",
   packageName: "ui-common-components",
   hooksPackage: "ui-common-hooks",
-  version: "0.0.4",
+  version: "0.0.6",
   hooksVersion: "0.3.0",
   tokensVersion: "2.0.0",
   owner: "UI Platform team",
@@ -175,7 +175,9 @@ export const HOOKS = [
 ] as const;
 
 export const THEMES: { id: string; dataTheme: string | null; name: string; description: string }[] = [
-  { id: "light", dataTheme: null, name: "Classic", description: "Default — Noir CTAs on white surfaces." },
+  { id: "infinia-light", dataTheme: "infinia-light", name: "Infinia Light", description: "Infinia (Xalion palette) — yellow CTAs, neutral greys, white surfaces." },
+  { id: "infinia-dark", dataTheme: "infinia-dark", name: "Infinia Dark", description: "Infinia (Xalion palette) on near-black surfaces." },
+  { id: "light", dataTheme: null, name: "Classic", description: "Library default — Noir CTAs on white surfaces." },
   { id: "dark", dataTheme: "dark", name: "Dark", description: "Dark neutral surfaces, inverted text." },
   { id: "mist", dataTheme: "mist", name: "Ion Mist", description: "Soft grey page and sidebar shells." },
   { id: "green", dataTheme: "green", name: "Green", description: "Green interaction accents." },
@@ -195,9 +197,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.0.6",
+    date: "19 Nov 2026",
+    status: "current",
+    summary: "New `ui-common-components/openui` entry: the design system as an OpenUI library, so AI agents answer with real components.",
+    changes: [
+      { type: "added", text: "`ui-common-components/openui` — `designSystemLibrary` (OpenUI) with Stack, Grid, Card, StatCard, DataTable, BarChart, LineChart, PieChart, Alert, Badge and ActionButton; `designSystemLibrary.prompt()` builds the agent's system prompt locally; `Renderer` re-exported. `@openuidev/react-lang` and `zod` are dependencies; the main entry does not import them." },
+    ],
+  },
+  {
+    version: "0.0.5",
+    date: "5 Nov 2026",
+    status: "previous",
+    summary: "TextView styles itself without the Tailwind preset; Button gains `unstyled` for custom-styled controls.",
+    changes: [
+      { type: "fixed", text: "TextView — variant sizes and semantic colours are now library CSS (`tv-*` classes) instead of preset-only Tailwind classes, so apps without the preset no longer render every TextView at 16px body colour. A consumer `className` (e.g. `text-xs`) still overrides them." },
+      { type: "added", text: "Button — `unstyled` prop: no variant / size / radius / centring surface and no ripple wrapper; the caller's className styles it. Keeps ref, a11y name, loading / disabled handling and the focus ring. For menu rows, tab strips, list rows and corner badges." },
+    ],
+  },
+  {
     version: "0.0.4",
     date: "4 Nov 2026",
-    status: "current",
+    status: "previous",
     summary: "Gaps found migrating ConsolidateAI: overlays & layering, context menu, file picker, table/input/checkbox upgrades, chart formatters + ComposedChart, ColorPicker, Slider, ToggleButton/ToggleGroup, LoadingOverlay.",
     changes: [
       { type: "changed", text: "⚠ Upgrade note — TextArea: no default maxLength (was 500, silently truncating); with showCount and no maxLength the counter shows only the count. `disabled` is now actually applied to the <textarea>." },

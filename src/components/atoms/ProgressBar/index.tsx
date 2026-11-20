@@ -228,7 +228,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                   : "stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)",
               transform: "rotate(-90deg)",
               transformOrigin: "center",
-              filter: resolvedAnimation === "pulse" ? "drop-shadow(0 0 6px rgba(59,130,246,0.35))" : undefined,
+              filter: resolvedAnimation === "pulse" ? "drop-shadow(0 0 6px var(--color-progress-glow, rgba(59, 130, 246, 0.35)))" : undefined,
             }}
           />
         </svg>

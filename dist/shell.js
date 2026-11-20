@@ -193,7 +193,7 @@ var Avatar = ({
   iconSize,
   preserveColors = false,
   bordered = false,
-  borderColor = "rgba(153, 153, 153, 0.35)",
+  borderColor = "var(--color-border-soft, rgba(153, 153, 153, 0.35))",
   className = "",
   style
 }) => {
@@ -579,6 +579,7 @@ function AppSidebar({
   showCollapseToggle = true,
   collapseToggleLabel = "Toggle sidebar",
   widthExpanded = 320,
+  density = "comfortable",
   widthCollapsed = 64,
   fixed = false,
   responsive = true,
@@ -1031,6 +1032,7 @@ function AppSidebar({
           "app-sidebar",
           useViewportFixedChrome && "app-sidebar--fixed",
           collapsed && "app-sidebar--collapsed",
+          density === "compact" && "app-sidebar--compact",
           responsive && isNarrow && "app-sidebar--narrow",
           showDrawerOverlay && "app-sidebar--drawer-open",
           classNames == null ? void 0 : classNames.root,
@@ -1304,6 +1306,7 @@ var ButtonImpl = import_react8.default.forwardRef(function Button({
   preserveIconColor = false,
   ripple = true,
   expandOnHover = false,
+  unstyled = false,
   loadingText = "Loading",
   href,
   ...rest
@@ -1356,7 +1359,7 @@ var ButtonImpl = import_react8.default.forwardRef(function Button({
     styleOverrides["--button-gradient-hover-bg"] = gradientHover || gradient;
     styleOverrides["--button-gradient-active-bg"] = gradientActive || gradientHover || gradient;
   }
-  const baseClass = [
+  const baseClass = unstyled ? ["btn-unstyled", loading ? "btn-loading" : "", className].filter(Boolean).join(" ") : [
     "btn-base",
     variantClassNames,
     sizeClassNames,
@@ -1428,7 +1431,7 @@ var ButtonImpl = import_react8.default.forwardRef(function Button({
   const isDisabled = nativeDisabled || loading;
   const ariaBusy = loading ? true : restAria["aria-busy"];
   const describedBy = [restAria["aria-describedby"], loading ? loadingId : void 0].filter(Boolean).join(" ") || void 0;
-  const rippleEnabled = ripple !== false && !isDisabled;
+  const rippleEnabled = ripple !== false && !isDisabled && !unstyled;
   const rippleApi = useRipple(rippleEnabled);
   const pointerDown = (e) => {
     rippleApi.onPointerDown(e);
@@ -2629,7 +2632,8 @@ var TextInputSearch = import_react10.default.forwardRef(function TextInputSearch
   suffix,
   trailingRail: trailingRailProp,
   pattern,
-  autoCorrection = false
+  autoCorrection = false,
+  autoComplete = "off"
 }, ref) {
   var _a, _b, _c, _d, _e;
   const errorId = `${id}-error`;
@@ -2741,6 +2745,7 @@ var TextInputSearch = import_react10.default.forwardRef(function TextInputSearch
             validation: "headerSearch",
             pattern,
             autoCorrection,
+            autoComplete,
             value,
             onChange,
             errorMessage,

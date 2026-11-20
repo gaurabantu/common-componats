@@ -56,6 +56,14 @@ type ButtonBaseProps = {
     className?: string;
     enableWhen?: any;
     preserveIconColor?: boolean;
+    /**
+     * Drop the design-system surface (variant, size tier, radius, centring) and let `className`
+     * style the element entirely. Keeps Button behaviour: ref, a11y name, loading / disabled
+     * handling and focus ring (no ripple: its wrapper span would break the caller's layout). For controls that are not "buttons" visually — menu rows,
+     * tab strips, list rows, tiny corner badges, stepper arms. `variant` / `size` are ignored.
+     * @default false
+     */
+    unstyled?: boolean;
     /** Press ripple on pointer down. Off when loading or disabled. @default true */
     ripple?: boolean;
     /**
@@ -134,6 +142,12 @@ type SearchActionButtonProps = Omit<Partial<Extract<ButtonProps, {
 }>>, "onClick" | "disabled" | "loading" | "href" | "type">;
 /** Search field with optional trailing action powered by `Button` (colors, variants, icon/text). */
 interface TextInputSearchProps {
+    /**
+     * Native `autocomplete`. Defaults to `"off"`: the browser's saved-entry dropdown is drawn by the
+     * browser/OS (it ignores `data-theme` and shows light in dark themes) and past queries add noise.
+     * @default "off"
+     */
+    autoComplete?: string;
     id?: string;
     /** Left icon (default: magnifier). Set to `null` to hide. */
     leftIcon?: IconSource | null;
