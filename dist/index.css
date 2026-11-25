@@ -773,7 +773,7 @@ button.ucs-toggle:focus-visible {
 }
 .ds-badge[data-variant=primary][data-tone=soft] {
   --badge-bg: color-mix(in srgb, var(--color-theme-primary) 12%, var(--color-bg-surface));
-  --badge-fg: var(--color-theme-primary);
+  --badge-fg: var(--color-badge-primary-soft-fg, var(--color-theme-primary));
   --badge-border: transparent;
   --badge-dot: var(--color-theme-primary);
 }

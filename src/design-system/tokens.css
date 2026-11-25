@@ -999,6 +999,8 @@ select {
   --color-control-checked-bg-radio: #ffd400;
   --color-page-current-bg: #ffd400;
   --color-page-current-fg: #111111;
+  /* Soft primary Badge / tag: yellow text on its own 12% yellow tint is unreadable */
+  --color-badge-primary-soft-fg: #111111;
   --color-step-current-ring: #ffd400;
   --color-today-ring: #ffd400;
   --color-progress-glow: rgba(255, 212, 0, 0.45);
