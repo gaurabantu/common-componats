@@ -7,13 +7,17 @@
 }
 
 .ds-stepper[data-size="sm"] {
-  --stepper-marker: 36px;
+  --stepper-marker: 24px;
+  --stepper-marker-font: 11px;
+  --stepper-row-gap: var(--space-1, 8px);
   --stepper-label-size: var(--text-small-size, 12px);
-  --stepper-desc-size: var(--text-small-size, 12px);
+  --stepper-desc-size: 11px;
 }
 
 .ds-stepper[data-size="md"] {
-  --stepper-marker: 44px;
+  --stepper-marker: 32px;
+  --stepper-marker-font: var(--text-small-size, 12px);
+  --stepper-row-gap: var(--space-1, 8px);
   --stepper-label-size: var(--text-secondary-size, 14px);
   --stepper-desc-size: var(--text-small-size, 12px);
 }
@@ -21,7 +25,7 @@
 .ds-stepper__grid {
   display: grid;
   grid-template-rows: auto auto;
-  row-gap: var(--space-2, 16px);
+  row-gap: var(--stepper-row-gap, var(--space-1, 8px));
   column-gap: 0;
   align-items: start;
   width: 100%;
@@ -48,7 +52,7 @@
   right: auto;
   top: 50%;
   transform: translateY(-50%);
-  height: 3px;
+  height: 2px;
   pointer-events: none;
   box-sizing: border-box;
 }
@@ -157,10 +161,10 @@
   height: var(--stepper-marker, 44px);
   flex-shrink: 0;
   border-radius: 999px;
-  border: 2px solid var(--color-border-default);
-  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-step-upcoming-border, var(--color-border-default));
+  background: var(--color-step-upcoming-bg, var(--color-surface-mist, var(--color-bg-elevated)));
   font-weight: 600;
-  font-size: var(--text-secondary-size, 14px);
+  font-size: var(--stepper-marker-font, 12px);
   line-height: 1;
   color: var(--color-text-secondary);
   transition:
@@ -170,35 +174,38 @@
 }
 
 .ds-stepper__marker-btn[data-state="complete"] .ds-stepper__marker {
-  border-color: var(--color-state-success);
-  background: var(--color-state-success);
-  color: var(--color-text-on-primary);
+  border-color: var(--color-step-complete-bg, var(--color-state-success));
+  background: var(--color-step-complete-bg, var(--color-state-success));
+  color: var(--color-step-complete-fg, var(--color-text-on-primary));
 }
 
 .ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
-  border-color: var(--color-brand-primary);
-  background: var(--color-bg-elevated);
-  color: var(--color-text-primary);
-  box-shadow: 0 0 0 2px var(--color-bg-elevated), 0 0 0 4px var(--color-step-current-ring, var(--color-brand-secondary));
+  border-color: var(--color-step-current-bg, var(--color-brand-primary));
+  background: var(--color-step-current-bg, var(--color-brand-primary));
+  color: var(--color-step-current-fg, var(--color-text-on-primary));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-step-current-ring, var(--color-brand-secondary)) 45%, transparent);
 }
 
 .ds-stepper[data-appearance="emphasized"] .ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
-  box-shadow:
-    0 0 0 2px var(--color-bg-elevated),
-    0 0 0 5px color-mix(in srgb, var(--color-step-current-ring, var(--color-brand-secondary)) 65%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-step-current-ring, var(--color-brand-secondary)) 60%, transparent);
+}
+
+.ds-stepper__marker-btn:not(:disabled):hover[data-state="upcoming"] .ds-stepper__marker {
+  border-color: var(--color-step-current-bg, var(--color-brand-primary));
+  color: var(--color-text-primary);
 }
 
 .ds-stepper__check {
   display: block;
-  width: 1.1em;
-  height: 1.1em;
+  width: 1.15em;
+  height: 1.15em;
 }
 
 .ds-stepper__marker-inner {
   display: block;
   min-width: 0;
-  max-width: 92%;
-  padding: 0 var(--space-1, 8px);
+  max-width: 100%;
+  padding: 0 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -267,20 +274,22 @@
   position: relative;
   z-index: 1;
   align-self: center;
-  width: 100%;
-  height: 3px;
+  width: calc(100% - 2 * var(--space-1, 8px));
+  margin-inline: var(--space-1, 8px);
+  height: 2px;
   border-radius: 2px;
   background: var(--color-border-default);
   opacity: 0.9;
 }
 
 .ds-stepper[data-appearance="emphasized"] .ds-stepper__gap {
-  height: 4px;
+  height: 3px;
   border-radius: 3px;
 }
 
 .ds-stepper__gap--complete {
-  background: color-mix(in srgb, var(--color-state-success) 80%, var(--color-border-default));
+  background: var(--color-step-complete-bg, var(--color-state-success));
+  opacity: 1;
 }
 
 /* Continuous mode: full-width track handles the line; gap columns are layout-only */

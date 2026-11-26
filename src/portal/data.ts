@@ -7,7 +7,7 @@ export const PRODUCT = {
   name: "Infinia Design System",
   packageName: "ui-common-components",
   hooksPackage: "ui-common-hooks",
-  version: "0.0.6",
+  version: "0.0.7",
   hooksVersion: "0.3.0",
   tokensVersion: "2.0.0",
   owner: "UI Platform team",
@@ -197,9 +197,19 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.0.7",
+    date: "25 Nov 2026",
+    status: "current",
+    summary: "Stepper: smaller markers and a calmer default style.",
+    changes: [
+      { type: "changed", text: "Stepper — markers 24px (`sm`) / 32px (`md`) instead of 36 / 44; upcoming steps are a soft filled circle with a 1px border; the current step is a solid brand fill with a soft halo (`--color-step-current-ring` at 45%) instead of a thick double ring; completed steps keep the success fill; connecting lines are 2px and stop short of the circles; tighter marker-to-label gap." },
+      { type: "added", text: "Stepper role tokens (all optional, theme-overridable): `--color-step-current-bg`, `--color-step-current-fg`, `--color-step-complete-bg`, `--color-step-complete-fg`, `--color-step-upcoming-bg`, `--color-step-upcoming-border`." },
+    ],
+  },
+  {
     version: "0.0.6",
     date: "19 Nov 2026",
-    status: "current",
+    status: "previous",
     summary: "New `ui-common-components/openui` entry: the design system as an OpenUI library, so AI agents answer with real components.",
     changes: [
       { type: "added", text: "`ui-common-components/openui` — `designSystemLibrary` (OpenUI) with Stack, Grid, Card, StatCard, DataTable, BarChart, LineChart, PieChart, Alert, Badge and ActionButton; `designSystemLibrary.prompt()` builds the agent's system prompt locally; `Renderer` re-exported. `@openuidev/react-lang` and `zod` are dependencies; the main entry does not import them." },
