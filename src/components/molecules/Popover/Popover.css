@@ -244,7 +244,7 @@
 
 .ds-listbox__option--selected,
 .ds-listbox__option--selected:hover:not([aria-disabled="true"]) {
-  background-color: var(--color-interactive-row-hover, var(--color-mist-20));
+  background-color: var(--color-option-selected-bg, var(--color-interactive-row-hover, var(--color-mist-20)));
   font-weight: 600;
 }
 

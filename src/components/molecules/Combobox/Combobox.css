@@ -188,7 +188,8 @@
 
 .ds-combobox__option:hover:not(:disabled),
 .ds-combobox__option:focus-visible:not(:disabled) {
-  background: color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+  /* Interaction-state token (theme accent tint); Infinia pins the previous 6% text-primary mix. */
+  background: var(--color-option-hover-bg, color-mix(in srgb, var(--color-text-primary) 6%, transparent));
   outline: none;
 }
 

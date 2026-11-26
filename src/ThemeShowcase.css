@@ -1,0 +1,876 @@
+/**
+ * Theme showcase — Storybook-only presentation (src/ThemeShowcase.stories.tsx).
+ * Tokens only: every colour, space, radius and shadow is a `var(--…)` from tokens.css.
+ * State tokens from the Sprint 5 interaction-state set (`--color-state-*`, `--color-selection-*`)
+ * are read with fallbacks to the older names so the page renders before and after they land.
+ */
+
+/* ---------------------------------------------------------------- theme scopes */
+
+/* Nested theme preview — `data-theme` on the element (tokens.css re-declares the base per scope). */
+.ts-scope {
+  display: block;
+  min-width: 0;
+}
+
+.ts-scope {
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------------- page */
+
+/* Declared on the page AND on every nested scope so tiles resolve them against their own theme. */
+.ts-root,
+.ts-scope {
+  --ts-hairline: var(--border-width-thin) solid var(--color-border-subtle);
+  /* State aliases — Sprint 5 state tokens first, then the closest pre-existing token. */
+  --ts-hover-bg: var(--color-state-hover-bg, var(--color-theme-surface-hover));
+  --ts-hover-fg: var(--color-state-hover-fg, var(--color-text-primary));
+  --ts-selected-bg: var(--color-state-selected-bg, var(--color-theme-primary));
+  --ts-selected-fg: var(--color-state-selected-fg, var(--color-theme-text));
+  --ts-selected-subtle-bg: var(
+    --color-state-selected-subtle-bg,
+    var(--color-selected-bg, color-mix(in srgb, var(--color-theme-primary) 14%, var(--color-bg-surface)))
+  );
+  --ts-selected-text: var(--color-state-selected-text, var(--color-text-primary));
+  --ts-selected-border: var(--color-state-selected-border, var(--color-theme-primary));
+  --ts-active-bg: var(
+    --color-state-active-bg,
+    color-mix(in srgb, var(--color-theme-primary) 22%, var(--color-bg-surface))
+  );
+  --ts-disabled-bg: var(--color-state-disabled-bg, var(--color-fill-muted));
+  --ts-disabled-fg: var(--color-state-disabled-fg, var(--color-text-disabled));
+  --ts-selection-bg: var(--color-selection-bg, var(--ts-selected-bg));
+  --ts-selection-fg: var(--color-selection-fg, var(--ts-selected-fg));
+}
+
+.ts-root {
+  --ts-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  box-sizing: border-box;
+  min-height: 100%;
+  width: 100%;
+  padding: var(--space-5) var(--space-3) var(--space-8);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+}
+
+.ts-root *,
+.ts-root *::before,
+.ts-root *::after {
+  box-sizing: border-box;
+}
+
+.ts-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.ts-root code,
+.ts-code {
+  font-family: var(--ts-mono);
+  font-size: 0.92em;
+  padding: 0 var(--space-0);
+  border-radius: var(--radius-base);
+  border: var(--ts-hairline);
+  background: var(--color-fill-muted);
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ts-root ::selection {
+  background: var(--ts-selection-bg);
+  color: var(--ts-selection-fg);
+}
+
+/* ---------------------------------------------------------------- hero */
+
+.ts-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.ts-hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  max-width: 48rem;
+}
+
+.ts-eyebrow {
+  margin: 0;
+  font-size: var(--text-small-size);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-link);
+}
+
+.ts-eyebrow--muted {
+  color: var(--color-text-secondary);
+}
+
+.ts-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+}
+
+.ts-lead {
+  margin: 0;
+  font-size: var(--text-h3-size);
+  color: var(--color-text-secondary);
+}
+
+.ts-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ts-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0);
+  padding: var(--space-0) var(--space-1);
+  border: var(--ts-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary-size);
+  white-space: nowrap;
+}
+
+.ts-chip--strong {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- sections */
+
+.ts-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.ts-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+}
+
+.ts-section__title {
+  margin: 0;
+  font-size: var(--text-h1-size);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--color-text-primary);
+}
+
+.ts-section__desc {
+  margin: var(--space-0) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.ts-panel {
+  border: var(--ts-hairline);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-xs);
+  min-width: 0;
+}
+
+.ts-muted {
+  color: var(--color-text-secondary);
+}
+
+.ts-small {
+  font-size: var(--text-secondary-size);
+}
+
+/* ---------------------------------------------------------------- signature */
+
+.ts-signature {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+@media (min-width: 900px) {
+  .ts-signature {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: center;
+    padding: var(--space-4);
+  }
+}
+
+.ts-signature__name {
+  margin: var(--space-0) 0;
+  font-size: var(--text-h1-size);
+  font-weight: 700;
+}
+
+.ts-bar {
+  display: flex;
+  width: 100%;
+  height: var(--space-3);
+  overflow: hidden;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+}
+
+.ts-bar--sm {
+  height: var(--space-1);
+  border-color: var(--color-border-subtle);
+}
+
+.ts-bar__seg {
+  display: block;
+  height: 100%;
+  min-width: 0;
+}
+
+.ts-bar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-0) var(--space-3);
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-secondary-size);
+  color: var(--color-text-secondary);
+}
+
+.ts-bar__legend strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  margin-right: var(--space-0);
+}
+
+/* ---------------------------------------------------------------- theme tiles */
+
+.ts-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ts-tile {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--easing-default),
+    box-shadow var(--duration-fast) var(--easing-default),
+    transform var(--duration-fast) var(--easing-default);
+}
+
+.ts-tile:hover {
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+.ts-tile:active {
+  transform: translateY(1px);
+}
+
+.ts-tile:focus-visible {
+  outline: var(--border-width-medium) solid var(--color-focus-ring);
+  outline-offset: var(--border-width-medium);
+}
+
+.ts-tile[aria-pressed="true"] {
+  border-color: var(--ts-selected-border);
+  box-shadow: 0 0 0 var(--border-width-medium) var(--ts-selected-border);
+}
+
+.ts-tile__preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--color-bg-page);
+}
+
+.ts-tile__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+}
+
+.ts-tile__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-0);
+  min-width: 0;
+}
+
+.ts-tile__sample-btn {
+  display: inline-flex;
+  align-items: center;
+  height: var(--button-height-xs);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--button-primary-default-bg);
+  color: var(--button-primary-default-text);
+  font-size: var(--text-secondary-size);
+  font-weight: 600;
+}
+
+.ts-tile__sample-link {
+  font-size: var(--text-secondary-size);
+  font-weight: 500;
+  color: var(--color-text-link);
+}
+
+.ts-tile__dots {
+  display: flex;
+  gap: var(--space-0);
+}
+
+.ts-dot {
+  display: block;
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-circle);
+  border: var(--border-width-thin) solid var(--color-border-default);
+}
+
+.ts-tile__meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-top: var(--ts-hairline);
+}
+
+.ts-tile__name {
+  display: block;
+  font-size: var(--text-h3-size);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ts-tile__attr {
+  display: block;
+  margin-top: var(--space-0);
+  font-family: var(--ts-mono);
+  font-size: var(--text-small-size);
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ts-tile__flag {
+  flex: none;
+}
+
+/* Active marker — the filled-selection pair (≥ 4.5:1 by the state-token contract). */
+.ts-flag-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--ts-selected-bg);
+  color: var(--ts-selected-fg);
+  font-size: var(--text-small-size);
+  font-weight: 600;
+}
+
+/* Mini state strip inside each tile (painted from that theme's tokens). */
+.ts-states-mini {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-0);
+}
+
+.ts-states-mini .ts-spec {
+  min-height: var(--space-3);
+  padding: 0;
+  justify-content: center;
+  font-size: var(--text-micro-size);
+}
+
+/* ---------------------------------------------------------------- palette explorer */
+
+.ts-explorer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .ts-explorer {
+    grid-template-columns: minmax(0, 1fr) 19rem;
+  }
+
+  .ts-detail {
+    position: sticky;
+    top: var(--space-3);
+  }
+}
+
+.ts-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: var(--ts-hairline);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary-size);
+}
+
+.ts-hint svg {
+  flex: none;
+  width: var(--size-icon-dense);
+  height: var(--size-icon-dense);
+  margin-top: 1px;
+}
+
+.ts-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ts-group + .ts-group {
+  margin-top: var(--space-4);
+}
+
+.ts-group__title {
+  margin: 0;
+  font-size: var(--text-h2-size);
+  font-weight: 650;
+  color: var(--color-text-primary);
+}
+
+.ts-group__desc {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.ts-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 7.5rem), 1fr));
+  gap: var(--space-2) var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ts-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  width: 100%;
+  min-height: var(--size-touch-target);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+}
+
+.ts-swatch:focus-visible {
+  outline: var(--border-width-medium) solid var(--color-focus-ring);
+  outline-offset: var(--border-width-medium);
+}
+
+.ts-swatch__chip {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 4.5rem;
+  border-radius: var(--radius-lg);
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+  transition:
+    box-shadow var(--duration-fast) var(--easing-default),
+    transform var(--duration-fast) var(--easing-default);
+}
+
+.ts-swatch:hover .ts-swatch__chip {
+  box-shadow: var(--shadow-sm);
+}
+
+.ts-swatch:active .ts-swatch__chip {
+  transform: scale(0.98);
+}
+
+.ts-swatch[aria-pressed="true"] .ts-swatch__chip {
+  box-shadow:
+    0 0 0 var(--border-width-medium) var(--color-bg-page),
+    0 0 0 calc(var(--border-width-medium) * 2) var(--ts-selected-border);
+}
+
+.ts-swatch__sample {
+  position: absolute;
+  left: var(--space-1);
+  bottom: var(--space-0);
+  font-size: var(--text-h3-size);
+  font-weight: 600;
+}
+
+.ts-swatch__copied {
+  position: absolute;
+  top: var(--space-0);
+  right: var(--space-0);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 var(--space-0);
+  border-radius: var(--radius-base);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--text-micro-size);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+
+.ts-swatch__label {
+  font-size: var(--text-secondary-size);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ts-swatch__value {
+  font-family: var(--ts-mono);
+  font-size: var(--text-small-size);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.ts-swatch__value--missing {
+  text-transform: none;
+  color: var(--color-warning-strong);
+}
+
+/* Contrast pill */
+.ts-ratio {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: flex-start;
+  font-size: var(--text-micro-size);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.ts-ratio[data-pass="false"] {
+  color: var(--color-danger-strong);
+}
+
+/* Detail panel */
+.ts-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.ts-detail__chip {
+  display: flex;
+  align-items: flex-end;
+  height: 7rem;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+  font-size: var(--text-h1-size);
+  font-weight: 600;
+}
+
+.ts-detail__name {
+  margin: 0;
+  font-family: var(--ts-mono);
+  font-size: var(--text-body-size);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ts-detail__dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-0) var(--space-2);
+  margin: 0;
+  font-size: var(--text-secondary-size);
+}
+
+.ts-detail__dl dt {
+  color: var(--color-text-secondary);
+}
+
+.ts-detail__dl dd {
+  margin: 0;
+  font-family: var(--ts-mono);
+  overflow-wrap: anywhere;
+}
+
+.ts-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+/* ---------------------------------------------------------------- state specimens */
+
+.ts-spec {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0);
+  width: 100%;
+  min-height: var(--button-height-md);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-md);
+  border: var(--border-width-thin) solid transparent;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--text-secondary-size);
+  white-space: nowrap;
+}
+
+.ts-spec--hover {
+  background: var(--ts-hover-bg);
+  color: var(--ts-hover-fg);
+}
+
+/* Row selection: subtle tint + selection edge (filled selection is shown on the palette swatch). */
+.ts-spec--selected {
+  background: var(--ts-selected-subtle-bg);
+  color: var(--color-text-primary);
+  box-shadow: inset var(--border-width-thick) 0 0 var(--ts-selected-border);
+  font-weight: 600;
+}
+
+.ts-spec--active {
+  background: var(--ts-active-bg);
+}
+
+.ts-spec--focus {
+  outline: var(--border-width-medium) solid var(--color-focus-ring);
+  outline-offset: calc(var(--border-width-medium) * -1);
+}
+
+.ts-spec--disabled {
+  background: var(--ts-disabled-bg);
+  color: var(--ts-disabled-fg);
+}
+
+.ts-spec--selection span {
+  background: var(--ts-selection-bg);
+  color: var(--ts-selection-fg);
+}
+
+/* ---------------------------------------------------------------- state matrix */
+
+.ts-matrix-scroll {
+  /* positioned so the visually-hidden cell labels (absolute) are clipped by the scroller, not the page */
+  position: relative;
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+}
+
+.ts-matrix-scroll:focus-visible {
+  outline: var(--border-width-medium) solid var(--color-focus-ring);
+  outline-offset: var(--border-width-medium);
+}
+
+.ts-matrix {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-secondary-size);
+}
+
+.ts-matrix caption {
+  text-align: left;
+  padding: var(--space-2) var(--space-2) 0;
+  color: var(--color-text-secondary);
+}
+
+.ts-matrix th,
+.ts-matrix td {
+  padding: var(--space-1) var(--space-2);
+  border-bottom: var(--ts-hairline);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ts-matrix tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.ts-matrix thead th {
+  font-size: var(--text-small-size);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.ts-matrix tbody th {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.ts-matrix__na {
+  color: var(--color-text-secondary);
+}
+
+/* Freeze pseudo-class looks on a real Button by pointing its rest tokens at the state tokens. */
+.ts-force-hover {
+  --button-primary-default-bg: var(--button-primary-hover-bg);
+}
+
+.ts-force-active {
+  --button-primary-default-bg: var(--button-primary-active-bg);
+}
+
+.ts-force-focus :is(button, a).btn-base {
+  outline: var(--border-width-medium) solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: var(--border-width-medium);
+}
+
+/* ---------------------------------------------------------------- live components */
+
+.ts-live {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-2);
+}
+
+.ts-live__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ts-live__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ts-live__label {
+  display: block;
+  margin-bottom: var(--space-0);
+  font-size: var(--text-small-size);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.ts-selectable {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  border: var(--border-width-thin) dashed var(--color-border-default);
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------------- small screens */
+
+@media (max-width: 640px) {
+  .ts-root {
+    padding: var(--space-3) var(--space-2) var(--space-6);
+  }
+
+  .ts-container {
+    gap: var(--space-5);
+  }
+
+  .ts-swatches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (pointer: coarse) {
+  .ts-tile__meta {
+    min-height: var(--size-touch-target);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-tile,
+  .ts-swatch__chip {
+    transition: none;
+  }
+
+  .ts-tile:active,
+  .ts-swatch:active .ts-swatch__chip {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ts-tile[aria-pressed="true"],
+  .ts-swatch[aria-pressed="true"] .ts-swatch__chip {
+    outline: var(--border-width-medium) solid Highlight;
+    outline-offset: var(--border-width-medium);
+  }
+
+  .ts-spec--selected,
+  .ts-spec--focus {
+    outline: var(--border-width-medium) solid Highlight;
+  }
+
+  .ts-swatch__chip,
+  .ts-dot,
+  .ts-bar__seg {
+    forced-color-adjust: none;
+  }
+}

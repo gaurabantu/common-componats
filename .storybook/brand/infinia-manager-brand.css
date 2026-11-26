@@ -46,12 +46,86 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Selected story / accent — follows §42 `--color-theme-primary` after data-theme swap */
-[aria-selected="true"],
-[aria-current="true"] {
-  color: var(--color-theme-primary);
+/*
+ * Selected sidebar row / active tab / toolbar accent come from the per-theme hex adapter
+ * (`manager-palettes.ts` → THEME_ACCENTS). A blanket `[aria-selected] { color: theme-primary }`
+ * rule used to live here; it painted yellow-on-white text in infinia-light (1.3:1) and fought the
+ * adapter's selected-row text, so it was removed.
+ */
+
+/* Dark themes — native scrollbars / form controls (manager.ts also sets color-scheme inline). */
+[data-theme="dark"],
+[data-theme="infinia-dark"] {
+  color-scheme: dark;
 }
 
-[data-theme="dark"] {
-  color-scheme: dark;
+/*
+ * Addon panel tab count badge (e.g. "Controls 32") — Storybook paints it with a fixed light
+ * `mediumlight` fill that ignores the theme. Pin it to the theme's muted fill.
+ */
+[role="tablist"] [role="tab"] span + div:not(:empty) {
+  background-color: var(--color-fill-muted) !important;
+  color: var(--color-text-primary) !important;
+}
+
+
+/*
+ * Selected sidebar row — soft tint style (user direction 2026-11-26, matches the Infinia app nav):
+ * pale accent fill + hairline accent border + dark readable text + accent-coloured icon.
+ * Storybook's default (solid `colorSecondary` fill + white text) is overridden for every theme;
+ * each theme supplies its own accent below. Text contrast on every tint is >= 4.5:1.
+ */
+html {
+  --sb-sel-bg: #eff6ff;
+  --sb-sel-border: #bfdbfe;
+  --sb-sel-fg: #0d0d0d;
+  --sb-sel-icon: #2563eb;
+}
+html[data-theme="blue-mist"] {
+  --sb-sel-icon: #1a56db;
+}
+html[data-theme="green"],
+html[data-theme="green-mist"] {
+  --sb-sel-bg: #f0fdf4;
+  --sb-sel-border: #bbf7d0;
+  --sb-sel-icon: #15803d;
+}
+html[data-theme="custom"] {
+  --sb-sel-bg: #fff1f2;
+  --sb-sel-border: #fecdd3;
+  --sb-sel-icon: #e11d48;
+}
+html[data-theme="dark"] {
+  --sb-sel-bg: rgba(96, 165, 250, 0.16);
+  --sb-sel-border: rgba(96, 165, 250, 0.45);
+  --sb-sel-fg: #f3f4f6;
+  --sb-sel-icon: #60a5fa;
+}
+html[data-theme="infinia-light"] {
+  --sb-sel-bg: #fdf8dc;
+  --sb-sel-border: #f2e08a;
+  --sb-sel-fg: #111111;
+  --sb-sel-icon: #6b5900;
+}
+html[data-theme="infinia-dark"] {
+  --sb-sel-bg: rgba(255, 212, 0, 0.12);
+  --sb-sel-border: rgba(255, 212, 0, 0.4);
+  --sb-sel-fg: #ffffff;
+  --sb-sel-icon: #ffd400;
+}
+
+.sidebar-item[data-selected="true"],
+.sidebar-item[data-selected="true"]:hover {
+  background: var(--sb-sel-bg) !important;
+  color: var(--sb-sel-fg) !important;
+  box-shadow: inset 0 0 0 1px var(--sb-sel-border) !important;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.sidebar-item[data-selected="true"] a,
+.sidebar-item[data-selected="true"] button {
+  color: var(--sb-sel-fg) !important;
+}
+.sidebar-item[data-selected="true"] svg {
+  color: var(--sb-sel-icon) !important;
 }

@@ -164,7 +164,7 @@
 
 /* Active option = the visual focus (DOM focus stays in the input) → full focus-ring outline */
 .ds-command-palette__option[data-active="true"] {
-  background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-surface));
+  background: var(--color-option-active-bg, color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-surface)));
   outline: 2px solid var(--color-focus-ring);
   outline-offset: -2px;
 }

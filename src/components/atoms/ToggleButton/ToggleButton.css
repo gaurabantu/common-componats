@@ -25,7 +25,7 @@ button.ucs-toggle.ucs-toggle[aria-pressed="true"] {
 }
 
 button.ucs-toggle.ucs-toggle[aria-pressed="true"]:hover:not(:disabled) {
-  background-color: var(--color-accent-lavender-10);
+  background-color: var(--color-selected-bg, var(--color-accent-lavender-10));
   border-color: var(--color-border-strong);
 }
 

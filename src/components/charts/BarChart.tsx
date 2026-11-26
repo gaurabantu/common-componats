@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useId, useMemo, useRef, useState } from "react";
 import type { CartesianAxisProps, ChartDataPoint, ChartDataSeries, ChartLayoutProps, ChartTooltipItem } from "./Chart.types";
 import { CHART_THEME_COLORS } from "./Chart.types";
 import { ChartTooltip } from "./ChartTooltip";
@@ -69,7 +69,12 @@ export interface BarChartProps extends ChartLayoutProps, CartesianAxisProps {
   colorKey?: string;
 }
 
-type BarRect = { key: string; x: number; y: number; w: number; h: number; fill: string; idx: number };
+/** `group` = the mark whose data end gets rounded (a whole stack when stacked); `dir` = which side is the data end. */
+type BarDir = "up" | "down" | "right" | "left";
+type BarRect = { key: string; x: number; y: number; w: number; h: number; fill: string; idx: number; group: string; dir: BarDir };
+
+/** Surface gap between touching stacked segments (dataviz mark spec: 2px). */
+const STACK_GAP = 2;
 
 function valueExtent(
   data: ChartDataPoint[],
@@ -241,10 +246,21 @@ const BarChartComponent: React.FC<BarChartProps> = (props) => {
       const b = sc(v1 * growth);
       const offset = groupStart + pos * (barWidth + barGap);
       const fill = colorOf(row, idx, s, si);
+      const negative = v < 0;
+      const group = stacked ? `${idx}-${side}-${negative ? "n" : "p"}` : `${idx}-${s.dataKey}`;
+      // Stacked segments above the baseline give up a 2px surface gap on their base side.
+      // Segments too thin to afford it keep their full length so they never vanish.
+      const gap = stacked && v0 !== 0 && Math.abs(b - a) > STACK_GAP * 2 ? STACK_GAP : 0;
       if (horizontal) {
-        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + Math.min(a, b), y: m.top + offset, w: Math.abs(b - a), h: barWidth, fill, idx });
+        const dir: BarDir = negative ? "left" : "right";
+        const x0 = m.left + Math.min(a, b) + (dir === "right" ? gap : 0);
+        rects.push({ key: `${idx}-${s.dataKey}`, x: x0, y: m.top + offset, w: Math.max(0, Math.abs(b - a) - gap), h: barWidth, fill, idx, group, dir });
       } else {
-        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + offset, y: m.top + Math.min(a, b), w: barWidth, h: Math.abs(b - a), fill, idx });
+        // Value scale is inverted on y: positive bars grow upward (data end = top).
+        const dir: BarDir = negative ? "down" : "up";
+        const y0 = m.top + Math.min(a, b);
+        const hh = Math.max(0, Math.abs(b - a) - gap);
+        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + offset, y: dir === "down" ? y0 + gap : y0, w: barWidth, h: hh, fill, idx, group, dir });
       }
     });
   });
@@ -286,6 +302,35 @@ const BarChartComponent: React.FC<BarChartProps> = (props) => {
   const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
   const r = Array.isArray(radius) ? radius[0] : radius;
+  const clipUid = `ds-bar-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  /**
+   * Round only the data end of each mark (the top of a whole stack), keep the baseline square:
+   * one clip rect per mark group, extended past the base side by `r` so only the far corners round.
+   */
+  const clips = useMemo(() => {
+    if (!(r > 0)) return [];
+    const byGroup = new Map<string, { x0: number; y0: number; x1: number; y1: number; dir: BarDir }>();
+    rects.forEach((b) => {
+      const g = byGroup.get(b.group);
+      if (!g) byGroup.set(b.group, { x0: b.x, y0: b.y, x1: b.x + b.w, y1: b.y + b.h, dir: b.dir });
+      else {
+        g.x0 = Math.min(g.x0, b.x);
+        g.y0 = Math.min(g.y0, b.y);
+        g.x1 = Math.max(g.x1, b.x + b.w);
+        g.y1 = Math.max(g.y1, b.y + b.h);
+      }
+    });
+    return Array.from(byGroup.entries()).map(([group, g], i) => {
+      let { x0, y0, x1, y1 } = g;
+      if (g.dir === "up") y1 += r;
+      else if (g.dir === "down") y0 -= r;
+      else if (g.dir === "right") x0 -= r;
+      else x1 += r;
+      return { group, id: `${clipUid}-b${i}`, x: x0, y: y0, w: Math.max(0, x1 - x0), h: Math.max(0, y1 - y0) };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rects.map((b) => `${b.group}:${b.x},${b.y},${b.w},${b.h}`).join("|"), r, clipUid]);
+  const clipOf = useMemo(() => new Map(clips.map((c) => [c.group, c.id])), [clips]);
   const bandCenters = data.map((_, i) => (horizontal ? m.top : m.left) + (i + 0.5) * slot);
   const tickIdx = horizontal ? data.map((_, i) => i) : xTickIndices(categoryLabels, xTickInterval, slot, xTickAngle);
 
@@ -331,6 +376,15 @@ const BarChartComponent: React.FC<BarChartProps> = (props) => {
             )}
           </g>
         )}
+        {clips.length > 0 && (
+          <defs>
+            {clips.map((c) => (
+              <clipPath key={c.id} id={c.id}>
+                <rect x={c.x} y={c.y} width={c.w} height={c.h} rx={r} ry={r} />
+              </clipPath>
+            ))}
+          </defs>
+        )}
         {rects.map((b) => (
           <rect
             key={b.key}
@@ -339,8 +393,7 @@ const BarChartComponent: React.FC<BarChartProps> = (props) => {
             width={Math.max(0, b.w)}
             height={Math.max(0, b.h)}
             fill={b.fill}
-            rx={r}
-            ry={r}
+            clipPath={clipOf.has(b.group) ? `url(#${clipOf.get(b.group)})` : undefined}
             data-testid="ds-chart-bar"
             onMouseMove={(e) => handleMouseMove(e, b.idx)}
           />

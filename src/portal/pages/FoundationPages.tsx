@@ -512,7 +512,7 @@ export function AllTokensPage() {
                   render: (v, row) => (
                     <span className="pt-row" style={{ flexWrap: "nowrap" }}>
                       {(row as { category: string }).category === "Colour" ? (
-                        <span aria-hidden style={{ width: 14, height: 14, flexShrink: 0, borderRadius: 4, border: "1px solid var(--color-border-subtle)", background: String(v) }} />
+                        <span aria-hidden className="pt-token-dot" style={{ background: `var(${(row as { name: string }).name})` }} />
                       ) : null}
                       <span className="pt-mono pt-small pt-muted">{String(v)}</span>
                     </span>

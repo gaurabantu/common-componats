@@ -25,6 +25,24 @@
  *
  * Primary **filled** buttons: **Noir** stack (DESIGN_SYSTEM.md §10), not theme blue, unless a theme
  * block remaps `button` tokens (e.g. `data-theme="green"`).
+ *
+ * **Interaction states (Sprint 5)** — every theme defines this set (guarded by
+ * `darkThemeFills.test.ts`, which also asserts the AA pairs below):
+ *   --color-state-hover-bg / -hover-fg     row, menu item, tab, option, day hover (accent tint)
+ *   --color-state-active-bg                pressed / :active (deeper accent tint)
+ *   --color-state-selected-bg / -fg        FILLED selection: current page, checked box/radio, selected
+ *                                          day, range endpoints, selected segment  (fg ≥ 4.5:1 on bg)
+ *   --color-state-selected-subtle-bg       row selection tint: list, table, combobox / listbox option
+ *   --color-state-selected-border          selection edge / tab indicator          (≥ 3:1 on surface)
+ *   --color-state-selected-text            selected label on a plain surface (tabs) (≥ 4.5:1 surface+page)
+ *   --color-state-disabled-bg / -fg        aliases of --color-fill-muted / --color-text-disabled
+ *   --color-focus-ring                     (existing) keyboard focus               (≥ 3:1 surface+page)
+ *   --color-selection-bg / -fg             `::selection` (text highlight)          (≥ 4.5:1)
+ * Existing names are aliases of the set, not duplicates: --color-theme-surface-hover,
+ * --color-interactive-row-hover, --color-selected-*, --color-border-selected, --color-tab-indicator,
+ * --color-page-current-*, --color-control-checked-* (bindings in the classic block). Infinia pins its own
+ * values for all of them, so Infinia is visually unchanged. Hover must be distinguishable from rest
+ * (luminance ratio ≥ 1.08 vs --color-bg-surface).
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -37,9 +55,19 @@
  * `[data-theme="classic"]` re-declares the classic (default) palette on a nested element, so a
  * region can keep the classic look while the document runs another theme (e.g. a public page
  * inside an infinia app). On the root itself classic is simply "no data-theme".
+ *
+ * Nested themes: this block and the classic palette block below also match **every**
+ * `[data-theme]` element (and the `.dark` / `.theme-*` classes), so `<div data-theme="mist">`
+ * inside `<html data-theme="infinia-dark">` resolves exactly like `<html data-theme="mist">` —
+ * nothing (text colour, mist scale, Infinia role tokens) leaks in from the outer theme. Theme
+ * blocks must therefore come **after** both base blocks in this file.
  */
 :root,
-[data-theme="classic"] {
+[data-theme="classic"],
+[data-theme],
+.dark,
+.theme-blue, .theme-green, .theme-mist, .theme-custom, .theme-blue-mist, .theme-green-mist,
+.theme-infinia-light, .theme-infinia-dark {
   /* SPACING (8pt Grid) — micro gap only inside components (§7) */
   --space-0: 4px;
   --space-1: 8px;
@@ -283,49 +311,16 @@ select {
   font-family: inherit;
 }
 
-/*
- * Green interaction theme — §42 strict scope only.
- * Surfaces, text, borders, accents, and shadows stay on CLASSIC BLUE (`:root` block below).
- * Consumers who need the legacy full green palette should copy tokens into their app CSS.
- */
-:root[data-theme="green"],
-[data-theme="green"],
-.theme-green {
-  --color-theme-primary: #15803d;
-  --color-theme-hover: #166534;
-  --color-theme-active: #14532d;
-  --color-theme-disabled: #86efac;
-  --color-theme-text: #ffffff;
-  --color-theme-surface-hover: #f0fdf4;
-  /* Dark neutral focus (matches --color-border-strong) — reads clearly on #f0fdf4 / mint, no orange */
-  --color-border-focus: #0d0d0d;
-  --color-focus-ring: #0d0d0d;
-
-  /* Primary fill + outline follow interaction theme only */
-  --button-primary-default-bg: var(--color-theme-primary);
-  --button-primary-default-text: var(--color-theme-text);
-  --button-primary-hover-bg: var(--color-theme-hover);
-  --button-primary-active-bg: var(--color-theme-active);
-  --button-primary-disabled-bg: var(--color-theme-disabled);
-  --button-primary-disabled-text: #14532d;
-  --button-primary-focus-ring: var(--color-focus-ring);
-
-  --button-outline-primary-border: var(--color-theme-primary);
-  --button-outline-primary-text: var(--color-theme-primary);
-  --button-outline-primary-hover-bg: var(--color-theme-surface-hover);
-  --button-outline-primary-active-bg: #d1fae5;
-
-  --button-secondary-border: var(--color-theme-primary);
-  --button-secondary-text: var(--color-theme-primary);
-
-  --button-link-color: var(--color-theme-primary);
-  --button-link-hover-color: var(--color-theme-hover);
-}
-
-/* ========== CLASSIC BLUE (default) ========== */
+/* ========== CLASSIC BLUE (default) ==========
+ * Also the base palette of every themed element (see the nested-theme note above): theme blocks
+ * below only override what differs. `color-scheme` keeps native controls / scrollbars in step. */
 :root,
 [data-theme="blue"],
-.theme-blue {
+[data-theme],
+.dark,
+.theme-blue, .theme-green, .theme-mist, .theme-custom, .theme-blue-mist, .theme-green-mist,
+.theme-infinia-light, .theme-infinia-dark {
+  color-scheme: light;
   --color-brand-primary: #0d0d0d;
   /* Inverse surface (strong header bar, chip, chat bubble) and the text on it. Default: the brand
      colour with on-primary text, as before. A dark theme can set a raised dark surface instead of a
@@ -380,11 +375,14 @@ select {
   /* Light: accent *-fg like success/info/warning — #dc3545 on rose-10 is 3.9:1 (fails AA text). */
   --color-danger-strong: var(--color-accent-rose-fg);
   --color-danger-fill: var(--color-accent-rose-10);
-  --color-success-strong: var(--color-accent-mint-fg);
+  /* Status text must also pass on --color-bg-page (#e0e0e0 classic / #ededed mist). The accent *-fg
+     values were 4.04 (mint) / 4.17 (sky) / 3.73 (amber) there — one step darker, same hue:
+     success 5.30 · info 5.38 · warning 5.18 on #e0e0e0 (≥ 6.2 on their own fills). */
+  --color-success-strong: #15663f;
   --color-success-fill: var(--color-accent-mint-10);
-  --color-info-strong: var(--color-accent-sky-fg);
+  --color-info-strong: #155a99;
   --color-info-fill: var(--color-accent-sky-10);
-  --color-warning-strong: var(--color-accent-amber-fg);
+  --color-warning-strong: #6f5800;
   --color-warning-fill: var(--color-accent-amber-10);
   --color-warning-soft: color-mix(in srgb, var(--color-warning-fill) 55%, transparent);
 
@@ -410,6 +408,118 @@ select {
   /* Themable keyboard focus; default matches `--color-border-focus` (#0066CC) */
   --color-border-focus: #0066cc;
   --color-focus-ring: #0066cc;
+
+  /*
+   * INTERACTION STATES (Sprint 5) — the contract every theme block fills in (documented in the file
+   * header). Mirrors Infinia per component: controls (page / checkbox / radio / day / segment) get the
+   * FILLED accent + high-contrast text; rows (list / table / option / menu) get the accent TINT
+   * (`selected-subtle-bg`) + accent edge; hover / pressed are lighter tints of the same accent.
+   * Classic accent = --color-theme-primary #2563eb. Contrast (classic): selected-fg on selected-bg
+   * 5.17 · selected-text on surface 6.70 / page 5.08 · selected-border vs surface 5.17 · text-primary on
+   * hover 17.15 · text-secondary on active 5.05 / on subtle 4.84 · hover vs surface 1.13 · selection 13.73.
+   */
+  --color-state-hover-bg: #ebf1fd;
+  --color-state-hover-fg: var(--color-text-primary);
+  --color-state-active-bg: #d6e4fc;
+  --color-state-selected-bg: #2563eb;
+  --color-state-selected-fg: #ffffff;
+  --color-state-selected-subtle-bg: #dce7fd;
+  --color-state-selected-border: #2563eb;
+  --color-state-selected-text: #1d4ed8;
+  --color-state-disabled-bg: var(--color-fill-muted);
+  --color-state-disabled-fg: var(--color-text-disabled);
+  --color-selection-bg: #c6dafc;
+  --color-selection-fg: #0d0d0d;
+
+  /*
+   * Role tokens components consume → bound to the state contract above. The Infinia blocks pin
+   * every one of these to the colour they already used, so Infinia renders unchanged.
+   */
+  --color-theme-surface-hover: var(--color-state-hover-bg);
+  --color-interactive-row-hover: var(--color-state-hover-bg);
+  --color-control-hover-bg: var(--color-state-hover-bg);
+  --color-selected-bg: var(--color-state-selected-subtle-bg);
+  --color-selected-fg: var(--color-text-primary);
+  --color-selected-text: var(--color-state-selected-text);
+  --color-selected-indicator: var(--color-state-selected-border);
+  --color-border-selected: var(--color-state-selected-border);
+  --color-tab-indicator: var(--color-state-selected-border);
+  --color-option-selected-bg: var(--color-state-selected-subtle-bg);
+  --color-option-hover-bg: var(--color-state-hover-bg);
+  --color-option-active-bg: var(--color-state-hover-bg);
+  --color-row-hover-bg: var(--color-state-hover-bg);
+  --color-grid-row-hover-bg: var(--color-state-hover-bg);
+  --color-page-current-bg: var(--color-state-selected-bg);
+  --color-page-current-fg: var(--color-state-selected-fg);
+  --color-control-checked-bg: var(--color-state-selected-bg);
+  --color-control-checked-bg-radio: var(--color-state-selected-bg);
+  --color-control-checked-border: var(--color-state-selected-bg);
+  --color-control-checked-fg: var(--color-state-selected-fg);
+  --color-day-selected-bg: var(--color-state-selected-bg);
+  --color-day-selected-fg: var(--color-state-selected-fg);
+  --color-day-hover-bg: var(--color-state-hover-bg);
+  --color-range-endpoint-bg: var(--color-state-selected-bg);
+  --color-range-endpoint-fg: var(--color-state-selected-fg);
+  --color-range-middle-bg: var(--color-state-selected-subtle-bg);
+  --color-segment-selected-bg: var(--color-state-selected-bg);
+  --color-segment-selected-fg: var(--color-state-selected-fg);
+  --color-segment-selected-border: var(--color-state-selected-border);
+
+  /* Badge tones (iteration 2): every text/fill pair ≥ 4.5:1 in the 8 non-Infinia themes (tested).
+     Badge.css reads --color-badge-{variant}-{tone}-{bg,fg}; Infinia resets them (initial) so its
+     badges keep the pre-existing expressions. */
+  --color-badge-neutral-soft-bg: var(--color-surface-mist);
+  --color-badge-neutral-soft-fg: var(--color-text-secondary);
+  --color-badge-neutral-solid-bg: var(--color-text-secondary);
+  --color-badge-neutral-solid-fg: var(--color-bg-surface);
+  --color-badge-neutral-outline-fg: var(--color-text-secondary);
+  --color-badge-primary-soft-bg: color-mix(in srgb, var(--color-theme-primary) 12%, var(--color-bg-surface));
+  --color-badge-primary-soft-fg: var(--color-state-selected-text);
+  --color-badge-primary-solid-bg: var(--color-state-selected-bg);
+  --color-badge-primary-solid-fg: var(--color-state-selected-fg);
+  --color-badge-primary-outline-fg: var(--color-state-selected-text);
+  --color-badge-success-soft-bg: var(--color-success-fill);
+  --color-badge-success-soft-fg: var(--color-success-strong);
+  --color-badge-success-solid-bg: var(--color-success-strong);
+  --color-badge-success-solid-fg: var(--color-bg-surface);
+  --color-badge-success-outline-fg: var(--color-success-strong);
+  --color-badge-warning-soft-bg: var(--color-warning-fill);
+  --color-badge-warning-soft-fg: var(--color-warning-strong);
+  --color-badge-warning-solid-bg: var(--color-state-warning);
+  --color-badge-warning-solid-fg: var(--color-text-on-primary-inverse);
+  --color-badge-warning-outline-fg: var(--color-warning-strong);
+  --color-badge-danger-soft-bg: var(--color-danger-fill);
+  --color-badge-danger-soft-fg: var(--color-danger-strong);
+  --color-badge-danger-solid-bg: var(--color-state-error);
+  --color-badge-danger-solid-fg: var(--color-text-on-primary);
+  --color-badge-danger-outline-fg: var(--color-danger-strong);
+  --color-badge-info-soft-bg: var(--color-info-fill);
+  --color-badge-info-soft-fg: var(--color-info-strong);
+  --color-badge-info-solid-bg: var(--color-brand-link);
+  --color-badge-info-solid-fg: var(--color-text-on-primary);
+  --color-badge-info-outline-fg: var(--color-brand-link);
+  /* AppTopbar theme="dark" (Noir bar): text stays white whatever the document theme. */
+  --color-on-noir: #ffffff;
+
+  /* Infinia-only role tokens: reset (guaranteed-invalid → component fallback) so they never leak
+     into a non-Infinia theme nested inside an Infinia document. */
+  --color-badge-bg: initial;
+  --color-badge-fg: initial;
+  --color-border-soft: initial;
+  --color-progress-glow: initial;
+  --color-scrim: initial;
+  --color-step-current-ring: initial;
+  --color-today-ring: initial;
+  --shadow-drawer: initial;
+  --shadow-popover: initial;
+  --shadow-tab-active: initial;
+  --shadow-thumb: initial;
+  --button-gradient-bg: initial;
+  --button-secondary-border: initial;
+  --button-secondary-border-color: initial;
+  --button-secondary-hover-border-color: initial;
+  --button-secondary-active-border-color: initial;
+  --button-secondary-disabled-border-color: initial;
 
   /* Primary filled button — §10 (Noir) */
   --button-primary-default-bg: #0d0d0d;
@@ -503,6 +613,55 @@ select {
   --app-sidebar-create-dash: rgba(255, 255, 255, 0.12);
 }
 
+/*
+ * Green interaction theme — §42 strict scope only.
+ * Surfaces, text, borders, accents, and shadows stay on CLASSIC BLUE (`:root` block below).
+ * Consumers who need the legacy full green palette should copy tokens into their app CSS.
+ */
+:root[data-theme="green"],
+[data-theme="green"],
+.theme-green {
+  --color-theme-primary: #15803d;
+  --color-theme-hover: #166534;
+  --color-theme-active: #14532d;
+  --color-theme-disabled: #86efac;
+  --color-theme-text: #ffffff;
+  /* Dark neutral focus (matches --color-border-strong) — reads clearly on mint tints, no orange */
+  --color-border-focus: #0d0d0d;
+  --color-focus-ring: #0d0d0d;
+
+  /* Interaction states — green accent #15803d (selected 5.02 · text 7.13 surface / 5.40 page) */
+  --color-state-hover-bg: #e8f5ec;
+  --color-state-active-bg: #cfe9d8;
+  --color-state-selected-bg: #15803d;
+  --color-state-selected-fg: #ffffff;
+  --color-state-selected-subtle-bg: #d7eedf;
+  --color-state-selected-border: #15803d;
+  --color-state-selected-text: #166534;
+  --color-selection-bg: #bbf7d0;
+  --color-selection-fg: #0d0d0d;
+
+  /* Primary fill + outline follow interaction theme only */
+  --button-primary-default-bg: var(--color-theme-primary);
+  --button-primary-default-text: var(--color-theme-text);
+  --button-primary-hover-bg: var(--color-theme-hover);
+  --button-primary-active-bg: var(--color-theme-active);
+  --button-primary-disabled-bg: var(--color-theme-disabled);
+  --button-primary-disabled-text: #14532d;
+  --button-primary-focus-ring: var(--color-focus-ring);
+
+  --button-outline-primary-border: var(--color-theme-primary);
+  --button-outline-primary-text: var(--color-theme-primary);
+  --button-outline-primary-hover-bg: var(--color-theme-surface-hover);
+  --button-outline-primary-active-bg: #d1fae5;
+
+  --button-secondary-border: var(--color-theme-primary);
+  --button-secondary-text: var(--color-theme-primary);
+
+  --button-link-color: var(--color-theme-primary);
+  --button-link-hover-color: var(--color-theme-hover);
+}
+
 /* ========== DARK MODE ========== */
 :is([data-theme="dark"], [data-theme="infinia-dark"]),
 .dark {
@@ -514,12 +673,26 @@ select {
   /* ≥ 4.5:1 incl. on --color-fill-muted #374151 (was #9CA3AF = 4.06:1 there). */
   --color-text-secondary: #a8b0bb;
   --color-text-on-accent: #0D0D0D;
+  /* Dark fills are LIGHT (brand #FFFFFF, success #34D399, error #F87171, link #60A5FA, text-primary
+     for the Table "dark" header), so text on them is ink — #ffffff was 1.00:1 on brand-primary.
+     brand 17.74 · text-primary 16.12 · success 9.23 · error 6.41 · link 6.98 · Spinner inverse ring
+     on the #2563eb primary Button 3.43 (non-text ≥ 3). */
+  --color-text-on-primary: #111827;
+  /* Inverse bar stays dark (mirrors infinia-dark): raised slate + light text, 9.37:1. */
+  --color-surface-inverse: #374151;
+  --color-text-on-inverse: #f3f4f6;
 
+  color-scheme: dark;
   --color-bg-page: #111827;
   --color-bg-surface: #1F2937;
 
   /* ≥ 3:1 on dark surface #1F2937 (was #4B5563 = 1.94:1). */
   --color-border-default: #717a86;
+  /* Were inherited from light :root (#0d0d0d strong = invisible on slate; #b3b3b3 disabled looked
+     enabled). gray-400 strong / interactive = 5.70:1 on #1F2937; disabled gray-500 is deliberately dim. */
+  --color-border-strong: #9ca3af;
+  --color-border-interactive: #9ca3af;
+  --color-text-disabled: #6b7280;
 
   --color-state-success: #34D399;
   --color-state-warning: #FBBF24;
@@ -543,7 +716,8 @@ select {
   --color-danger-fill: color-mix(in srgb, var(--color-state-error) 20%, var(--color-bg-surface));
   --color-success-strong: var(--color-state-success);
   --color-success-fill: color-mix(in srgb, var(--color-state-success) 18%, var(--color-bg-surface));
-  --color-info-strong: var(--color-state-info);
+  /* blue-300 on the 18% info fill: 5.94 (#60a5fa was 4.21) · 8.14 surface · 9.84 page */
+  --color-info-strong: #93c5fd;
   --color-info-fill: color-mix(in srgb, var(--color-state-info) 18%, var(--color-bg-surface));
   --color-warning-strong: var(--color-state-warning);
   --color-warning-fill: color-mix(in srgb, var(--color-state-warning) 18%, var(--color-bg-surface));
@@ -556,15 +730,29 @@ select {
   --color-accent-amber-10: #78350F;
   --color-accent-rose-10: #881337;
 
-  --color-theme-primary: #3b82f6;
-  --color-theme-hover: #2563eb;
-  --color-theme-active: #1d4ed8;
+  /* Theme accent is used both as text on slate and as a fill: blue-400 is 5.77 on surface / 6.98 on
+     page as text, and carries ink text as a fill (#111827: 6.98; hover blue-300 9.84; active blue-500
+     4.82) — #3b82f6 + #fff was 3.68 and #3b82f6 text 3.99. Primary Button keeps its own blue-600 fill. */
+  --color-theme-primary: #60a5fa;
+  --color-theme-hover: #93c5fd;
+  --color-theme-active: #3b82f6;
   --color-theme-disabled: #1e3a8a;
-  --color-theme-text: #ffffff;
-  --color-theme-surface-hover: rgba(255, 255, 255, 0.08);
+  --color-theme-text: #111827;
   /* #0066cc was 2.64:1 on #1F2937 (WCAG 1.4.11 needs 3:1) — blue-400 is 5.77:1 surface / 6.98:1 page. */
   --color-border-focus: #60a5fa;
   --color-focus-ring: #60a5fa;
+
+  /* Interaction states — accent fill is blue-600 (#3b82f6 + white was 3.68:1): selected 5.17 ·
+     selected-text blue-300 8.14 on surface · edge blue-400 5.77 · hover/pressed = blue over slate. */
+  --color-state-hover-bg: #243653;
+  --color-state-active-bg: #2b4166;
+  --color-state-selected-bg: #2563eb;
+  --color-state-selected-fg: #ffffff;
+  --color-state-selected-subtle-bg: #1d3d6b;
+  --color-state-selected-border: #60a5fa;
+  --color-state-selected-text: #93c5fd;
+  --color-selection-bg: #1d4ed8;
+  --color-selection-fg: #ffffff;
 
   --color-bg-elevated: #1f2937;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
@@ -572,11 +760,11 @@ select {
 
   /* White label needs 4.5:1 — #3b82f6 was 3.68:1. Button fills only; --color-theme-* (links, accents) unchanged. */
   --button-primary-default-bg: #2563eb; /* 5.17:1 */
-  --button-primary-default-text: var(--color-theme-text);
+  --button-primary-default-text: #ffffff; /* not theme-text: that is ink for the light accent fill */
   --button-primary-hover-bg: #1d4ed8; /* 6.70:1 */
   --button-primary-active-bg: #1e40af; /* 8.72:1 */
   --button-primary-disabled-bg: var(--color-theme-disabled);
-  --button-primary-disabled-text: var(--color-theme-text);
+  --button-primary-disabled-text: #ffffff; /* 10.36 on #1e3a8a */
   --button-primary-focus-ring: var(--color-border-focus);
 
   --button-secondary-border: var(--color-theme-primary);
@@ -594,8 +782,6 @@ select {
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-
-  --color-interactive-row-hover: color-mix(in srgb, var(--color-bg-surface) 90%, #ffffff);
 
   /* Align shell chrome with dark surfaces (sidebar rail + topbar inherit from document). */
   --color-bg-sidebar: #111827;
@@ -617,14 +803,15 @@ select {
   --app-sidebar-tone-3: #4b5563;
   --app-sidebar-fg: var(--color-text-primary);
   --app-sidebar-fg-muted: var(--color-text-secondary);
-  --app-sidebar-hover: rgba(255, 255, 255, 0.08);
-  --app-sidebar-active-bg: rgba(255, 255, 255, 0.1);
+  /* Nav hover / current item follow the interaction-state contract (accent tint + accent icon). */
+  --app-sidebar-hover: var(--color-state-hover-bg);
+  --app-sidebar-active-bg: var(--color-state-selected-subtle-bg);
   --app-sidebar-active-tint: rgba(255, 255, 255, 0.04);
   --app-sidebar-border: rgba(255, 255, 255, 0.08);
   --app-sidebar-border-strong: rgba(255, 255, 255, 0.12);
   --app-sidebar-focus: var(--color-focus-ring);
   --app-sidebar-nav-icon: var(--color-text-secondary);
-  --app-sidebar-nav-icon-active: var(--color-text-primary);
+  --app-sidebar-nav-icon-active: var(--color-state-selected-text);
   --app-sidebar-utility-icon: var(--color-text-secondary);
   --app-sidebar-create-dash: rgba(255, 255, 255, 0.18);
 }
@@ -638,6 +825,10 @@ select {
   --color-bg-sidebar: #f5f5f5;
   /* modals / elevated: stay white in v2.0.0 for contrast */
   --color-fill-muted: var(--color-mist-80);
+
+  /* Interaction states — classic accent #2563eb, tints one step deeper for the #fafafa surface */
+  --color-state-hover-bg: #e6eefc;
+  --color-state-active-bg: #d2e0fa;
 }
 
 /* ========== CUSTOM (example rose brand — §42 slots only) ========== */
@@ -649,8 +840,18 @@ select {
   --color-theme-active: #9f1239;
   --color-theme-disabled: #fda4af;
   --color-theme-text: #ffffff;
-  --color-theme-surface-hover: #fff1f2;
   /* --color-border-focus: do not override to a low-contrast colour (a11y) */
+
+  /* Interaction states — rose accent #e11d48 (selected 4.70 · text rose-700 6.29 surface / 4.76 page) */
+  --color-state-hover-bg: #fdedf0;
+  --color-state-active-bg: #fad5dd;
+  --color-state-selected-bg: #e11d48;
+  --color-state-selected-fg: #ffffff;
+  --color-state-selected-subtle-bg: #fbdce2;
+  --color-state-selected-border: #e11d48;
+  --color-state-selected-text: #be123c;
+  --color-selection-bg: #fecdd3;
+  --color-selection-fg: #0d0d0d;
 }
 
 /* ========== BLUE + ION MIST (combined) ========== */
@@ -662,7 +863,17 @@ select {
   --color-theme-active: #1e3a8a;
   --color-theme-disabled: #93b4f5;
   --color-theme-text: #ffffff;
-  --color-theme-surface-hover: #eff4fb;
+
+  /* Interaction states — accent #1a56db (selected 6.18 · text 8.36 surface) */
+  --color-state-hover-bg: #e5ecfa;
+  --color-state-active-bg: #d0ddf7;
+  --color-state-selected-bg: #1a56db;
+  --color-state-selected-fg: #ffffff;
+  --color-state-selected-subtle-bg: #d9e4f9;
+  --color-state-selected-border: #1a56db;
+  --color-state-selected-text: #1e40af;
+  --color-selection-bg: #c3d5f7;
+  --color-selection-fg: #0d0d0d;
   --color-bg-page: #ededed;
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
@@ -701,14 +912,25 @@ select {
   --color-theme-active: #14532d;
   --color-theme-disabled: #86efac;
   --color-theme-text: #ffffff;
-  --color-theme-surface-hover: #f0fdf4;
   --color-bg-page: #ededed;
   --color-bg-surface: #fafafa;
   --color-bg-sidebar: #f5f5f5;
   --color-fill-muted: var(--color-mist-80);
-  /* #06b6d4 was 1.8–2.4:1 on mist surfaces — cyan-700 keeps the teal hue at ≥ 4.06:1. */
+  /* #06b6d4 was 1.8–2.4:1 on mist surfaces — cyan-700: 5.13 surface / 4.58 page / 4.59 on hover.
+     Outline (border-focus) now matches the ring instead of switching to Noir. */
   --color-focus-ring: #0e7490;
-  --color-border-focus: #0d0d0d;
+  --color-border-focus: #0e7490;
+
+  /* Interaction states — green accent #15803d on mist (selected 5.02 · text 6.83 surface) */
+  --color-state-hover-bg: #e3f1e7;
+  --color-state-active-bg: #cce6d4;
+  --color-state-selected-bg: #15803d;
+  --color-state-selected-fg: #ffffff;
+  --color-state-selected-subtle-bg: #d4ebdb;
+  --color-state-selected-border: #15803d;
+  --color-state-selected-text: #166534;
+  --color-selection-bg: #bbf7d0;
+  --color-selection-fg: #0d0d0d;
 
   /* Same §42 mapping as `data-theme="green"` so CTAs are not stuck on `:root` Noir */
   --button-primary-default-bg: var(--color-theme-primary);
@@ -745,14 +967,15 @@ select {
   --app-sidebar-tone-3: var(--color-mist-100);
   --app-sidebar-fg: var(--color-text-primary);
   --app-sidebar-fg-muted: var(--color-text-secondary);
-  --app-sidebar-hover: rgba(0, 0, 0, 0.06);
-  --app-sidebar-active-bg: rgba(0, 0, 0, 0.08);
+  /* Nav hover / current item follow the interaction-state contract (accent tint + accent icon). */
+  --app-sidebar-hover: var(--color-state-hover-bg);
+  --app-sidebar-active-bg: var(--color-state-selected-subtle-bg);
   --app-sidebar-active-tint: rgba(0, 0, 0, 0.05);
   --app-sidebar-border: rgba(0, 0, 0, 0.09);
   --app-sidebar-border-strong: rgba(0, 0, 0, 0.12);
   --app-sidebar-focus: var(--color-border-focus);
   --app-sidebar-nav-icon: var(--color-text-secondary);
-  --app-sidebar-nav-icon-active: var(--color-text-primary);
+  --app-sidebar-nav-icon-active: var(--color-state-selected-text);
   --app-sidebar-utility-icon: var(--color-text-secondary);
   --app-sidebar-create-dash: rgba(0, 0, 0, 0.22);
 
@@ -988,7 +1211,75 @@ select {
   --app-sidebar-utility-icon: #5c5c5c;
   --app-sidebar-create-dash: #bdbdbd;
 
+  /* Status text — keep the Forma accent *-fg (the classic base now darkens these for its grey page) */
+  --color-success-strong: var(--color-accent-mint-fg);
+  --color-info-strong: var(--color-accent-sky-fg);
+  --color-warning-strong: var(--color-accent-amber-fg);
+
+  /* Interaction-state contract — ALIASES of colours this theme already uses (no visual change):
+     hover = theme-surface-hover, pressed = outline active, selected = page-current / checked fill,
+     selected-text = Forma primary-text. Text selection stays the browser default (see ::selection). */
+  --color-state-hover-bg: #f5f5f5;
+  --color-state-active-bg: #e8e8e8;
+  --color-state-selected-bg: #ffd400;
+  --color-state-selected-fg: #111111;
+  --color-state-selected-border: #ffd400;
+  --color-state-selected-text: #6b5900;
+  --color-selection-bg: initial;
+  --color-selection-fg: initial;
+
+  /* Badge / Noir-bar roles: unset → Badge.css and AppTopbar.css fall back to the expressions Infinia already used. */
+  --color-badge-neutral-soft-bg: initial;
+  --color-badge-neutral-soft-fg: initial;
+  --color-badge-neutral-solid-bg: initial;
+  --color-badge-neutral-solid-fg: initial;
+  --color-badge-neutral-outline-fg: initial;
+  --color-badge-primary-soft-bg: initial;
+  --color-badge-primary-soft-fg: initial;
+  --color-badge-primary-solid-bg: initial;
+  --color-badge-primary-solid-fg: initial;
+  --color-badge-primary-outline-fg: initial;
+  --color-badge-success-soft-bg: initial;
+  --color-badge-success-soft-fg: initial;
+  --color-badge-success-solid-bg: initial;
+  --color-badge-success-solid-fg: initial;
+  --color-badge-success-outline-fg: initial;
+  --color-badge-warning-soft-bg: initial;
+  --color-badge-warning-soft-fg: initial;
+  --color-badge-warning-solid-bg: initial;
+  --color-badge-warning-solid-fg: initial;
+  --color-badge-warning-outline-fg: initial;
+  --color-badge-danger-soft-bg: initial;
+  --color-badge-danger-soft-fg: initial;
+  --color-badge-danger-solid-bg: initial;
+  --color-badge-danger-solid-fg: initial;
+  --color-badge-danger-outline-fg: initial;
+  --color-badge-info-soft-bg: initial;
+  --color-badge-info-soft-fg: initial;
+  --color-badge-info-solid-bg: initial;
+  --color-badge-info-solid-fg: initial;
+  --color-badge-info-outline-fg: initial;
+  --color-on-noir: initial;
+  /* Role pins — the colours these components already used under Infinia (no visual change) */
+  --color-state-selected-subtle-bg: var(--color-selected-bg);
+  --color-control-hover-bg: var(--color-fill-muted);
+  --color-option-selected-bg: var(--color-interactive-row-hover);
+  --color-option-hover-bg: color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+  --color-option-active-bg: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-surface));
+  --color-row-hover-bg: color-mix(in srgb, var(--color-text-primary) 7%, var(--color-bg-surface));
+  --color-grid-row-hover-bg: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface));
+  --color-day-selected-bg: var(--button-primary-default-bg);
+  --color-day-selected-fg: var(--color-text-on-primary);
+  --color-day-hover-bg: color-mix(in srgb, var(--button-primary-default-bg) 8%, transparent);
+  --color-range-endpoint-bg: var(--color-text-primary);
+  --color-range-endpoint-fg: var(--color-bg-elevated);
+  --color-range-middle-bg: var(--color-fill-muted);
+  --color-segment-selected-bg: var(--color-bg-surface);
+  --color-segment-selected-fg: var(--color-text-primary);
+  --color-segment-selected-border: var(--color-text-secondary);
+
   /* Role tokens — selection / controls / feedback (consumed by components with classic fallbacks) */
+  --color-selected-fg: #111111;
   --color-selected-bg: #fffbe5;
   --color-selected-indicator: #ffd400;
   --color-selected-text: #6b5900;
@@ -1190,7 +1481,68 @@ select {
   --app-sidebar-utility-icon: #a3a3a3;
   --app-sidebar-create-dash: #5b5b5b;
 
+  /* Interaction-state contract — aliases of colours already used here (no visual change). */
+  --color-state-hover-bg: #2c2c2c;
+  --color-state-active-bg: #363636;
+  --color-state-selected-bg: #ffd400;
+  --color-state-selected-fg: #111111;
+  --color-state-selected-border: #ffd400;
+  --color-state-selected-text: #ffd400;
+  --color-selection-bg: initial;
+  --color-selection-fg: initial;
+
+  /* Badge / Noir-bar roles: unset → Badge.css and AppTopbar.css fall back to the expressions Infinia already used. */
+  --color-badge-neutral-soft-bg: initial;
+  --color-badge-neutral-soft-fg: initial;
+  --color-badge-neutral-solid-bg: initial;
+  --color-badge-neutral-solid-fg: initial;
+  --color-badge-neutral-outline-fg: initial;
+  --color-badge-primary-soft-bg: initial;
+  --color-badge-primary-soft-fg: initial;
+  --color-badge-primary-solid-bg: initial;
+  --color-badge-primary-solid-fg: initial;
+  --color-badge-primary-outline-fg: initial;
+  --color-badge-success-soft-bg: initial;
+  --color-badge-success-soft-fg: initial;
+  --color-badge-success-solid-bg: initial;
+  --color-badge-success-solid-fg: initial;
+  --color-badge-success-outline-fg: initial;
+  --color-badge-warning-soft-bg: initial;
+  --color-badge-warning-soft-fg: initial;
+  --color-badge-warning-solid-bg: initial;
+  --color-badge-warning-solid-fg: initial;
+  --color-badge-warning-outline-fg: initial;
+  --color-badge-danger-soft-bg: initial;
+  --color-badge-danger-soft-fg: initial;
+  --color-badge-danger-solid-bg: initial;
+  --color-badge-danger-solid-fg: initial;
+  --color-badge-danger-outline-fg: initial;
+  --color-badge-info-soft-bg: initial;
+  --color-badge-info-soft-fg: initial;
+  --color-badge-info-solid-bg: initial;
+  --color-badge-info-solid-fg: initial;
+  --color-badge-info-outline-fg: initial;
+  --color-on-noir: initial;
+  /* Role pins — the colours these components already used under Infinia (no visual change) */
+  --color-state-selected-subtle-bg: var(--color-selected-bg);
+  --color-control-hover-bg: var(--color-fill-muted);
+  --color-option-selected-bg: var(--color-interactive-row-hover);
+  --color-option-hover-bg: color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+  --color-option-active-bg: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-surface));
+  --color-row-hover-bg: color-mix(in srgb, var(--color-text-primary) 7%, var(--color-bg-surface));
+  --color-grid-row-hover-bg: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface));
+  --color-day-selected-bg: var(--button-primary-default-bg);
+  --color-day-selected-fg: var(--color-text-on-primary);
+  --color-day-hover-bg: color-mix(in srgb, var(--button-primary-default-bg) 8%, transparent);
+  --color-range-endpoint-bg: var(--color-text-primary);
+  --color-range-endpoint-fg: var(--color-bg-elevated);
+  --color-range-middle-bg: var(--color-fill-muted);
+  --color-segment-selected-bg: var(--color-bg-surface);
+  --color-segment-selected-fg: var(--color-text-primary);
+  --color-segment-selected-border: var(--color-text-secondary);
+
   /* Role tokens — selection / controls / feedback */
+  --color-selected-fg: #ffffff;
   --color-selected-bg: #2a250b;
   --color-selected-indicator: #ffd400;
   --color-selected-text: #ffd400;
@@ -1223,7 +1575,8 @@ select {
 
 /* ========== HIGH CONTRAST ========== */
 @media (forced-colors: active) {
-  :root {
+  :root,
+  [data-theme] {
     --color-border-default: CanvasText;
     --button-primary-focus-ring: Highlight;
   }
@@ -1232,6 +1585,17 @@ select {
     outline: 2px solid Highlight;
     outline-offset: 2px;
   }
+}
+
+/* Text selection follows the theme (--color-selection-*). Infinia subtrees never match this rule, so
+   they keep the browser-default highlight untouched (user decision 2026-11-26: Infinia renders
+   unchanged). A non-Infinia theme nested inside an Infinia subtree also keeps the default. */
+:not(:is(
+    [data-theme="infinia-light"], [data-theme="infinia-dark"], .theme-infinia-light, .theme-infinia-dark,
+    [data-theme="infinia-light"] *, [data-theme="infinia-dark"] *, .theme-infinia-light *, .theme-infinia-dark *
+  ))::selection {
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-fg);
 }
 
 /* Screen-reader only / visually hidden (accessibility) */
@@ -1248,64 +1612,67 @@ select {
   border: 0;
 }
 
-/* Button: force variant styles to win everywhere (Canvas + Docs) */
-:is(button, a).btn-primary,
-#storybook-root :is(button, a).btn-primary,
-.docblock-preview :is(button, a).btn-primary,
-:is(button, a).btn-base.btn-primary {
+/* Button: force variant styles to win everywhere (Canvas + Docs) — RESTING state only. Hover / active
+   and disabled rules below carry !important themselves; before iteration 2 these ID-scoped rules
+   (#storybook-root …) outranked them, so disabled and hover looked like rest in Storybook (and the
+   unscoped !important rest rule masked hover in apps too). */
+:is(button, a).btn-primary:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-primary:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-primary:not(:disabled, [aria-disabled="true"], :hover, :active),
+:is(button, a).btn-base.btn-primary:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: var(--button-primary-default-bg) !important;
   color: var(--button-primary-default-text) !important;
   border-color: var(--button-primary-default-bg) !important;
 }
-:is(button, a).btn-secondary,
-#storybook-root :is(button, a).btn-secondary,
-.docblock-preview :is(button, a).btn-secondary,
-:is(button, a).btn-base.btn-secondary {
+:is(button, a).btn-secondary:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-secondary:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-secondary:not(:disabled, [aria-disabled="true"], :hover, :active),
+:is(button, a).btn-base.btn-secondary:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: var(--button-secondary-bg) !important;
   color: var(--button-secondary-text) !important;
   border-color: var(--button-secondary-border-color, var(--button-secondary-bg)) !important;
 }
-:is(button, a).btn-outline-primary,
-#storybook-root :is(button, a).btn-outline-primary,
-.docblock-preview :is(button, a).btn-outline-primary {
+:is(button, a).btn-outline-primary:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-outline-primary:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-outline-primary:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: transparent !important;
   color: var(--button-outline-primary-text) !important;
   border-color: var(--button-outline-primary-border) !important;
   border-width: 1.5px !important;
 }
-:is(button, a).btn-outline-secondary,
-#storybook-root :is(button, a).btn-outline-secondary,
-.docblock-preview :is(button, a).btn-outline-secondary {
+:is(button, a).btn-outline-secondary:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-outline-secondary:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-outline-secondary:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: transparent !important;
   color: var(--button-outline-secondary-text) !important;
   border-color: var(--button-outline-secondary-border) !important;
   border-width: 1.5px !important;
 }
-:is(button, a).btn-success,
-#storybook-root :is(button, a).btn-success,
-.docblock-preview :is(button, a).btn-success {
+:is(button, a).btn-success:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-success:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-success:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: var(--button-success-bg) !important;
   color: var(--button-success-text) !important;
   border-color: var(--button-success-bg) !important;
 }
-:is(button, a).btn-danger,
-#storybook-root :is(button, a).btn-danger,
-.docblock-preview :is(button, a).btn-danger {
+:is(button, a).btn-danger:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-danger:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-danger:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: var(--button-danger-bg) !important;
   color: var(--button-danger-text) !important;
   border-color: var(--button-danger-bg) !important;
 }
-:is(button, a).btn-warning,
-#storybook-root :is(button, a).btn-warning,
-.docblock-preview :is(button, a).btn-warning {
+:is(button, a).btn-warning:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-warning:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-warning:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: var(--button-warning-bg) !important;
   color: var(--button-warning-text) !important;
   border-color: var(--button-warning-bg) !important;
 }
-:is(button, a).btn-link,
-#storybook-root :is(button, a).btn-link,
-.docblock-preview :is(button, a).btn-link,
-:is(button, a).btn-base.btn-link {
+:is(button, a).btn-link:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-link:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-link:not(:disabled, [aria-disabled="true"], :hover, :active),
+:is(button, a).btn-base.btn-link:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: transparent !important;
   color: var(--button-link-color) !important;
   border-width: 0 !important;
@@ -1355,9 +1722,9 @@ a.btn-base:not(.btn-link):hover {
 }
 
 /* Gradient button — uses CSS variables so React can set per-instance gradients */
-:is(button, a).btn-base.btn-gradient,
-#storybook-root :is(button, a).btn-base.btn-gradient,
-.docblock-preview :is(button, a).btn-base.btn-gradient {
+:is(button, a).btn-base.btn-gradient:not(:disabled, [aria-disabled="true"], :hover, :active),
+#storybook-root :is(button, a).btn-base.btn-gradient:not(:disabled, [aria-disabled="true"], :hover, :active),
+.docblock-preview :is(button, a).btn-base.btn-gradient:not(:disabled, [aria-disabled="true"], :hover, :active) {
   background-color: transparent !important;
   background-image: var(
     --button-gradient-bg,
@@ -1368,11 +1735,15 @@ a.btn-base:not(.btn-link):hover {
 }
 
 :is(button, a).btn-base.btn-gradient:hover:not(:disabled, [aria-disabled="true"]) {
+  background-color: transparent !important;
+  color: var(--button-primary-default-text) !important;
   background-image: var(--button-gradient-hover-bg, var(--button-gradient-bg)) !important;
   border-color: transparent !important;
 }
 
 :is(button, a).btn-base.btn-gradient:active:not(:disabled, [aria-disabled="true"]) {
+  background-color: transparent !important;
+  color: var(--button-primary-default-text) !important;
   background-image: var(--button-gradient-active-bg, var(--button-gradient-hover-bg, var(--button-gradient-bg))) !important;
   border-color: transparent !important;
 }
@@ -1391,12 +1762,14 @@ a.btn-base:not(.btn-link):hover {
   border-color: var(--button-primary-default-bg);
 }
 :is(button, a).btn-primary:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-primary-hover-bg);
-  border-color: var(--button-primary-hover-bg);
+  background-color: var(--button-primary-hover-bg) !important;
+  border-color: var(--button-primary-hover-bg) !important;
+  color: var(--button-primary-default-text) !important;
 }
 :is(button, a).btn-primary:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-primary-active-bg);
-  border-color: var(--button-primary-active-bg);
+  background-color: var(--button-primary-active-bg) !important;
+  border-color: var(--button-primary-active-bg) !important;
+  color: var(--button-primary-default-text) !important;
 }
 :is(button, a).btn-primary:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-primary-disabled-bg) !important;
@@ -1413,12 +1786,14 @@ a.btn-base:not(.btn-link):hover {
 /* Border role tokens (--button-secondary-*-border-color) default to the fill, so themes with a
    filled secondary are unchanged; a theme sets them for an outlined (white + border) secondary. */
 :is(button, a).btn-secondary:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-secondary-hover-bg);
-  border-color: var(--button-secondary-hover-border-color, var(--button-secondary-hover-bg));
+  background-color: var(--button-secondary-hover-bg) !important;
+  border-color: var(--button-secondary-hover-border-color, var(--button-secondary-hover-bg)) !important;
+  color: var(--button-secondary-text) !important;
 }
 :is(button, a).btn-secondary:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-secondary-active-bg);
-  border-color: var(--button-secondary-active-border-color, var(--button-secondary-active-bg));
+  background-color: var(--button-secondary-active-bg) !important;
+  border-color: var(--button-secondary-active-border-color, var(--button-secondary-active-bg)) !important;
+  color: var(--button-secondary-text) !important;
 }
 :is(button, a).btn-secondary:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-secondary-disabled-bg) !important;
@@ -1434,13 +1809,14 @@ a.btn-base:not(.btn-link):hover {
   border-width: 1.5px;
 }
 :is(button, a).btn-outline-primary:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-outline-primary-hover-bg);
-  border-color: var(--button-outline-primary-border);
-  color: var(--button-outline-primary-text);
+  background-color: var(--button-outline-primary-hover-bg) !important;
+  border-color: var(--button-outline-primary-border) !important;
+  color: var(--button-outline-primary-text) !important;
 }
 :is(button, a).btn-outline-primary:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-outline-primary-active-bg);
-  border-color: var(--button-outline-primary-border);
+  background-color: var(--button-outline-primary-active-bg) !important;
+  border-color: var(--button-outline-primary-border) !important;
+  color: var(--button-outline-primary-text) !important;
 }
 :is(button, a).btn-outline-primary:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
@@ -1456,13 +1832,14 @@ a.btn-base:not(.btn-link):hover {
   border-width: 1.5px;
 }
 :is(button, a).btn-outline-secondary:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-outline-secondary-hover-bg);
-  border-color: var(--button-outline-secondary-border);
-  color: var(--button-outline-secondary-text);
+  background-color: var(--button-outline-secondary-hover-bg) !important;
+  border-color: var(--button-outline-secondary-border) !important;
+  color: var(--button-outline-secondary-text) !important;
 }
 :is(button, a).btn-outline-secondary:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-outline-secondary-active-bg);
-  border-color: var(--button-outline-secondary-border);
+  background-color: var(--button-outline-secondary-active-bg) !important;
+  border-color: var(--button-outline-secondary-border) !important;
+  color: var(--button-outline-secondary-text) !important;
 }
 :is(button, a).btn-outline-secondary:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
@@ -1477,12 +1854,14 @@ a.btn-base:not(.btn-link):hover {
   border-color: var(--button-success-bg);
 }
 :is(button, a).btn-success:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-success-hover-bg);
-  border-color: var(--button-success-hover-bg);
+  background-color: var(--button-success-hover-bg) !important;
+  border-color: var(--button-success-hover-bg) !important;
+  color: var(--button-success-text) !important;
 }
 :is(button, a).btn-success:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-success-active-bg);
-  border-color: var(--button-success-active-bg);
+  background-color: var(--button-success-active-bg) !important;
+  border-color: var(--button-success-active-bg) !important;
+  color: var(--button-success-text) !important;
 }
 :is(button, a).btn-success:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-success-disabled-bg) !important;
@@ -1497,12 +1876,14 @@ a.btn-base:not(.btn-link):hover {
   border-color: var(--button-danger-bg);
 }
 :is(button, a).btn-danger:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-danger-hover-bg);
-  border-color: var(--button-danger-hover-bg);
+  background-color: var(--button-danger-hover-bg) !important;
+  border-color: var(--button-danger-hover-bg) !important;
+  color: var(--button-danger-text) !important;
 }
 :is(button, a).btn-danger:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-danger-active-bg);
-  border-color: var(--button-danger-active-bg);
+  background-color: var(--button-danger-active-bg) !important;
+  border-color: var(--button-danger-active-bg) !important;
+  color: var(--button-danger-text) !important;
 }
 :is(button, a).btn-danger:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-danger-disabled-bg) !important;
@@ -1517,12 +1898,14 @@ a.btn-base:not(.btn-link):hover {
   border-color: var(--button-warning-bg);
 }
 :is(button, a).btn-warning:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-warning-hover-bg);
-  border-color: var(--button-warning-hover-bg);
+  background-color: var(--button-warning-hover-bg) !important;
+  border-color: var(--button-warning-hover-bg) !important;
+  color: var(--button-warning-text) !important;
 }
 :is(button, a).btn-warning:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: var(--button-warning-active-bg);
-  border-color: var(--button-warning-active-bg);
+  background-color: var(--button-warning-active-bg) !important;
+  border-color: var(--button-warning-active-bg) !important;
+  color: var(--button-warning-text) !important;
 }
 :is(button, a).btn-warning:is(:disabled, [aria-disabled="true"]) {
   background-color: var(--button-warning-disabled-bg) !important;
@@ -1563,12 +1946,13 @@ a.btn-base:not(.btn-link):hover {
   text-decoration: none;
 }
 :is(button, a).btn-link:hover:not(:disabled, [aria-disabled="true"]) {
-  background-color: transparent;
-  text-decoration: underline;
-  color: var(--button-link-hover-color);
+  background-color: transparent !important;
+  text-decoration: underline !important;
+  color: var(--button-link-hover-color) !important;
 }
 :is(button, a).btn-link:active:not(:disabled, [aria-disabled="true"]) {
-  background-color: transparent;
+  background-color: transparent !important;
+  color: var(--button-link-hover-color) !important;
 }
 :is(button, a).btn-link:is(:disabled, [aria-disabled="true"]) {
   background-color: transparent !important;
@@ -1630,7 +2014,8 @@ a.btn-base:not(.btn-link):hover {
 
 /* Narrow screens: keep semantic button sizes but reduce horizontal inset so labels fit like common UI libraries. */
 @media (max-width: 640px) {
-  :root {
+  :root,
+  [data-theme] {
     --button-padding-x-sm: 0.875rem;
     --button-padding-x-md: 1rem;
     --button-padding-x-lg: 1rem;

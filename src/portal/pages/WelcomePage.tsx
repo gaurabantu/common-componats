@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import Card from "../../components/molecules/Card";
 import Button from "../../components/atoms/Button";
 import Badge from "../../components/atoms/Badge";
 import IconBox from "../../components/atoms/IconBox";
 import StatCard from "../../components/molecules/StatCard";
 import { List, ListItem } from "../../components/molecules/List";
-import { COMPONENT_COUNT, HOOKS, INVENTORY, PRODUCT, THEMES } from "../data";
+import { PRODUCT, THEMES } from "../data";
 import {
   IconAccessibility,
   IconArrowRight,
@@ -26,16 +26,19 @@ import { portalLinkProps } from "../navigation";
 import { TOKEN_COUNT } from "../tokens/useTokens";
 import { DownloadTokensButton, PortalPage, Section, SectionHeading } from "../components/Portal";
 import { PRINCIPLES, ProductMock, ThemeLab } from "../components/Showcase";
+import { COMPONENT_TOTAL, NEW_TOTAL, STATS } from "../components/dashboardData";
+import { CountUp, Reveal, useHeroIntro } from "../components/motion";
 
-const NEW_COUNT = INVENTORY.flatMap((g) => g.items).filter((i) => i.status === "new").length;
+const NEW_COUNT = NEW_TOTAL;
+const HOOK_COUNT = STATS.library.hooks;
 
 const PILLARS = [
   {
     icon: <IconPackage />,
     title: "Components",
-    text: `${COMPONENT_COUNT} production components — forms, data, overlays, feedback and a full dashboard shell.`,
+    text: `${COMPONENT_TOTAL} production components — forms, data, overlays, feedback and a full dashboard shell.`,
     meta: ["React 18+", "TypeScript", "ESM + CJS"],
-    link: portalLinkProps("Overview/Component Inventory"),
+    link: portalLinkProps("Overview/Components"),
   },
   {
     icon: <IconSwatch />,
@@ -47,7 +50,7 @@ const PILLARS = [
   {
     icon: <IconHook />,
     title: "Hooks",
-    text: `${HOOKS.length} typed hooks for async phases, focus traps, tables, selection, gestures and storage.`,
+    text: `${HOOK_COUNT} typed hooks for async phases, focus traps, tables, selection, gestures and storage.`,
     meta: [PRODUCT.hooksPackage, `v${PRODUCT.hooksVersion}`],
     link: portalLinkProps("Design System/Hooks/ui-common-hooks", "component"),
   },
@@ -68,12 +71,14 @@ const ADOPTION = [
 ];
 
 export function WelcomePage() {
+  const heroRef = useRef<HTMLElement>(null);
+  useHeroIntro(heroRef);
   return (
     <PortalPage section="Overview" title={PRODUCT.name} bare>
       {/* Hero */}
-      <section className="pt-hero" aria-labelledby="pt-hero-title">
+      <section ref={heroRef} className="pt-hero" aria-labelledby="pt-hero-title">
         <div className="pt-hero__copy">
-          <div className="pt-row">
+          <div className="pt-row" data-hero-item>
             <Badge variant="neutral" tone="outline" size="md" dot>
               v{PRODUCT.version} · tokens {PRODUCT.tokensVersion}
             </Badge>
@@ -83,48 +88,48 @@ export function WelcomePage() {
               </Badge>
             ) : null}
           </div>
-          <h2 id="pt-hero-title" className="pt-hero__title">
+          <h2 id="pt-hero-title" className="pt-hero__title" data-hero-item>
             One system for every product screen. <span>Designed, coded and governed.</span>
           </h2>
-          <p className="pt-hero__lead">
+          <p className="pt-hero__lead" data-hero-item>
             {PRODUCT.name} is the shared React library, token set and set of rules our teams use to build consistent,
             accessible enterprise applications — faster, and without re-inventing the basics.
           </p>
-          <div className="pt-hero__ctas">
+          <div className="pt-hero__ctas" data-hero-item>
             <Button size="lg" icon={<IconRocket />} {...portalLinkProps("Overview/Getting Started")}>
               Get started
             </Button>
             <DownloadTokensButton size="lg" />
-            <Button size="lg" variant="ghost" icon={<IconArrowRight />} iconPosition="right" {...portalLinkProps("Overview/Component Inventory")}>
+            <Button size="lg" variant="ghost" icon={<IconArrowRight />} iconPosition="right" {...portalLinkProps("Overview/Components")}>
               Browse components
             </Button>
           </div>
-          <div className="pt-hero__trust">
+          <div className="pt-hero__trust" data-hero-item>
             <span><IconAccessibility /> {PRODUCT.standard}</span>
             <span><IconSwatch /> {THEMES.length} themes</span>
             <span><IconShield /> XSS-safe rendering</span>
             <span><IconCheck /> Unit-tested</span>
           </div>
         </div>
-        <div className="pt-hero__stage">
+        <div className="pt-hero__stage" data-hero-item>
           <ProductMock />
         </div>
       </section>
 
       {/* KPIs */}
-      <section aria-label="Key figures" className="pt-grid pt-grid--kpi">
-        <StatCard label="Components" value={COMPONENT_COUNT} icon={<IconPackage />} description="Atoms, molecules, shell & charts" delta={NEW_COUNT ? { value: `+${NEW_COUNT}`, trend: "up", label: "in next release" } : undefined} />
-        <StatCard label="Design tokens" value={TOKEN_COUNT} icon={<IconSwatch />} description="Generated from tokens.css" />
-        <StatCard label="Hooks" value={HOOKS.length} icon={<IconHook />} description={PRODUCT.hooksPackage} />
-        <StatCard label="Themes" value={THEMES.length} icon={<IconPalette />} description="Light, dark, mist & brand" />
-        <StatCard label="Accessibility" value="AA" icon={<IconAccessibility />} iconTone="success" description="WCAG 2.2 target on every control" />
-      </section>
+      <Reveal as="section" stagger aria-label="Key figures" className="pt-grid pt-grid--kpi">
+        <StatCard data-reveal-item label="Components" value={<CountUp value={COMPONENT_TOTAL} />} icon={<IconPackage />} description="Atoms, molecules, shell & charts" delta={NEW_COUNT ? { value: `+${NEW_COUNT}`, trend: "up", label: "in next release" } : undefined} />
+        <StatCard data-reveal-item label="Design tokens" value={<CountUp value={TOKEN_COUNT} />} icon={<IconSwatch />} description="Generated from tokens.css" />
+        <StatCard data-reveal-item label="Hooks" value={<CountUp value={HOOK_COUNT} />} icon={<IconHook />} description={PRODUCT.hooksPackage} />
+        <StatCard data-reveal-item label="Themes" value={<CountUp value={THEMES.length} />} icon={<IconPalette />} description="Light, dark, mist & brand" />
+        <StatCard data-reveal-item label="Accessibility" value="AA" icon={<IconAccessibility />} iconTone="success" description="WCAG 2.2 target on every control" />
+      </Reveal>
 
       {/* What's inside */}
       <SectionHeading title="What's in the box" description="Four deliverables, one version number." />
-      <div className="pt-grid pt-grid--tiles">
+      <Reveal stagger className="pt-grid pt-grid--tiles">
         {PILLARS.map((p, i) => (
-          <a key={p.title} className="pt-tile-link" {...p.link}>
+          <a key={p.title} data-reveal-item className="pt-tile-link" {...p.link}>
           <Card interactive>
             <div className="pt-tile">
               <IconBox size="lg" tone={i === 0 ? "strong" : "neutral"}>{p.icon}</IconBox>
@@ -142,7 +147,7 @@ export function WelcomePage() {
           </Card>
           </a>
         ))}
-      </div>
+      </Reveal>
 
       {/* Principles */}
       <Section

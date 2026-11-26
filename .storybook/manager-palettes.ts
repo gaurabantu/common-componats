@@ -147,33 +147,64 @@ export const INFINIA_DARK: ManagerPalette = {
   booleanSelectedBg: "#ffd400",
 };
 
-/** tokens.css §42 interaction accents — `--color-theme-primary` per named theme */
-const ACCENT_PRIMARY: Partial<Record<ToolbarTheme, string>> = {
-  green: "#15803d",
-  custom: "#e11d48",
-  "blue-mist": "#1a56db",
-  "green-mist": "#15803d",
+/**
+ * Per-theme selection accent for the 8 non-Infinia themes (Infinia palettes above are final —
+ * do not route them through this table).
+ *
+ * Storybook paints the **selected sidebar row** with `colorSecondary` and fixed white text
+ * (`theme.color.lightest`), the active toolbar/tab with `barSelectedColor`, toolbar hover with
+ * `barHoverColor` and boolean toggles with `booleanSelectedBg`. Each theme therefore needs its
+ * own accent here, otherwise the base palette's neutral grey (or a previously-mounted theme) shows.
+ *
+ * - `selected`: sidebar selected-row fill. White text on it must be ≥ 4.5:1.
+ * - `bar`: active toolbar item / tab text + underline on `barBg`. Must be ≥ 4.5:1 on `barBg`.
+ * - `primary`: `--color-theme-primary` for that theme (tokens.css), used for colorPrimary.
+ * Contrast (white on selected / bar on barBg) is asserted in `src/portal/components/storybookTheme.test.ts`.
+ */
+type ThemeAccent = { selected: string; bar: string; primary: string };
+
+export const THEME_ACCENTS: Record<
+  Exclude<ToolbarTheme, "infinia-light" | "infinia-dark">,
+  ThemeAccent
+> = {
+  /** :root / blue — --color-theme-primary #2563eb (white 5.17:1) */
+  light: { selected: "#2563eb", bar: "#2563eb", primary: "#2563eb" },
+  blue: { selected: "#2563eb", bar: "#2563eb", primary: "#2563eb" },
+  /** mist inherits the blue accent on mist surfaces */
+  mist: { selected: "#2563eb", bar: "#2563eb", primary: "#2563eb" },
+  /** green — #15803d (white 5.02:1) */
+  green: { selected: "#15803d", bar: "#15803d", primary: "#15803d" },
+  "green-mist": { selected: "#15803d", bar: "#15803d", primary: "#15803d" },
+  /** custom (rose) — #e11d48 (white 4.70:1) */
+  custom: { selected: "#e11d48", bar: "#e11d48", primary: "#e11d48" },
+  /** blue-mist — #1a56db */
+  "blue-mist": { selected: "#1a56db", bar: "#1a56db", primary: "#1a56db" },
+  /**
+   * dark — primary #3b82f6 only reaches 3.68:1 under white text, so the selected row uses the
+   * theme's own hover step #2563eb (5.17:1); active bar text uses the focus blue #60a5fa on #111827.
+   */
+  dark: { selected: "#2563eb", bar: "#60a5fa", primary: "#3b82f6" },
 };
 
 export function resolveManagerPalette(toolbarTheme: string): ManagerPalette {
-  if (toolbarTheme === "dark") return DARK;
   if (toolbarTheme === "infinia-light") return INFINIA_LIGHT;
   if (toolbarTheme === "infinia-dark") return INFINIA_DARK;
 
+  const key = (toolbarTheme in THEME_ACCENTS ? toolbarTheme : "light") as keyof typeof THEME_ACCENTS;
   const base =
-    toolbarTheme === "mist" ||
-    toolbarTheme === "blue-mist" ||
-    toolbarTheme === "green-mist"
-      ? LIGHT_MIST
-      : LIGHT_CLASSIC;
-
-  const accent =
-    ACCENT_PRIMARY[toolbarTheme as ToolbarTheme] ?? base.colorPrimary;
+    key === "dark"
+      ? DARK
+      : key === "mist" || key === "blue-mist" || key === "green-mist"
+        ? LIGHT_MIST
+        : LIGHT_CLASSIC;
+  const accent = THEME_ACCENTS[key];
 
   return {
     ...base,
-    colorPrimary: accent,
-    barSelectedColor: accent,
-    booleanSelectedBg: accent,
+    colorPrimary: accent.primary,
+    colorSecondary: accent.selected,
+    barSelectedColor: accent.bar,
+    barHoverColor: accent.bar,
+    booleanSelectedBg: accent.selected,
   };
 }

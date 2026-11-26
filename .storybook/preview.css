@@ -149,3 +149,184 @@ body,
   gap: var(--space-3, 0.75rem);
   align-items: flex-start;
 }
+
+/* ==========================================================================
+ * Docs / MDX chrome follows the theme (no white islands in dark themes).
+ * `ThemedDocsContainer` (docs-container.tsx) swaps Storybook's emotion theme; these rules pin the
+ * main surfaces to tokens so the docs page matches the story exactly. `#storybook-docs` raises
+ * specificity above emotion's single-class rules. Portal pages (`.pt-root`) keep their own layout
+ * from src/portal/portal.css. Only Storybook's `.sbdocs-*` / `.docblock-*` classes are targeted, so
+ * story content (inside `.sb-unstyled`) is never restyled.
+ * ========================================================================== */
+html,
+body {
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+#storybook-docs,
+#storybook-docs .sbdocs-wrapper {
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+#storybook-docs .sbdocs-content {
+  color: var(--color-text-primary);
+}
+
+#storybook-docs .sbdocs-title,
+#storybook-docs .sbdocs-h1,
+#storybook-docs .sbdocs-h2,
+#storybook-docs .sbdocs-h3,
+#storybook-docs .sbdocs-h4,
+#storybook-docs .sbdocs-h5,
+#storybook-docs .sbdocs-h6 {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-subtle);
+}
+
+#storybook-docs .sbdocs-subtitle,
+#storybook-docs .sbdocs-p,
+#storybook-docs .sbdocs-li,
+#storybook-docs .sbdocs-content > p {
+  color: var(--color-text-secondary);
+}
+
+/*
+ * Docs links: left to the docs emotion theme (`colorSecondary` = the palette's bar accent, which
+ * meets 4.5:1 on content in every theme — incl. Infinia's #6b5900 / #ffd400). A token rule here
+ * would paint --color-theme-primary (#ffd400) on white in infinia-light.
+ */
+
+#storybook-docs .sbdocs-hr {
+  border-color: var(--color-border-subtle);
+}
+
+/* Inline code + code blocks */
+#storybook-docs .sbdocs-code,
+#storybook-docs .sbdocs-content code:not(.sb-unstyled code) {
+  background-color: var(--color-fill-muted);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-primary);
+}
+
+/* Story frame (Canvas block) + its toolbar */
+#storybook-docs .sbdocs-preview,
+#storybook-docs .docblock-source {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border-subtle);
+  box-shadow: none;
+}
+
+#storybook-docs .sbdocs-preview .sb-bar,
+#storybook-docs .docs-story + div .sb-bar {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  box-shadow: inset 0 -1px 0 var(--color-border-subtle);
+}
+
+#storybook-docs .sbdocs-preview .sb-bar button {
+  color: var(--color-text-secondary);
+}
+
+#storybook-docs .sbdocs-preview .sb-bar button:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-state-hover-bg, var(--color-theme-surface-hover));
+}
+
+#storybook-docs .docs-story {
+  background-color: var(--color-bg-surface);
+}
+
+#storybook-docs .docblock-code-toggle {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-subtle);
+}
+
+#storybook-docs .docblock-code-toggle:hover,
+#storybook-docs .docblock-code-toggle--expanded {
+  background-color: var(--color-state-hover-bg, var(--color-theme-surface-hover));
+}
+
+/* ArgsTable / Controls inside Docs */
+#storybook-docs .docblock-argstable,
+#storybook-docs .docblock-argstable tbody,
+#storybook-docs .docblock-argstable tbody tr,
+#storybook-docs .docblock-argstable tbody td {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-subtle);
+}
+
+#storybook-docs .docblock-argstable thead th {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+#storybook-docs .docblock-argstable tbody tr:hover td {
+  background-color: var(--color-state-hover-bg, var(--color-theme-surface-hover));
+}
+
+#storybook-docs .docblock-argstable tbody {
+  box-shadow: 0 0 0 1px var(--color-border-subtle);
+}
+
+#storybook-docs .docblock-argstable tbody tr:not(:first-of-type) {
+  border-top-color: var(--color-border-subtle);
+}
+
+#storybook-docs .docblock-argstable td:not(:first-child) span[class^="css-"],
+#storybook-docs .docblock-argstable td code {
+  background-color: var(--color-fill-muted);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-primary);
+}
+
+#storybook-docs .docblock-argstable input,
+#storybook-docs .docblock-argstable textarea,
+#storybook-docs .docblock-argstable select {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+}
+
+#storybook-docs .docblock-argstable input:focus-visible,
+#storybook-docs .docblock-argstable textarea:focus-visible,
+#storybook-docs .docblock-argstable select:focus-visible,
+#storybook-docs .docblock-code-toggle:focus-visible,
+#storybook-docs .sb-bar button:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Docs-only MDX tables (not ArgsTable) */
+#storybook-docs .sbdocs-table th,
+#storybook-docs .sbdocs-table td {
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-primary);
+}
+
+#storybook-docs .sbdocs-table tr {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border-subtle);
+}
+
+#storybook-docs .sbdocs-table tr:nth-of-type(2n) {
+  background-color: var(--color-fill-muted);
+}
+
+
+/*
+ * Narrow docs (≤ 48rem, e.g. 375px phones): Storybook's ArgsTable has a fixed min layout wider than
+ * the viewport (624–765px), which made the whole docs page scroll sideways. Contain it in its own
+ * horizontal scroller instead. Desktop layout is untouched (display stays `table` above 48rem).
+ */
+@media (max-width: 48rem) {
+  #storybook-docs .docblock-argstable {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

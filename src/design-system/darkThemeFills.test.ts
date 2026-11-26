@@ -40,6 +40,6 @@ describe.each(["dark", "infinia-dark"])("%s theme neutral fills", (id) => {
 
 describe("classic scope", () => {
   it("the default palette can be re-applied on a nested element via [data-theme=\"classic\"]", () => {
-    expect(css).toMatch(/:root,\s*\[data-theme="classic"\]\s*\{/);
+    expect(css).toMatch(/:root,\s*\[data-theme="classic"\],\s*\[data-theme\][^{]*\{/);
   });
 });

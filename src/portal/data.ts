@@ -26,6 +26,12 @@ export interface InventoryItem {
   from?: string;
   /** Replacement when legacy. */
   replacement?: string;
+  /**
+   * Props interface / type shown in the Components gallery detail panel. Read by
+   * `src/portal/components/stats/generate-portal-stats.mjs`, which extracts its members into
+   * `portal-stats.json` — keep it a plain double-quoted string literal (the generator matches it with a regex).
+   */
+  props?: string;
 }
 
 export interface InventoryGroup {
@@ -44,11 +50,14 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Actions",
     description: "Trigger work — one primary CTA per zone, size encodes hierarchy.",
     items: [
-      { name: "Button", description: "Primary, outline, ghost, link and semantic variants; 5 size tiers, icon, loading, expand-on-hover.", status: "stable", story: `${A}Button` },
-      { name: "ButtonGroup", description: "Segmented actions with separators and inline text.", status: "stable", story: `${M}ButtonGroup` },
-      { name: "Hyperlink", description: "Accessible inline link with new-tab handling.", status: "stable", story: `${A}Hyperlink` },
-      { name: "DropdownMenu", description: "Menu of actions anchored to a trigger (Popover family).", status: "stable", story: `${M}Popover` },
-      { name: "Pagination", description: "Standalone pager with page-size select, compact mobile mode and safe page links.", status: "new", story: `${M}Pagination` },
+      { name: "Button", description: "Primary, outline, ghost, link and semantic variants; 5 size tiers, icon, loading, expand-on-hover.", status: "stable", story: `${A}Button`, props: "ButtonProps" },
+      { name: "ButtonGroup", description: "Segmented actions with separators and inline text.", status: "stable", story: `${M}ButtonGroup`, props: "ButtonGroupProps" },
+      { name: "Hyperlink", description: "Accessible inline link with new-tab handling.", status: "stable", story: `${A}Hyperlink`, props: "HyperlinkProps" },
+      { name: "DropdownMenu", description: "Menu of actions anchored to a trigger (Popover family).", status: "stable", story: `${M}Popover`, props: "DropdownMenuItemProps" },
+      { name: "ContextMenu", description: "Right-click / Shift+F10 menu at the pointer with viewport flip and focus return.", status: "stable", story: `${M}ContextMenu`, props: "ContextMenuProps" },
+      { name: "ToggleButton", description: "Pressed / unpressed button for formatting and view toggles.", status: "stable", story: `${A}ToggleButton`, props: "ToggleButtonProps" },
+      { name: "ToggleGroup", description: "Single or multiple selection across a row of toggle buttons.", status: "stable", story: `${M}ToggleGroup`, props: "ToggleGroupSingleProps" },
+      { name: "Pagination", description: "Standalone pager with page-size select, compact mobile mode and safe page links.", status: "new", story: `${M}Pagination`, props: "PaginationProps" },
     ],
   },
   {
@@ -56,22 +65,24 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Forms & input",
     description: "Labelled, validated controls with consistent heights and error messaging.",
     items: [
-      { name: "Input", description: "Text input with validation, masking, clear and verified states.", status: "stable", story: `${A}Input` },
-      { name: "InputSearch", description: "Search field with clear and search-action button.", status: "stable", story: `${A}InputSearch` },
-      { name: "TextArea", description: "Multi-line input with counter and validation.", status: "stable", story: `${A}TextArea` },
-      { name: "Select", description: "Native select with groups, icons and live search.", status: "stable", story: `${A}Select` },
-      { name: "Combobox", description: "Searchable single / multi select with icons.", status: "stable", story: `${M}Combobox` },
-      { name: "CheckBox", description: "Indeterminate, description, error, required and sizes (upgraded).", status: "stable", story: `${A}Checkbox` },
-      { name: "Switch", description: "Binary toggle with label positions and sizes.", status: "stable", story: `${A}Switch` },
-      { name: "RadioGroup", description: "Single choice from a small set.", status: "stable", story: `${A}RadioGroup` },
-      { name: "OtpBox", description: "One-time-code input with paste support.", status: "stable", story: `${A}OtpBox` },
-      { name: "DatePicker", description: "Date input with calendar popover.", status: "stable", story: `${A}DatePicker` },
-      { name: "DateRangePicker", description: "Ranges with presets, 2-month grid (1 on mobile), APG keyboard grid, FormField-aware.", status: "new", story: `${M}DateRangePicker` },
-      { name: "NumberInput", description: "Locale-aware spinbutton — currency / percent / compact, steppers, full keyboard.", status: "new", story: `${A}NumberInput` },
-      { name: "SegmentedControl", description: "Single-choice radio group with sliding indicator; 36 / 40px targets.", status: "new", story: `${M}SegmentedControl` },
-      { name: "FileUpload", description: "Upload + Dropzone with magic-byte security validation.", status: "stable", story: `${M}FileUpload` },
-      { name: "Form", description: "Form layout with grid-based fields.", status: "stable", story: `${M}Form` },
-      { name: "FormField", description: "Label, hint, error, required and counter wired to any control (+ useFormField).", status: "new", story: `${M}FormField` },
+      { name: "Input", description: "Text input with validation, masking, clear and verified states.", status: "stable", story: `${A}Input`, props: "TextInputProps" },
+      { name: "InputSearch", description: "Search field with clear and search-action button.", status: "stable", story: `${A}InputSearch`, props: "TextInputSearchProps" },
+      { name: "TextArea", description: "Multi-line input with counter and validation.", status: "stable", story: `${A}TextArea`, props: "TextAreaProps" },
+      { name: "Select", description: "Native select with groups, icons and live search.", status: "stable", story: `${A}Select`, props: "SelectProps" },
+      { name: "Combobox", description: "Searchable single / multi select with icons.", status: "stable", story: `${M}Combobox`, props: "ComboboxProps" },
+      { name: "CheckBox", description: "Indeterminate, description, error, required and sizes (upgraded).", status: "stable", story: `${A}Checkbox`, props: "CheckboxProps" },
+      { name: "Switch", description: "Binary toggle with label positions and sizes.", status: "stable", story: `${A}Switch`, props: "SwitchProps" },
+      { name: "RadioGroup", description: "Single choice from a small set.", status: "stable", story: `${A}RadioGroup`, props: "RadioGroupProps" },
+      { name: "Slider", description: "Single value or range with keyboard steps and labelled thumbs.", status: "stable", story: `${A}Slider`, props: "SliderSingleProps" },
+      { name: "ColorPicker", description: "Hex value, token palette presets and a validated hex input.", status: "stable", story: `${M}ColorPicker`, props: "ColorPickerProps" },
+      { name: "OtpBox", description: "One-time-code input with paste support.", status: "stable", story: `${A}OtpBox`, props: "OtpBoxProps" },
+      { name: "DatePicker", description: "Date input with calendar popover.", status: "stable", story: `${A}DatePicker`, props: "DatePickerProps" },
+      { name: "DateRangePicker", description: "Ranges with presets, 2-month grid (1 on mobile), APG keyboard grid, FormField-aware.", status: "new", story: `${M}DateRangePicker`, props: "DateRangePickerProps" },
+      { name: "NumberInput", description: "Locale-aware spinbutton — currency / percent / compact, steppers, full keyboard.", status: "new", story: `${A}NumberInput`, props: "NumberInputProps" },
+      { name: "SegmentedControl", description: "Single-choice radio group with sliding indicator; 36 / 40px targets.", status: "new", story: `${M}SegmentedControl`, props: "SegmentedControlProps" },
+      { name: "FileUpload", description: "Upload + Dropzone with magic-byte security validation.", status: "stable", story: `${M}FileUpload`, props: "FileUploadProps" },
+      { name: "Form", description: "Form layout with grid-based fields.", status: "stable", story: `${M}Form`, props: "FormProps" },
+      { name: "FormField", description: "Label, hint, error, required and counter wired to any control (+ useFormField).", status: "new", story: `${M}FormField`, props: "FormFieldProps" },
     ],
   },
   {
@@ -79,18 +90,18 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Display & content",
     description: "Typography, status and media primitives.",
     items: [
-      { name: "TextView", description: "Token-driven typography (h1–micro) with semantic colours.", status: "stable", story: `${A}TextView` },
-      { name: "Badge / Chip / Tag", description: "Status labels — soft, solid, outline; dot and dismiss.", status: "stable", story: `${A}Badge` },
-      { name: "IconBox", description: "Fixed-size icon container for rows, tiles and stats.", status: "new", story: `${A}IconBox` },
-      { name: "StatCard", description: "KPI tile with trend that never relies on colour alone.", status: "new", story: `${M}StatCard` },
-      { name: "CodeBlock", description: "Copyable code panel with live-region feedback.", status: "new", story: `${M}CodeBlock` },
-      { name: "Icon", description: "SVG/URL icon with tinting and decorative handling.", status: "stable", story: `${A}Icon` },
-      { name: "Avatar", description: "Image, initials or icon avatar with status.", status: "stable", story: `${A}Avatar`, replacement: "Exported as Avtar" },
-      { name: "ProgressBar", description: "Determinate progress with label.", status: "stable", story: `${A}ProgressBar` },
-      { name: "ToolTip", description: "Hover / focus hint with icon trigger.", status: "stable", story: `${A}ToolTip` },
-      { name: "Divider", description: "Horizontal / vertical separator with label.", status: "stable", story: `${A}Divider` },
-      { name: "GradientText", description: "Brand gradient headline text.", status: "stable", story: `${A}GradientText` },
-      { name: "Kbd", description: "Keyboard-shortcut chips; ⌘ on macOS, Ctrl elsewhere; spoken key names.", status: "new", story: `${A}Kbd` },
+      { name: "TextView", description: "Token-driven typography (h1–micro) with semantic colours.", status: "stable", story: `${A}TextView`, props: "TextViewProps" },
+      { name: "Badge / Chip / Tag", description: "Status labels — soft, solid, outline; dot and dismiss.", status: "stable", story: `${A}Badge`, props: "BadgeProps" },
+      { name: "IconBox", description: "Fixed-size icon container for rows, tiles and stats.", status: "new", story: `${A}IconBox`, props: "IconBoxProps" },
+      { name: "StatCard", description: "KPI tile with trend that never relies on colour alone.", status: "new", story: `${M}StatCard`, props: "StatCardProps" },
+      { name: "CodeBlock", description: "Copyable code panel with live-region feedback.", status: "new", story: `${M}CodeBlock`, props: "CodeBlockProps" },
+      { name: "Icon", description: "SVG/URL icon with tinting and decorative handling.", status: "stable", story: `${A}Icon`, props: "IconProps" },
+      { name: "Avtar", description: "Image, initials or icon avatar with status (the export name is spelled Avtar).", status: "stable", story: `${A}Avatar`, props: "AvatarProps" },
+      { name: "ProgressBar", description: "Determinate progress with label.", status: "stable", story: `${A}ProgressBar`, props: "ProgressBarProps" },
+      { name: "ToolTip", description: "Hover / focus hint with icon trigger.", status: "stable", story: `${A}ToolTip`, props: "TooltipIconProps" },
+      { name: "Divider", description: "Horizontal / vertical separator with label.", status: "stable", story: `${A}Divider`, props: "DividerProps" },
+      { name: "GradientText", description: "Brand gradient headline text.", status: "stable", story: `${A}GradientText`, props: "GradientTextProps" },
+      { name: "Kbd", description: "Keyboard-shortcut chips; ⌘ on macOS, Ctrl elsewhere; spoken key names.", status: "new", story: `${A}Kbd`, props: "KbdProps" },
     ],
   },
   {
@@ -98,17 +109,17 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Layout & navigation",
     description: "Structure pages and move between views.",
     items: [
-      { name: "Card", description: "Bordered / elevated surface, compound header, interactive tiles.", status: "stable", story: `${M}Card` },
-      { name: "List", description: "Settings-style rows: icon, title, badge, description, action.", status: "new", story: `${M}List` },
-      { name: "Grid", description: "Responsive column / auto-fit grid.", status: "stable", story: `${M}Grid` },
-      { name: "Tabs", description: "Line, minimal and segmented tabs with icons (ARIA APG).", status: "stable", story: `${M}Tabs` },
-      { name: "Accordion", description: "Disclosure sections, single or multiple.", status: "stable", story: `${M}Accordion` },
-      { name: "Stepper", description: "Multi-step progress with icons and markers.", status: "stable", story: `${M}Stepper` },
-      { name: "Wizard", description: "Stepper + per-step validation + review step; focus moves to each step heading.", status: "new", story: `${M}Wizard` },
-      { name: "CommandPalette", description: "⌘K search & actions — combobox pattern, remote search, focus restore.", status: "new", story: `${M}CommandPalette` },
-      { name: "Breadcrumb", description: "Location trail with custom separators.", status: "stable", story: `${M}Breadcrumb` },
-      { name: "PageHeader", description: "Zone 3 header — title, breadcrumb, status, one primary action, overflow menu.", status: "new", story: `${M}PageHeader` },
-      { name: "Tooltip", description: "Wraps any trigger; hover + focus, Escape, collision flip (WCAG 1.4.13).", status: "new", story: `${M}Tooltip` },
+      { name: "Card", description: "Bordered / elevated surface, compound header, interactive tiles.", status: "stable", story: `${M}Card`, props: "CardProps" },
+      { name: "List", description: "Settings-style rows: icon, title, badge, description, action.", status: "new", story: `${M}List`, props: "ListItemProps" },
+      { name: "Grid", description: "Responsive column / auto-fit grid.", status: "stable", story: `${M}Grid`, props: "GridProps" },
+      { name: "Tabs", description: "Line, minimal and segmented tabs with icons (ARIA APG).", status: "stable", story: `${M}Tabs`, props: "TabsProps" },
+      { name: "Accordion", description: "Disclosure sections, single or multiple.", status: "stable", story: `${M}Accordion`, props: "AccordionProps" },
+      { name: "Stepper", description: "Multi-step progress with icons and markers.", status: "stable", story: `${M}Stepper`, props: "StepperProps" },
+      { name: "Wizard", description: "Stepper + per-step validation + review step; focus moves to each step heading.", status: "new", story: `${M}Wizard`, props: "WizardProps" },
+      { name: "CommandPalette", description: "⌘K search & actions — combobox pattern, remote search, focus restore.", status: "new", story: `${M}CommandPalette`, props: "CommandPaletteProps" },
+      { name: "Breadcrumb", description: "Location trail with custom separators.", status: "stable", story: `${M}Breadcrumb`, props: "BreadcrumbProps" },
+      { name: "PageHeader", description: "Zone 3 header — title, breadcrumb, status, one primary action, overflow menu.", status: "new", story: `${M}PageHeader`, props: "PageHeaderProps" },
+      { name: "Tooltip", description: "Wraps any trigger; hover + focus, Escape, collision flip (WCAG 1.4.13).", status: "new", story: `${M}Tooltip`, props: "TooltipProps" },
     ],
   },
   {
@@ -116,11 +127,12 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Overlays",
     description: "Focus-trapped, dismissable layers.",
     items: [
-      { name: "Modal", description: "Dialog with description, initial focus, inside/outside scroll, mobile fullscreen, confirm loading.", status: "stable", story: `${M}Modal` },
-      { name: "Drawer / Sheet", description: "Side panel on any edge — focus-trapped, sticky footer, non-modal option.", status: "new", story: `${M}Drawer` },
-      { name: "AlertDialog", description: "Confirm / destructive decision dialog.", status: "stable", story: `${M}AlertDialog` },
-      { name: "Popover", description: "Anchored floating panel.", status: "stable", story: `${M}Popover` },
-      { name: "Calendar", description: "Month grid with keyboard navigation.", status: "stable", story: `${M}Calendar` },
+      { name: "Modal", description: "Dialog with description, initial focus, inside/outside scroll, mobile fullscreen, confirm loading.", status: "stable", story: `${M}Modal`, props: "ModalProps" },
+      { name: "Drawer / Sheet", description: "Side panel on any edge — focus-trapped, sticky footer, non-modal option.", status: "new", story: `${M}Drawer`, props: "DrawerProps" },
+      { name: "AlertDialog", description: "Confirm / destructive decision dialog.", status: "stable", story: `${M}AlertDialog`, props: "AlertDialogProps" },
+      { name: "Popover", description: "Anchored floating panel.", status: "stable", story: `${M}Popover`, props: "PopoverProps" },
+      { name: "Calendar", description: "Month grid with keyboard navigation.", status: "stable", story: `${M}Calendar`, props: "CalendarProps" },
+      { name: "LoadingOverlay", description: "Container or full-screen veil; blocking (aria-busy) or non-blocking.", status: "stable", story: `${M}LoadingOverlay`, props: "LoadingOverlayProps" },
     ],
   },
   {
@@ -128,14 +140,14 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Feedback states",
     description: "Messages, notifications, loading and empty / error states.",
     items: [
-      { name: "Toast", description: "Stacked notifications with actions, pause-on-hover and F8 focus (ToastProvider + useToast).", status: "new", story: `${M}Toast` },
-      { name: "Alert", description: "Inline page / form message — soft, outline or accent; action and dismiss.", status: "new", story: `${M}Alert` },
-      { name: "Spinner", description: "Loading indicator with screen-reader label; reduced-motion aware.", status: "new", story: `${A}Spinner` },
-      { name: "Skeleton", description: "Loading placeholders + SkeletonGroup with aria-busy.", status: "new", story: `${A}Skeleton` },
-      { name: "EmptyState", description: "No data / no results with call to action.", status: "stable", story: `${M}Feedback states/EmptyState` },
-      { name: "ErrorState", description: "Recoverable errors with retry.", status: "stable", story: `${M}Feedback states/ErrorState` },
-      { name: "OfflineBanner", description: "Connection status banner (role=status).", status: "stable", story: `${M}Feedback states/OfflineBanner` },
-      { name: "FeedbackState", description: "Variant-driven union of all states.", status: "stable", story: `${M}Feedback states/FeedbackState` },
+      { name: "Toast", description: "Stacked notifications with actions, pause-on-hover and F8 focus (ToastProvider + useToast).", status: "new", story: `${M}Toast`, props: "ToastProviderProps" },
+      { name: "Alert", description: "Inline page / form message — soft, outline or accent; action and dismiss.", status: "new", story: `${M}Alert`, props: "AlertProps" },
+      { name: "Spinner", description: "Loading indicator with screen-reader label; reduced-motion aware.", status: "new", story: `${A}Spinner`, props: "SpinnerProps" },
+      { name: "Skeleton", description: "Loading placeholders + SkeletonGroup with aria-busy.", status: "new", story: `${A}Skeleton`, props: "SkeletonProps" },
+      { name: "EmptyState", description: "No data / no results with call to action.", status: "stable", story: `${M}Feedback states/EmptyState`, props: "EmptyStateProps" },
+      { name: "ErrorState", description: "Recoverable errors with retry.", status: "stable", story: `${M}Feedback states/ErrorState`, props: "ErrorStateProps" },
+      { name: "OfflineBanner", description: "Connection status banner (role=status).", status: "stable", story: `${M}Feedback states/OfflineBanner`, props: "OfflineBannerProps" },
+      { name: "FeedbackState", description: "Variant-driven union of all states.", status: "stable", story: `${M}Feedback states/FeedbackState`, props: "FeedbackStateProps" },
     ],
   },
   {
@@ -143,9 +155,9 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Application shell",
     description: "Dashboard frame — sidebar, top bar and content zones.",
     items: [
-      { name: "DashboardShell", description: "Responsive app frame with collapsible sidebar.", status: "stable", story: "Design System/Dashboard/Overview", from: "ui-common-components/shell" },
-      { name: "AppSidebar", description: "Sectioned navigation rail with persistence.", status: "stable", story: `${M}AppSidebar`, from: "ui-common-components/shell" },
-      { name: "AppTopbar", description: "Page title, search, actions and profile menu.", status: "stable", story: `${M}AppTopbar`, from: "ui-common-components/shell" },
+      { name: "DashboardShell", description: "Responsive app frame with collapsible sidebar.", status: "stable", story: "Design System/Dashboard/Overview", from: "ui-common-components/shell", props: "DashboardShellProps" },
+      { name: "AppSidebar", description: "Sectioned navigation rail with persistence.", status: "stable", story: `${M}AppSidebar`, from: "ui-common-components/shell", props: "AppSidebarProps" },
+      { name: "AppTopbar", description: "Page title, search, actions and profile menu.", status: "stable", story: `${M}AppTopbar`, from: "ui-common-components/shell", props: "AppTopbarProps" },
       { name: "AppShell", description: "Legacy alias of DashboardShell.", status: "legacy", replacement: "DashboardShell", from: "ui-common-components/shell" },
     ],
   },
@@ -154,11 +166,12 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Data & charts",
     description: "Tables and native-SVG charts — no chart library dependency.",
     items: [
-      { name: "Table", description: "Sorting, selection, search, expandable rows, sticky columns.", status: "stable", story: `${M}Table`, from: "ui-common-components/table" },
-      { name: "DataTable", description: "Table + FilterBar + Pagination + bulk actions + column visibility + safe CSV export.", status: "new", story: `${M}DataTable` },
-      { name: "FilterBar", description: "Search, filters, active chips, clear all and announced result count.", status: "new", story: `${M}FilterBar` },
-      { name: "LineChart · AreaChart", description: "Trends over time with animated draw.", status: "stable", story: `${M}Charts`, from: "ui-common-components/charts" },
-      { name: "BarChart · PieChart", description: "Comparisons and composition.", status: "stable", story: `${M}Charts`, from: "ui-common-components/charts" },
+      { name: "Table", description: "Sorting, selection, search, expandable rows, sticky columns.", status: "stable", story: `${M}Table`, from: "ui-common-components/table", props: "TableProps" },
+      { name: "DataTable", description: "Table + FilterBar + Pagination + bulk actions + column visibility + safe CSV export.", status: "new", story: `${M}DataTable`, props: "DataTableProps" },
+      { name: "FilterBar", description: "Search, filters, active chips, clear all and announced result count.", status: "new", story: `${M}FilterBar`, props: "FilterBarProps" },
+      { name: "LineChart · AreaChart", description: "Trends over time with animated draw.", status: "stable", story: `${M}Charts`, from: "ui-common-components/charts", props: "AreaChartProps" },
+      { name: "BarChart · PieChart", description: "Comparisons and composition.", status: "stable", story: `${M}Charts`, from: "ui-common-components/charts", props: "BarChartProps" },
+      { name: "ComposedChart", description: "Bar + line + area + range band on shared or dual axes.", status: "stable", story: `${M}Charts`, from: "ui-common-components/charts", props: "ComposedChartProps" },
     ],
   },
 ];
@@ -403,4 +416,98 @@ export const ROADMAP: RoadmapPhase[] = [
       { name: "Retire colour-override props", kind: "platform", status: "backlog", description: "Replace *ColorClass / custom colour props with tokens + variants across the library." },
     ],
   },
+];
+
+/* ------------------------------------------------------------------ */
+/* Compliance reviews (Overview/Dashboard)                            */
+/* ------------------------------------------------------------------ */
+
+export type ComplianceDimension = "a11y" | "security" | "responsive";
+export type ComplianceOutcome = "pass" | "fail";
+
+export interface ComplianceReview {
+  id: string;
+  title: string;
+  /** Verdict file in the repository (`_fleet/`). */
+  file: string;
+  /** Review rounds until the final verdict. */
+  rounds: number;
+  /** Outcome of the first review round per dimension (any failing slice = fail). */
+  firstRound: Record<ComplianceDimension, ComplianceOutcome>;
+  /** Final verdict per dimension. */
+  final: Record<ComplianceDimension, ComplianceOutcome>;
+  /** `file:line` of the lines the two outcomes are read from. */
+  source: string;
+  /** `npx vitest run` total recorded in the final round of that review. */
+  testsAtFinal: number;
+  testsSource: string;
+}
+
+/**
+ * Summarised from the compliance-reviewer verdict files (`_fleet/VERDICT-*.md`) — one row per
+ * completed review. `complianceSources.test.ts` re-reads every cited line and fails if a verdict
+ * file stops saying what this table claims. Sprint 5 is still under review and is not listed.
+ */
+export const COMPLIANCE_REVIEWS: ComplianceReview[] = [
+  {
+    id: "portal",
+    title: "Design System Portal",
+    file: "_fleet/VERDICT-portal.md",
+    rounds: 3,
+    firstRound: { a11y: "fail", security: "pass", responsive: "fail" },
+    final: { a11y: "pass", security: "pass", responsive: "pass" },
+    source: "_fleet/VERDICT-portal.md:7-8",
+    testsAtFinal: 143,
+    testsSource: "_fleet/VERDICT-portal.md:14",
+  },
+  {
+    id: "sprint1",
+    title: "Sprint 1 — Feedback & overlays",
+    file: "_fleet/VERDICT-sprint1.md",
+    rounds: 3,
+    firstRound: { a11y: "fail", security: "fail", responsive: "pass" },
+    final: { a11y: "pass", security: "pass", responsive: "pass" },
+    source: "_fleet/VERDICT-sprint1.md:6-7",
+    testsAtFinal: 448,
+    testsSource: "_fleet/VERDICT-sprint1.md:13",
+  },
+  {
+    id: "sprint2",
+    title: "Sprint 2 — Page patterns",
+    file: "_fleet/VERDICT-sprint2.md",
+    rounds: 3,
+    firstRound: { a11y: "fail", security: "fail", responsive: "pass" },
+    final: { a11y: "pass", security: "pass", responsive: "pass" },
+    source: "_fleet/VERDICT-sprint2.md:6-9",
+    testsAtFinal: 474,
+    testsSource: "_fleet/VERDICT-sprint2.md:14",
+  },
+  {
+    id: "sprint3",
+    title: "Sprint 3 — Advanced inputs & flows",
+    file: "_fleet/VERDICT-sprint3.md",
+    rounds: 2,
+    firstRound: { a11y: "fail", security: "pass", responsive: "pass" },
+    final: { a11y: "pass", security: "pass", responsive: "pass" },
+    source: "_fleet/VERDICT-sprint3.md:5,12",
+    testsAtFinal: 703,
+    testsSource: "_fleet/VERDICT-sprint3.md:27",
+  },
+  {
+    id: "sprint4",
+    title: "Sprint 4 — Button & Select hardening",
+    file: "_fleet/VERDICT-sprint4.md",
+    rounds: 3,
+    firstRound: { a11y: "fail", security: "pass", responsive: "pass" },
+    final: { a11y: "pass", security: "pass", responsive: "pass" },
+    source: "_fleet/VERDICT-sprint4.md:9-10,12",
+    testsAtFinal: 784,
+    testsSource: "_fleet/VERDICT-sprint4.md:127",
+  },
+];
+
+export const COMPLIANCE_DIMENSIONS: { id: ComplianceDimension; label: string; checklist: string }[] = [
+  { id: "a11y", label: "Accessibility", checklist: "A1–A10" },
+  { id: "security", label: "Security", checklist: "B1–B7" },
+  { id: "responsive", label: "Responsiveness", checklist: "C1–C7" },
 ];

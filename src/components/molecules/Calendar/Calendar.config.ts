@@ -50,9 +50,11 @@ export const resolveElevation = (
 };
 
 export const defaultTheme: CalendarTheme = {
-  primary: "var(--button-primary-default-bg)",
-  primaryHover: "color-mix(in srgb, var(--button-primary-default-bg) 8%, transparent)",
-  primaryText: "var(--color-text-on-primary)",
+  // Interaction-state roles (tokens.css): theme accent in every theme; Infinia pins the previous
+  // primary-button fill / 8% mix / on-primary text, so it renders unchanged.
+  primary: "var(--color-day-selected-bg, var(--button-primary-default-bg))",
+  primaryHover: "var(--color-day-hover-bg, color-mix(in srgb, var(--button-primary-default-bg) 8%, transparent))",
+  primaryText: "var(--color-day-selected-fg, var(--color-text-on-primary))",
   rangeBackground: "var(--color-accent-sky-10)",
   todayBackground: "var(--color-accent-amber-10)",
   todayRing: "color-mix(in srgb, var(--color-state-warning) 50%, transparent)",

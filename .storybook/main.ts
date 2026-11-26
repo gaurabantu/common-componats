@@ -32,6 +32,13 @@ const config: StorybookConfig = {
     autodocs: "tag",
   },
   /**
+   * The "What's new" toast uses Storybook's inverse palette (light card in dark themes) and is not
+   * themable — disable it so the manager has no off-theme island.
+   */
+  core: {
+    disableWhatsNewNotifications: true,
+  },
+  /**
    * Perf (dev server “hangs” / slow first compile):
    * - `ts-loader` + `transpileOnly` is required here so `import type` and TS in stories parse correctly.
    * - `experimentalFileCaching` speeds ts-loader incremental builds.

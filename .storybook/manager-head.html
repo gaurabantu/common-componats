@@ -6,9 +6,40 @@
     and scanning all buttons on every change can freeze the tab (white screen).
 -->
 <title>Infinia Design System</title>
-<link rel="icon" type="image/png" href="/infinia-icon.png" />
-<link rel="stylesheet" href="/design-system/tokens.css" />
-<link rel="stylesheet" href="/infinia-manager-brand.css" />
+<!--
+  Relative URLs: the static build is served from a GitHub Pages project sub-path (/<repo>/), where
+  root-absolute "/design-system/tokens.css" 404s and the manager chrome loses every token.
+-->
+<link rel="icon" type="image/png" href="./infinia-icon.png" />
+<link rel="stylesheet" href="./design-system/tokens.css" />
+<link rel="stylesheet" href="./infinia-manager-brand.css" />
+<script>
+  /*
+    Paint the remembered / URL theme before the manager bundle loads (no light flash on reload).
+    Keep the key + whitelist in sync with .storybook/theme-bridge.ts (THEME_STORAGE_KEY, TOOLBAR_THEMES).
+  */
+  (function () {
+    "use strict";
+    var THEMES = ["light", "blue", "dark", "green", "mist", "custom", "blue-mist", "green-mist", "infinia-light", "infinia-dark"];
+    var theme = null;
+    try {
+      var g = new URLSearchParams(window.location.search).get("globals") || "";
+      g.split(";").forEach(function (pair) {
+        var kv = pair.split(":");
+        if (kv[0] === "theme" && THEMES.indexOf(kv[1]) !== -1) theme = kv[1];
+      });
+    } catch (e) {}
+    if (!theme) {
+      try {
+        var stored = window.localStorage.getItem("ui-common-components:storybook-theme");
+        if (THEMES.indexOf(stored) !== -1) theme = stored;
+      } catch (e) {}
+    }
+    if (!theme || theme === "light") return;
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark" || theme === "infinia-dark") document.documentElement.style.colorScheme = "dark";
+  })();
+</script>
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"

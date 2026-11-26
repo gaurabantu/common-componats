@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import type { Preview } from "@storybook/react";
 /**
  * Tailwind + tokens — required for `DashboardShell`, `AppTopbar`, and stories using `className` presets
@@ -6,9 +6,36 @@ import type { Preview } from "@storybook/react";
  */
 import "../app/globals.css";
 import "./preview.css";
-import { addons } from "@storybook/preview-api";
+import { addons, useEffect as useStorybookEffect } from "@storybook/preview-api";
 import { GLOBALS_UPDATED, SET_GLOBALS } from "@storybook/core/core-events";
-import { applyDataTheme, readToolbarTheme } from "./theme-bridge";
+import { ThemedDocsContainer } from "./docs-container";
+import {
+  applyDataTheme,
+  isDarkToolbarTheme,
+  readStoredTheme,
+  readThemeFromSearch,
+  readToolbarTheme,
+  storeTheme,
+} from "./theme-bridge";
+
+/**
+ * Apply theme to the preview document: `data-theme` (token contract) + `color-scheme` (native
+ * scrollbars / form controls follow dark themes), and remember it for the next visit.
+ */
+function applyPreviewTheme(toolbarTheme: string): void {
+  applyDataTheme(toolbarTheme);
+  document.documentElement.style.colorScheme = isDarkToolbarTheme(toolbarTheme) ? "dark" : "light";
+  storeTheme(toolbarTheme);
+}
+
+/**
+ * Initial theme: the iframe URL carries `globals=` when the manager URL does; otherwise use the
+ * remembered choice. Seeds `initialGlobals.theme` so the manager toolbar, every story and every
+ * Docs/MDX page start on the same theme after a reload — and paints it before React mounts.
+ */
+const initialTheme = readThemeFromSearch(window.location.search) ?? readStoredTheme() ?? "light";
+applyDataTheme(initialTheme);
+document.documentElement.style.colorScheme = isDarkToolbarTheme(initialTheme) ? "dark" : "light";
 
 /**
  * Docs-only (MDX) pages have no story decorator, so the Theme toolbar would not reach them.
@@ -17,21 +44,26 @@ import { applyDataTheme, readToolbarTheme } from "./theme-bridge";
 const previewChannel = addons.getChannel();
 const syncThemeFromGlobals = (payload: unknown) => {
   const globals = (payload as { globals?: Record<string, unknown> } | undefined)?.globals;
-  applyDataTheme(readToolbarTheme(globals));
+  if (!globals || typeof globals.theme !== "string") return;
+  applyPreviewTheme(readToolbarTheme(globals));
 };
 previewChannel.on(SET_GLOBALS, syncThemeFromGlobals);
 previewChannel.on(GLOBALS_UPDATED, syncThemeFromGlobals);
 
-/** Same `data-theme` bridge as consumer apps — see `docs/design-system/THEMES.md`. */
+/**
+ * Same `data-theme` bridge as consumer apps — see `docs/design-system/THEMES.md`.
+ *
+ * Uses Storybook's decorator hook (`useEffect` from `@storybook/preview-api`) and returns the
+ * story element directly. It must NOT define a wrapper component inside the decorator: a new
+ * component type per render made React remount the whole story on every theme change, which
+ * dropped keyboard focus to <body> and reset component state (VERDICT-sprint5 L item 6).
+ */
 function withTheme(Story: React.ComponentType, context: { globals: { theme?: string } }) {
   const theme = context.globals.theme ?? "light";
-  const Bridge = () => {
-    useEffect(() => {
-      applyDataTheme(theme);
-    }, [theme]);
-    return <Story />;
-  };
-  return <Bridge />;
+  useStorybookEffect(() => {
+    applyPreviewTheme(theme);
+  }, [theme]);
+  return <Story />;
 }
 
 const preview: Preview = {
@@ -42,6 +74,7 @@ const preview: Preview = {
    *   could still trigger heavy axe runs and freeze the iframe. See addon-a11y `preview.mjs`.
    */
   initialGlobals: {
+    theme: initialTheme,
     a11y: {
       manual: true,
     },
@@ -50,7 +83,6 @@ const preview: Preview = {
     theme: {
       description:
         'Sets data-theme on <html> — classic (none), blue, dark, green, mist, custom, blue-mist, green-mist, infinia-light, infinia-dark (tokens.css)',
-      defaultValue: "light",
       toolbar: {
         title: "Theme",
         icon: "mirror",
@@ -90,7 +122,17 @@ const preview: Preview = {
       },
     },
     layout: "padded",
-    /** Default white canvas improves contrast for secondary text vs gray page (Lighthouse). */
+    /**
+     * Docs pages (autodocs + MDX) use Storybook's own emotion theme, which defaults to light.
+     * `ThemedDocsContainer` swaps it per toolbar theme; `preview.css` pins docs surfaces to tokens.
+     */
+    docs: {
+      container: ThemedDocsContainer,
+    },
+    /**
+     * Canvas background — values are CSS variables, never a fixed colour, so the canvas follows
+     * the active theme (surface in light themes, dark surface in dark themes).
+     */
     backgrounds: {
       default: "surface",
       values: [
@@ -132,7 +174,7 @@ const preview: Preview = {
         method: "alphabetical",
         order: [
           "Overview",
-          ["Welcome", "Getting Started", "Downloads", "Component Inventory", "Roadmap", "Release Notes"],
+          ["Dashboard", "Components", "Welcome", "Getting Started", "Downloads", "Roadmap", "Release Notes"],
           "Foundations",
           ["Colors", "Typography", "Spacing & Layout", "Shape & Elevation", "Motion & Layers", "Themes", "All Tokens"],
           "Governance",

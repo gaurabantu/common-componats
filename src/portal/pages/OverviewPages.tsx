@@ -1,35 +1,27 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 import Badge from "../../components/atoms/Badge";
 import Button from "../../components/atoms/Button";
 import IconBox from "../../components/atoms/IconBox";
-import InputSearch from "../../components/atoms/TextInputSearch";
 import CodeBlock from "../../components/molecules/CodeBlock";
 import StatCard from "../../components/molecules/StatCard";
 import Table from "../../components/molecules/Table";
 import { List, ListItem } from "../../components/molecules/List";
-import { COMPONENT_COUNT, INVENTORY, PRODUCT, RELEASES, ROADMAP, type ComponentStatus, type InventoryItem, type RoadmapKind, type RoadmapStatus } from "../data";
+import { PRODUCT, RELEASES, ROADMAP, THEMES, type RoadmapKind, type RoadmapStatus } from "../data";
 import ProgressBar from "../../components/atoms/ProgressBar";
 import {
-  IconArrowRight,
-  IconBell,
-  IconChart,
-  IconCursor,
   IconDownload,
   IconFile,
   IconFileCode,
-  IconForm,
   IconGit,
   IconGrid,
   IconLayout,
   IconLock,
   IconPackage,
-  IconPanel,
   IconTag,
-  IconType,
   IconWind,
 } from "../icons";
 import { portalLinkProps } from "../navigation";
-import { DownloadButton, FilterGroup, PortalPage, Section, formatBytes, useDownloads, type DownloadAsset } from "../components/Portal";
+import { DownloadButton, PortalPage, Section, formatBytes, useDownloads, type DownloadAsset } from "../components/Portal";
 
 /* ======================================================================== */
 /* Downloads                                                                */
@@ -43,10 +35,10 @@ const ASSET_ICON: Record<DownloadAsset["kind"], React.ReactNode> = {
 
 const PACKAGE_EXPORTS = [
   { id: "1", path: "ui-common-components", provides: "All components (main entry)", type: "JS · types" },
-  { id: "2", path: "ui-common-components/charts", provides: "LineChart, BarChart, PieChart, AreaChart", type: "JS · types" },
+  { id: "2", path: "ui-common-components/charts", provides: "LineChart, BarChart, PieChart, AreaChart, ComposedChart", type: "JS · types" },
   { id: "3", path: "ui-common-components/shell", provides: "DashboardShell, AppSidebar, AppTopbar", type: "JS · types" },
   { id: "4", path: "ui-common-components/table", provides: "Table + semantic primitives", type: "JS · types" },
-  { id: "5", path: "ui-common-components/design-system/tokens.css", provides: "Design tokens + 8 themes", type: "CSS" },
+  { id: "5", path: "ui-common-components/design-system/tokens.css", provides: `Design tokens + ${THEMES.length} themes`, type: "CSS" },
   { id: "6", path: "ui-common-components/index.css", provides: "Compiled component styles", type: "CSS" },
   { id: "7", path: "ui-common-components/tailwind.preset.js", provides: "Tailwind preset on tokens", type: "JS" },
 ];
@@ -139,135 +131,6 @@ export function DownloadsPage() {
           hover
         />
       </Section>
-    </PortalPage>
-  );
-}
-
-/* ======================================================================== */
-/* Component inventory                                                      */
-/* ======================================================================== */
-
-const GROUP_ICON: Record<string, React.ReactNode> = {
-  actions: <IconCursor />,
-  forms: <IconForm />,
-  display: <IconType />,
-  layout: <IconLayout />,
-  overlays: <IconGrid />,
-  feedback: <IconBell />,
-  shell: <IconPanel />,
-  data: <IconChart />,
-};
-
-const STATUS_BADGE: Record<ComponentStatus, { label: string; variant: "success" | "info" | "warning" | "neutral" }> = {
-  stable: { label: "Stable", variant: "success" },
-  new: { label: "New", variant: "info" },
-  beta: { label: "Beta", variant: "warning" },
-  legacy: { label: "Legacy", variant: "neutral" },
-};
-
-type Filter = "all" | ComponentStatus;
-
-export function InventoryPage() {
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<Filter>("all");
-  const all = INVENTORY.flatMap((g) => g.items);
-  const count = (s: ComponentStatus) => all.filter((i) => i.status === s).length;
-
-  const groups = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const match = (i: InventoryItem) =>
-      (filter === "all" || i.status === filter) &&
-      (!q || `${i.name} ${i.description}`.toLowerCase().includes(q));
-    return INVENTORY.map((g) => ({ ...g, items: g.items.filter(match) })).filter((g) => g.items.length);
-  }, [query, filter]);
-
-  const shown = groups.reduce((n, g) => n + g.items.length, 0);
-
-  return (
-    <PortalPage
-      section="Overview"
-      icon={<IconPackage />}
-      title="Component inventory"
-      description="Every shipped component, its status and where to import it from. Select View to open its live documentation."
-      actions={<Button variant="outlinePrimary" size="md" {...portalLinkProps("Overview/Getting Started")}>Install guide</Button>}
-    >
-      <section aria-label="Inventory summary" className="pt-grid pt-grid--kpi">
-        <StatCard size="sm" label="Total" value={COMPONENT_COUNT} icon={<IconPackage />} />
-        <StatCard size="sm" label="Stable" value={count("stable")} icon={<IconLock />} iconTone="success" />
-        <StatCard size="sm" label="New" value={count("new")} icon={<IconTag />} iconTone="info" />
-        <StatCard size="sm" label="Legacy aliases" value={count("legacy")} icon={<IconGit />} />
-      </section>
-
-      <div className="pt-toolbar">
-        <div className="pt-toolbar__search">
-          <InputSearch
-            value={query}
-            onChange={setQuery}
-            placeholder="Search components…"
-            ariaLabel="Search components"
-            showClearButton
-            fullWidth
-          />
-        </div>
-        <FilterGroup<Filter>
-          label="Filter by status"
-          value={filter}
-          onChange={setFilter}
-          options={[
-            { value: "all", label: "All" },
-            { value: "stable", label: "Stable" },
-            { value: "new", label: "New" },
-            { value: "legacy", label: "Legacy" },
-          ]}
-        />
-      </div>
-      <p className="pt-muted pt-small" role="status" aria-live="polite">
-        Showing {shown} of {COMPONENT_COUNT} components
-      </p>
-
-      {groups.map((g) => (
-        <Section key={g.id} title={g.title} description={g.description} action={<Badge tone="outline">{g.items.length}</Badge>}>
-          <List aria-label={g.title}>
-            {g.items.map((item) => {
-              const s = STATUS_BADGE[item.status];
-              return (
-                <ListItem
-                  key={item.name}
-                  leading={<IconBox tone={item.status === "new" ? "info" : "neutral"}>{GROUP_ICON[g.id]}</IconBox>}
-                  title={item.name}
-                  badge={
-                    <>
-                      <Badge variant={s.variant}>{s.label}</Badge>
-                      {item.replacement ? <Badge tone="outline">{item.status === "legacy" ? `Use ${item.replacement}` : item.replacement}</Badge> : null}
-                    </>
-                  }
-                  description={item.description}
-                  meta={<code className="pt-inline-code">{item.from ?? PRODUCT.packageName}</code>}
-                  action={
-                    item.story ? (
-                      <Button
-                        size="sm"
-                        variant="outlinePrimary"
-                        icon={<IconArrowRight />}
-                        iconPosition="right"
-                        ariaLabel={`View ${item.name} documentation`}
-                        {...portalLinkProps(item.story, "component")}
-                      >
-                        View
-                      </Button>
-                    ) : undefined
-                  }
-                />
-              );
-            })}
-          </List>
-        </Section>
-      ))}
-      {!groups.length ? (
-        <Section title="No matches" description="Try a different name or clear the status filter.">
-          <Button variant="outlinePrimary" onClick={() => { setQuery(""); setFilter("all"); }}>Reset filters</Button>
-        </Section>
-      ) : null}
     </PortalPage>
   );
 }

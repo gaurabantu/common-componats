@@ -163,14 +163,40 @@ describe("BarChart", () => {
     expect(r).toHaveLength(8);
     expect(r[0].getAttribute("x")).toBe(r[1].getAttribute("x"));
     const bottomOfSecond = Number(r[1].getAttribute("y")) + Number(r[1].getAttribute("height"));
+    // Segment too thin for a gap (b=20 of ~3000 → <4px) keeps touching so it never vanishes.
     expect(bottomOfSecond).toBeCloseTo(Number(r[0].getAttribute("y")), 5);
+  });
+
+  it("stacked segments are separated by a 2px surface gap when they can afford it", () => {
+    const d = [{ name: "x", a: 50, b: 50 }];
+    const { container } = render(<BarChart data={d} series={series} stacked width={300} height={300} chartAnimation={false} />);
+    const r = bars(container);
+    const bottomOfSecond = Number(r[1].getAttribute("y")) + Number(r[1].getAttribute("height"));
+    expect(Number(r[0].getAttribute("y")) - bottomOfSecond).toBeCloseTo(2, 5);
+  });
+
+  it("rounds only the data end: one clip per stack, baseline stays square", () => {
+    const { container } = render(<BarChart data={data} series={series} stacked chartAnimation={false} />);
+    const r = bars(container);
+    // Both segments of a stack share one clip; no rect carries its own rx.
+    expect(r[0].getAttribute("clip-path")).toBe(r[1].getAttribute("clip-path"));
+    expect(r[0].getAttribute("clip-path")).not.toBe(r[2].getAttribute("clip-path"));
+    expect(r.every((b) => !b.hasAttribute("rx"))).toBe(true);
+    const clipRects = container.querySelectorAll("defs rect");
+    expect(clipRects).toHaveLength(4);
+    // The clip extends below the baseline by the radius so the bottom corners are square.
+    const base = Number(r[0].getAttribute("y")) + Number(r[0].getAttribute("height"));
+    const c = clipRects[0];
+    expect(Number(c.getAttribute("y")) + Number(c.getAttribute("height"))).toBeCloseTo(base + 4, 5);
   });
 
   it("orientation='horizontal-bars' is the same as layout='horizontal' (categories on the left)", () => {
     const a = render(<BarChart data={data} series={[{ dataKey: "a" }]} orientation="horizontal-bars" chartAnimation={false} />);
     const b = render(<BarChart data={data} series={[{ dataKey: "a" }]} layout="horizontal" chartAnimation={false} />);
     expect(a.container.querySelector(".ds-chart-category-axis")).not.toBeNull();
-    expect(a.container.innerHTML).toBe(b.container.innerHTML);
+    // Clip ids come from useId and differ per render; compare everything else.
+    const norm = (h: string) => h.replace(/ds-bar-[A-Za-z0-9_-]+?-b/g, "ds-bar-ID-b");
+    expect(norm(a.container.innerHTML)).toBe(norm(b.container.innerHTML));
   });
 
   it("orientation='vertical-bars' wins over layout", () => {

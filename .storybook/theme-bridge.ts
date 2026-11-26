@@ -81,3 +81,56 @@ export function isMistSurfaceFamily(toolbarTheme: string): boolean {
 export function managerThemeConfigKey(toolbarTheme: string): string {
   return `${storybookChromeBase(toolbarTheme)}:${isMistSurfaceFamily(toolbarTheme) ? "mist" : "classic"}:${toolbarThemeToDataTheme(toolbarTheme) ?? "light"}`;
 }
+
+/** Themes whose surfaces are dark — drive `color-scheme` and the docs/manager dark base. */
+export function isDarkToolbarTheme(toolbarTheme: string): boolean {
+  return storybookChromeBase(toolbarTheme) === "dark";
+}
+
+export function isToolbarTheme(value: unknown): value is ToolbarTheme {
+  return typeof value === "string" && (TOOLBAR_THEMES as readonly string[]).includes(value);
+}
+
+/**
+ * Persistence — the last toolbar theme survives reload / opening a URL without `globals=`.
+ * Namespaced key (GitHub Pages shares one origin across a user's project sites). Storage is
+ * untrusted input: only whitelisted theme ids are ever returned. All access is try/catch
+ * (Safari private mode, sandboxed iframes and disabled storage throw on access).
+ */
+export const THEME_STORAGE_KEY = "ui-common-components:storybook-theme";
+
+export function readStoredTheme(): ToolbarTheme | null {
+  try {
+    const v = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return isToolbarTheme(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+export function storeTheme(toolbarTheme: string): void {
+  if (!isToolbarTheme(toolbarTheme)) return;
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, toolbarTheme);
+  } catch {
+    /* storage unavailable — theme still applies for this session */
+  }
+}
+
+/**
+ * Read `theme` from Storybook's URL globals (`?globals=theme:dark;a11y.manual:!true`).
+ * Returns null when absent or not a known theme id.
+ */
+export function readThemeFromSearch(search: string): ToolbarTheme | null {
+  try {
+    const globals = new URLSearchParams(search).get("globals");
+    if (!globals) return null;
+    for (const pair of globals.split(";")) {
+      const [k, v] = pair.split(":");
+      if (k === "theme" && isToolbarTheme(v)) return v;
+    }
+  } catch {
+    /* malformed URL — ignore */
+  }
+  return null;
+}

@@ -210,7 +210,7 @@
 }
 
 .ds-date-range-picker__preset:hover:not(:disabled) {
-  background: var(--color-fill-muted);
+  background: var(--color-control-hover-bg, var(--color-fill-muted));
 }
 
 .ds-date-range-picker__preset[aria-pressed="true"] {
@@ -350,7 +350,7 @@
 .ds-date-range-picker__calendar .ds-date-range-picker__day--preview .rdp-day_button {
   border-radius: 0;
   border-color: var(--color-border-default) transparent;
-  background: var(--color-fill-muted);
+  background: var(--color-range-middle-bg, var(--color-fill-muted));
   color: var(--color-text-primary);
 }
 
@@ -358,14 +358,15 @@
   border-style: dashed;
 }
 
-/* Endpoints: inverse fill (text-primary on surface colours) — high contrast in every theme */
+/* Endpoints: filled theme accent (--color-range-endpoint-*, ≥ 4.5:1 every theme); Infinia pins the
+   previous inverse fill (text-primary / bg-elevated). */
 .ds-date-range-picker__calendar .rdp-range_start .rdp-day_button,
 .ds-date-range-picker__calendar .rdp-range_end .rdp-day_button,
 .ds-date-range-picker__calendar .rdp-selected:not(.rdp-range_middle) .rdp-day_button {
-  border-color: var(--color-text-primary);
+  border-color: var(--color-range-endpoint-bg, var(--color-text-primary));
   border-style: solid;
-  background: var(--color-text-primary);
-  color: var(--color-bg-elevated);
+  background: var(--color-range-endpoint-bg, var(--color-text-primary));
+  color: var(--color-range-endpoint-fg, var(--color-bg-elevated));
   font-weight: 600;
 }
 

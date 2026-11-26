@@ -46,7 +46,7 @@
 .app-topbar--dark {
   --app-topbar-bg: var(--color-noir-100);
   --app-topbar-bg-elevated: var(--color-noir-80);
-  --app-topbar-text: var(--color-text-on-primary);
+  --app-topbar-text: var(--color-on-noir, var(--color-text-on-primary));
   --app-topbar-text-muted: var(--color-noir-20);
   --app-topbar-border: rgba(255, 255, 255, 0.08);
   --app-topbar-hover: rgba(255, 255, 255, 0.06);
