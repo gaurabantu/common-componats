@@ -22,8 +22,8 @@ declare const DataTable: _openuidev_react_lang.DefinedComponent<z.ZodObject<{
         header: z.ZodString;
         align: z.ZodOptional<z.ZodEnum<{
             left: "left";
-            right: "right";
             center: "center";
+            right: "right";
         }>>;
     }, z.core.$strip>>;
     rows: z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnion<readonly [z.ZodString, z.ZodNumber, z.ZodNull]>>>;
@@ -55,10 +55,10 @@ declare const PieChart: _openuidev_react_lang.DefinedComponent<z.ZodObject<{
 declare const Alert: _openuidev_react_lang.DefinedComponent<z.ZodObject<{
     variant: z.ZodEnum<{
         success: "success";
-        danger: "danger";
-        warning: "warning";
-        info: "info";
         neutral: "neutral";
+        info: "info";
+        warning: "warning";
+        danger: "danger";
     }>;
     message: z.ZodString;
     title: z.ZodOptional<z.ZodString>;
@@ -66,12 +66,12 @@ declare const Alert: _openuidev_react_lang.DefinedComponent<z.ZodObject<{
 declare const Badge: _openuidev_react_lang.DefinedComponent<z.ZodObject<{
     text: z.ZodString;
     variant: z.ZodOptional<z.ZodEnum<{
-        primary: "primary";
         success: "success";
-        danger: "danger";
-        warning: "warning";
-        info: "info";
         neutral: "neutral";
+        info: "info";
+        warning: "warning";
+        danger: "danger";
+        primary: "primary";
     }>>;
 }, z.core.$strip>>;
 declare const ActionButton: _openuidev_react_lang.DefinedComponent<z.ZodObject<{

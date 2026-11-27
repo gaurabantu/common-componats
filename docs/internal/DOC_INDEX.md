@@ -39,7 +39,7 @@ Use this folder when you are maintaining the library, consuming it in an app, re
 
 | Path | Package | Notes |
 |------|---------|-------|
-| `/` | `ui-common-components` (v0.0.15) | Main component library (ESM split per component — see `PACKAGES.md`) |
+| `/` | `ui-common-components` (v0.0.16) | Main component library (ESM split per component — see `PACKAGES.md`) |
 | `packages/ui-common-hooks/` | `ui-common-hooks` (v0.3.0) | 25 typed hooks companion |
 | `src/components/molecules/FeedbackStates/` | Module | EmptyState, ErrorState, OfflineBanner, FeedbackState, animations |
 | `src/stories/` | Storybook | All component + hook stories |

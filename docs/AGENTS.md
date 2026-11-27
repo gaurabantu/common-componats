@@ -1,6 +1,6 @@
 # Project AI memory
 
-This project uses `ui-common-components` (v0.0.15) + `ui-common-hooks` (v0.3.0) together with the UX Governance design system.
+This project uses `ui-common-components` (v0.0.16) + `ui-common-hooks` (v0.3.0) together with the UX Governance design system.
 
 **Read every file under `docs/`** in the order defined in [`docs/README.md`](./README.md) (including `docs/design-system/` and `docs/internal/`). Do not skip internal docs.
 

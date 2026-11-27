@@ -4,7 +4,7 @@
 
 > **AI agents:** start at [`../AGENTS.md`](../AGENTS.md) (repo root) — it is the universal entry point.
 
-Latest shared package bundle: `ui-common-components-0.0.15.tgz` (create with `npm run build && npm pack`; installs alone, no npm registry required). From 0.0.13 the library is tree-shaken per component — apps import only `tokens.css`, never `index.css`  
+Latest shared package bundle: `ui-common-components-0.0.16.tgz` (create with `npm run build && npm pack`; installs alone, no npm registry required). From 0.0.13 the library is tree-shaken per component — apps import only `tokens.css`, never `index.css`  
 Hooks package: `ui-common-hooks-0.3.0.tgz` — optional peer; recommended for async/feedback patterns
 
 ---

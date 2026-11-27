@@ -14,7 +14,7 @@
 - UX Governance design system (CSS token-driven, WCAG 2.2 AA, dark-mode ready)
 - Storybook with live controls for every component
 
-**Package name:** `ui-common-components` (v0.0.15 — tree-shaken per component since v0.0.13, JS + CSS)  
+**Package name:** `ui-common-components` (v0.0.16 — tree-shaken per component since v0.0.13, JS + CSS)  
 **Hooks package:** `ui-common-hooks` (v0.3.0)  
 **React:** 18+  
 **TypeScript:** 5.x  
