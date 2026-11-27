@@ -30,7 +30,7 @@ Use this folder when you are maintaining the library, consuming it in an app, re
 | [`README.md`](./README.md) | What belongs in `internal/` |
 | [`APP_TOPBAR_SYSTEM.md`](./APP_TOPBAR_SYSTEM.md) | Top bar notes and implementation reminders |
 | [`SIDEBAR_NAVIGATION_SYSTEM.md`](./SIDEBAR_NAVIGATION_SYSTEM.md) | Sidebar notes and implementation reminders |
-| [`PACKAGES.md`](./PACKAGES.md) | Dependency explanations |
+| [`PACKAGES.md`](./PACKAGES.md) | Dependency explanations + build output / tree-shaking rules for new components |
 | [`AI_UNIVERSAL_DESIGN_RULES.md`](./AI_UNIVERSAL_DESIGN_RULES.md) | Portable AI instruction reference |
 
 ---
@@ -39,7 +39,7 @@ Use this folder when you are maintaining the library, consuming it in an app, re
 
 | Path | Package | Notes |
 |------|---------|-------|
-| `/` | `ui-common-components` (v0.0.2) | Main component library |
+| `/` | `ui-common-components` (v0.0.13) | Main component library (ESM split per component — see `PACKAGES.md`) |
 | `packages/ui-common-hooks/` | `ui-common-hooks` (v0.3.0) | 25 typed hooks companion |
 | `src/components/molecules/FeedbackStates/` | Module | EmptyState, ErrorState, OfflineBanner, FeedbackState, animations |
 | `src/stories/` | Storybook | All component + hook stories |

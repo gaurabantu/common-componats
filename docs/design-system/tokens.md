@@ -14,9 +14,11 @@ Consumers should import the published path **once** at app root:
 import "ui-common-components/design-system/tokens.css";
 ```
 
-Bundled apps may also load **`ui-common-components/index.css`** for component-level CSS (see root `README.md`).
-
-Smaller JS graphs are available via subpath imports (`ui-common-components/charts`, `/shell`, `/table`); see **Import paths (bundle size)** in [`../UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md).
+`tokens.css` is the **only** stylesheet an app imports. Component-level CSS loads automatically with each
+component (the library is tree-shaken per component, JS and CSS). Do **not** also import
+`ui-common-components/index.css` — it duplicates every component's styles; it exists only as a fallback for
+toolchains that cannot load CSS from `node_modules`. See **Import paths (bundle size)** in
+[`../UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md).
 
 ## What to use in code
 

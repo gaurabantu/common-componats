@@ -219,7 +219,7 @@ flowchart TB
   end
 
   subgraph consumer ["Consumer app"]
-    APP["import tokens.css + index.css"]
+    APP["import tokens.css (component CSS loads per component)"]
     APP --> DT
   end
 ```
@@ -259,7 +259,8 @@ Storybook's `@storybook/theming/create()` runs every colour through **`polished`
 ```tsx
 // main.tsx / layout.tsx — once at app root
 import "ui-common-components/design-system/tokens.css";
-import "ui-common-components/index.css";
+// No index.css — each component imports its own CSS (tree-shaken with the component).
+// index.css is only a fallback for toolchains that cannot load CSS from node_modules; never add both.
 
 // Optional theme (same values as Storybook toolbar)
 document.documentElement.setAttribute("data-theme", "dark");

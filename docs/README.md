@@ -4,7 +4,7 @@
 
 > **AI agents:** start at [`../AGENTS.md`](../AGENTS.md) (repo root) — it is the universal entry point.
 
-Latest shared package bundle: `ui-common-components-0.0.2.tgz` (installs alone; no npm registry required)  
+Latest shared package bundle: `ui-common-components-0.0.13.tgz` (create with `npm run build && npm pack`; installs alone, no npm registry required). From 0.0.13 the library is tree-shaken per component — apps import only `tokens.css`, never `index.css`  
 Hooks package: `ui-common-hooks-0.3.0.tgz` — optional peer; recommended for async/feedback patterns
 
 ---
@@ -49,7 +49,7 @@ flowchart TD
 12. [`internal/DOC_INDEX.md`](./internal/DOC_INDEX.md) — internal map
 13. [`internal/APP_TOPBAR_SYSTEM.md`](./internal/APP_TOPBAR_SYSTEM.md) — `AppTopbar` notes
 14. [`internal/SIDEBAR_NAVIGATION_SYSTEM.md`](./internal/SIDEBAR_NAVIGATION_SYSTEM.md) — `AppSidebar` notes
-15. [`internal/PACKAGES.md`](./internal/PACKAGES.md) — dependency rationale
+15. [`internal/PACKAGES.md`](./internal/PACKAGES.md) — dependency rationale + build / tree-shaking rules (read before adding a component)
 16. [`internal/AI_UNIVERSAL_DESIGN_RULES.md`](./internal/AI_UNIVERSAL_DESIGN_RULES.md) — portable AI rules
 17. [`COMPOSITION_RULES_1.md`](./COMPOSITION_RULES_1.md) — zones, CTA hierarchy, density
 18. [`design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./design-system/DESIGN_SYSTEM_TOKENS_REFERENCE.md) — token/CSS tables

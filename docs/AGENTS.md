@@ -1,6 +1,6 @@
 # Project AI memory
 
-This project uses `ui-common-components` (v0.0.2) + `ui-common-hooks` (v0.3.0) together with the UX Governance design system.
+This project uses `ui-common-components` (v0.0.13) + `ui-common-hooks` (v0.3.0) together with the UX Governance design system.
 
 **Read every file under `docs/`** in the order defined in [`docs/README.md`](./README.md) (including `docs/design-system/` and `docs/internal/`). Do not skip internal docs.
 
@@ -33,8 +33,8 @@ This project uses `ui-common-components` (v0.0.2) + `ui-common-hooks` (v0.3.0) t
 
 ## Core usage rules
 
-- Import from `ui-common-components` (or subpaths: `/charts`, `/shell`, `/table`) before building custom UI.
-- Import `ui-common-components/design-system/tokens.css` once at app root.
+- Import from `ui-common-components` (or subpaths: `/charts`, `/shell`, `/table`, `/openui`) before building custom UI. Use **named** imports — the library is tree-shaken per component (JS + CSS), so importing one component never ships the rest. Never `import * as`, never deep-import `dist/` files.
+- Import `ui-common-components/design-system/tokens.css` once at app root. That is the **only** stylesheet to import — component CSS loads automatically with each component. Do **not** add `ui-common-components/index.css` (duplicates all styles; fallback only). Details: [`UI_COMPONENTS_GUIDE.md` → Import paths](./UI_COMPONENTS_GUIDE.md#import-paths-bundle-size).
 - Import `ui-common-hooks` for hooks.
 - Do not use Bootstrap. Do not hardcode token values.
 - Follow WCAG 2.2 AA. Support `[data-theme="dark"]`.

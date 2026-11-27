@@ -13,16 +13,45 @@ For installation and token import, use [`../README.md`](../README.md). For AI do
 
 ## Import paths (bundle size)
 
-The package supports a **main entry** and **subpaths** so consumers can ship less JavaScript when a feature only needs one area.
+The library is **tree-shakeable per component** (since v0.0.13). The ESM build is split into one chunk per
+component, and every component chunk imports **only its own CSS**. Your app's bundler (Next.js, Vite,
+webpack) keeps only the components you import — JS **and** CSS — and drops everything else.
+
+```tsx
+// ✅ Ships Button's JS + Button.css only (~11 KB), not the whole library
+import { Button, Modal } from "ui-common-components";
+```
 
 | Module | Typical imports |
 |--------|-------------------|
-| `ui-common-components` | Full surface: forms, layout, shell, table, charts, etc. |
-| `ui-common-components/charts` | `LineChart`, `BarChart`, `PieChart`, `AreaChart`, `ChartTooltip`, chart theme helpers, and chart-related types |
+| `ui-common-components` | Everything: forms, layout, shell, table, charts, etc. Tree-shaken — importing one component does **not** pull the rest |
+| `ui-common-components/charts` | `LineChart`, `BarChart`, `PieChart`, `AreaChart`, `ComposedChart`, `ChartTooltip`, chart theme helpers, and chart-related types |
 | `ui-common-components/shell` | `DashboardShell`, `AppShell`, `AppSidebar`, `AppTopbar`, `mergeSidebarTokensStyle`, `mergeTopbarTokensStyle`, persist helpers, shell types |
 | `ui-common-components/table` | Data `Table` (`columns` / `data`), semantic primitives (`TableRoot`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, …), and types |
+| `ui-common-components/openui` | AI answer rendering: `Renderer`, `designSystemLibrary` (pulls `@openuidev/react-lang` + `zod` — import only on AI screens) |
 
-Use the **main entry** when a file mixes many areas (e.g. form + modal + card). Use **subpaths** on dashboard-only shells, analytics-only charts, or data-only tables so the bundler does not pull the whole library into that chunk.
+The **main entry is the default** — use it everywhere. Subpaths give the same result and remain supported;
+they are useful to make a file's dependency on one area explicit (e.g. a charts-only route).
+
+### Rules for small bundles
+
+- **Do** use named imports: `import { Button } from "ui-common-components"`.
+- **Don't** use `import * as UI from "ui-common-components"` — a namespace object can force the bundler to keep every component.
+- **Don't** deep-import build files (`ui-common-components/dist/chunk-*.mjs`, `dist/atoms/*`, `dist/styles/*`). They are internal, hashed, and change every build. Only the paths in `package.json` `exports` are public.
+- **Don't** import `ui-common-components/index.css` in addition to components — component CSS already loads automatically, so this loads every component's styles twice. See [Styles](#styles) below.
+- **Do** keep `/openui` imports on AI screens only; it is the one entry with heavy dependencies.
+
+### Styles
+
+| Import | When |
+|--------|------|
+| `ui-common-components/design-system/tokens.css` | **Always**, once at app root. Components read every colour, spacing and radius from these variables. Not loaded automatically. |
+| *(nothing)* — component CSS | **Default.** Each component imports its own CSS; it arrives with the component. |
+| `ui-common-components/index.css` | **Only** if your setup cannot load CSS imported from `node_modules` JS (e.g. a CommonJS-only / `require()` toolchain). It contains every component's styles (~245 KB). Never combine with the default. |
+
+**Testing consumer apps with Vitest:** the ESM files import `.css`, which plain Node cannot load. Add
+`test: { server: { deps: { inline: ["ui-common-components"] } } }` to `vitest.config.ts`. Jest uses the
+CommonJS build (no CSS imports) and needs no change.
 
 ## Choose by use case
 

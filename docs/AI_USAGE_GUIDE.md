@@ -59,7 +59,8 @@ Use this file when you want an AI tool to build a real application with `ui-comm
 - Keep one primary CTA per zone (never two competing `variant="primary"` buttons)
 - Use `EmptyState` / `ErrorState` / `OfflineBanner` for feedback — not custom one-offs
 - Pair feedback state components with `useAsyncContentPhase` from `ui-common-hooks`
-- Subpath imports when a route only needs one area: `/charts`, `/shell`, `/table`
+- Named imports from `ui-common-components` (tree-shaken per component, JS + CSS); subpaths `/charts`, `/shell`, `/table` also work. Import `/openui` only on AI screens
+- `tokens.css` is the only stylesheet the app imports — component CSS loads automatically with each component
 - Prefer `useDebounce` or `useDebouncedCallback` for search inputs over inline `setTimeout`
 - Use `useClientTableState` for table search + sort + pagination
 - Use `useOnlineStatus` + `useAsyncContentPhase` for offline detection
@@ -73,6 +74,8 @@ Use this file when you want an AI tool to build a real application with `ui-comm
 - Use `dangerouslySetInnerHTML`
 - Use `AppShell` in new code (legacy alias — use `DashboardShell`)
 - Skip `docs/internal/` — it is required
+- Import `ui-common-components/index.css` alongside components (loads every component's styles twice; fallback for non-bundler toolchains only)
+- Use `import * as` from the library, or deep-import `dist/` files (`dist/chunk-*`, `dist/atoms/*`, `dist/styles/*`) — breaks tree-shaking / internal paths change every build
 
 ---
 
@@ -119,7 +122,7 @@ flowchart TD
 Paste this into any AI tool before asking it to generate code from this repo:
 
 ```
-Use `ui-common-components` (v0.0.2) and `ui-common-hooks` (v0.3.0).
+Use `ui-common-components` (v0.0.13) and `ui-common-hooks` (v0.3.0).
 Follow the UX Governance design system.
 
 Read ALL files under `docs/` in the order in `docs/README.md` (including `docs/internal/`).
@@ -127,7 +130,8 @@ Also read `AGENTS.md` (root), `docs/COMPOSITION_RULES_1.md`, `design-system/DESI
 
 Rules:
 - Use library components + hooks before building custom ones
-- Import `ui-common-components/design-system/tokens.css` once at app root
+- Import `ui-common-components/design-system/tokens.css` once at app root — the ONLY stylesheet; component CSS loads with each component. Never also import `ui-common-components/index.css`
+- Use named imports (`import { Button } from "ui-common-components"`); never `import * as`, never deep-import `dist/` files
 - For shell layouts: DashboardShell (not AppShell) + AppSidebar + AppTopbar
 - For cards: Card with CardHeader/CardTitle/CardContent/CardFooter
 - For feedback states: EmptyState, ErrorState, OfflineBanner, FeedbackState
