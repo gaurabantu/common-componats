@@ -56,7 +56,7 @@ See [`THEMES.md`](./THEMES.md) for full theme matrix and QA stories.
 - [ ] Loading → empty → error → offline → ready driven by `useAsyncContentPhase` where applicable
 - [ ] `EmptyState` / `ErrorState` / `OfflineBanner` from library — not custom panels
 - [ ] Zone 2: slim `OfflineBanner` (no `image`); Zone 4: full panel with optional animation
-- [ ] No Toast assumed — use §35 interim patterns until Toast ships
+- [ ] Transient notifications use `useToast()` inside one app-root `ToastProvider` (§35) — no custom or third-party toasts; toasts never carry essential info
 
 ---
 

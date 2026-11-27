@@ -111,7 +111,33 @@ function growth() {
     );
     rows.push({ version, date, commit: sha.slice(0, 7), ...lib });
   }
-  return rows.reverse(); // oldest first
+  rows.reverse(); // oldest first
+
+  // A commit that moved package.json to a LOWER version than an earlier release (an accidental
+  // downgrade) is not a release — drop it so the x-axis always reads in release order.
+  const semver = (v) => v.split(/[.-]/).slice(0, 3).map(Number);
+  const lower = (a, b) => {
+    const [x, y] = [semver(a), semver(b)];
+    for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] < y[i];
+    return false;
+  };
+  let highest = null;
+  for (let i = 0; i < rows.length; i++) {
+    if (highest && lower(rows[i].version, highest)) rows.splice(i--, 1);
+    else highest = rows[i].version;
+  }
+
+  // The release being prepared: the working-tree package.json version is usually bumped before it is
+  // committed, so git alone would leave the chart one release behind. Count it from the working tree.
+  const pkgVersion = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")).version;
+  const workingTree = { version: pkgVersion, date: new Date().toISOString().slice(0, 10), commit: "working tree", ...current };
+  const last = rows[rows.length - 1];
+  if (!last || last.version !== pkgVersion) {
+    rows.push(workingTree);
+  } else if (JSON.stringify({ ...last, version: 0, date: 0, commit: 0 }) !== JSON.stringify({ ...workingTree, version: 0, date: 0, commit: 0 })) {
+    rows[rows.length - 1] = workingTree; // same version, newer uncommitted counts
+  }
+  return rows;
 }
 
 /* ---------------- tests (vitest JSON reporter) ---------------- */

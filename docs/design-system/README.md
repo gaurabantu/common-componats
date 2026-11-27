@@ -4,7 +4,7 @@ This folder is the **canonical source of truth** for design rules.
 
 | File | Purpose |
 |------|---------|
-| [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) | **Principles + rules** — §22a canonical zones, §34 FeedbackStates, §35 Toast (spec), §35a agent routing |
+| [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) | **Principles + rules** — §22a canonical zones, §34 FeedbackStates, §35 Toast (shipped), §35a agent routing |
 | [`DESIGN_SYSTEM_TOKENS_REFERENCE.md`](./DESIGN_SYSTEM_TOKENS_REFERENCE.md) | **Token/CSS tables** — summary §1–14 tables + `:root` snapshot (runtime: `tokens.css`) |
 | [`THEMES.md`](./THEMES.md) | Theme enable syntax, contrast matrix, component QA, Storybook manager sync |
 | [`COMPONENT_AUDIT.md`](./COMPONENT_AUDIT.md) | Production checklist — a11y, tokens, dark mode, zones |

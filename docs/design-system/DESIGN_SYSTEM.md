@@ -643,7 +643,7 @@ Every screen uses **five vertical zones**. Define them **before** writing JSX. F
 | Zone | Components | Notes |
 |------|------------|-------|
 | **1** | `AppTopbar`, `DashboardShell` header | One **`primary`** CTA max (`md`/`lg`); alt actions → `outlineSecondary` `sm` |
-| **2** | `OfflineBanner` (compact, no `image`), future Toast strip | Sticky under topbar; omit when no alert |
+| **2** | `OfflineBanner` (compact, no `image`) | Sticky under topbar; omit when no alert. Toasts are **not** a zone — `ToastProvider` renders them in a fixed overlay (§35) |
 | **3** | `Tabs`, filters, `InputSearch`, `DatePicker` | Inputs only — not mixed with action buttons (see §22) |
 | **4** | `Table`, charts, `Card`, `EmptyState`, `ErrorState`, `FeedbackState` | Main focus; empty/error replaces table body |
 | **5** | Pagination, export links | `ghost` `sm` for footer actions |
@@ -1475,53 +1475,59 @@ Variants: `empty` \| `success` \| `info` \| `error` \| `offline`. See **[`FEEDBA
 - Red border: `--border-width-thick` + `--color-border-error` + message below field — **[§25](#25-form-inputs)**
 - Do **not** use `EmptyState` / `ErrorState` for single-field validation
 
-### Transient errors (no Toast yet)
+### Transient errors
 
-When an action fails but the user stays on the page, prefer **`ErrorState`** inline or **`AlertDialog`**. For async success/failure after navigation, see **§35** interim patterns until **`Toast`** ships.
+When a **user action or background task** fails, show a **`Toast`** `variant="danger"` with actionable copy (optionally `action: { label: "Retry" }`). When **content the page needs** fails to load, use **`ErrorState`** in the zone instead. If the user must acknowledge or decide, use **`AlertDialog`**. See **§35**.
 
 ---
 
 ## 35. Feedback & Notifications
 
-> **Last verified against library:** 2026-07-02 · interim patterns (Toast not shipped)
+> **Last verified against library:** 2026-11-27 · `Toast` / `ToastProvider` / `useToast` (shipped since v0.0.3)
 
-### Toast / Snackbar — **spec only (not shipped in v0.0.2)**
+### Toast / Snackbar — **shipped** (`ToastProvider` + `useToast`)
 
-> **Status:** There is **no `Toast` component** in `ui-common-components` yet. §35 below is the **target spec** for a future release. Until then, use the **interim patterns** in the table — do **not** build ad-hoc toast DOM or third-party snackbars that ignore tokens.
+Mount **one** `ToastProvider` near the app root, then call `useToast().toast({ title, description?, variant?, action?, duration?, id? })`.
+API and code: **[`UI_COMPONENTS_GUIDE.md` → Notifications — Toast](../UI_COMPONENTS_GUIDE.md)**. Do **not** build ad-hoc toast DOM or add third-party snackbars.
 
-| Property | Target value (when shipped) |
-|----------|----------------------------|
-| Background | `--color-noir-100` |
-| Text | `--color-text-on-primary` |
+| Property | Shipped value |
+|----------|---------------|
+| Background | `--color-bg-elevated` |
 | Radius | `--radius-lg` |
 | Shadow | `--shadow-md` |
-| Z-Index | `--z-toast` |
-| Duration | 5 seconds auto-dismiss (manual dismiss optional) |
-| Position | Bottom-center (mobile), bottom-right (web desktop) |
-| Max Width | 560px (web), full-width minus `--space-2` (mobile) |
+| Z-Index | `--z-toast` (portal to `document.body`) |
+| Duration | 5000 ms auto-dismiss (provider `duration`); **sticky when the toast has an `action`** (WCAG 2.2.1); timer pauses on hover, focus and hidden tab |
+| Position | `ToastProvider position` — default `bottom-right`; any `top-*` / `bottom-*` × `left` / `center` / `right` |
+| Width | 24rem (max 100%); at ≤ 480px full width with a `--space-2` (16px) gutter |
+| Stack | `max` visible (default 3); further toasts queue FIFO |
+| Dismiss | Close button + Escape (`dismissible`, default true); `dismiss(id)`, `dismissAll()` |
+| Focus | Never steals focus; **F8** moves focus into the notifications region |
 
-#### Semantic variants (target)
+#### Semantic variants
 
-| Type | Left accent | Icon |
-|------|-------------|------|
-| Success | `--color-state-success` 4px bar | check-circle |
-| Warning | `--color-state-warning` 4px bar | alert-triangle |
-| Error | `--color-state-error` 4px bar | alert-circle |
-| Info | `--color-state-info` 4px bar | info |
+Same tone set, icons and colours as **`Alert`** (`Alert.config.ts`), with a `--space-0` (4px) left accent bar.
 
-**Target rules (future):** max 3 stacked toasts; optional ghost action on toast; never silent success; error toasts include actionable copy.
+| `variant` | Use for | Screen reader |
+|-----------|---------|---------------|
+| `success` | Completed action ("Saved", "Invite sent") | Polite region · "Success:" |
+| `info` (default) | Neutral status update | Polite region · "Information:" |
+| `warning` | Non-blocking caution | Polite region · "Warning:" |
+| `danger` | Failed background / async action — include actionable copy, optionally `action: { label: "Retry" }` | `role="alert"` (assertive) · "Error:" |
+| `neutral` | Low-emphasis notice | Polite region · "Note:" |
 
-#### Interim patterns (use today)
+**Rules:** max 3 visible toasts; at most one non-essential `action` (never the only path to a task); never silent success; error toasts include actionable copy; reduced-motion and forced-colors are handled by the component.
+
+#### When a toast is the wrong choice
 
 | Need | Use instead of Toast |
 |------|----------------------|
-| Async success, user still on screen | Inline success near action; **`EmptyState` / `FeedbackState variant="success"`** for completed empty views; **`TextView`** + `--color-success-strong` helper text |
-| Async success, user navigated away | **`AlertDialog`** acknowledgement (lightweight) or persist status in page header |
-| Async / background error | **`ErrorState`** in Zone 4; **`OfflineBanner`** slim strip (Zone 2) for connectivity |
-| Non-blocking warning | **`OfflineBanner`** (`tone="warning"`, no `image`) or compact inline banner with `--color-warning-soft` |
-| Must acknowledge error | **`AlertDialog`** `variant="error"` or blocking **`Modal`** |
+| Page / section failed to load | **`ErrorState`** in Zone 4 with `onRetry` — persistent, not transient |
+| Connectivity lost | **`OfflineBanner`** slim strip (Zone 2) or full panel |
+| Completed view that is now empty | **`EmptyState`** / **`FeedbackState variant="success"`** |
+| Must acknowledge error, or a decision is required | **`AlertDialog`** `variant="error"` or blocking **`Modal`** |
 | Field validation | Inline error under input — **[§25](#25-form-inputs)** |
 | Destructive confirm | **`AlertDialog`** — **[§27](#27-modal--dialog)** |
+| Essential information the user must not miss | Inline content or **`AlertDialog`** — toasts disappear |
 
 Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE.md)** (Feedback states + Notifications).
 
@@ -1547,7 +1553,7 @@ Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE
 | `OfflineBanner` | `ui-common-components` | Offline — slim Zone 2 strip or Zone 4 full panel (`image`) |
 | `FeedbackState` | `ui-common-components` | Phase router: `variant="empty"\|"success"\|"info"\|"error"\|"offline"` |
 | `useAsyncContentPhase` | `ui-common-hooks` | `loading → offline → error → empty → ready` |
-| `Toast` | — | **Not shipped** — use §35 interim patterns |
+| `ToastProvider` + `useToast` | `ui-common-components` | Transient notification for actions / background results — **§35** |
 
 ### B1 — Interaction glossary
 
@@ -1558,7 +1564,7 @@ Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE
 | **Press / active** | Pointer or key down while activating (`:active`). Often one step darker than hover. | **§19 Button States**. On **touch**, this is the main transient feedback — use where **hover** does not exist (see **§26 Cards** mobile note). |
 | **Select** | A durable choice: list/table row, tab, radio, checkbox, combobox value. | Distinct from hover; typically **`--color-border-selected`** or component-specific selected styling. |
 | **Expand / collapse** | Shows or hides more content (`Accordion`, expandable **Table** rows, trees). | Motion obeys **§18**; respect **`prefers-reduced-motion`**. |
-| **Dismiss** | Closes an ephemeral layer: **Modal** (Cancel, backdrop if allowed, Escape if allowed), **Toast** *(future)*, **Popover** / **Dropdown** (outside click / Escape), **`OfflineBanner`** `onDismiss`. | **Destructive** flows require an explicit safe exit — see **B3** and **[§27](#27-modal--dialog)**. |
+| **Dismiss** | Closes an ephemeral layer: **Modal** (Cancel, backdrop if allowed, Escape if allowed), **Toast** (close button, Escape, auto-dismiss), **Popover** / **Dropdown** (outside click / Escape), **`OfflineBanner`** `onDismiss`. | **Destructive** flows require an explicit safe exit — see **B3** and **[§27](#27-modal--dialog)**. |
 
 **Mobile and touch (align with §32):**
 
@@ -1569,18 +1575,18 @@ Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE
 
 | Situation | Prefer (shipped) | Escalate / avoid |
 |-----------|------------------|-------------------|
-| **Success — async / off-screen action** | Inline success near action; **`FeedbackState variant="success"`** when view is empty-after-success. **Future:** Toast (**§35**). | Never silent success. Avoid toast-like custom DOM until **`Toast`** ships. |
+| **Success — async / off-screen action** | Inline success near action; **`FeedbackState variant="success"`** when view is empty-after-success; **`Toast`** `variant="success"` when the result arrives while the user is elsewhere (**§35**). | Never silent success. Never custom toast-like DOM — use **`Toast`**. |
 | **Success — field-level** | Inline validation / helper (muted success). | Usually **not** a full **`EmptyState`**. |
 | **Error — field validation** | **Inline** + **`--border-width-thick`** + message (**§25**). | **`ErrorState`** only for section/page failures, not per-field. |
-| **Error — section or page load failed** | **`ErrorState`** or **`FeedbackState variant="error"`** with **`onRetry`** + optional **`ErrorAnimation`** (**§34**, **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)**). **Future:** error Toast. | Full-screen block only for hard stops. |
+| **Error — section or page load failed** | **`ErrorState`** or **`FeedbackState variant="error"`** with **`onRetry`** + optional **`ErrorAnimation`** (**§34**, **[`FEEDBACK_STATES_GUIDE.md`](../FEEDBACK_STATES_GUIDE.md)**). Not a toast — the content is missing, so the error stays in the zone. | Full-screen block only for hard stops. |
 | **Error — must acknowledge** | **`AlertDialog`** `variant="error"` or blocking **`Modal`**. | Use sparingly. |
 | **Offline** | **`OfflineBanner`** slim (Zone 2) or full panel (Zone 4 with `image`); **`FeedbackState variant="offline"`**. | Do not duplicate offline strip + full panel without hierarchy. |
-| **Warning — non-blocking** | **`OfflineBanner`** `tone="warning"` or compact inline banner (`--color-warning-soft`). **Future:** warning Toast. | If user **must** choose → **`Modal`** / **`AlertDialog`**. |
+| **Warning — non-blocking** | **`OfflineBanner`** `tone="warning"` or compact inline banner (`--color-warning-soft`), or **`Toast`** `variant="warning"` for a transient notice. | If user **must** choose → **`Modal`** / **`AlertDialog`**. |
 | **Confirmation — safe** | **`Modal`** or **`AlertDialog`** (info / success acknowledgement). **[§27](#27-modal--dialog)**. | Single clear primary (**§21**). |
 | **Confirmation — destructive / irreversible** | **`AlertDialog`** destructive pattern — **[§27](#27-modal--dialog)**. | Never red-filled primary. |
-| **Long-running / processing** | **`Table`** skeleton / button **`loading`**, **`ProgressBar`**. **Future:** Toast on completion only. | Avoid notification spam during progress. |
+| **Long-running / processing** | **`Table`** skeleton / button **`loading`**, **`ProgressBar`**. **`Toast`** on completion only. | Avoid notification spam during progress. |
 
-**Rules of thumb:** **`ErrorState` / `EmptyState`** = persistent zone content. **Inline** = field or action-adjacent. **`Modal` / `AlertDialog`** = interrupt when consequence requires. **Toast** = *future* transient layer (**§35** interim table until shipped).
+**Rules of thumb:** **`ErrorState` / `EmptyState`** = persistent zone content. **Inline** = field or action-adjacent. **`Modal` / `AlertDialog`** = interrupt when consequence requires. **`Toast`** = transient layer for action / background results (**§35**).
 
 ### B3 — Flow patterns (retry, destructive vs info)
 
@@ -1590,7 +1596,7 @@ Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE
 2. **Layout:** **`ErrorState`** or **`FeedbackState variant="error"`** — `title`, `description`, optional **`ErrorAnimation`** `image`, tone `danger` default.
 3. **Primary action:** **`onRetry`** → **`Button variant="outlinePrimary" size="md"`** with loading state on re-fetch (**§19**).
 4. **Guardrails:** Debounce duplicate retries; swap Retry for Sign in / Contact support when retry will not succeed (403, revoked token).
-5. **Transient vs inline:** Prefer **`ErrorState`** while user is on that page. **Future Toast** only when failure surfaces after navigation (§35 interim: **`AlertDialog`** or return-route banner).
+5. **Transient vs inline:** Prefer **`ErrorState`** while user is on that page. Use **`Toast`** `variant="danger"` when the failure surfaces after the user moved on (background / async work) — **§35**.
 
 #### Destructive vs info modal — cross-reference **[§27](#27-modal--dialog)**
 
@@ -1598,7 +1604,7 @@ Component selection details: **[`UI_COMPONENTS_GUIDE.md`](../UI_COMPONENTS_GUIDE
 |----------|----------|----------------|
 | Delete, revoke access, discard unsaved edits, exit without saving | **Destructive** modal semantics | Variant table (**Modal / Destructive**); **Destructive Modal — NO RED BUTTONS**; Cancel left, destructive **Outlined/Ghost** right; backdrop dismiss **off** unless product explicitly overrides (library **`AlertDialog`**: **`destructive`** defaults **`closeOnBackdropClick`** unset → **false**). |
 | Alert, acknowledgement, moderate-risk confirm | **Info** / **`AlertDialog`** non-destructive | **Modal / Info**; Escape and backdrop behaviour per **[§27](#27-modal--dialog)** rules. |
-| Timed toast equivalent | **§35 interim** (inline banner / **`AlertDialog`**) until **`Toast`** ships | Success / warning / error / info accent patterns in **§35** target spec |
+| Timed notification | **`Toast`** via `useToast()` — not a modal | Variants, timing and a11y in **§35** |
 
 **Agents:** Prefer **`FEEDBACK_STATES_GUIDE.md`**, **§34**, and **§35** interim table over custom empty/error UI. **`Modal`** / **`AlertDialog`** in **`UI_COMPONENTS_GUIDE.md`** mirror **§27** button rules.
 
@@ -1868,7 +1874,7 @@ All components across platforms should follow this naming pattern for consistenc
 - `Switch` — toggle switches
 - `Card` — all card variants
 - `Modal` — modals and dialogs
-- `Toast` — notification toasts / snackbars (**planned — not in v0.0.2**; use §35 interim patterns)
+- `Toast` — notification toasts / snackbars (`ToastProvider` + `useToast`; §35)
 - `Nav` — navigation components (sidebar, tab bar, app bar)
 - `Badge` — status badges, chips, tags
 - `Avatar` — user avatars
@@ -1923,7 +1929,7 @@ Theme cannot touch anything in these four categories. Violations must be refused
 - Card backgrounds — `--color-bg-surface` stays `#FFFFFF`
 - Modal backgrounds — `--color-bg-elevated` stays `#FFFFFF`
 - Page background — `--color-bg-page` stays `#E0E0E0`
-- Toast backgrounds — `--color-noir-100` stays `#0D0D0D`
+- Toast backgrounds — `--color-bg-elevated` (same surface as modals)
 - Empty state backgrounds — `--color-mist-60` stays `#EDEDED`
 
 **System (Locked)**

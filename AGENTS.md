@@ -14,7 +14,7 @@
 - UX Governance design system (CSS token-driven, WCAG 2.2 AA, dark-mode ready)
 - Storybook with live controls for every component
 
-**Package name:** `ui-common-components` (v0.0.13 — tree-shaken per component, JS + CSS)  
+**Package name:** `ui-common-components` (v0.0.15 — tree-shaken per component since v0.0.13, JS + CSS)  
 **Hooks package:** `ui-common-hooks` (v0.3.0)  
 **React:** 18+  
 **TypeScript:** 5.x  
@@ -100,6 +100,7 @@ import { useDebounce, useToggle }     from "ui-common-hooks";
 | `ErrorState` | Named export from `FeedbackStates` |
 | `OfflineBanner` | Named export from `FeedbackStates` |
 | `FeedbackState` | Variant-driven union component |
+| `ToastProvider` + `useToast` | Notifications: one `ToastProvider` at app root, then `useToast().toast({ title, variant })`. `Toast` itself is for static previews only |
 | `Card` | Default + compound parts: `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, `CardFooter` |
 | `Table` | Data-driven (columns/data); `TableRoot`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell` for semantic HTML |
 

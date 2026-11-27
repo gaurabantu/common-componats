@@ -100,21 +100,58 @@ Use the **`FeedbackStates`** module — do **not** build custom empty/error/offl
 
 **CTA hierarchy (Zone 4):** `EmptyState` action → `Button variant="primary" size="md"`; extra → `ghost sm`. `ErrorState` retry → `outlinePrimary md`.
 
-### Notifications — Toast (**not shipped**)
+### Notifications — Toast
 
-There is **no `Toast` / `Snackbar` component** in v0.0.2. The visual spec lives in [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §35 (target behaviour). Until Toast ships, use:
+**Shipped since v0.0.3.** Exports: `ToastProvider`, `useToast`, `Toast` (+ types `ToastOptions`,
+`ToastAction`, `ToastPosition`, `ToastVariant`, `ToastProviderProps`, `ToastContextValue`, `ToastProps`).
+Visual spec: [`design-system/DESIGN_SYSTEM.md`](./design-system/DESIGN_SYSTEM.md) §35.
 
-| Need | Interim component |
-|------|-------------------|
-| Page/section load failure | `ErrorState` + `onRetry` |
+```tsx
+// 1. Once, near the app root (client component in Next.js App Router)
+import { ToastProvider } from "ui-common-components";
+<ToastProvider position="bottom-right" max={3} duration={5000}>{children}</ToastProvider>
+
+// 2. Anywhere below it
+import { useToast } from "ui-common-components";
+const { toast, dismiss, dismissAll } = useToast();
+toast({ variant: "success", title: "Invoice sent", description: "INV-204 emailed to the client." });
+toast({ variant: "danger", title: "Upload failed", action: { label: "Retry", onClick: retry } });
+toast({ id: "sync", title: "Syncing…" }); // same id again → updates that toast and restarts its timer
+```
+
+| Option (`toast({...})`) | Default | Notes |
+|---|---|---|
+| `title` (required), `description` | — | Short; the toast is announced to screen readers |
+| `variant` | `"info"` | `"info" \| "success" \| "warning" \| "danger" \| "neutral"` (same set as `Alert`) |
+| `duration` | `5000` (provider) | ms; `Infinity` = sticky. **A toast with `action` is sticky by default** (WCAG 2.2.1) |
+| `action` | — | One non-essential `{ label, onClick }`; the toast closes after the click |
+| `dismissible` | `true` | Close button + Escape |
+| `id` | generated | Pass to update / dedupe; `toast()` returns the id for `dismiss(id)` |
+
+`ToastProvider` props: `position` (`top-*` / `bottom-*` × `left|center|right`, default `"bottom-right"`),
+`max` (visible at once, default `3`, extra toasts queue), `duration` (default `5000`), `label`
+(region name, default `"Notifications"`), `dismissLabel`.
+
+**Built in — do not re-implement:** timer pauses on hover, focus and hidden tab; toasts never steal focus
+(**F8** moves focus to the region); `danger` toasts are `role="alert"`, the rest are announced through a
+polite live region; reduced-motion and forced-colors supported; full width with a 16px gutter at ≤ 480px.
+`useToast()` throws outside a `ToastProvider`. A standalone `<Toast>` is for static previews only — outside
+the provider it is silent to screen readers unless `danger`.
+
+**When to use Toast vs. something else**
+
+| Need | Use |
+|------|-----|
+| Brief confirmation of an action the user just took ("Saved", "Copied", "Invite sent") | **`Toast`** `success` |
+| Background / async result that finishes while the user does something else | **`Toast`** (`success` / `danger`, optional `action`) |
+| Page/section load failure | `ErrorState` + `onRetry` (persistent, in the zone — not a toast) |
 | No data / zero results | `EmptyState` or `FeedbackState variant="empty"` |
 | Offline | `OfflineBanner` (slim or full panel) |
-| Must acknowledge error/warning | `AlertDialog` |
-| Non-blocking warning strip | `OfflineBanner` `tone="warning"`, compact |
-| Async success on same screen | Inline helper text or `FeedbackState variant="success"` |
-| Field validation error | `Input` inline error (not `ErrorState`) |
+| Must acknowledge error/warning, or a decision is required | `AlertDialog` |
+| Field validation error | `Input` inline error (never a toast) |
+| Essential information or the only path to an action | Not a toast — it disappears. Use inline content or `AlertDialog` |
 
-Do not add third-party toast libraries that bypass design tokens.
+Do not add third-party toast libraries — `Toast` already follows the design tokens and WCAG 2.2 AA.
 
 ### Layout, navigation, and content
 
@@ -783,7 +820,7 @@ Shared expectations:
 - Empty list / zero search results: `EmptyState` or `FeedbackState variant="empty"` (+ `useAsyncContentPhase`)
 - Failed API / section error: `ErrorState` or `FeedbackState variant="error"` with `onRetry`
 - Offline: `OfflineBanner` (Zone 2 strip or Zone 4 panel) + `useOnlineStatus`
-- Transient success/error (no Toast yet): see **Notifications — Toast** section above
+- Transient success/error notification: `useToast().toast({...})` inside a `ToastProvider` — see **Notifications — Toast** above
 - Searchable data table: `Table searchable`
 - Dashboard shell: `DashboardShell` with `AppSidebar` + `AppTopbar`
 - Responsive layout: `Grid` + `GridItem`

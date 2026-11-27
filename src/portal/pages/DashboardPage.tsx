@@ -175,7 +175,7 @@ export function DashboardPage() {
                 ? `Component modules grew from ${firstGrowth["Component modules"]} (${firstGrowth.version}) to ${lastGrowth["Component modules"]} (${lastGrowth.version}); public exports from ${firstGrowth["Public exports"]} to ${lastGrowth["Public exports"]}.`
                 : "Component modules and public exports per release."
             }
-            source="Source: git — last commit of each package.json version; folders in src/components and runtime exports of src/index.tsx (portal-stats.json)."
+            source="Source: git — last commit of each package.json version (current version: working tree); folders in src/components and runtime exports of src/index.tsx (portal-stats.json)."
             table={{
               columns: [
                 { key: "version", label: "Release" },

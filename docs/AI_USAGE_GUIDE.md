@@ -122,7 +122,7 @@ flowchart TD
 Paste this into any AI tool before asking it to generate code from this repo:
 
 ```
-Use `ui-common-components` (v0.0.13) and `ui-common-hooks` (v0.3.0).
+Use `ui-common-components` (v0.0.15) and `ui-common-hooks` (v0.3.0).
 Follow the UX Governance design system.
 
 Read ALL files under `docs/` in the order in `docs/README.md` (including `docs/internal/`).

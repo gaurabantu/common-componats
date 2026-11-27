@@ -1,6 +1,6 @@
 # Project AI memory
 
-This project uses `ui-common-components` (v0.0.13) + `ui-common-hooks` (v0.3.0) together with the UX Governance design system.
+This project uses `ui-common-components` (v0.0.15) + `ui-common-hooks` (v0.3.0) together with the UX Governance design system.
 
 **Read every file under `docs/`** in the order defined in [`docs/README.md`](./README.md) (including `docs/design-system/` and `docs/internal/`). Do not skip internal docs.
 
@@ -61,6 +61,7 @@ This project uses `ui-common-components` (v0.0.13) + `ui-common-hooks` (v0.3.0) 
 | `EmptyState` | `ui-common-components` | Default export from FeedbackStates; `image`, `icon`, `action`, `extra`, `size`, `align`, `tone` |
 | `ErrorState` | `ui-common-components` | Named; `image`, `icon`, `hideIcon`, `details`, `onRetry`, `extra`, `tone`, `aria-live` |
 | `OfflineBanner` | `ui-common-components` | Named; slim bar (no `image`) or full panel (with `image`) |
+| `ToastProvider`, `useToast` | `ui-common-components` | One provider at app root; `useToast().toast({ title, description, variant, action, duration, id })` — see UI_COMPONENTS_GUIDE → Notifications |
 | `FeedbackState` | `ui-common-components` | `variant="empty"\|"success"\|"info"\|"error"\|"offline"` |
 | `NoDataAnimation` | `ui-common-components` | CSS-animated SVG illustration |
 | `NoSearchResultsAnimation` | `ui-common-components` | CSS-animated SVG |
