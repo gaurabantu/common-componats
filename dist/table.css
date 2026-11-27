@@ -4,6 +4,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  align-content: start;
   gap: var(--space-0);
   min-width: 0;
   font-family: var(--font-family);

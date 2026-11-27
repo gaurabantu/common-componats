@@ -68,7 +68,13 @@ Import design tokens once in your app root:
 import "ui-common-components/design-system/tokens.css";
 ```
 
-Import bundled component styles (required for molecules such as `AppSidebar` / `AppTopbar`, and any CSS shipped beside Tailwind utilities). Either path is valid:
+**Component styles load automatically.** The ESM build is split per component and each component imports
+only its own CSS, so `import { Button } from "ui-common-components"` ships Button's JS and CSS and nothing
+else (unused components are tree-shaken by Next.js / webpack / Vite). Do **not** also import `index.css`
+in that case — you would load every component's styles twice.
+
+The full stylesheet is still published for setups that cannot import CSS from `node_modules` JS
+(or that load the CommonJS build). Either path is valid:
 
 ```tsx
 import "ui-common-components/index.css";
@@ -76,6 +82,9 @@ import "ui-common-components/index.css";
 ```
 
 `package.json` **exports** explicitly includes these specifiers so Vite, Next.js, and other bundlers can resolve them (the file exists at `dist/index.css` after `npm run build`).
+
+**Vitest in a consuming app:** because the ESM files import `.css`, let Vitest process the package instead of
+loading it with plain Node: `test: { server: { deps: { inline: ["ui-common-components"] } } }`.
 
 Optional Tailwind preset:
 

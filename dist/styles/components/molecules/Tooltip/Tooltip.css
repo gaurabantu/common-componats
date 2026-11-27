@@ -1,0 +1,105 @@
+/* Tooltip — generic, portalled to <body>. Position is fixed (viewport coords from tooltipPosition.ts). */
+
+.ds-tooltip {
+  --ds-tooltip-max-width: 240px;
+  --ds-tooltip-gap: var(--space-1);
+  position: fixed;
+  z-index: var(--z-tooltip-top);
+  box-sizing: border-box;
+  /* Never wider than the viewport minus edge padding (375px screens). */
+  max-width: min(var(--ds-tooltip-max-width), calc(100vw - var(--space-2)));
+  padding: var(--space-0) var(--space-1);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-family: var(--font-family);
+  font-size: var(--text-secondary-size);
+  font-weight: var(--text-body-weight);
+  line-height: var(--text-body-line-height);
+  text-align: start;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  pointer-events: auto;
+}
+
+.ds-tooltip[hidden] {
+  display: none;
+}
+
+/* Before first measurement — keep it invisible so it never flashes at 0,0. */
+.ds-tooltip[data-positioned="false"] {
+  visibility: hidden;
+}
+
+/* dark = inverted: text-primary fill, surface text (flips automatically in dark theme). */
+.ds-tooltip[data-variant="dark"] {
+  background: var(--color-text-primary);
+  color: var(--color-bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* light = elevated surface with a 3:1 boundary. */
+.ds-tooltip[data-variant="light"] {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-md);
+}
+
+/* Invisible hover bridge across the trigger gap so the pointer can move onto the bubble (WCAG 1.4.13 hoverable). */
+.ds-tooltip::before {
+  content: "";
+  position: absolute;
+}
+.ds-tooltip[data-side="top"]::before {
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: calc(var(--ds-tooltip-gap) + 1px);
+}
+.ds-tooltip[data-side="bottom"]::before {
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: calc(var(--ds-tooltip-gap) + 1px);
+}
+.ds-tooltip[data-side="left"]::before {
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--ds-tooltip-gap) + 1px);
+}
+.ds-tooltip[data-side="right"]::before {
+  right: 100%;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--ds-tooltip-gap) + 1px);
+}
+
+.ds-tooltip[data-state="open"][data-positioned="true"] {
+  animation: ds-tooltip-in var(--duration-fast) var(--easing-enter);
+}
+
+@keyframes ds-tooltip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-tooltip[data-state="open"][data-positioned="true"] {
+    animation: none;
+  }
+}
+
+/* Windows High Contrast: shadows are dropped and fills forced — keep a visible boundary. */
+@media (forced-colors: active) {
+  .ds-tooltip {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+  }
+}

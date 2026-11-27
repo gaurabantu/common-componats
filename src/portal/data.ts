@@ -7,7 +7,7 @@ export const PRODUCT = {
   name: "Infinia Design System",
   packageName: "ui-common-components",
   hooksPackage: "ui-common-hooks",
-  version: "0.0.12",
+  version: "0.0.15",
   hooksVersion: "0.3.0",
   tokensVersion: "2.0.0",
   owner: "UI Platform team",
@@ -216,9 +216,40 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
-    version: "0.0.12",
+    version: "0.0.15",
     date: "27 Nov 2026",
     status: "current",
+    summary: "Form alignment: fields in one row line up, and Select / Combobox / Input / DatePicker share height and text inset.",
+    changes: [
+      { type: "fixed", text: "FormField — `align-content: start`. A field stretched to the row height by a sibling with a hint or error no longer pushes its control down." },
+      { type: "fixed", text: "Combobox — side padding follows size (10 / 12 / 16px, like Select) instead of a fixed 16px, so text starts at the same x as a Select." },
+      { type: "fixed", text: "TextInput and DatePicker — the inner input fills the bordered shell instead of repeating its min-height: same height as a Select (30px at sm, was 33px). DatePicker text is no longer indented twice." },
+    ],
+  },
+  {
+    version: "0.0.14",
+    date: "27 Nov 2026",
+    status: "previous",
+    summary: "DatePicker calendar button scales with size, so sm pickers line up with Select / Input.",
+    changes: [
+      { type: "fixed", text: "DatePicker / DateRangePicker — the calendar button was a fixed 36px, stretching every `sm` picker to ~39px. It is now 24 / 36 / 40px for sm / md / lg (icon 16 / 18 / 18), keeping the 24px target minimum." },
+    ],
+  },
+  {
+    version: "0.0.13",
+    date: "27 Nov 2026",
+    status: "previous",
+    summary: "Per-component ESM build: apps load only the JS and CSS of the components they import.",
+    changes: [
+      { type: "changed", text: "ESM build is split per component (tree-shakable chunks); each chunk imports only its own CSS from dist/styles. Do not also import index.css." },
+      { type: "changed", text: "CJS build stays one bundle per public entry (Jest / Node) and still emits the .d.ts files; dist/index.css is still published for apps that load the full stylesheet." },
+      { type: "docs", text: "README — Vitest in a consuming app needs `server.deps.inline: [\"ui-common-components\"]`." },
+    ],
+  },
+  {
+    version: "0.0.12",
+    date: "27 Nov 2026",
+    status: "previous",
     summary: "React 18 fixes: Accordion inert, DatePicker keeps focus on Enter.",
     changes: [
       { type: "fixed", text: "Accordion — closed animated panels are inert on React 18 too (attribute set on the DOM node; React 18 dropped the boolean `inert` prop, leaving hidden panels focusable)." },

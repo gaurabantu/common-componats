@@ -2040,7 +2040,11 @@ var TextInput = (0, import_react8.forwardRef)(({
   const suffixPadLeft = isIntegratedRail ? 0 : fieldMetrics.suffixPadLeft;
   const suffixPadRight = isIntegratedRail ? 0 : fieldMetrics.suffixPadRight;
   const inputElementStyle = {
-    height: fieldMetrics.minHeight,
+    // Fill the shell's grid row instead of repeating its min-height: the shell is border-box with a
+    // 1.5px border, so a full-height input made every TextInput 3px taller than a Select of the
+    // same size (33 vs 30px at sm) and fields in one form row did not line up.
+    height: "auto",
+    alignSelf: "stretch",
     fontSize: fieldMetrics.fontSize,
     lineHeight: fieldMetrics.inputLineHeight,
     boxSizing: "border-box",
@@ -4951,9 +4955,11 @@ var Combobox = import_react20.default.memo(function Combobox2({
   const helperMessage = error != null ? error : helperText;
   const sizeStyles = (0, import_react20.useMemo)(() => {
     const map = {
-      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)" },
-      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)" },
-      lg: { minH: "3rem", font: "var(--text-body-size, 16px)" }
+      // padX mirrors Select's paddingX (10 / 12 / 16) so a Combobox and a Select in the same form
+      // start their text at the same x.
+      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)", padX: "10px" },
+      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)", padX: "12px" },
+      lg: { minH: "3rem", font: "var(--text-body-size, 16px)", padX: "var(--space-2, 16px)" }
     };
     return map[size];
   }, [size]);
@@ -5028,6 +5034,7 @@ var Combobox = import_react20.default.memo(function Combobox2({
               style: {
                 "--combobox-min-h": sizeStyles.minH,
                 "--combobox-font-size": sizeStyles.font,
+                "--combobox-pad-x": sizeStyles.padX,
                 "--combobox-border": borderColor
               },
               children: [

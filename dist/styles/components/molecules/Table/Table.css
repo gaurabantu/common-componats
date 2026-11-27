@@ -1,0 +1,803 @@
+/* Table — data table aligned with design tokens (spacing, radius, shadows) */
+.table-wrapper {
+  --table-surface: var(--color-bg-surface);
+  --table-border-token: var(--color-border-default);
+  --table-divider-color: var(--color-border-subtle, var(--color-mist-60));
+  --table-cell-divider-color: var(--color-border-subtle, var(--color-mist-60));
+  font-family: var(--font-family, "Inter"), system-ui, sans-serif;
+  background: var(--table-surface);
+  border-radius: var(--radius-md, 6px);
+  overflow: hidden;
+  box-shadow: var(--table-shadow, var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.06)));
+  border: 1px solid var(--table-border, var(--table-border-token));
+}
+
+/* Dark theme — for dark backgrounds (PredictStreet, dashboards) */
+.table-theme-dark {
+  --table-surface: var(--color-bg-surface);
+  --table-border: var(--color-border-default);
+  --table-text: var(--color-text-primary);
+  --table-text-muted: var(--color-text-secondary);
+  --table-header-bg: var(--color-surface-mist);
+  --table-header-text: var(--color-text-secondary);
+  --table-row-hover: rgba(255, 255, 255, 0.04);
+  --table-stripe: rgba(255, 255, 255, 0.02);
+  --table-border-color: var(--color-border-default);
+  --table-shadow: var(--shadow-md);
+}
+
+.table-theme-dark {
+  background: var(--table-surface);
+  border-color: var(--table-border);
+  box-shadow: var(--table-shadow);
+}
+
+.table-theme-dark .table-thead,
+.table-theme-dark .table-thead-theme-light {
+  background: var(--table-header-bg) !important;
+  border-bottom-color: var(--table-border-color) !important;
+}
+
+.table-theme-dark .table-thead th {
+  color: var(--table-header-text) !important;
+  border-bottom-color: var(--table-border-color) !important;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.table-theme-dark .table-tbody td {
+  color: var(--table-text) !important;
+  border-bottom-color: var(--table-border-color) !important;
+}
+
+.table-theme-dark .table-striped .table-tbody tr:nth-child(even) td {
+  background: var(--table-stripe) !important;
+}
+
+.table-theme-dark .table-hover .table-tbody tr:hover td {
+  background: var(--table-row-hover) !important;
+}
+
+.table-theme-dark .table-row-selected td {
+  background: color-mix(in srgb, var(--color-state-success) 12%, transparent) !important;
+}
+
+.table-theme-dark .table-pagination {
+  background: var(--table-surface) !important;
+  border-top-color: var(--table-border-color) !important;
+}
+
+.table-theme-dark .table-pagination-btn,
+.table-theme-dark .table-pagination-page {
+  background: var(--table-header-bg) !important;
+  border-color: var(--table-border-color) !important;
+  color: var(--table-text) !important;
+}
+
+.table-theme-dark .table-pagination-btn:hover:not(:disabled),
+.table-theme-dark .table-pagination-page:hover {
+  background: var(--table-row-hover) !important;
+}
+
+.table-theme-dark .table-pagination-page.active {
+  background: var(--table-accent, var(--color-theme-primary)) !important;
+  border-color: var(--table-accent, var(--color-theme-primary)) !important;
+  color: var(--color-text-on-primary-inverse) !important;
+}
+
+.table-theme-dark .table-empty {
+  color: var(--table-text-muted) !important;
+}
+
+.table-theme-dark .table-sortable:hover {
+  background: var(--table-row-hover) !important;
+}
+
+.table-theme-dark .table-expand-btn {
+  color: var(--table-text-muted) !important;
+}
+
+.table-theme-dark .table-expand-btn:hover {
+  color: var(--table-text) !important;
+}
+
+.table-theme-dark .table-loading-overlay {
+  background: color-mix(in srgb, var(--table-surface) 70%, var(--table-text));
+  color: var(--table-text) !important;
+}
+
+.table-theme-dark .table-toolbar {
+  border-bottom-color: var(--table-border-color, var(--table-border));
+}
+
+/* Toolbar — search + actions */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 16px);
+  flex-wrap: wrap;
+  padding: var(--space-2, 16px) var(--space-2, 16px) var(--space-1, 8px);
+  margin-bottom: 0;
+  min-height: var(--space-5, 40px);
+  border-bottom: 1px solid var(--table-divider-color);
+}
+
+.table-toolbar-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 16px);
+}
+
+.table-toolbar-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 8px);
+}
+
+
+/* Base table */
+.table-base {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: var(--text-body-size, 14px);
+  line-height: 1.5;
+  table-layout: fixed;
+}
+
+.table-base.table-layout-auto {
+  table-layout: auto;
+}
+
+.table-layout-fixed {
+  table-layout: fixed;
+}
+
+/* Minimal variant — cleaner, less visual noise */
+.table-variant-minimal .table-thead th {
+  border-bottom-width: 1px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.table-variant-minimal .table-tbody td {
+  border-bottom-color: var(--table-divider-color);
+  border-bottom-width: 1px;
+}
+
+.table-variant-minimal.table-striped .table-tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--color-text-primary) 2%, var(--color-bg-surface));
+}
+
+/* Table header */
+.table-thead {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.table-thead th {
+  padding: 12px var(--space-2, 16px);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--text-small-size, 12px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid var(--table-cell-divider-color);
+  white-space: nowrap;
+}
+
+.table-thead th.text-center {
+  text-align: center;
+}
+
+.table-thead th.text-end {
+  text-align: right;
+}
+
+/* Header variants */
+.table-thead-theme-primary {
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+}
+
+.table-thead-theme-primary th {
+  color: var(--color-text-on-primary);
+  border-bottom-color: color-mix(in srgb, var(--color-text-on-primary) 20%, transparent);
+}
+
+.table-thead-theme-light {
+  background: var(--color-bg-secondary);
+}
+
+.table-thead-theme-dark {
+  background: var(--color-text-primary);
+  color: var(--color-text-on-primary);
+}
+
+.table-thead-theme-dark th {
+  color: var(--color-text-on-primary);
+  border-bottom-color: color-mix(in srgb, var(--color-text-on-primary) 20%, transparent);
+}
+
+/* Table body cells */
+.table-tbody td {
+  padding: 12px var(--space-2, 16px);
+  border-bottom: 1px solid var(--table-cell-divider-color);
+  color: var(--color-text-primary);
+  vertical-align: middle;
+}
+
+.table-tbody td.text-center {
+  text-align: center;
+}
+
+.table-tbody td.text-end {
+  text-align: right;
+}
+
+/* Striped rows — token-aware tints */
+.table-striped .table-tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--color-text-primary) 4%, var(--color-bg-surface));
+}
+
+/* Hover */
+.table-hover .table-tbody tr:hover td {
+  background: var(--color-row-hover-bg, color-mix(in srgb, var(--color-text-primary) 7%, var(--color-bg-surface)));
+}
+
+.table-hover .table-tbody tr:hover td[style*="background"] {
+  background: color-mix(in srgb, var(--color-text-primary) 9%, var(--color-bg-surface)) !important;
+}
+
+/* Bordered */
+.table-bordered {
+  border: 1px solid var(--color-border-default);
+}
+
+.table-bordered .table-thead th,
+.table-bordered .table-tbody td {
+  border: 1px solid var(--table-cell-divider-color);
+}
+
+.table-bordered .table-thead th {
+  border-bottom: 2px solid var(--table-cell-divider-color);
+}
+
+/* Density: sm / md (default) / lg */
+.table-size-sm .table-thead th,
+.table-size-sm .table-tbody td {
+  padding: var(--space-1, 8px) 12px;
+  font-size: var(--text-small-size, 13px);
+}
+
+.table-size-lg .table-thead th,
+.table-size-lg .table-tbody td {
+  padding: var(--space-2, 16px) var(--space-3, 24px);
+  font-size: var(--text-body-size, 14px);
+}
+
+.table-size-lg .table-thead th {
+  font-size: var(--text-small-size, 12px);
+}
+
+/* Compact — tightest; wins over size-sm when both are set */
+.table-compact .table-thead th,
+.table-compact .table-tbody td {
+  padding: var(--space-1, 8px) 12px;
+  font-size: var(--text-small-size, 13px);
+}
+
+/* Selected row */
+.table-row-selected td {
+  background: var(--color-selected-bg, var(--color-accent-sky-10)) !important;
+}
+
+/* Sticky header */
+.table-sticky-header .table-thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.06));
+}
+
+.table-sticky-header .table-thead th {
+  background: inherit;
+}
+
+/* Scroll wrapper — horizontal scroll on small screens (responsive) */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scroll body — vertical (sticky header) and horizontal */
+.table-scroll-body {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sortable header */
+.table-sortable {
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.table-sortable:hover {
+  background: color-mix(in srgb, var(--color-text-primary) 6%, var(--color-bg-secondary)) !important;
+}
+
+.table-sortable:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-brand-primary));
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.table-sort-icon {
+  margin-left: var(--space-1, 8px);
+  opacity: 0.65;
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+/* Expand row control */
+.table-expand-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin: calc(var(--space-1, 8px) * -1);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-base, 4px);
+}
+
+.table-expand-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.table-expand-btn:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-brand-primary));
+  outline-offset: 2px;
+}
+
+.table-expand-btn-icon {
+  display: inline-block;
+  transition: transform var(--duration-fast, 200ms) var(--easing-default);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.table-expand-btn-expanded .table-expand-btn-icon {
+  transform: rotate(90deg);
+}
+
+/* Loading overlay */
+.table-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-bg-surface) 88%, var(--color-text-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  color: var(--color-text-primary);
+}
+
+.table-skeleton-row td {
+  padding: 12px var(--space-2, 16px);
+}
+
+.table-skeleton-line {
+  width: 100%;
+  height: 14px;
+  border-radius: var(--radius-base, 4px);
+  background: color-mix(in srgb, var(--color-text-primary) 10%, var(--color-bg-surface));
+  animation: table-skeleton-pulse 1.2s var(--easing-default, ease-in-out) infinite;
+}
+
+@keyframes table-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-skeleton-line {
+    animation: none;
+    opacity: 0.72;
+  }
+
+  .table-expand-btn-icon {
+    transition: none;
+  }
+}
+
+/* Expanded row */
+.table-expanded-row td {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--table-cell-divider-color);
+  background: var(--color-bg-secondary) !important;
+  vertical-align: top;
+}
+
+/* Footer */
+.table-base tfoot td {
+  padding: 12px var(--space-2, 16px);
+  border-top: 2px solid var(--table-cell-divider-color);
+  background: var(--color-bg-secondary);
+  font-weight: 500;
+}
+
+/* Optional vertical separators between columns */
+.table-vertical-divider .table-thead th:not(:last-child),
+.table-vertical-divider .table-tbody td:not(:last-child) {
+  border-right: 1px solid var(--table-cell-divider-color);
+}
+
+/* Empty state */
+.table-empty {
+  padding: var(--space-6, 48px) var(--space-3, 24px);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-body-size, 14px);
+  max-width: 28rem;
+  margin-inline: auto;
+}
+
+/* Pagination */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2, 16px);
+  padding: var(--space-2, 16px);
+  border-top: 1px solid var(--table-divider-color);
+  background: var(--color-bg-surface);
+}
+
+.table-pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 8px);
+}
+
+.table-pagination-btn {
+  min-width: var(--button-height-sm, 2rem);
+  min-height: var(--button-height-sm, 2rem);
+  padding: 0 var(--space-1, 8px);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-base, 4px);
+  cursor: pointer;
+  font-size: var(--text-secondary-size, 14px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    border-color var(--duration-instant, 100ms) var(--easing-default);
+}
+
+.table-pagination-btn:hover:not(:disabled) {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-default);
+}
+
+.table-pagination-btn:focus-visible,
+.table-pagination-page:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-brand-primary));
+  outline-offset: 2px;
+}
+
+.table-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.table-pagination-page {
+  min-width: var(--button-height-sm, 2rem);
+  min-height: var(--button-height-sm, 2rem);
+  padding: 0 var(--space-1, 8px);
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-base, 4px);
+  cursor: pointer;
+  font-size: var(--text-secondary-size, 14px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition:
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default);
+}
+
+.table-pagination-page:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.table-pagination-page.active {
+  background: var(--color-page-current-bg, var(--color-brand-primary));
+  color: var(--color-page-current-fg, var(--color-bg-surface));
+  font-weight: 600;
+}
+
+.table-pagination-ellipsis {
+  padding: 0 var(--space-1, 8px);
+  color: var(--color-text-secondary);
+  font-size: var(--text-body-size, 14px);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+/* —— Compositional / semantic table (shadcn-style markup API: TableRoot, TableHeader, TableBody, …) —— */
+/* Row/column hairlines: a light tint of the control border so dividers read as
+   structure, not as bold rules (--color-border-default is sized for 3:1 input
+   outlines). Override `--table-ui-divider` on a host to tune. */
+:root {
+  --table-ui-divider: var(--color-border-divider, color-mix(in srgb, var(--color-border-default) 25%, var(--color-bg-surface)));
+}
+
+.table-ui-wrap {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--table-ui-divider);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.06));
+}
+
+.table-ui {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  caption-side: bottom;
+  font-size: var(--text-secondary-size, 14px);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  /* Opaque even without .table-ui-wrap (scroll={false}) — otherwise body cells
+     show the page background (#e0e0e0) and rows read as gray. */
+  background: var(--color-bg-surface);
+}
+
+.table-ui-caption {
+  margin-top: var(--space-2, 16px);
+  color: var(--color-text-secondary);
+  font-size: var(--text-secondary-size, 14px);
+  text-align: left;
+}
+
+.table-ui-thead {
+  background: var(--color-bg-secondary);
+}
+
+.table-ui-th {
+  padding: var(--space-2, 12px) var(--space-2, 16px);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--text-small-size, 12px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--table-ui-divider);
+  white-space: nowrap;
+}
+
+.table-ui-th.text-center {
+  text-align: center;
+}
+
+.table-ui-th.text-end {
+  text-align: right;
+}
+
+.table-ui-tbody .table-ui-tr:last-child .table-ui-td {
+  border-bottom: none;
+}
+
+.table-ui-td {
+  padding: var(--space-2, 12px) var(--space-2, 16px);
+  border-bottom: 1px solid var(--table-ui-divider);
+  vertical-align: middle;
+}
+
+.table-ui-tbody .table-ui-tr:hover .table-ui-td {
+  background: var(--color-grid-row-hover-bg, color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface)));
+}
+
+.table-ui-tfoot {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+}
+
+.table-ui-tfoot .table-ui-td {
+  border-top: 1px solid var(--table-ui-divider);
+  border-bottom: none;
+}
+
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-wrap,
+.dark .table-ui-wrap {
+  background: var(--color-bg-surface);
+  border-color: var(--table-ui-divider);
+}
+
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-thead,
+.dark .table-ui-thead {
+  background: var(--color-bg-secondary);
+}
+
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-td,
+:is([data-theme="dark"], [data-theme="infinia-dark"]) .table-ui-th,
+.dark .table-ui-td,
+.dark .table-ui-th {
+  border-color: var(--table-ui-divider);
+  color: var(--color-text-primary);
+}
+
+/* —— TableRoot options (0.0.4) —— */
+
+/* flush: embedded in a Card / panel — no chrome of its own. */
+.table-ui-wrap--flush {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* Sticky header / first column. `separate` keeps cell borders painted while cells are stuck
+   (with `collapse` they scroll away with the row). */
+.table-ui--sticky-header,
+.table-ui--sticky-first-col {
+  border-collapse: separate;
+}
+
+.table-ui--sticky-header .table-ui-thead .table-ui-th,
+.table-ui--sticky-header .table-ui-thead .table-ui-td {
+  position: sticky;
+  top: var(--table-ui-sticky-top, 0);
+  z-index: 2;
+  background: var(--color-bg-secondary, var(--color-bg-surface));
+}
+
+.table-ui--sticky-first-col .table-ui-tr > :first-child {
+  position: sticky;
+  left: var(--table-ui-sticky-left, 0);
+  z-index: 1;
+  background: var(--color-bg-surface);
+}
+
+.table-ui--sticky-first-col .table-ui-thead .table-ui-tr > :first-child,
+.table-ui--sticky-first-col .table-ui-tfoot .table-ui-tr > :first-child {
+  background: var(--color-bg-secondary, var(--color-bg-surface));
+}
+
+/* Corner cell: above both the sticky header row and the sticky column. */
+.table-ui--sticky-header.table-ui--sticky-first-col .table-ui-thead .table-ui-tr > :first-child {
+  z-index: 3;
+}
+
+/* TableHead casing / wrap */
+.table-ui-th--casing-none {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.table-ui-th--wrap {
+  white-space: normal;
+}
+
+/* TableRow selected */
+.table-ui-tr--selected > .table-ui-td,
+.table-ui-tr--selected > .table-ui-th {
+  background: var(--color-selected-bg, var(--color-accent-lavender-10));
+}
+
+.table-ui-tbody .table-ui-tr--selected:hover > .table-ui-td {
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-selected-bg, var(--color-accent-lavender-10)));
+}
+
+.table-ui-tr--selected > :first-child {
+  box-shadow: inset 3px 0 0 var(--color-selected-indicator, var(--color-border-selected));
+}
+
+/* Sticky first column keeps the row's hover / selected tint. */
+.table-ui--sticky-first-col .table-ui-tbody .table-ui-tr:hover > :first-child {
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface));
+}
+
+.table-ui--sticky-first-col .table-ui-tr.table-ui-tr--selected > :first-child {
+  background: var(--color-selected-bg, var(--color-accent-lavender-10));
+}
+
+.table-ui--sticky-first-col .table-ui-tbody .table-ui-tr.table-ui-tr--selected:hover > :first-child {
+  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-selected-bg, var(--color-accent-lavender-10)));
+}
+
+/* —— In-cell editors (0.0.4) ——
+   Wrap an Input / Select that edits a table cell in `.table-ui-cell-editor`: compact height,
+   small text, and no outline at rest — the border appears on row hover and on focus, so a grid
+   full of editors reads like data, not like a form. Heights follow --button-height-sm, so the
+   override is a token, not a hard-coded size. Inline borders on the controls need !important. */
+.table-ui-cell-editor {
+  --button-height-sm: 1.625rem;
+  --ucs-select-chevron-inset: 6px;
+  display: inline-block;
+}
+
+.table-ui-cell-editor select,
+.table-ui-cell-editor div:has(> input) {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.table-ui-cell-editor select,
+.table-ui-cell-editor input {
+  font-size: var(--text-small-size) !important;
+}
+
+.table-ui-cell-editor select {
+  padding-left: 6px !important;
+  padding-right: 22px !important;
+  cursor: pointer;
+}
+
+.table-ui-cell-editor input {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+/* Affordance: show the control on row hover / pointer hover, and fully on focus. */
+.table-ui-tr:hover .table-ui-cell-editor select,
+.table-ui-tr:hover .table-ui-cell-editor div:has(> input),
+.table-ui-cell-editor:hover select,
+.table-ui-cell-editor:hover div:has(> input) {
+  border-color: var(--table-ui-divider) !important;
+  background-color: var(--color-bg-surface) !important;
+}
+
+.table-ui-cell-editor select:focus,
+.table-ui-cell-editor div:has(> input:focus) {
+  border-color: var(--color-border-focus) !important;
+  background-color: var(--color-bg-surface) !important;
+}
+
+/* —— Long-text cells (0.0.4) ——
+   `.table-ui-clamp` on a cell's content: a readable column width and at most 3 lines (override
+   with --table-ui-clamp-lines); pair it with `title={fullText}` so the rest shows on hover. Stops a
+   description from squeezing into a one-word-per-line ribbon or blowing up the row height. */
+.table-ui-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--table-ui-clamp-lines, 3);
+  line-clamp: var(--table-ui-clamp-lines, 3);
+  overflow: hidden;
+  min-width: 14rem;
+  max-width: 28rem;
+  white-space: normal;
+  overflow-wrap: break-word;
+}

@@ -1,0 +1,29 @@
+/* ToolTip (deprecated wrapper) — trigger only; the bubble is styled by molecules/Tooltip/Tooltip.css. */
+.ds-tooltip-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+}
+
+.ds-tooltip-icon:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-tooltip-icon__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.ds-tooltip-icon__body[data-has-media="true"] {
+  gap: var(--space-1);
+}
+
+@media (forced-colors: active) {
+  .ds-tooltip-icon:focus-visible {
+    outline-color: Highlight;
+  }
+}

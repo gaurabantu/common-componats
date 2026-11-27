@@ -1,0 +1,17 @@
+/* ContextMenu — reuses .ds-popover__content surface + .ds-dropdown-menu__* rows from Popover.css. */
+
+.ds-context-menu__content {
+  min-width: 180px;
+  overscroll-behavior: contain;
+}
+
+/* Before the first measurement keep it invisible (but focusable) so it never flashes at the raw point. */
+.ds-context-menu__content[data-positioned="false"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ds-context-menu__trigger:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

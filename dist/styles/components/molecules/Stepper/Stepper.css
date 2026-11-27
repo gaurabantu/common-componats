@@ -1,0 +1,352 @@
+/* Stepper — row 1: markers + gap columns (line through circle centers); row 2: labels */
+
+.ds-stepper {
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-family, "Inter", system-ui, sans-serif);
+}
+
+.ds-stepper[data-size="sm"] {
+  --stepper-marker: 24px;
+  --stepper-marker-font: 11px;
+  --stepper-row-gap: var(--space-1, 8px);
+  --stepper-label-size: var(--text-small-size, 12px);
+  --stepper-desc-size: 11px;
+}
+
+.ds-stepper[data-size="md"] {
+  --stepper-marker: 32px;
+  --stepper-marker-font: var(--text-small-size, 12px);
+  --stepper-row-gap: var(--space-1, 8px);
+  --stepper-label-size: var(--text-secondary-size, 14px);
+  --stepper-desc-size: var(--text-small-size, 12px);
+}
+
+.ds-stepper__grid {
+  display: grid;
+  grid-template-rows: auto auto;
+  row-gap: var(--stepper-row-gap, var(--space-1, 8px));
+  -moz-column-gap: 0;
+       column-gap: 0;
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+.ds-stepper__track-shell {
+  position: relative;
+  z-index: 0;
+  min-height: var(--stepper-marker, 44px);
+  pointer-events: none;
+  align-self: stretch;
+}
+
+/*
+ * Track spans only between the *grid column centers* of the first and last marker.
+ * (Fixed px inset was wrong: circles sit in 1fr columns, not at the container edge.)
+ */
+.ds-stepper__track-inset {
+  position: absolute;
+  --_c: var(--stepper-total-cols, 5);
+  left: calc(100% / (2 * var(--_c)));
+  width: calc(100% * (var(--_c) - 1) / var(--_c));
+  right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.ds-stepper__track-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.ds-stepper__track-line--bg {
+  z-index: 0;
+  right: 0;
+  background: var(--color-border-default);
+  opacity: 0.9;
+}
+
+.ds-stepper__track-line--fill {
+  z-index: 1;
+  width: var(--stepper-progress-pct, 0%);
+  max-width: 100%;
+  background: var(--color-state-success);
+  transition: width var(--duration-normal, 300ms) var(--easing-default);
+}
+
+/* Emphasized: thicker stem + gradient progress */
+.ds-stepper[data-appearance="emphasized"] .ds-stepper__track-inset {
+  height: 4px;
+}
+
+.ds-stepper[data-appearance="emphasized"] .ds-stepper__track-line--fill {
+  background: linear-gradient(
+    90deg,
+    var(--color-state-success),
+    color-mix(in srgb, var(--color-state-success) 75%, var(--color-brand-secondary))
+  );
+}
+
+/* Segments / none: no continuous fill bar */
+.ds-stepper[data-track-mode="none"] .ds-stepper__track-line--fill,
+.ds-stepper[data-track-mode="segments"] .ds-stepper__track-line--fill {
+  display: none;
+}
+
+/* Segments: only per-gap lines (hide full-width baseline) */
+.ds-stepper[data-track-mode="segments"] .ds-stepper__track-line--bg {
+  display: none;
+}
+
+/* None: optional subtle baseline — hide so gaps-only reads cleaner */
+.ds-stepper[data-track-mode="none"] .ds-stepper__track-line--bg {
+  display: none;
+}
+
+.ds-stepper__cell--marker {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+.ds-stepper__cell--label {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.ds-stepper__marker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-md, 6px);
+}
+
+.ds-stepper__marker-btn:focus {
+  outline: none;
+}
+
+.ds-stepper__marker-btn:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-stepper__marker-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ds-stepper__marker {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--stepper-marker, 44px);
+  height: var(--stepper-marker, 44px);
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid var(--color-step-upcoming-border, var(--color-border-default));
+  background: var(--color-step-upcoming-bg, var(--color-surface-mist, var(--color-bg-elevated)));
+  font-weight: 600;
+  font-size: var(--stepper-marker-font, 12px);
+  line-height: 1;
+  color: var(--color-text-secondary);
+  transition:
+    border-color var(--duration-instant, 100ms) var(--easing-default),
+    background-color var(--duration-instant, 100ms) var(--easing-default),
+    color var(--duration-instant, 100ms) var(--easing-default);
+}
+
+.ds-stepper__marker-btn[data-state="complete"] .ds-stepper__marker {
+  border-color: var(--color-step-complete-bg, var(--color-state-success));
+  background: var(--color-step-complete-bg, var(--color-state-success));
+  color: var(--color-step-complete-fg, var(--color-text-on-primary));
+}
+
+.ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
+  border-color: var(--color-step-current-bg, var(--color-brand-primary));
+  background: var(--color-step-current-bg, var(--color-brand-primary));
+  color: var(--color-step-current-fg, var(--color-text-on-primary));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-step-current-ring, var(--color-brand-secondary)) 45%, transparent);
+}
+
+.ds-stepper[data-appearance="emphasized"] .ds-stepper__marker-btn[data-state="current"] .ds-stepper__marker {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-step-current-ring, var(--color-brand-secondary)) 60%, transparent);
+}
+
+.ds-stepper__marker-btn:not(:disabled):hover[data-state="upcoming"] .ds-stepper__marker {
+  border-color: var(--color-step-current-bg, var(--color-brand-primary));
+  color: var(--color-text-primary);
+}
+
+.ds-stepper__check {
+  display: block;
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.ds-stepper__marker-inner {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 0.92em;
+  line-height: 1.1;
+}
+
+.ds-stepper__marker-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35em;
+  height: 1.35em;
+  max-width: 62%;
+  max-height: 62%;
+  flex-shrink: 0;
+}
+
+.ds-stepper__marker-icon-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ds-stepper__label-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.ds-stepper__label-block[data-interactive="true"] {
+  cursor: pointer;
+}
+
+.ds-stepper__label-block:not([data-interactive="true"]) {
+  pointer-events: none;
+  cursor: default;
+}
+
+.ds-stepper__label-block[data-state="upcoming"] .ds-stepper__label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.ds-stepper__label {
+  font-size: var(--stepper-label-size, 14px);
+  font-weight: 600;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.ds-stepper__description {
+  font-size: var(--stepper-desc-size, 12px);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+}
+
+/* Gap columns: segments between circle centers (middle of row 1) */
+.ds-stepper__gap {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  width: calc(100% - 2 * var(--space-1, 8px));
+  margin-inline: var(--space-1, 8px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-border-default);
+  opacity: 0.9;
+}
+
+.ds-stepper[data-appearance="emphasized"] .ds-stepper__gap {
+  height: 3px;
+  border-radius: 3px;
+}
+
+.ds-stepper__gap--complete {
+  background: var(--color-step-complete-bg, var(--color-state-success));
+  opacity: 1;
+}
+
+/* Continuous mode: full-width track handles the line; gap columns are layout-only */
+.ds-stepper[data-track-mode="continuous"] .ds-stepper__gap {
+  visibility: hidden;
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .ds-stepper--scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-1, 8px);
+    scrollbar-width: thin;
+  }
+
+  .ds-stepper--scroll .ds-stepper__grid {
+    min-width: max(100%, calc((var(--stepper-count, 3) * 2 - 1) * 72px));
+  }
+}
+
+/* Narrow viewports: horizontal scroll keeps alignment (line stays centered on circles) */
+@media (max-width: 639px) {
+  .ds-stepper:not(.ds-stepper--scroll) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-1, 8px);
+  }
+
+  .ds-stepper:not(.ds-stepper--scroll) .ds-stepper__grid {
+    min-width: max(100%, calc((var(--stepper-count, 3) * 2 - 1) * 64px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-stepper__track-line--fill {
+    transition: none;
+  }
+
+  .ds-stepper__marker {
+    transition: none;
+  }
+}
+
+/* Visually hidden step position ("Step 2 of 4, completed:") — read as part of the marker button name. */
+.ds-stepper__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

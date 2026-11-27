@@ -1,0 +1,239 @@
+/* ─── Feedback Shell (EmptyState / ErrorState) ────────────────────────────── */
+
+.ds-feedback-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-card);
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+  background: color-mix(in srgb, var(--color-fill-muted) 85%, transparent);
+  color: var(--color-text-primary);
+  text-align: center;
+  max-width: 28rem;
+  margin-inline: auto;
+}
+
+/* ── Size scale ─────────────────────────────────────────────────── */
+
+.ds-feedback-shell--sm {
+  padding: var(--space-3) var(--space-4);
+  gap: var(--space-2);
+  max-width: 22rem;
+}
+
+.ds-feedback-shell--sm .ds-feedback-icon {
+  font-size: 1.5rem;
+}
+
+.ds-feedback-shell--md {
+  /* inherits base */
+}
+
+.ds-feedback-shell--lg {
+  padding: var(--space-6) var(--space-7);
+  gap: var(--space-4);
+  max-width: 34rem;
+}
+
+.ds-feedback-shell--lg .ds-feedback-icon {
+  font-size: 3rem;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+
+.ds-feedback-shell--compact {
+  padding: var(--space-4);
+  gap: var(--space-2);
+}
+
+.ds-feedback-shell--align-start {
+  align-items: flex-start;
+  text-align: start;
+  margin-inline: 0;
+}
+
+/* ── Tones ───────────────────────────────────────────────────────── */
+
+.ds-feedback-shell--danger {
+  border-color: color-mix(in srgb, var(--color-danger-fill) 55%, var(--color-border-subtle));
+  background: color-mix(in srgb, var(--color-danger-fill) 35%, transparent);
+}
+
+.ds-feedback-shell--danger .ds-feedback-status-icon {
+  color: var(--color-danger-strong);
+}
+
+.ds-feedback-shell--tone-warning {
+  border-color: color-mix(in srgb, var(--color-warning-strong) 50%, var(--color-border-subtle));
+  background: color-mix(in srgb, var(--color-warning-soft) 50%, transparent);
+}
+
+.ds-feedback-shell--tone-warning .ds-feedback-status-icon {
+  color: var(--color-warning-strong);
+}
+
+.ds-feedback-shell--tone-info {
+  border-color: color-mix(in srgb, var(--color-info-fill) 55%, var(--color-border-subtle));
+  background: color-mix(in srgb, var(--color-info-fill) 35%, transparent);
+}
+
+.ds-feedback-shell--tone-info .ds-feedback-status-icon {
+  color: var(--color-info-strong);
+}
+
+.ds-feedback-shell--tone-success {
+  border-color: color-mix(in srgb, var(--color-success-fill) 55%, var(--color-border-subtle));
+  background: color-mix(in srgb, var(--color-success-fill) 35%, transparent);
+}
+
+.ds-feedback-shell--tone-success .ds-feedback-status-icon {
+  color: var(--color-success-strong);
+}
+
+.ds-feedback-shell--tone-neutral {
+  border-color: var(--color-border-subtle);
+  background: color-mix(in srgb, var(--color-fill-muted) 95%, transparent);
+}
+
+/* ── Image / illustration slot ───────────────────────────────────── */
+
+.ds-feedback-image {
+  width: 100%;
+  max-width: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-feedback-shell--align-start .ds-feedback-image {
+  justify-content: flex-start;
+}
+
+/* ── Icon ────────────────────────────────────────────────────────── */
+
+.ds-feedback-icon {
+  font-size: 2.25rem;
+  line-height: 1;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.ds-feedback-icon--status {
+  font-size: 1rem;
+}
+
+.ds-feedback-status-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* ── Actions ─────────────────────────────────────────────────────── */
+
+.ds-feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+  margin-top: var(--space-1);
+}
+
+.ds-feedback-extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.ds-feedback-shell--align-start .ds-feedback-actions,
+.ds-feedback-shell--align-start .ds-feedback-extra {
+  justify-content: flex-start;
+}
+
+/* ── Detail block (error diagnostics) ───────────────────────────── */
+
+.ds-feedback-detail {
+  width: 100%;
+  padding: var(--space-2);
+  margin: 0;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-fill-surface) 60%, transparent);
+  border: var(--border-width-thin) dashed var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  font-size: var(--text-small-size);
+  text-align: start;
+  word-break: break-word;
+}
+
+/* ─── Offline Banner ─────────────────────────────────────────────────────── */
+
+.ds-offline-banner {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  color: var(--color-text-primary);
+}
+
+.ds-offline-banner--warning {
+  background: color-mix(in srgb, var(--color-warning-soft) 65%, transparent);
+}
+
+.ds-offline-banner--neutral {
+  background: color-mix(in srgb, var(--color-fill-muted) 90%, transparent);
+}
+
+.ds-offline-banner__icon-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+}
+
+.ds-offline-banner__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.ds-offline-banner__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ds-offline-banner__actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ds-offline-banner--compact {
+  padding-block: var(--space-2);
+  gap: var(--space-2);
+}
+
+.ds-offline-banner--sticky {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+/* ─── Illustration motion (§18) ──────────────────────────────────────────── */
+
+/**
+ * Feedback SVG animations are decorative. Keyframes live inline on each illustration;
+ * this block disables them when the user prefers reduced motion (DESIGN_SYSTEM §18).
+ */
+@media (prefers-reduced-motion: reduce) {
+  .ds-feedback-illustration,
+  .ds-feedback-illustration * {
+    animation: none !important;
+  }
+}

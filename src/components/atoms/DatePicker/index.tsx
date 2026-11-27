@@ -225,9 +225,11 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }, [isOpen, updatePopoverPosition, closePopover]);
 
   const currentSize = {
-    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
-    lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" },
+    // `toggle` = calendar button box. It must fit inside the field: a fixed 36px button made every
+    // `sm` picker ~39px tall, taller than the Select / Input it sits next to. 24px+ keeps WCAG 2.5.8.
+    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)", toggle: 24, icon: 16 },
+    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)", toggle: 36, icon: 18 },
+    lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)", toggle: 40, icon: 18 },
   }[size];
 
   const resolvedStatus = status ?? (error ? "error" : undefined);
@@ -282,8 +284,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const inputStyle: React.CSSProperties = {
     width: "100%",
     minWidth: 0,
-    height: currentSize.minHeight,
-    padding: `0 ${currentSize.paddingX}px`,
+    // The input always sits inside a padded, bordered shell (triggerShellStyle), which owns the
+    // height and the side padding. A full-height input with its own padding made the field 3px
+    // taller than a Select of the same size and indented the text twice (paddingX × 2).
+    height: "auto",
+    alignSelf: "stretch",
+    padding: 0,
     border: "none",
     outline: "none",
     background: "transparent",
@@ -593,8 +599,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 36,
-              height: 36,
+              width: currentSize.toggle,
+              height: currentSize.toggle,
               flexShrink: 0,
               padding: 0,
               border: "none",
@@ -611,7 +617,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
             aria-label="Open calendar"
             disabled={disabled}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg width={currentSize.icon} height={currentSize.icon} viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
               <path d="M3 10h18" stroke="currentColor" strokeWidth="1.5" />
               <path d="M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -766,8 +772,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 36,
-            height: 36,
+            width: currentSize.toggle,
+            height: currentSize.toggle,
             flexShrink: 0,
             padding: 0,
             border: "none",
@@ -784,7 +790,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           aria-label="Open calendar"
           disabled={disabled}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg width={currentSize.icon} height={currentSize.icon} viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
             <path d="M3 10h18" stroke="currentColor" strokeWidth="1.5" />
             <path d="M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

@@ -1,0 +1,129 @@
+.ucs-color-picker {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-1, 8px);
+  font-family: var(--font-family);
+  max-width: 100%;
+  --ucs-swatch: 28px;
+}
+
+.ucs-color-picker--sm {
+  --ucs-swatch: 24px;
+}
+
+.ucs-color-picker__label {
+  font-size: var(--text-secondary-size, 0.8125rem);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.ucs-color-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--ucs-cols, 8), var(--ucs-swatch));
+  gap: var(--space-0, 4px);
+}
+
+.ucs-color-picker__swatch {
+  width: var(--ucs-swatch);
+  height: var(--ucs-swatch);
+  padding: 0;
+  margin: 0;
+  border-radius: var(--radius-md, 6px);
+  /* Neutral ring keeps light swatches visible on light surfaces (WCAG 1.4.11). */
+  border: 1px solid var(--color-border-default);
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ucs-color-picker__swatch:focus {
+  outline: none;
+}
+
+.ucs-color-picker__swatch:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+/* Selected: thick ring + check mark (state not by colour alone). */
+.ucs-color-picker__swatch[aria-checked="true"] {
+  box-shadow:
+    0 0 0 2px var(--color-bg-surface),
+    0 0 0 4px var(--color-border-strong);
+}
+
+.ucs-color-picker__check {
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.ucs-color-picker__swatch:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ucs-color-picker__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 8px);
+}
+
+.ucs-color-picker__preview {
+  width: var(--ucs-swatch);
+  height: var(--ucs-swatch);
+  flex-shrink: 0;
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--color-border-default);
+}
+
+.ucs-color-picker__hex {
+  box-sizing: border-box;
+  width: 7.5rem;
+  height: var(--button-height-sm, 1.875rem);
+  padding: 0 var(--space-1, 8px);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control, 6px);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono, ui-monospace, monospace);
+  font-size: var(--text-secondary-size, 0.8125rem);
+}
+
+.ucs-color-picker__hex:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: 1px;
+}
+
+.ucs-color-picker__hex[aria-invalid="true"] {
+  border-color: var(--color-border-error);
+}
+
+.ucs-color-picker__error {
+  font-size: var(--text-small-size, 0.75rem);
+  color: var(--color-state-error);
+}
+
+.ucs-color-picker__native {
+  width: var(--button-height-sm, 1.875rem);
+  height: var(--button-height-sm, 1.875rem);
+  padding: 2px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control, 6px);
+  background: var(--color-bg-surface);
+  cursor: pointer;
+}
+
+.ucs-color-picker__native:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .ucs-color-picker__swatch[aria-checked="true"] {
+    outline: 3px solid Highlight;
+    outline-offset: 1px;
+  }
+}

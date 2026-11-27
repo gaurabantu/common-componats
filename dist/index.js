@@ -1679,7 +1679,11 @@ var TextInput = (0, import_react5.forwardRef)(({
   const suffixPadLeft = isIntegratedRail ? 0 : fieldMetrics.suffixPadLeft;
   const suffixPadRight = isIntegratedRail ? 0 : fieldMetrics.suffixPadRight;
   const inputElementStyle = {
-    height: fieldMetrics.minHeight,
+    // Fill the shell's grid row instead of repeating its min-height: the shell is border-box with a
+    // 1.5px border, so a full-height input made every TextInput 3px taller than a Select of the
+    // same size (33 vs 30px at sm) and fields in one form row did not line up.
+    height: "auto",
+    alignSelf: "stretch",
     fontSize: fieldMetrics.fontSize,
     lineHeight: fieldMetrics.inputLineHeight,
     boxSizing: "border-box",
@@ -9971,9 +9975,11 @@ var DatePicker = ({
     };
   }, [isOpen, updatePopoverPosition, closePopover]);
   const currentSize = {
-    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
-    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)" },
-    lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)" }
+    // `toggle` = calendar button box. It must fit inside the field: a fixed 36px button made every
+    // `sm` picker ~39px tall, taller than the Select / Input it sits next to. 24px+ keeps WCAG 2.5.8.
+    sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)", toggle: 24, icon: 16 },
+    md: { minHeight: "var(--button-height-lg)", paddingX: 12, fontSize: "var(--text-body-size, 16px)", toggle: 36, icon: 18 },
+    lg: { minHeight: 48, paddingX: 16, fontSize: "var(--text-body-size, 16px)", toggle: 40, icon: 18 }
   }[size];
   const resolvedStatus = status != null ? status : error ? "error" : void 0;
   const borderColor = resolvedStatus === "error" ? "var(--color-state-error)" : resolvedStatus === "warning" ? "var(--color-state-warning)" : resolvedStatus === "success" ? "var(--color-state-success)" : "var(--color-border-default)";
@@ -10009,8 +10015,12 @@ var DatePicker = ({
   const inputStyle = {
     width: "100%",
     minWidth: 0,
-    height: currentSize.minHeight,
-    padding: `0 ${currentSize.paddingX}px`,
+    // The input always sits inside a padded, bordered shell (triggerShellStyle), which owns the
+    // height and the side padding. A full-height input with its own padding made the field 3px
+    // taller than a Select of the same size and indented the text twice (paddingX × 2).
+    height: "auto",
+    alignSelf: "stretch",
+    padding: 0,
     border: "none",
     outline: "none",
     background: "transparent",
@@ -10296,8 +10306,8 @@ var DatePicker = ({
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 36,
-              height: 36,
+              width: currentSize.toggle,
+              height: currentSize.toggle,
               flexShrink: 0,
               padding: 0,
               border: "none",
@@ -10313,7 +10323,7 @@ var DatePicker = ({
             "aria-expanded": isOpen,
             "aria-label": "Open calendar",
             disabled,
-            children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true", children: [
+            children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("svg", { width: currentSize.icon, height: currentSize.icon, viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true", children: [
               /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2", stroke: "currentColor", strokeWidth: "1.5" }),
               /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M3 10h18", stroke: "currentColor", strokeWidth: "1.5" }),
               /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M8 3v4M16 3v4", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" })
@@ -10482,8 +10492,8 @@ var DatePicker = ({
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 36,
-            height: 36,
+            width: currentSize.toggle,
+            height: currentSize.toggle,
             flexShrink: 0,
             padding: 0,
             border: "none",
@@ -10499,7 +10509,7 @@ var DatePicker = ({
           "aria-expanded": isOpen,
           "aria-label": "Open calendar",
           disabled,
-          children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true", children: [
+          children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("svg", { width: currentSize.icon, height: currentSize.icon, viewBox: "0 0 24 24", fill: "none", "aria-hidden": "true", children: [
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2", stroke: "currentColor", strokeWidth: "1.5" }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M3 10h18", stroke: "currentColor", strokeWidth: "1.5" }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("path", { d: "M8 3v4M16 3v4", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" })
@@ -12195,9 +12205,11 @@ var Combobox = import_react40.default.memo(function Combobox2({
   const helperMessage = error != null ? error : helperText;
   const sizeStyles = (0, import_react40.useMemo)(() => {
     const map = {
-      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)" },
-      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)" },
-      lg: { minH: "3rem", font: "var(--text-body-size, 16px)" }
+      // padX mirrors Select's paddingX (10 / 12 / 16) so a Combobox and a Select in the same form
+      // start their text at the same x.
+      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)", padX: "10px" },
+      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)", padX: "12px" },
+      lg: { minH: "3rem", font: "var(--text-body-size, 16px)", padX: "var(--space-2, 16px)" }
     };
     return map[size];
   }, [size]);
@@ -12272,6 +12284,7 @@ var Combobox = import_react40.default.memo(function Combobox2({
               style: {
                 "--combobox-min-h": sizeStyles.minH,
                 "--combobox-font-size": sizeStyles.font,
+                "--combobox-pad-x": sizeStyles.padX,
                 "--combobox-border": borderColor
               },
               children: [

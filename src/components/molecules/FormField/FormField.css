@@ -9,6 +9,10 @@
   width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  /* Pack label · control · hint at the top. A field in a form grid is stretched to the row height
+     (a sibling with a hint or an error is taller); with the default align-content the extra height
+     was shared between the rows, pushing this field's control down out of line with its siblings. */
+  align-content: start;
   gap: var(--space-0);
   min-width: 0;
   font-family: var(--font-family);

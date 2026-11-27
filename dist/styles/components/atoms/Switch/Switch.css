@@ -1,0 +1,26 @@
+/* Focus ring — WCAG 2.2 AA; tokens from design system */
+.ucs-switch__control:focus {
+  outline: none;
+}
+
+.ucs-switch__control:focus-visible {
+  outline: 2px solid var(--button-primary-focus-ring, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+.ucs-switch__control:disabled:focus-visible {
+  outline: none;
+}
+
+/* hideLabel — label stays the accessible name but is visually hidden. */
+.ucs-switch__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

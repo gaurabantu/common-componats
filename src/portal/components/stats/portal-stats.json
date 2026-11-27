@@ -84,6 +84,17 @@
     "charts": 5
    },
    "runtimeExports": 185
+  },
+  {
+   "version": "0.0.12",
+   "date": "2026-11-27",
+   "commit": "4e00cf0",
+   "components": {
+    "atoms": 28,
+    "molecules": 43,
+    "charts": 5
+   },
+   "runtimeExports": 206
   }
  ],
  "props": {
@@ -3611,7 +3622,7 @@
      "name": "loading",
      "type": "boolean",
      "required": false,
-     "doc": "Submitting: fields are disabled (<fieldset disabled>), the form gets aria-busy, submit is blocked."
+     "doc": "Submitting: fields are disabled (<fieldset disabled>), the form gets aria-busy, submit is blocked, and the actions group gets aria-disabled (still focusable — …"
     },
     {
      "name": "loadingLabel",
@@ -3623,7 +3634,7 @@
      "name": "disabled",
      "type": "boolean",
      "required": false,
-     "doc": "Disable every field (<fieldset disabled>) and block submit."
+     "doc": "Disable every field and every action (<fieldset disabled>) and block submit."
     },
     {
      "name": "errorSummary",

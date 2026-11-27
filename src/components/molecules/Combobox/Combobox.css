@@ -30,7 +30,7 @@
   width: 100%;
   min-width: 0;
   min-height: var(--combobox-min-h, var(--button-height-lg));
-  padding: 0 var(--space-2, 16px);
+  padding: 0 var(--combobox-pad-x, var(--space-2, 16px));
   text-align: left;
   border-radius: var(--radius-md, 6px);
   border: 1.5px solid var(--combobox-border, var(--color-border-default));

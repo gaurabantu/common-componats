@@ -188,9 +188,11 @@ export const Combobox = React.memo(function Combobox({
 
   const sizeStyles = useMemo(() => {
     const map = {
-      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)" },
-      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)" },
-      lg: { minH: "3rem", font: "var(--text-body-size, 16px)" },
+      // padX mirrors Select's paddingX (10 / 12 / 16) so a Combobox and a Select in the same form
+      // start their text at the same x.
+      sm: { minH: "var(--button-height-sm)", font: "var(--text-small-size, 12px)", padX: "10px" },
+      md: { minH: "var(--button-height-lg)", font: "var(--text-body-size, 16px)", padX: "12px" },
+      lg: { minH: "3rem", font: "var(--text-body-size, 16px)", padX: "var(--space-2, 16px)" },
     } as const;
     return map[size];
   }, [size]);
@@ -274,6 +276,7 @@ export const Combobox = React.memo(function Combobox({
             {
               "--combobox-min-h": sizeStyles.minH,
               "--combobox-font-size": sizeStyles.font,
+              "--combobox-pad-x": sizeStyles.padX,
               "--combobox-border": borderColor,
             } as React.CSSProperties
           }

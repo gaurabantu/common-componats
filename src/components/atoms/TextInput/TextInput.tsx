@@ -731,7 +731,11 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
 
   // Keep the native input visually flat; the field shell renders the border.
   const inputElementStyle: React.CSSProperties = {
-    height: fieldMetrics.minHeight,
+    // Fill the shell's grid row instead of repeating its min-height: the shell is border-box with a
+    // 1.5px border, so a full-height input made every TextInput 3px taller than a Select of the
+    // same size (33 vs 30px at sm) and fields in one form row did not line up.
+    height: "auto",
+    alignSelf: "stretch",
     fontSize: fieldMetrics.fontSize,
     lineHeight: fieldMetrics.inputLineHeight,
     boxSizing: "border-box",

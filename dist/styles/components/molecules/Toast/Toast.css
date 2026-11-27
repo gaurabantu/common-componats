@@ -1,0 +1,176 @@
+/* Toast — transient notification stack. Tone colours arrive as --ds-feedback-strong / --ds-feedback-fill
+   from Alert.config.ts (getToneStyle); dismiss button + .ds-alert__sr styles live in Alert.css. */
+
+.ds-toast-region {
+  --ds-toast-enter-y: var(--space-1);
+  /* Focus ring follows --color-focus-ring (≥ 3:1 in every theme). */
+  --ds-feedback-ring: var(--color-focus-ring);
+  position: fixed;
+  z-index: var(--z-toast);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 24rem;
+  max-width: 100%;
+  max-height: 100vh;
+  padding: var(--space-2);
+  overflow: visible;
+  pointer-events: none;
+  outline: none;
+}
+
+.ds-toast-region[data-empty="true"] {
+  padding: 0;
+}
+
+.ds-toast-region:focus-visible {
+  outline: 2px solid var(--ds-feedback-ring);
+  outline-offset: calc(-1 * var(--space-0));
+  border-radius: var(--radius-lg);
+}
+
+/* Newest toast sits nearest the screen edge; DOM (and Tab) order stays chronological. */
+.ds-toast-region[data-position^="top"] {
+  --ds-toast-enter-y: calc(-1 * var(--space-1));
+  top: 0;
+  flex-direction: column-reverse;
+}
+
+.ds-toast-region[data-position^="bottom"] {
+  bottom: 0;
+}
+
+.ds-toast-region[data-position$="right"] {
+  right: 0;
+}
+
+.ds-toast-region[data-position$="left"] {
+  left: 0;
+}
+
+.ds-toast-region[data-position$="center"] {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ds-toast {
+  --ds-feedback-fg: color-mix(in srgb, var(--ds-feedback-strong) 80%, var(--color-text-primary));
+  --ds-feedback-ring: var(--color-focus-ring);
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border-subtle);
+  border-left: var(--space-0) solid var(--ds-feedback-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+  pointer-events: auto;
+  animation: ds-toast-in var(--duration-fast) var(--easing-enter) both;
+}
+
+.ds-toast[data-state="closed"] {
+  animation: ds-toast-out var(--duration-fast) var(--easing-exit) both;
+  pointer-events: none;
+}
+
+.ds-toast:focus-visible {
+  outline: 2px solid var(--ds-feedback-ring);
+  outline-offset: 2px;
+}
+
+.ds-toast__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding-top: 1px;
+  color: var(--ds-feedback-strong);
+}
+
+.ds-toast__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ds-toast__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  overflow-wrap: anywhere;
+}
+
+.ds-toast__title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ds-feedback-fg);
+}
+
+.ds-toast__description {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.ds-toast__action {
+  margin-top: var(--space-0);
+}
+
+.ds-toast__dismiss {
+  margin: calc(-1 * var(--space-0)) calc(-1 * var(--space-0)) 0 0;
+}
+
+@keyframes ds-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--ds-toast-enter-y));
+  }
+}
+
+@keyframes ds-toast-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* ≤ 480px: full-width stack with a 16px (--space-2) gutter */
+@media (max-width: 480px) {
+  .ds-toast-region,
+  .ds-toast-region[data-position$="center"] {
+    left: 0;
+    right: 0;
+    width: 100%;
+    transform: none;
+    padding: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-toast,
+  .ds-toast[data-state="closed"] {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-toast {
+    border-color: CanvasText;
+  }
+
+  .ds-toast__icon {
+    color: CanvasText;
+  }
+
+  .ds-toast:focus-visible,
+  .ds-toast-region:focus-visible {
+    outline-color: Highlight;
+  }
+}

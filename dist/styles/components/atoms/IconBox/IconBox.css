@@ -1,0 +1,82 @@
+/* IconBox — square/circle container for a leading icon. Token-driven; follows data-theme. */
+
+.ds-icon-box {
+  --icon-box-size: 36px;
+  --icon-box-icon: 18px;
+  --icon-box-bg: var(--color-fill-muted);
+  --icon-box-fg: var(--color-text-primary);
+  --icon-box-border: var(--color-border-subtle);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--icon-box-size);
+  height: var(--icon-box-size);
+  border: 1px solid var(--icon-box-border);
+  border-radius: var(--radius-md);
+  background: var(--icon-box-bg);
+  color: var(--icon-box-fg);
+  font-family: var(--font-family);
+  font-size: var(--text-small-size);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ds-icon-box > svg,
+.ds-icon-box > img,
+.ds-icon-box > span {
+  width: var(--icon-box-icon);
+  height: var(--icon-box-icon);
+  flex-shrink: 0;
+}
+
+.ds-icon-box[data-size="sm"] { --icon-box-size: 28px; --icon-box-icon: 16px; }
+.ds-icon-box[data-size="md"] { --icon-box-size: 36px; --icon-box-icon: 18px; }
+.ds-icon-box[data-size="lg"] { --icon-box-size: 44px; --icon-box-icon: 20px; }
+.ds-icon-box[data-size="xl"] { --icon-box-size: 56px; --icon-box-icon: 26px; border-radius: var(--radius-lg); }
+
+.ds-icon-box[data-shape="circle"] { border-radius: 9999px; }
+.ds-icon-box[data-shape="square"] { border-radius: var(--radius-xs); }
+
+.ds-icon-box[data-tone="strong"] {
+  --icon-box-bg: var(--button-primary-default-bg);
+  --icon-box-fg: var(--button-primary-default-text);
+  --icon-box-border: transparent;
+}
+
+.ds-icon-box[data-tone="outline"] {
+  --icon-box-bg: var(--color-bg-surface);
+  --icon-box-fg: var(--color-text-primary);
+  --icon-box-border: var(--color-border-default);
+}
+
+.ds-icon-box[data-tone="primary"] {
+  --icon-box-bg: color-mix(in srgb, var(--color-theme-primary) 12%, var(--color-bg-surface));
+  --icon-box-fg: var(--color-theme-primary);
+  --icon-box-border: transparent;
+}
+
+.ds-icon-box[data-tone="success"] {
+  --icon-box-bg: var(--color-success-fill);
+  --icon-box-fg: var(--color-success-strong);
+  --icon-box-border: transparent;
+}
+
+.ds-icon-box[data-tone="warning"] {
+  --icon-box-bg: var(--color-warning-fill);
+  --icon-box-fg: var(--color-warning-strong);
+  --icon-box-border: transparent;
+}
+
+.ds-icon-box[data-tone="danger"] {
+  --icon-box-bg: var(--color-danger-fill);
+  --icon-box-fg: var(--color-danger-strong);
+  --icon-box-border: transparent;
+}
+
+.ds-icon-box[data-tone="info"] {
+  --icon-box-bg: var(--color-info-fill);
+  --icon-box-fg: var(--color-info-strong);
+  --icon-box-border: transparent;
+}

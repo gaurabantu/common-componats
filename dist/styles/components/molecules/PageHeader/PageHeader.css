@@ -1,0 +1,128 @@
+/* PageHeader — Zone 3. Tokens only. Title = text-primary, description/meta = text-secondary
+   (contrast table in handoff 06d — all ≥ 4.5:1 on bg-page and bg-surface in classic, mist, dark). */
+
+.ds-page-header {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+}
+
+.ds-page-header__breadcrumb {
+  min-width: 0;
+}
+
+.ds-page-header__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ds-page-header__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  flex: 1 1 calc(var(--space-8) * 4);
+  min-width: 0;
+}
+
+.ds-page-header__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ds-page-header__title {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--text-h1-size);
+  font-weight: var(--text-h1-weight);
+  line-height: var(--text-h1-line-height);
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ds-page-header__status {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+
+.ds-page-header__description {
+  margin: 0;
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ds-page-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-0) var(--space-2);
+  font-size: var(--text-secondary-size);
+  color: var(--color-text-secondary);
+  min-width: 0;
+}
+
+.ds-page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  flex: none;
+  max-width: 100%;
+}
+
+.ds-page-header__primary {
+  display: inline-flex;
+}
+
+.ds-page-header__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0);
+}
+
+.ds-page-header__menu-link {
+  text-decoration: none;
+}
+
+.ds-page-header__tabs {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: var(--space-1);
+}
+
+/* Touch devices: page actions reach the 44px target (Button md is 34px; ≥ 24px meets 2.5.8 on fine pointers). */
+@media (pointer: coarse) {
+  .ds-page-header .ds-page-header__actions :is(button, a) {
+    min-height: calc(var(--space-5) + var(--space-0)); /* 44px */
+  }
+}
+
+/* Narrow: actions drop under the heading and align to the start; only "More actions" + primary remain. */
+@media (max-width: 640px) {
+  .ds-page-header__main {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ds-page-header__actions {
+    justify-content: flex-start;
+  }
+  .ds-page-header__title {
+    font-size: var(--text-h2-size);
+    line-height: var(--text-h2-line-height);
+  }
+}

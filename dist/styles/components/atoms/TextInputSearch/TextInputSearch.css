@@ -1,0 +1,64 @@
+/**
+ * Inline search action: compact `Button` + fixed `height`;
+ * global `.btn-*` min-heights would otherwise stretch the `headerSearch` rail.
+ */
+.text-input-search-wrapper .ucs-search-input__inline-action:is(button, a).btn-base {
+  min-height: unset !important;
+}
+
+.text-input-search-wrapper
+  button.ucs-search-input__inline-action:is([class*="btn-icon-only"]) {
+  min-width: unset !important;
+  width: auto !important;
+  max-height: 100%;
+}
+
+/* Integrated rail (`trailingRail="integrated"`): action fills toolbar height flush to outer edge */
+.text-input-search-wrapper .ucs-text-input-field--integrated-rail .ucs-search-input__integrated-action-slot {
+  align-self: stretch;
+}
+
+.text-input-search-wrapper
+  .ucs-text-input-field--integrated-rail
+  button.ucs-search-input__inline-action:is(button, a).btn-base {
+  height: 100% !important;
+  align-self: stretch;
+}
+
+/** Match `--ucs-textfield-outer-radius` from `TextInput` (integrated rail) — backs inline styles if classes zero all corners (`btn-rounded-0`). */
+.text-input-search-wrapper
+  .ucs-text-input-field--integrated-rail
+  button.ucs-search-input__inline-action.btn-rounded-0 {
+  border-top-right-radius: var(--ucs-textfield-outer-radius, var(--radius-base, 4px));
+  border-bottom-right-radius: var(--ucs-textfield-outer-radius, var(--radius-base, 4px));
+}
+
+@media (max-width: 420px) {
+  .text-input-search-wrapper
+    .ucs-text-input-field--integrated-rail
+    button.ucs-search-input__inline-action:is(button, a).btn-base {
+    padding-left: 0.625rem !important;
+    padding-right: 0.625rem !important;
+    white-space: nowrap;
+  }
+
+  .text-input-search-wrapper
+    .ucs-text-input-field--integrated-rail
+    button.ucs-search-input__inline-action:is(button, a).btn-size-sm,
+  .text-input-search-wrapper
+    .ucs-text-input-field--integrated-rail
+    button.ucs-search-input__inline-action:is(button, a).btn-size-md {
+    font-size: var(--text-small-size, 0.75rem);
+  }
+}
+
+/* Full-width wrapper (default). Directly inside a wrapping flex row (filter bar) it takes a fixed
+   comfortable width instead of a whole line; a width utility in containerClassName still wins
+   (:where keeps single-class specificity). */
+.ds-input-search--full {
+  width: 100%;
+}
+:where(.flex-wrap, .ds-form-row) > .ds-input-search--full {
+  width: 18rem;
+  max-width: 100%;
+}

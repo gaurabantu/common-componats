@@ -1567,7 +1567,11 @@ var TextInput = (0, import_react5.forwardRef)(({
   const suffixPadLeft = isIntegratedRail ? 0 : fieldMetrics.suffixPadLeft;
   const suffixPadRight = isIntegratedRail ? 0 : fieldMetrics.suffixPadRight;
   const inputElementStyle = {
-    height: fieldMetrics.minHeight,
+    // Fill the shell's grid row instead of repeating its min-height: the shell is border-box with a
+    // 1.5px border, so a full-height input made every TextInput 3px taller than a Select of the
+    // same size (33 vs 30px at sm) and fields in one form row did not line up.
+    height: "auto",
+    alignSelf: "stretch",
     fontSize: fieldMetrics.fontSize,
     lineHeight: fieldMetrics.inputLineHeight,
     boxSizing: "border-box",

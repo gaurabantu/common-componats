@@ -1,0 +1,91 @@
+/* LoadingOverlay — token-driven loading veil for a positioned parent or the viewport. */
+
+.ds-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--ds-loading-overlay-z, var(--z-raised));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--space-2);
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+  pointer-events: auto;
+  cursor: progress;
+  animation: ds-loading-overlay-fade-in var(--duration-fast) var(--easing-enter) both;
+}
+
+.ds-loading-overlay[data-fullscreen="true"] {
+  position: fixed;
+  z-index: var(--ds-loading-overlay-z, calc(var(--z-modal) + 2));
+}
+
+.ds-loading-overlay[data-backdrop="surface"] {
+  background: color-mix(in srgb, var(--color-bg-surface) 72%, transparent);
+}
+
+.ds-loading-overlay[data-backdrop="dim"] {
+  background: var(--color-bg-overlay);
+}
+
+.ds-loading-overlay[data-backdrop="none"] {
+  background: transparent;
+}
+
+/* Non-blocking veil: never intercepts pointer input, lighter tint */
+.ds-loading-overlay[data-blocking="false"] {
+  pointer-events: none;
+  cursor: default;
+}
+
+.ds-loading-overlay[data-blocking="false"][data-backdrop="surface"] {
+  background: color-mix(in srgb, var(--color-bg-surface) 40%, transparent);
+}
+
+.ds-loading-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+  text-align: center;
+}
+
+.ds-loading-overlay[data-blocking="false"] .ds-loading-overlay__content {
+  flex-direction: row;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+.ds-loading-overlay[data-backdrop="dim"] .ds-loading-overlay__content {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.ds-loading-overlay__label {
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+@keyframes ds-loading-overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-loading-overlay {
+    animation: none;
+  }
+}
