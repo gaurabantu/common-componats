@@ -151,8 +151,8 @@ export const isValidDate = (dateStr: string, format: string = "MM/DD/YYYY"): boo
       if (year < 1000 || year > 9999) {
         return false;
       }
-      // Check if year part is actually 4 digits
-      const yearStr = parts[2];
+      // Check if year part is actually 4 digits (year is the FIRST part in YYYY-first formats)
+      const yearStr = formatUpper.startsWith("YYYY") ? parts[0] : parts[2];
       if (yearStr.length !== 4) {
         return false;
       }

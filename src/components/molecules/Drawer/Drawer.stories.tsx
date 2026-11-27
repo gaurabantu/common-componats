@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import Drawer, { Sheet } from "./index";
+import Drawer, { BottomSheet as BottomSheetComponent, Sheet } from "./index";
 import Button from "../../atoms/Button";
 import type { DrawerProps } from "./Drawer.types";
 
@@ -42,6 +42,13 @@ const meta: Meta<typeof Drawer> = {
     headerActions: { control: false },
     onBeforeClose: { control: false },
     bodyScroll: { control: "boolean" },
+    handle: { control: "boolean" },
+    handleLabel: { control: "text" },
+    swipeToDismiss: { control: "boolean" },
+    snapPoints: { control: "object" },
+    defaultSnap: { control: "number" },
+    snap: { control: false },
+    onSnapChange: { action: "onSnapChange" },
   },
 };
 
@@ -289,4 +296,49 @@ function GuardedDrawerDemo() {
 /** `onBeforeClose` can be async — the close waits for it, and `false` keeps the drawer open. */
 export const GuardedClose: Story = {
   render: () => <GuardedDrawerDemo />,
+};
+
+function BottomSheetDemo({ label, ...props }: Partial<React.ComponentProps<typeof BottomSheetComponent>> & { label: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="primary" onClick={() => setOpen(true)}>
+        {label}
+      </Button>
+      <BottomSheetComponent
+        title="Share"
+        description="Drag the handle down to dismiss."
+        {...props}
+        open={open}
+        onOpenChange={setOpen}
+      >
+        {props.children ?? <LongBody />}
+      </BottomSheetComponent>
+    </>
+  );
+}
+
+/**
+ * `BottomSheet` = Drawer preset with `side="bottom"` and a drag handle. Swipe the handle down (distance or a
+ * quick flick) to dismiss; the X button and Escape are the keyboard / single-pointer alternatives.
+ * Best checked in the 375px viewport.
+ */
+export const BottomSheetSwipe: Story = {
+  render: () => <BottomSheetDemo label="Open bottom sheet" size="md" />,
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
+/**
+ * `snapPoints={["40%", "90%"]}`: the handle becomes a "Resize sheet" button — drag it, click it to cycle, or use
+ * ArrowUp / ArrowDown / Home / End. Snap changes are announced politely and fire `onSnapChange`.
+ */
+export const BottomSheetSnapPoints: Story = {
+  render: () => <BottomSheetDemo label="Open resizable sheet" snapPoints={["40%", "90%"]} defaultSnap={0} />,
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};
+
+/** Opt in on a plain Drawer: `side="bottom"` + `handle` (the `BottomSheet` export just presets these). */
+export const DrawerWithHandle: Story = {
+  render: (args) => <WithTrigger {...args} label="Open bottom drawer" />,
+  args: { side: "bottom", handle: true, title: "Bottom drawer", size: "md" },
 };

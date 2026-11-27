@@ -31,3 +31,17 @@ export const DRAWER_HEIGHTS: Record<DrawerSize, string> = {
 
 /** Fallback unmount delay if `animationend` never fires (matches `--duration-normal`). */
 export const DRAWER_EXIT_FALLBACK_MS = 320;
+
+/** Bottom-sheet gesture + copy defaults. */
+export const BOTTOM_SHEET_DEFAULTS = {
+  handleLabel: "Resize sheet",
+  defaultSnap: 0,
+};
+
+/** Drag below this distance (px) is treated as a click / jitter, never a dismiss or snap change. */
+export const SHEET_DRAG_SLOP_PX = 6;
+/** Dismiss when dragged down by more than this fraction of the sheet height… */
+export const SHEET_DISMISS_DISTANCE_RATIO = 0.25;
+/** …or flicked down faster than this (px per ms) after moving at least `SHEET_FLICK_MIN_PX`. */
+export const SHEET_DISMISS_VELOCITY = 0.5;
+export const SHEET_FLICK_MIN_PX = 24;

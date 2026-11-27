@@ -1,13 +1,16 @@
-/* OtpBox — polished design (MUI / Ant Design inspired) */
+/* OtpBox — one-time-code entry. Token-driven; follows data-theme. */
 
 .otp-box-root {
-  font-family: var(--font-family, "Inter"), system-ui, sans-serif;
+  --otp-cell-size: var(--layout-touch-target-min); /* md 44px */
+  --otp-cell-font-size: var(--text-h1-size);
+  --otp-cell-gap: var(--space-1);
+  --otp-single-width: calc(var(--space-8) * 4 + var(--space-3)); /* 280px */
+  --otp-single-height: calc(var(--space-6) + var(--space-0)); /* 52px */
+  --otp-border-width: var(--border-width-medium);
+  --otp-mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-sans);
   width: min-content;
   max-width: 100%;
-  --otp-cell-size: 2.5rem;
-  --otp-cell-font-size: 1.375rem;
-  --otp-cell-gap: 0.625rem;
-  --otp-single-width: 17.5rem;
 }
 
 .otp-box-wrapper {
@@ -19,9 +22,9 @@
 
 .otp-box-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-1);
   color: var(--color-text-primary);
-  font-size: var(--text-secondary-size, 14px);
+  font-size: var(--text-secondary-size);
   font-weight: 500;
   line-height: 1.4;
 }
@@ -30,27 +33,63 @@
   color: var(--color-text-secondary);
 }
 
+/* ========== SHARED CONTROL SURFACE ========== */
+
+.otp-box-input,
+.otp-box-cell {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: var(--otp-mono);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-align: center;
+  background: var(--color-bg-surface);
+  border: var(--otp-border-width) solid var(--color-border-interactive);
+  border-radius: var(--radius-lg);
+  outline: none;
+  transition:
+    border-color var(--duration-fast) var(--easing-default),
+    box-shadow var(--duration-fast) var(--easing-default),
+    background-color var(--duration-fast) var(--easing-default);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.otp-box-input:hover:not(:disabled):not(:focus),
+.otp-box-cell:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-border-strong);
+}
+
+/* Text inputs always match :focus-visible, so keyboard and pointer users both get the ring. */
+.otp-box-input:focus-visible,
+.otp-box-cell:focus-visible {
+  border-color: var(--color-focus-ring);
+  outline: var(--border-width-medium) solid var(--color-focus-ring);
+  outline-offset: var(--border-width-medium);
+}
+
+.otp-box-input:disabled,
+.otp-box-cell:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.otp-box--error .otp-box-input,
+.otp-box--error .otp-box-cell {
+  border-color: var(--color-border-error);
+}
+
 /* ========== SINGLE INPUT (outlined, filled, underlined) ========== */
 
 .otp-box-input {
   display: block;
   width: min(var(--otp-single-width), 100%);
-  height: 3.25rem;
-  box-sizing: border-box;
-  padding: 0 1rem;
-  margin: 0;
-  font-family: "ui-monospace", "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
-  font-size: 1.375rem;
-  font-weight: 700;
+  height: var(--otp-single-height);
+  padding: 0 var(--space-2);
+  font-size: var(--otp-cell-font-size);
   letter-spacing: 0.35em;
-  line-height: 3rem;
-  color: var(--color-text-primary);
-  text-align: center;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  line-height: calc(var(--otp-single-height) - var(--otp-border-width) * 2);
 }
 
 .otp-box-input::placeholder {
@@ -59,44 +98,9 @@
   font-weight: 400;
 }
 
-.otp-box-input:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.otp-box-input:focus {
-  outline: none;
-}
-
-/* --- Outlined --- */
-.otp-box--outlined .otp-box-input {
-  background: var(--color-bg-surface);
-  border: 2px solid var(--color-border-default);
-  border-radius: var(--radius-lg, 8px);
-}
-
-.otp-box--outlined .otp-box-input:hover:not(:disabled):not(:focus) {
-  border-color: var(--color-text-primary);
-}
-
-.otp-box--outlined .otp-box-input:focus {
-  border-color: var(--button-primary-focus-ring);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-primary-focus-ring) 15%, transparent);
-}
-
-.otp-box--outlined.otp-box--error .otp-box-input {
-  border-color: var(--color-state-error);
-}
-
-.otp-box--outlined.otp-box--error .otp-box-input:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-state-error) 15%, transparent);
-}
-
 /* --- Filled --- */
 .otp-box--filled .otp-box-input {
   background: var(--color-fill-muted);
-  border: 2px solid transparent;
-  border-radius: var(--radius-lg, 8px);
 }
 
 .otp-box--filled .otp-box-input:hover:not(:disabled):not(:focus) {
@@ -105,38 +109,19 @@
 
 .otp-box--filled .otp-box-input:focus {
   background: var(--color-bg-surface);
-  border-color: var(--button-primary-focus-ring);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-primary-focus-ring) 15%, transparent);
 }
 
 .otp-box--filled.otp-box--error .otp-box-input {
-  border-color: var(--color-state-error);
   background: var(--color-danger-fill);
 }
 
 /* --- Underlined --- */
 .otp-box--underlined .otp-box-input {
   background: transparent;
-  border: none;
-  border-bottom: 2px solid var(--color-border-default);
+  border-width: 0 0 var(--otp-border-width);
   border-radius: 0;
-  padding-left: 8px;
-  padding-right: 8px;
-  line-height: 50px;
-}
-
-.otp-box--underlined .otp-box-input:hover:not(:disabled):not(:focus) {
-  border-bottom-color: var(--color-text-primary);
-}
-
-.otp-box--underlined .otp-box-input:focus {
-  border-bottom-color: var(--button-primary-focus-ring);
-  border-bottom-width: 2px;
-  box-shadow: none;
-}
-
-.otp-box--underlined.otp-box--error .otp-box-input {
-  border-bottom-color: var(--color-state-error);
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
 }
 
 /* ========== BOXES VARIANT (individual cells) ========== */
@@ -150,95 +135,46 @@
 
 .otp-box-cell {
   display: block;
+  flex: 0 0 auto;
   width: var(--otp-cell-size);
   height: var(--otp-cell-size);
-  min-width: var(--otp-cell-size);
-  min-height: var(--otp-cell-size);
-  max-width: var(--otp-cell-size);
-  max-height: var(--otp-cell-size);
   padding: 0;
-  margin: 0;
-  text-align: center;
-  vertical-align: middle;
-  font-family: "ui-monospace", "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
   font-size: var(--otp-cell-font-size);
-  font-weight: 700;
-  line-height: calc(var(--otp-cell-size) - 0.25rem);
-  color: var(--color-text-primary);
-  background: var(--color-bg-surface);
-  border: 2px solid var(--color-border-default);
-  border-radius: var(--radius-lg, 8px);
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.otp-box-cell:hover:not(:disabled):not(:focus) {
-  border-color: var(--color-text-primary);
-}
-
-.otp-box-cell:focus {
-  border-color: var(--button-primary-focus-ring);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-primary-focus-ring) 15%, transparent);
+  line-height: calc(var(--otp-cell-size) - var(--otp-border-width) * 2);
+  caret-color: var(--color-focus-ring);
 }
 
 .otp-box-cell:disabled {
   background: var(--color-bg-page);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.otp-box--boxes.otp-box--error .otp-box-cell {
-  border-color: var(--color-state-error);
-}
-
-.otp-box--boxes.otp-box--error .otp-box-cell:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-state-error) 15%, transparent);
 }
 
 /* ========== SIZE VARIANTS ========== */
 
-/* Small */
-.otp-box--sm .otp-box-input {
-  --otp-single-width: 15rem;
-  height: 2.75rem;
-  font-size: 1.125rem;
-  letter-spacing: 0.3em;
-  line-height: 2.5rem;
-}
-
 .otp-box--sm {
-  --otp-cell-size: 2.25rem;
-  --otp-cell-font-size: 1.125rem;
-  --otp-cell-gap: 0.5rem;
-}
-
-/* Large */
-.otp-box--lg .otp-box-input {
-  --otp-single-width: 21.25rem;
-  height: 3.75rem;
-  font-size: 1.75rem;
-  letter-spacing: 0.4em;
-  line-height: 3.5rem;
+  --otp-cell-size: var(--space-5); /* 40px — above the 24px WCAG 2.2 minimum */
+  --otp-cell-font-size: var(--text-h2-size);
+  --otp-cell-gap: var(--space-1);
+  --otp-single-width: calc(var(--space-8) * 3 + var(--space-6)); /* 240px */
+  --otp-single-height: var(--layout-touch-target-min);
 }
 
 .otp-box--lg {
-  --otp-cell-size: 3rem;
-  --otp-cell-font-size: 1.625rem;
-  --otp-cell-gap: 0.75rem;
+  --otp-cell-size: var(--space-6); /* 48px */
+  --otp-cell-font-size: calc(var(--text-h1-size) * 1.25);
+  --otp-cell-gap: calc(var(--space-1) + var(--space-0));
+  --otp-single-width: calc(var(--space-8) * 5 + var(--space-5)); /* 360px */
+  --otp-single-height: calc(var(--space-7) + var(--space-0)); /* 60px */
 }
 
 /* ========== ERROR MESSAGE ========== */
 .otp-box-error {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  font-size: var(--text-small-size, 12px);
+  gap: var(--space-0);
+  margin-top: var(--space-1);
+  font-size: var(--text-small-size);
   font-weight: 500;
-  color: var(--color-state-error);
+  color: var(--color-danger-strong);
   line-height: 1.4;
 }
 
@@ -250,20 +186,45 @@
   }
 }
 
+/* ========== FORCED COLORS ========== */
+@media (forced-colors: active) {
+  .otp-box-input,
+  .otp-box-cell {
+    border-color: CanvasText;
+  }
+
+  .otp-box--error .otp-box-input,
+  .otp-box--error .otp-box-cell {
+    border-style: dashed;
+  }
+
+  .otp-box-input:focus-visible,
+  .otp-box-cell:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ========== NARROW SCREENS — cells shrink to fit instead of overflowing ========== */
 @media (max-width: 420px) {
   .otp-box-root {
     width: 100%;
-    --otp-cell-size: clamp(2rem, 12vw, 2.5rem);
-    --otp-cell-font-size: clamp(1rem, 6vw, 1.375rem);
-    --otp-cell-gap: clamp(0.25rem, 2vw, 0.5rem);
+    --otp-cell-gap: var(--space-0);
   }
 
   .otp-box-cells {
     width: 100%;
-    justify-content: space-between;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.125rem;
+    justify-content: center;
+  }
+
+  .otp-box-cell {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    max-width: var(--otp-cell-size);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    line-height: normal;
+    font-size: min(var(--otp-cell-font-size), 6vw);
   }
 
   .otp-box-input {

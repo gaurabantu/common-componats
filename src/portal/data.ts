@@ -7,7 +7,7 @@ export const PRODUCT = {
   name: "Infinia Design System",
   packageName: "ui-common-components",
   hooksPackage: "ui-common-hooks",
-  version: "0.0.7",
+  version: "0.0.12",
   hooksVersion: "0.3.0",
   tokensVersion: "2.0.0",
   owner: "UI Platform team",
@@ -54,6 +54,7 @@ export const INVENTORY: InventoryGroup[] = [
       { name: "ButtonGroup", description: "Segmented actions with separators and inline text.", status: "stable", story: `${M}ButtonGroup`, props: "ButtonGroupProps" },
       { name: "Hyperlink", description: "Accessible inline link with new-tab handling.", status: "stable", story: `${A}Hyperlink`, props: "HyperlinkProps" },
       { name: "DropdownMenu", description: "Menu of actions anchored to a trigger (Popover family).", status: "stable", story: `${M}Popover`, props: "DropdownMenuItemProps" },
+      { name: "Menu", description: "APG menu button — checkbox/radio items, submenus, typeahead, shortcuts.", status: "new", story: `${M}Menu`, props: "MenuProps" },
       { name: "ContextMenu", description: "Right-click / Shift+F10 menu at the pointer with viewport flip and focus return.", status: "stable", story: `${M}ContextMenu`, props: "ContextMenuProps" },
       { name: "ToggleButton", description: "Pressed / unpressed button for formatting and view toggles.", status: "stable", story: `${A}ToggleButton`, props: "ToggleButtonProps" },
       { name: "ToggleGroup", description: "Single or multiple selection across a row of toggle buttons.", status: "stable", story: `${M}ToggleGroup`, props: "ToggleGroupSingleProps" },
@@ -70,6 +71,9 @@ export const INVENTORY: InventoryGroup[] = [
       { name: "TextArea", description: "Multi-line input with counter and validation.", status: "stable", story: `${A}TextArea`, props: "TextAreaProps" },
       { name: "Select", description: "Native select with groups, icons and live search.", status: "stable", story: `${A}Select`, props: "SelectProps" },
       { name: "Combobox", description: "Searchable single / multi select with icons.", status: "stable", story: `${M}Combobox`, props: "ComboboxProps" },
+      { name: "TagInput", description: "Chips + text entry with paste-split, validation and suggestions.", status: "new", story: `${M}TagInput`, props: "TagInputProps" },
+      { name: "TimePicker", description: "HH:mm time field with segment keyboard, 12/24h, step and min/max.", status: "new", story: `${M}TimePicker`, props: "TimePickerProps" },
+      { name: "Rating", description: "Star rating (radio group), half-star precision, read-only mode.", status: "new", story: `${A}Rating`, props: "RatingProps" },
       { name: "CheckBox", description: "Indeterminate, description, error, required and sizes (upgraded).", status: "stable", story: `${A}Checkbox`, props: "CheckboxProps" },
       { name: "Switch", description: "Binary toggle with label positions and sizes.", status: "stable", story: `${A}Switch`, props: "SwitchProps" },
       { name: "RadioGroup", description: "Single choice from a small set.", status: "stable", story: `${A}RadioGroup`, props: "RadioGroupProps" },
@@ -102,6 +106,8 @@ export const INVENTORY: InventoryGroup[] = [
       { name: "Divider", description: "Horizontal / vertical separator with label.", status: "stable", story: `${A}Divider`, props: "DividerProps" },
       { name: "GradientText", description: "Brand gradient headline text.", status: "stable", story: `${A}GradientText`, props: "GradientTextProps" },
       { name: "Kbd", description: "Keyboard-shortcut chips; ⌘ on macOS, Ctrl elsewhere; spoken key names.", status: "new", story: `${A}Kbd`, props: "KbdProps" },
+      { name: "AvatarGroup", description: "Stacked avatars with +N overflow list.", status: "new", story: `${A}AvatarGroup`, props: "AvatarGroupProps" },
+      { name: "Timeline", description: "Ordered events with timestamps, status tones, vertical / horizontal.", status: "new", story: `${M}Timeline`, props: "TimelineProps" },
     ],
   },
   {
@@ -155,7 +161,7 @@ export const INVENTORY: InventoryGroup[] = [
     title: "Application shell",
     description: "Dashboard frame — sidebar, top bar and content zones.",
     items: [
-      { name: "DashboardShell", description: "Responsive app frame with collapsible sidebar.", status: "stable", story: "Design System/Dashboard/Overview", from: "ui-common-components/shell", props: "DashboardShellProps" },
+      { name: "DashboardShell", description: "Responsive app frame with collapsible sidebar.", status: "stable", story: `${M}DashboardShell`, from: "ui-common-components/shell", props: "DashboardShellProps" },
       { name: "AppSidebar", description: "Sectioned navigation rail with persistence.", status: "stable", story: `${M}AppSidebar`, from: "ui-common-components/shell", props: "AppSidebarProps" },
       { name: "AppTopbar", description: "Page title, search, actions and profile menu.", status: "stable", story: `${M}AppTopbar`, from: "ui-common-components/shell", props: "AppTopbarProps" },
       { name: "AppShell", description: "Legacy alias of DashboardShell.", status: "legacy", replacement: "DashboardShell", from: "ui-common-components/shell" },
@@ -210,9 +216,61 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.0.12",
+    date: "27 Nov 2026",
+    status: "current",
+    summary: "React 18 fixes: Accordion inert, DatePicker keeps focus on Enter.",
+    changes: [
+      { type: "fixed", text: "Accordion — closed animated panels are inert on React 18 too (attribute set on the DOM node; React 18 dropped the boolean `inert` prop, leaving hidden panels focusable)." },
+      { type: "fixed", text: "DatePicker — Enter applies the typed date, closes the calendar and keeps focus in the input." },
+    ],
+  },
+  {
+    version: "0.0.11",
+    date: "27 Nov 2026",
+    status: "previous",
+    summary: "Sprint 6 review fixes: Rating target size, DatePicker Escape inside overlays, ToolTip role, disabled Form actions, Hyperlink object hrefs.",
+    changes: [
+      { type: "fixed", text: "Rating — one full-star pointer target per star (half picked from pointer position), 24px+ spacing at `sm`, 44px stars on coarse pointers (WCAG 2.5.8)." },
+      { type: "fixed", text: "DatePicker — Escape closes only the calendar (an enclosing Modal / Drawer stays open); Enter applies the typed date and closes the calendar." },
+      { type: "fixed", text: "ToolTip trigger has role=button and opens with Enter / Space. Form `disabled` disables its actions; `loading` marks them aria-disabled (focus-safe)." },
+      { type: "fixed", text: "Hyperlink `asChild` passes Next.js URL-object hrefs through (unsafe pathname / protocol still dropped)." },
+    ],
+  },
+  {
+    version: "0.0.10",
+    date: "27 Nov 2026",
+    status: "previous",
+    summary: "DatePicker works inside FormField.",
+    changes: [
+      { type: "added", text: "DatePicker — FormField consumer (label, hint, error and required wired by the field); new `id`, `name` and `ariaLabel` props." },
+    ],
+  },
+  {
+    version: "0.0.9",
+    date: "27 Nov 2026",
+    status: "previous",
+    summary: "Sprint 6: Menu, AvatarGroup, Rating, Timeline, TagInput, TimePicker, BottomSheet; richer Hyperlink, Spinner, Breadcrumb, ButtonGroup, OtpBox, Form, DashboardShell.",
+    changes: [
+      { type: "added", text: "Menu (APG menu button, checkbox / radio items, submenus, typeahead), AvatarGroup, Rating, Timeline, TagInput, TimePicker, BottomSheet (Drawer with drag handle, swipe-to-dismiss, snap points)." },
+      { type: "changed", text: "Hyperlink (variants, underline, icons, asChild, safe external links), Spinner (variant, thickness, speed, delay), Breadcrumb (items, maxItems collapse, renderLink), ButtonGroup (attached, cascading size / variant / disabled), OtpBox (onComplete, paste, one-time-code autofill, ref)." },
+      { type: "changed", text: "⚠ DashboardShell renders a `<main>` landmark and a skip link — pass `contentAs=\"div\"` if your content already has `<main>`. Form gains onSubmitValues, loading, errorSummary, responsive columns. ToolTip is now a deprecated wrapper over Tooltip." },
+      { type: "fixed", text: "Calendar keyboard navigation and aria-pressed days; Accordion no longer mutates a controlled array; AppSidebar sanitises hrefs; DatePicker min / max honoured." },
+    ],
+  },
+  {
+    version: "0.0.8",
+    date: "27 Nov 2026",
+    status: "previous",
+    summary: "Hotfix: DatePicker accepts YYYY-MM-DD dates.",
+    changes: [
+      { type: "fixed", text: "`isValidDate` read the day as the year for YYYY-first formats, so every YYYY-MM-DD date was rejected; DatePicker now passes parsed min / max dates to Calendar." },
+    ],
+  },
+  {
     version: "0.0.7",
     date: "25 Nov 2026",
-    status: "current",
+    status: "previous",
     summary: "Stepper: smaller markers and a calmer default style.",
     changes: [
       { type: "changed", text: "Stepper — markers 24px (`sm`) / 32px (`md`) instead of 36 / 44; upcoming steps are a soft filled circle with a 1px border; the current step is a solid brand fill with a soft halo (`--color-step-current-ring` at 45%) instead of a thick double ring; completed steps keep the success fill; connecting lines are 2px and stop short of the circles; tighter marker-to-label gap." },

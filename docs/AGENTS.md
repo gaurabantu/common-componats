@@ -53,7 +53,7 @@ This project uses `ui-common-components` (v0.0.2) + `ui-common-hooks` (v0.3.0) t
 | `AppSidebar` | `ui-common-components/shell` | |
 | `AppTopbar` | `ui-common-components/shell` | |
 | `Avtar` | `ui-common-components` | Not `Avatar` |
-| `ToolTip` | `ui-common-components` | Not `Tooltip` |
+| `Tooltip` | `ui-common-components` | Canonical since 0.0.9; `ToolTip` (icon trigger) is a deprecated wrapper over it |
 | `Input` | `ui-common-components` | Not `TextInput` |
 | `InputSearch` | `ui-common-components` | |
 | `Card` | `ui-common-components` | Compound: `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, `CardFooter` |

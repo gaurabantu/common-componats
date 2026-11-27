@@ -6,13 +6,18 @@ import { acquireBodyScrollLock, releaseBodyScrollLock } from "../Modal/bodyScrol
 import { OverlayLayerContext, isTopLayer, popLayer, pushLayer } from "../Modal/overlayStack";
 import { runGuardedClose } from "../Modal/closeGuard";
 import {
+  BOTTOM_SHEET_DEFAULTS,
   DRAWER_DEFAULTS,
   DRAWER_EXIT_FALLBACK_MS,
   DRAWER_HEIGHTS,
   DRAWER_WIDTHS,
+  SHEET_DISMISS_DISTANCE_RATIO,
+  SHEET_DISMISS_VELOCITY,
+  SHEET_DRAG_SLOP_PX,
+  SHEET_FLICK_MIN_PX,
 } from "./Drawer.config";
-import { getFocusable, trapTabKey } from "./Drawer.utils";
-import type { DrawerProps } from "./Drawer.types";
+import { getFocusable, nearestSnapIndex, resolveSnapPx, trapTabKey } from "./Drawer.utils";
+import type { BottomSheetProps, DrawerProps } from "./Drawer.types";
 import "./Drawer.css";
 
 function CloseGlyph() {
@@ -57,6 +62,13 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
     returnFocus = DRAWER_DEFAULTS.returnFocus,
     className,
     id,
+    handle = false,
+    handleLabel = BOTTOM_SHEET_DEFAULTS.handleLabel,
+    swipeToDismiss,
+    snapPoints,
+    defaultSnap = BOTTOM_SHEET_DEFAULTS.defaultSnap,
+    snap: snapProp,
+    onSnapChange,
   },
   forwardedRef,
 ) {
@@ -84,6 +96,31 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   if (open && !present) setPresent(true);
 
   const [bodyScrollable, setBodyScrollable] = useState(false);
+
+  // ── Bottom sheet: handle, snap points, swipe-to-dismiss (side="bottom" only) ──
+  const isSheet = side === "bottom";
+  const snapList = isSheet && snapPoints && snapPoints.length > 0 ? snapPoints : null;
+  const showHandle = isSheet && handle;
+  const canSwipe = showHandle && (swipeToDismiss ?? handle);
+  const clampSnap = (i: number) => (snapList ? Math.min(Math.max(0, Math.round(i)), snapList.length - 1) : 0);
+  const [innerSnap, setInnerSnap] = useState(() => clampSnap(defaultSnap));
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    // Uncontrolled sheets start at `defaultSnap` every time they open.
+    if (open) setInnerSnap(clampSnap(defaultSnap));
+  }
+  const snapIndex = clampSnap(snapProp ?? innerSnap);
+  const [snapAnnouncement, setSnapAnnouncement] = useState("");
+  const dragRef = useRef<{
+    pointerId: number;
+    startY: number;
+    startTime: number;
+    startHeight: number;
+    startSnap: number;
+    moved: boolean;
+  } | null>(null);
+  const suppressHandleClickRef = useRef(false);
 
   const setPanelRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -171,8 +208,12 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
       typeof document !== "undefined" ? (document.activeElement as HTMLElement | null) : null;
     const panel = panelRef.current;
     if (panel) {
+      panel.style.translate = "";
+      // The bottom-sheet handle is reachable by Tab but is not the initial focus target.
       const target =
-        initialFocusRefRef.current?.current ?? getFocusable(panel)[0] ?? panel;
+        initialFocusRefRef.current?.current ??
+        getFocusable(panel).find((el) => !el.hasAttribute("data-drawer-handle")) ??
+        panel;
       target.focus({ preventScroll: true });
     }
     return () => {
@@ -226,7 +267,146 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   if (!present || typeof document === "undefined") return null;
 
   const state = open ? "open" : "closed";
-  const extent = side === "left" || side === "right" ? DRAWER_WIDTHS[size] : DRAWER_HEIGHTS[size];
+  const extent = snapList
+    ? snapList[snapIndex]
+    : side === "left" || side === "right"
+      ? DRAWER_WIDTHS[size]
+      : DRAWER_HEIGHTS[size];
+
+  const changeSnap = (next: number) => {
+    if (!snapList) return;
+    const target = clampSnap(next);
+    // Drag may have left an inline px extent; always restore the CSS length for the target snap.
+    panelRef.current?.style.setProperty("--ds-drawer-extent", snapList[target]);
+    if (target === snapIndex) return;
+    if (snapProp === undefined) setInnerSnap(target);
+    setSnapAnnouncement(`${handleLabel}: ${snapList[target]}`);
+    onSnapChange?.(target, snapList[target]);
+  };
+
+  const resetDragOffset = () => {
+    const panel = panelRef.current;
+    if (panel) panel.style.translate = "";
+  };
+
+  const swipeDismiss = () => {
+    requestClose();
+    // Vetoed by onBeforeClose (or the parent kept it open): slide back into place.
+    setTimeout(() => {
+      if (openRef.current) resetDragOffset();
+    }, DRAWER_EXIT_FALLBACK_MS);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    if (!open || (!canSwipe && !snapList)) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    dragRef.current = {
+      pointerId: e.pointerId,
+      startY: e.clientY,
+      startTime: typeof performance !== "undefined" ? performance.now() : Date.now(),
+      startHeight: panel.getBoundingClientRect().height,
+      startSnap: snapIndex,
+      moved: false,
+    };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    const drag = dragRef.current;
+    const panel = panelRef.current;
+    if (!drag || !panel || e.pointerId !== drag.pointerId) return;
+    const dy = e.clientY - drag.startY;
+    if (!drag.moved && Math.abs(dy) < SHEET_DRAG_SLOP_PX) return;
+    drag.moved = true;
+    panel.dataset.dragging = "true";
+    if (snapList) {
+      const vh = window.innerHeight;
+      const px = snapList.map((p) => resolveSnapPx(p, vh)).filter((n) => !Number.isNaN(n));
+      const minPx = px.length ? Math.min(...px) : drag.startHeight;
+      const maxPx = px.length ? Math.max(...px) : drag.startHeight;
+      const wanted = drag.startHeight - dy;
+      const height = Math.min(Math.max(wanted, minPx), maxPx);
+      panel.style.setProperty("--ds-drawer-extent", `${height}px`);
+      panel.style.translate = canSwipe && wanted < minPx ? `0 ${minPx - wanted}px` : "";
+    } else {
+      panel.style.translate = `0 ${Math.max(0, dy)}px`;
+    }
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLElement>, cancelled: boolean) => {
+    const drag = dragRef.current;
+    const panel = panelRef.current;
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    dragRef.current = null;
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+    if (!panel || !drag.moved) return;
+    delete panel.dataset.dragging;
+    suppressHandleClickRef.current = true;
+    const dy = cancelled ? 0 : e.clientY - drag.startY;
+    const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+    const velocity = dy / Math.max(1, now - drag.startTime);
+    const flickDown = dy >= SHEET_FLICK_MIN_PX && velocity > SHEET_DISMISS_VELOCITY;
+    const flickUp = -dy >= SHEET_FLICK_MIN_PX && -velocity > SHEET_DISMISS_VELOCITY;
+
+    if (snapList) {
+      const vh = window.innerHeight;
+      const px = snapList.map((p) => resolveSnapPx(p, vh));
+      const valid = px.filter((n) => !Number.isNaN(n));
+      const minPx = valid.length ? Math.min(...valid) : drag.startHeight;
+      const wanted = drag.startHeight - dy;
+      const overshoot = minPx - wanted;
+      if (canSwipe && overshoot > 0 && (overshoot > minPx * SHEET_DISMISS_DISTANCE_RATIO || flickDown)) {
+        swipeDismiss();
+        return;
+      }
+      let target = nearestSnapIndex(wanted, px);
+      if (target === drag.startSnap && flickDown) target = drag.startSnap - 1;
+      if (target === drag.startSnap && flickUp) target = drag.startSnap + 1;
+      resetDragOffset();
+      changeSnap(target);
+      return;
+    }
+    if (canSwipe && (dy > drag.startHeight * SHEET_DISMISS_DISTANCE_RATIO || flickDown)) {
+      swipeDismiss();
+      return;
+    }
+    resetDragOffset();
+  };
+
+  const handleHandleClick = () => {
+    if (suppressHandleClickRef.current) {
+      suppressHandleClickRef.current = false;
+      return;
+    }
+    if (snapList) changeSnap((snapIndex + 1) % snapList.length);
+  };
+
+  const handleHandleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!snapList) return;
+    const last = snapList.length - 1;
+    const next =
+      e.key === "ArrowUp" || e.key === "ArrowRight"
+        ? Math.min(last, snapIndex + 1)
+        : e.key === "ArrowDown" || e.key === "ArrowLeft"
+          ? Math.max(0, snapIndex - 1)
+          : e.key === "Home"
+            ? 0
+            : e.key === "End"
+              ? last
+              : null;
+    if (next === null) return;
+    e.preventDefault();
+    changeSnap(next);
+  };
+
+  const gestureHandlers = {
+    onPointerDown: handlePointerDown,
+    onPointerMove: handlePointerMove,
+    onPointerUp: (e: React.PointerEvent<HTMLElement>) => endDrag(e, false),
+    onPointerCancel: (e: React.PointerEvent<HTMLElement>) => endDrag(e, true),
+  };
 
   const handlePanelKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (modal && panelRef.current) trapTabKey(e.nativeEvent, panelRef.current);
@@ -273,10 +453,36 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
           data-side={side}
           data-size={size}
           data-state={state}
+          data-handle={showHandle ? "true" : undefined}
+          data-snap={snapList ? snapIndex : undefined}
           style={{ "--ds-drawer-extent": extent } as React.CSSProperties}
           onKeyDown={handlePanelKeyDown}
           onAnimationEnd={handleAnimationEnd}
         >
+          {showHandle && snapList ? (
+            <button
+              type="button"
+              className="ds-drawer__handle"
+              data-drawer-handle=""
+              aria-label={handleLabel}
+              aria-keyshortcuts="ArrowUp ArrowDown Home End"
+              onClick={handleHandleClick}
+              onKeyDown={handleHandleKeyDown}
+              {...gestureHandlers}
+            >
+              <span className="ds-drawer__handle-bar" aria-hidden="true" />
+            </button>
+          ) : showHandle ? (
+            // Pointer-only grip (swipe-to-dismiss); keyboard users close with the X button or Escape.
+            <div className="ds-drawer__handle" data-drawer-handle="" aria-hidden="true" {...gestureHandlers}>
+              <span className="ds-drawer__handle-bar" />
+            </div>
+          ) : null}
+          {showHandle && snapList ? (
+            <span className="ds-drawer__sr" role="status" aria-live="polite" aria-atomic="true">
+              {snapAnnouncement}
+            </span>
+          ) : null}
           <div className="ds-drawer__header">
             <div className="ds-drawer__heading">
               <h2 id={titleId} className="ds-drawer__title">
@@ -324,5 +530,19 @@ Drawer.displayName = "Drawer";
 /** Alias of `Drawer` — same component, for teams that call this pattern a "sheet". */
 export const Sheet = Drawer;
 
+/**
+ * BottomSheet — `Drawer` preset with `side="bottom"` and a drag `handle` (swipe down to dismiss).
+ * Add `snapPoints` (e.g. `["40%", "90%"]`) for resizable detents; the handle then becomes a
+ * "Resize sheet" button (click / ArrowUp / ArrowDown / Home / End).
+ */
+export const BottomSheet = React.forwardRef<HTMLDivElement, BottomSheetProps>(function BottomSheet(
+  { handle = true, ...props },
+  ref,
+) {
+  return <Drawer {...props} handle={handle} side="bottom" ref={ref} />;
+});
+
+BottomSheet.displayName = "BottomSheet";
+
 export default Drawer;
-export type { DrawerProps, DrawerSide, DrawerSize, SheetProps } from "./Drawer.types";
+export type { DrawerProps, DrawerSide, DrawerSize, SheetProps, BottomSheetProps } from "./Drawer.types";

@@ -231,6 +231,78 @@
   background: var(--color-bg-surface);
 }
 
+/* ── Bottom sheet: drag handle, snap transitions ─────────────────────────── */
+.ds-drawer__handle {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  box-sizing: border-box;
+  width: min(100%, var(--size-touch-target) * 3);
+  min-height: var(--space-3);
+  margin: 0;
+  padding: var(--space-1) 0 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ds-drawer__handle:active {
+  cursor: grabbing;
+}
+
+.ds-drawer__handle-bar {
+  display: block;
+  width: var(--space-5);
+  height: var(--space-0);
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+button.ds-drawer__handle:hover {
+  color: var(--color-text-primary);
+}
+
+button.ds-drawer__handle:focus {
+  outline: none;
+}
+
+button.ds-drawer__handle:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+@media (pointer: coarse) {
+  .ds-drawer__handle {
+    min-height: var(--size-touch-target);
+  }
+}
+
+/* Snap changes and drag release ease into place; nothing animates while the finger is down. */
+.ds-drawer[data-side="bottom"][data-handle="true"][data-state="open"]:not([data-dragging="true"]) {
+  transition:
+    translate var(--duration-normal) var(--easing-default),
+    height var(--duration-normal) var(--easing-default);
+}
+
+.ds-drawer__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Mobile: side drawers take the full width */
 @media (max-width: 480px) {
   .ds-drawer[data-side="right"],
@@ -258,7 +330,8 @@
     animation: none;
   }
 
-  .ds-drawer__close {
+  .ds-drawer__close,
+  .ds-drawer[data-side="bottom"][data-handle="true"][data-state="open"]:not([data-dragging="true"]) {
     transition: none;
   }
 }
@@ -269,8 +342,13 @@
     outline: 1px solid CanvasText;
   }
 
-  .ds-drawer__close:focus-visible {
+  .ds-drawer__close:focus-visible,
+  button.ds-drawer__handle:focus-visible {
     outline-color: Highlight;
+  }
+
+  .ds-drawer__handle-bar {
+    background: CanvasText;
   }
 }
 

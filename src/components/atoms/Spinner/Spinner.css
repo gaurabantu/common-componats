@@ -1,8 +1,12 @@
-/* Spinner — indeterminate loading ring. Token-driven; follows data-theme. */
+/* Spinner — indeterminate loading indicator (ring · dots · bars). Token-driven; follows data-theme. */
 
 .ds-spinner {
   --spinner-size: var(--size-icon-primary);
   --spinner-stroke: var(--border-width-medium);
+  /* Dot diameter / bar width as a share of --spinner-size (dots, bars). */
+  --spinner-weight: 0.24;
+  /* One cycle. normal = 800ms on the classic scale (slow 500 + normal 300). */
+  --spinner-duration: calc(var(--duration-slow) + var(--duration-normal));
   --spinner-ring: currentColor;
   /* currentColor at 20% over whatever surface it sits on keeps ring:track >= 3:1
      whenever the inherited text colour itself meets 4.5:1 on that surface. */
@@ -17,6 +21,7 @@
   vertical-align: middle;
 }
 
+/* ---------- ring ---------- */
 .ds-spinner__ring {
   box-sizing: border-box;
   display: block;
@@ -25,8 +30,47 @@
   border-radius: var(--radius-circle);
   border: var(--spinner-stroke) solid var(--spinner-track);
   border-top-color: var(--spinner-ring);
-  animation: ds-spinner-rotate calc(var(--duration-slow) + var(--duration-normal)) linear infinite;
+  animation: ds-spinner-rotate var(--spinner-duration) linear infinite;
 }
+
+/* ---------- dots / bars ---------- */
+.ds-spinner__dots,
+.ds-spinner__bars {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.ds-spinner__segment {
+  display: block;
+  flex: 0 0 auto;
+  background-color: var(--spinner-ring);
+  animation-duration: var(--spinner-duration);
+  animation-iteration-count: infinite;
+  animation-timing-function: var(--easing-default, ease-in-out);
+}
+
+.ds-spinner__dots .ds-spinner__segment {
+  width: calc(var(--spinner-size) * var(--spinner-weight));
+  height: calc(var(--spinner-size) * var(--spinner-weight));
+  border-radius: var(--radius-circle);
+  animation-name: ds-spinner-dot;
+}
+
+.ds-spinner__bars .ds-spinner__segment {
+  width: calc(var(--spinner-size) * var(--spinner-weight));
+  height: 80%;
+  border-radius: var(--radius-xs);
+  transform-origin: center;
+  animation-name: ds-spinner-bar;
+}
+
+/* Negative delays so every segment is mid-cycle on first paint (no dead frame). */
+.ds-spinner__segment:nth-child(1) { animation-delay: calc(var(--spinner-duration) * -0.66); }
+.ds-spinner__segment:nth-child(2) { animation-delay: calc(var(--spinner-duration) * -0.33); }
+.ds-spinner__segment:nth-child(3) { animation-delay: 0s; }
 
 .ds-spinner__label {
   position: absolute;
@@ -40,11 +84,27 @@
   border: 0;
 }
 
+/* ---------- size ---------- */
 .ds-spinner[data-size="xs"] { --spinner-size: var(--size-icon-dense); --spinner-stroke: var(--border-width-medium); }
 .ds-spinner[data-size="sm"] { --spinner-size: var(--size-icon-ui); --spinner-stroke: var(--border-width-medium); }
 .ds-spinner[data-size="md"] { --spinner-size: var(--size-icon-primary); --spinner-stroke: var(--border-width-medium); }
 .ds-spinner[data-size="lg"] { --spinner-size: var(--size-icon-large); --spinner-stroke: var(--border-width-thick); }
+.ds-spinner[data-size="xl"] { --spinner-size: var(--space-6); --spinner-stroke: var(--border-width-thick); }
 
+/* ---------- thickness (overrides the size default) ---------- */
+.ds-spinner[data-thickness="thin"] { --spinner-stroke: var(--border-width-thin); --spinner-weight: 0.18; }
+.ds-spinner[data-thickness="regular"] { --spinner-stroke: var(--border-width-medium); --spinner-weight: 0.24; }
+.ds-spinner[data-thickness="thick"] {
+  --spinner-stroke: calc(var(--border-width-thick) + var(--border-width-thin));
+  --spinner-weight: 0.3;
+}
+
+/* ---------- speed ---------- */
+.ds-spinner[data-speed="slow"] { --spinner-duration: calc(var(--duration-slow) * 2 + var(--duration-fast)); }
+.ds-spinner[data-speed="normal"] { --spinner-duration: calc(var(--duration-slow) + var(--duration-normal)); }
+.ds-spinner[data-speed="fast"] { --spinner-duration: var(--duration-slow); }
+
+/* ---------- tone ---------- */
 .ds-spinner[data-tone="primary"] {
   --spinner-ring: var(--color-brand-primary);
   --spinner-track: var(--color-border-subtle);
@@ -61,8 +121,19 @@
   --spinner-track: color-mix(in srgb, var(--color-text-on-primary) 12%, transparent);
 }
 
+/* ---------- keyframes ---------- */
 @keyframes ds-spinner-rotate {
   to { transform: rotate(360deg); }
+}
+
+@keyframes ds-spinner-dot {
+  0%, 100% { transform: scale(0.55); opacity: 0.45; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes ds-spinner-bar {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.55; }
+  50% { transform: scaleY(1); opacity: 1; }
 }
 
 @keyframes ds-spinner-pulse {
@@ -70,10 +141,18 @@
   50% { opacity: 0.45; }
 }
 
-/* Reduced motion — no rotation; a slow opacity pulse keeps "busy" perceivable. */
+/* Reduced motion — no rotation / scaling; a slow opacity pulse keeps "busy" perceivable. */
 @media (prefers-reduced-motion: reduce) {
-  .ds-spinner__ring {
+  .ds-spinner__ring,
+  .ds-spinner__dots,
+  .ds-spinner__bars {
     animation: ds-spinner-pulse calc(var(--duration-slow) * 4) ease-in-out infinite;
+  }
+
+  .ds-spinner__segment {
+    animation: none;
+    transform: none;
+    opacity: 1;
   }
 }
 
@@ -81,5 +160,11 @@
   .ds-spinner {
     --spinner-ring: CanvasText;
     --spinner-track: GrayText;
+  }
+
+  /* Background fills are dropped in forced colours — opt the segments out so they stay visible. */
+  .ds-spinner__segment {
+    forced-color-adjust: none;
+    background-color: CanvasText;
   }
 }

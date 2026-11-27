@@ -6,6 +6,14 @@ const meta: Meta<typeof ToolTip> = {
   title: "Design System/Atoms/ToolTip",
   component: ToolTip,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "**Deprecated — use `Tooltip` (Molecules/Tooltip).** `ToolTip` is now a thin wrapper over the canonical `Tooltip`: same props as before (`tooltipText`, `content`, `placement`, `variant`, `zIndex`, …), but the bubble is portalled, flips on collision, stays open while hovered and closes on Escape (WCAG 1.4.13). The trigger is a focusable `span` named by `tooltipText`; `children` replace the icon but must not be interactive (the span is already the focus stop) — wrap a real `Button` in `Tooltip` instead.",
+      },
+    },
+  },
   argTypes: {
     placement: { control: "select", options: ["auto", "top", "bottom", "left", "right"] },
     size: { control: { type: "number", min: 12, max: 32 } },
@@ -65,18 +73,16 @@ export const CustomTrigger: Story = {
       tooltipText="This tooltip is attached to custom content."
       placement="bottom"
     >
-      <button
-        type="button"
+      <span
         style={{
-          border: "1px solid rgba(153,153,153,0.35)",
+          border: "1px solid var(--color-border-default)",
           background: "var(--color-bg-surface)",
-          borderRadius: 8,
-          padding: "8px 12px",
-          cursor: "pointer",
+          borderRadius: "var(--radius-md)",
+          padding: "var(--space-1) var(--space-2)",
         }}
       >
-        Hover me
-      </button>
+        Hover or focus me
+      </span>
     </ToolTip>
   ),
 };

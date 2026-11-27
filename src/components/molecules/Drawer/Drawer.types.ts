@@ -60,7 +60,37 @@ export interface DrawerProps {
   className?: string;
   /** DOM id for the panel. Title / description ids derive from it. Auto-generated when omitted. */
   id?: string;
+
+  // ── Bottom-sheet behaviour (`side="bottom"` only; ignored on other sides) ──────────────────────
+  /**
+   * Show a drag handle at the top of a bottom sheet. With `snapPoints` it is a button
+   * ("Resize sheet": click / ArrowUp / ArrowDown / Home / End move between snap points); without, it is a
+   * pointer-only grip for swipe-to-dismiss (the close button / Escape stay the keyboard alternative).
+   * @default false (`BottomSheet` defaults it to `true`)
+   */
+  handle?: boolean;
+  /** Accessible name of the handle button. @default "Resize sheet" */
+  handleLabel?: string;
+  /**
+   * Swipe the handle down to dismiss (pointer events; distance threshold + flick velocity). Goes through
+   * `onBeforeClose` like any user close. @default the value of `handle`
+   */
+  swipeToDismiss?: boolean;
+  /**
+   * Sheet heights the user can snap between, smallest first — any CSS length (`"40%"`, `"90%"`, `"20rem"`,
+   * `"320px"`, `"50vh"`; `%` is of the viewport height). Replaces `size` for a bottom sheet.
+   */
+  snapPoints?: string[];
+  /** Index into `snapPoints` used each time the sheet opens (uncontrolled). @default 0 */
+  defaultSnap?: number;
+  /** Controlled snap index. Pair with `onSnapChange`. */
+  snap?: number;
+  /** Fires with the new snap index (and its CSS length) after a drag, click or key press on the handle. */
+  onSnapChange?: (index: number, snapPoint: string) => void;
 }
 
 /** `Sheet` is an alias of `Drawer` with the same props. */
 export type SheetProps = DrawerProps;
+
+/** `BottomSheet` = `Drawer` with `side="bottom"` and `handle` on by default. */
+export type BottomSheetProps = Omit<DrawerProps, "side">;

@@ -8,9 +8,9 @@ declare const StatCard: _openuidev_react_lang.DefinedComponent<z.ZodObject<{
     unit: z.ZodOptional<z.ZodString>;
     change: z.ZodOptional<z.ZodString>;
     trend: z.ZodOptional<z.ZodEnum<{
-        neutral: "neutral";
         up: "up";
         down: "down";
+        neutral: "neutral";
     }>>;
     changeLabel: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;

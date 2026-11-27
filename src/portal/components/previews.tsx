@@ -15,6 +15,11 @@ import {
   AccordionTrigger,
   Alert,
   Avtar,
+  AvatarGroup,
+  Rating,
+  TagInput,
+  TimePicker,
+  Timeline,
   Badge,
   Breadcrumb,
   BreadcrumbItem,
@@ -159,6 +164,34 @@ export const PREVIEWS: Record<string, Preview> = {
       </Button>
       {MENU}
     </div>
+  )),
+  Menu: schematic(() => (
+    <div className="pt-pv-stack">
+      <Button size="sm" variant="outlineSecondary">
+        Options ▾
+      </Button>
+      {MENU}
+    </div>
+  )),
+  TagInput: live(() => <TagInput label="Tags" defaultValue={["react", "a11y"]} />),
+  TimePicker: live(() => <TimePicker label="Start time" defaultValue="09:30" />),
+  Rating: live(() => <Rating label="Rating" defaultValue={4} />),
+  AvatarGroup: live(() => (
+    <AvatarGroup
+      label="Team"
+      max={3}
+      items={[{ name: "Ada Lovelace" }, { name: "Grace Hopper" }, { name: "Alan Turing" }, { name: "Linus T" }, { name: "Mary K" }]}
+    />
+  )),
+  Timeline: live(() => (
+    <Timeline
+      label="Activity"
+      items={[
+        { title: "Created", status: "success" },
+        { title: "Reviewed", status: "info" },
+        { title: "Deploying" },
+      ]}
+    />
   )),
   ContextMenu: schematic(() => (
     <div className="pt-pv-stack">

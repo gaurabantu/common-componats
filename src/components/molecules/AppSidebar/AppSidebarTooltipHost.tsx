@@ -79,6 +79,10 @@ export default function AppSidebarTooltipHost({ collapsed, label, children }: Pr
       onMouseLeave={() => setVisible(false)}
       onFocusCapture={() => setVisible(true)}
       onBlurCapture={() => setVisible(false)}
+      // WCAG 1.4.13: hover/focus content must be dismissible without moving focus.
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && visible) setVisible(false);
+      }}
     >
       {child}
       {tooltip}

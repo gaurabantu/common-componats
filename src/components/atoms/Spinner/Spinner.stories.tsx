@@ -1,7 +1,13 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import Spinner from "./index";
-import { SPINNER_SIZES, SPINNER_TONES } from "./Spinner.config";
+import {
+  SPINNER_SIZES,
+  SPINNER_SPEEDS,
+  SPINNER_THICKNESSES,
+  SPINNER_TONES,
+  SPINNER_VARIANTS,
+} from "./Spinner.config";
 
 const meta: Meta<typeof Spinner> = {
   title: "Design System/Atoms/Spinner",
@@ -11,17 +17,21 @@ const meta: Meta<typeof Spinner> = {
     docs: {
       description: {
         component:
-          "Indeterminate loading indicator. By default it is a `role=\"status\"` region that announces `label` (\"Loading\"). Use `decorative` when the spinner sits inside a control that already announces its busy state, such as a loading Button. Under `prefers-reduced-motion` the ring stops rotating and pulses slowly instead. Prefer `Skeleton` when the layout of the incoming content is known.",
+          "Indeterminate loading indicator. By default it is a `role=\"status\"` region that announces `label` (\"Loading\"). Use `decorative` when the spinner sits inside a control that already announces its busy state, such as a loading Button. `variant` switches between `ring`, `dots` and `bars`; `thickness` and `speed` tune the weight and cycle; `delay` (ms) renders nothing until it elapses so fast requests never flash a spinner. Under `prefers-reduced-motion` nothing rotates or scales — the indicator pulses slowly instead. Prefer `Skeleton` when the layout of the incoming content is known.",
       },
     },
   },
   argTypes: {
     size: { control: "inline-radio", options: SPINNER_SIZES },
     tone: { control: "inline-radio", options: SPINNER_TONES },
+    variant: { control: "inline-radio", options: SPINNER_VARIANTS },
+    thickness: { control: "inline-radio", options: SPINNER_THICKNESSES },
+    speed: { control: "inline-radio", options: SPINNER_SPEEDS },
+    delay: { control: { type: "number", min: 0, step: 100 } },
     label: { control: "text" },
     decorative: { control: "boolean" },
   },
-  args: { size: "md", tone: "primary", label: "Loading", decorative: false },
+  args: { size: "md", tone: "primary", variant: "ring", speed: "normal", delay: 0, label: "Loading", decorative: false },
 };
 
 export default meta;
@@ -83,6 +93,63 @@ export const Decorative: Story = {
     docs: {
       description: {
         story: "Hidden from assistive tech (`aria-hidden`, no role). The parent must expose the busy state itself, e.g. `aria-busy` or a visible \"Saving…\" label.",
+      },
+    },
+  },
+};
+
+export const Variants: Story = {
+  render: (args) => (
+    <div className="sb-inline">
+      {SPINNER_VARIANTS.map((variant) => (
+        <div key={variant} className="sb-swatch">
+          <Spinner {...args} size="lg" variant={variant} />
+          <span className="sb-swatch-label">{variant}</span>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Thickness: Story = {
+  render: (args) => (
+    <div className="sb-stack">
+      {SPINNER_VARIANTS.map((variant) => (
+        <div key={variant} className="sb-inline">
+          {SPINNER_THICKNESSES.map((thickness) => (
+            <div key={thickness} className="sb-swatch">
+              <Spinner {...args} size="xl" variant={variant} thickness={thickness} />
+              <span className="sb-swatch-label">
+                {variant} · {thickness}
+              </span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Speeds: Story = {
+  render: (args) => (
+    <div className="sb-inline">
+      {SPINNER_SPEEDS.map((speed) => (
+        <div key={speed} className="sb-swatch">
+          <Spinner {...args} size="lg" speed={speed} />
+          <span className="sb-swatch-label">{speed}</span>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const Delayed: Story = {
+  args: { delay: 600 },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Nothing renders for the first 600 ms (re-mount the story to see it again). Use 300–800 ms for requests that usually resolve fast so users never see a one-frame flash.",
       },
     },
   },

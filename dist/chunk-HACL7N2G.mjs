@@ -927,6 +927,7 @@ var ListboxOption = forwardRef(function ListboxOption2({
 });
 
 export {
+  computePopoverPosition,
   DEFAULT_TOOLTIP_Z,
   getAncestorZIndex,
   resolveLayerZIndex,
@@ -956,4 +957,4 @@ export {
   Listbox,
   ListboxOption
 };
-//# sourceMappingURL=chunk-R6XNUOQM.mjs.map
+//# sourceMappingURL=chunk-HACL7N2G.mjs.map

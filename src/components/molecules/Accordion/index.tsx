@@ -119,14 +119,15 @@ export const Accordion = React.memo(function Accordion({
           setValue(itemValue);
         }
       } else {
-        const arr = normalizeMultipleValue(v);
+        // Copy first — `normalizeMultipleValue` returns the caller's (possibly controlled) array as-is.
+        const arr = [...normalizeMultipleValue(v)];
         const i = arr.indexOf(itemValue);
         if (i >= 0) {
           arr.splice(i, 1);
         } else {
           arr.push(itemValue);
         }
-        setValue([...arr]);
+        setValue(arr);
       }
     },
     [type, collapsible, setValue]
@@ -245,6 +246,8 @@ export const AccordionTrigger = React.memo(function AccordionTrigger({
   );
 });
 
+const useInertLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 export const AccordionContent = React.memo(function AccordionContent({
   children,
   className,
@@ -255,6 +258,20 @@ export const AccordionContent = React.memo(function AccordionContent({
   const item = useAccordionItemContext("AccordionContent");
   const open = acc.isOpen(item.value);
   const animated = acc.motion === "default";
+  const hidden = !open;
+  const useInertWhenClosed = hidden && animated;
+
+  /**
+   * `inert` is set on the DOM node, not as a JSX prop: React 18 rejects `inert={true}` (warns and drops
+   * it, leaving closed panels focusable) while React 19 rejects `inert=""`. The attribute works on both.
+   */
+  const outerRef = useRef<HTMLDivElement>(null);
+  useInertLayoutEffect(() => {
+    const el = outerRef.current;
+    if (!el) return;
+    if (useInertWhenClosed) el.setAttribute("inert", "");
+    else el.removeAttribute("inert");
+  }, [useInertWhenClosed]);
 
   /** Animated mode keeps panels mounted so height can transition on close; `hidden` would break CSS grid animation. */
   const keepMounted = animated || forceMount || open;
@@ -262,12 +279,10 @@ export const AccordionContent = React.memo(function AccordionContent({
     return null;
   }
 
-  const hidden = !open;
-  const useInertWhenClosed = hidden && animated;
-
   return (
     <div
       {...rest}
+      ref={outerRef}
       className={cls("ds-accordion__content-outer", className)}
       data-state={open ? "open" : "closed"}
       data-animated={animated ? "true" : undefined}
@@ -276,7 +291,6 @@ export const AccordionContent = React.memo(function AccordionContent({
       aria-labelledby={item.triggerId}
       aria-hidden={hidden ? true : undefined}
       hidden={hidden && !forceMount && !animated ? true : undefined}
-      inert={useInertWhenClosed ? true : undefined}
     >
       <div className="ds-accordion__content-inner">
         <div

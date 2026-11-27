@@ -1,184 +1,279 @@
-import React, { useState, ChangeEvent, useId, useEffect, useRef } from "react";
+"use client";
+
+import React, {
+  ChangeEvent,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import Icon from "../Icon";
 import ErrorIcon from "../../../assets/error.svg";
+import { OTP_BOX_DEFAULTS, OTP_BOX_INPUT_MODE, OTP_BOX_PATTERN } from "./OtpBox.config";
+import type { OtpBoxHandle, OtpBoxProps } from "./OtpBox.types";
+import { defaultCellLabel, filterOtp, toCells } from "./OtpBox.utils";
 import "./OtpBox.css";
 
-export type OtpBoxVariant = "outlined" | "filled" | "underlined" | "boxes";
-export type OtpBoxSize = "sm" | "md" | "lg";
+/**
+ * OtpBox — one-time-code entry. `variant="boxes"` (default) renders one input per character inside a
+ * labelled `role="group"`; the other variants render a single input. Supports SMS autofill
+ * (`autocomplete="one-time-code"`), full-code paste, arrow/Home/End/Backspace navigation,
+ * `onComplete`, form submission via `name`, and an imperative `focus()` / `clear()` handle.
+ */
+const OtpBox = forwardRef<OtpBoxHandle, OtpBoxProps>(function OtpBox(
+  {
+    length = OTP_BOX_DEFAULTS.length,
+    mask = OTP_BOX_DEFAULTS.mask,
+    value,
+    defaultValue,
+    type = OTP_BOX_DEFAULTS.type,
+    variant = OTP_BOX_DEFAULTS.variant,
+    size = OTP_BOX_DEFAULTS.size,
+    onChange,
+    onComplete,
+    autoFocus = false,
+    name,
+    id,
+    label,
+    ariaLabel = OTP_BOX_DEFAULTS.ariaLabel,
+    getCellLabel,
+    error = "",
+    showValidation = OTP_BOX_DEFAULTS.showValidation,
+    incompleteMessage = OTP_BOX_DEFAULTS.incompleteMessage,
+    required = false,
+    disabled = false,
+    className = "",
+    containerClass = "",
+  },
+  ref,
+) {
+  const generatedId = useId();
+  const baseId = id ?? `otp-${generatedId}`;
+  const labelId = `${baseId}-label`;
+  const errorId = `${baseId}-error`;
+  const cellId = (i: number) => `${baseId}-${i}`;
 
-export interface OtpBoxProps {
-  length?: number;
-  mask?: boolean;
-  value?: string;
-  type?: "numeric" | "alphanumeric" | "alphabet";
-  variant?: OtpBoxVariant;
-  size?: OtpBoxSize;
-  onChange?: (value: string) => void;
-  className?: string;
-  containerClass?: string;
-  disabled?: boolean;
-  label?: string;
-  error?: string;
-  showValidation?: boolean;
-}
+  const [cells, setCells] = useState<string[]>(() =>
+    toCells(filterOtp(type, value ?? defaultValue ?? ""), length),
+  );
+  const cellsRef = useRef(cells);
+  cellsRef.current = cells;
 
-const OtpBox: React.FC<OtpBoxProps> = ({
-  length = 6,
-  mask = false,
-  value = "",
-  type = "numeric",
-  variant = "boxes",
-  size = "md",
-  onChange,
-  className = "",
-  containerClass = "",
-  disabled = false,
-  label,
-  error = "",
-  showValidation = true,
-}) => {
-  const [otpValue, setOtpValue] = useState<string>(value);
+  const [focusWithin, setFocusWithin] = useState(false);
+  const [touched, setTouched] = useState(false);
+
+  const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const boxRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const inputId = useId();
 
+  const joined = cells.join("");
+
+  // Re-sync from the `value` prop (controlled use) and when `length` changes.
   useEffect(() => {
-    if (value !== otpValue) {
-      setOtpValue(value);
+    const current = cellsRef.current;
+    const source = value !== undefined ? filterOtp(type, value) : current.join("");
+    if (current.length !== length || source !== current.join("")) {
+      const next = toCells(source, length);
+      cellsRef.current = next;
+      setCells(next);
     }
-  }, [value]);
+  }, [value, length, type]);
 
-  const filterInput = (val: string): string => {
-    switch (type) {
-      case "numeric":
-        return val.replace(/\D/g, "");
-      case "alphabet":
-        return val.replace(/[^a-zA-Z]/g, "");
-      case "alphanumeric":
-        return val.replace(/[^a-zA-Z0-9]/g, "");
+  const commit = useCallback(
+    (next: string[]) => {
+      const prevValue = cellsRef.current.join("");
+      cellsRef.current = next;
+      setCells(next);
+      const nextValue = next.join("");
+      if (nextValue === prevValue) return;
+      onChange?.(nextValue);
+      if (nextValue.length === length && next.every(Boolean)) onComplete?.(nextValue);
+    },
+    [length, onChange, onComplete],
+  );
+
+  const focusCell = (index: number) => {
+    const target = boxRefs.current[Math.max(0, Math.min(index, length - 1))];
+    target?.focus();
+  };
+
+  const isBoxes = variant === "boxes";
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: (index?: number) => {
+        if (!isBoxes) {
+          inputRef.current?.focus();
+          return;
+        }
+        const firstEmpty = cellsRef.current.findIndex((c) => !c);
+        focusCell(index ?? (firstEmpty === -1 ? length - 1 : firstEmpty));
+      },
+      clear: () => {
+        commit(toCells("", length));
+        if (isBoxes) focusCell(0);
+        else inputRef.current?.focus();
+      },
+      getValue: () => cellsRef.current.join(""),
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isBoxes, length, commit],
+  );
+
+  /** Write `chars` starting at `start`; a full-length code always fills from the first cell. */
+  const distribute = (start: number, chars: string) => {
+    if (!chars) return;
+    const from = chars.length >= length ? 0 : start;
+    const next = cellsRef.current.slice();
+    for (let k = 0; k < chars.length && from + k < length; k += 1) next[from + k] = chars.charAt(k);
+    commit(next);
+    focusCell(Math.min(from + chars.length, length - 1));
+  };
+
+  // ---------- validation ----------
+  const isIncomplete = joined.length > 0 && joined.length < length;
+  const lengthError =
+    showValidation && isIncomplete && touched && !focusWithin ? incompleteMessage : "";
+  const displayError = error || lengthError;
+  const showError = !!displayError;
+
+  const handleFocus = () => setFocusWithin(true);
+  const handleBlur = (e: React.FocusEvent<HTMLElement>) => {
+    const next = e.relatedTarget as Node | null;
+    if (next && rootRef.current?.contains(next)) return;
+    setFocusWithin(false);
+    setTouched(true);
+  };
+
+  // ---------- boxes handlers ----------
+  const handleBoxChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+    const prev = cellsRef.current[index];
+    const filtered = filterOtp(type, e.target.value);
+
+    if (filtered.length === 0) {
+      const next = cellsRef.current.slice();
+      next[index] = "";
+      commit(next);
+      return;
+    }
+
+    let char: string | null = null;
+    if (filtered.length === 1) char = filtered;
+    else if (filtered.length === 2 && prev && filtered.indexOf(prev) !== -1) {
+      // Typed next to an existing character (caret not over a selection): keep the new one.
+      char = filtered.charAt(0) === prev ? filtered.charAt(1) : filtered.charAt(0);
+    }
+
+    if (char === null) {
+      // Several characters at once: SMS autofill or an IME / drag-drop insert.
+      distribute(index, filtered);
+      return;
+    }
+
+    const next = cellsRef.current.slice();
+    next[index] = char;
+    commit(next);
+    if (index < length - 1) focusCell(index + 1);
+  };
+
+  const handleBoxKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    const current = cellsRef.current;
+    switch (e.key) {
+      case "Backspace": {
+        e.preventDefault();
+        const next = current.slice();
+        if (current[index]) {
+          next[index] = "";
+          commit(next);
+        } else if (index > 0) {
+          next[index - 1] = "";
+          commit(next);
+          focusCell(index - 1);
+        }
+        return;
+      }
+      case "Delete": {
+        e.preventDefault();
+        if (current[index]) {
+          const next = current.slice();
+          next[index] = "";
+          commit(next);
+        }
+        return;
+      }
+      case "ArrowLeft":
+        e.preventDefault();
+        focusCell(index - 1);
+        return;
+      case "ArrowRight":
+        e.preventDefault();
+        focusCell(index + 1);
+        return;
+      case "Home":
+        e.preventDefault();
+        focusCell(0);
+        return;
+      case "End":
+        e.preventDefault();
+        focusCell(length - 1);
+        return;
       default:
-        return val;
+        // Re-typing the same character produces no change event — still advance.
+        if (
+          e.key.length === 1 &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          !e.altKey &&
+          current[index] === e.key &&
+          filterOtp(type, e.key) === e.key
+        ) {
+          e.preventDefault();
+          if (index < length - 1) focusCell(index + 1);
+        }
     }
   };
 
-  const updateValue = (newVal: string) => {
-    const limited = newVal.slice(0, length);
-    setOtpValue(limited);
-    onChange?.(limited);
+  const handleBoxPaste = (index: number, e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    distribute(index, filterOtp(type, e.clipboardData.getData("text")));
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // ---------- single-input handlers ----------
+  const handleSingleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    const cursorPos = e.target.selectionStart || 0;
+    const otpValue = cellsRef.current.join("");
+    const cursorPos = e.target.selectionStart ?? inputValue.length;
+    let newValue = otpValue;
 
     if (mask) {
       const prevLength = otpValue.length;
       const newLength = inputValue.length;
-      let newValue = otpValue;
-
       if (newLength > prevLength) {
-        const addedChars = inputValue.slice(cursorPos - (newLength - prevLength), cursorPos);
-        const filteredChars = filterInput(addedChars);
-        const beforeCursor = otpValue.slice(0, cursorPos - (newLength - prevLength));
-        const afterCursor = otpValue.slice(cursorPos - (newLength - prevLength));
-        newValue = beforeCursor + filteredChars + afterCursor;
+        const addedStart = cursorPos - (newLength - prevLength);
+        const added = filterOtp(type, inputValue.slice(addedStart, cursorPos));
+        newValue = otpValue.slice(0, addedStart) + added + otpValue.slice(addedStart);
       } else if (newLength < prevLength) {
         const deleteCount = prevLength - newLength;
-        const beforeCursor = otpValue.slice(0, cursorPos);
-        const afterCursor = otpValue.slice(cursorPos + deleteCount);
-        newValue = beforeCursor + afterCursor;
+        newValue = otpValue.slice(0, cursorPos) + otpValue.slice(cursorPos + deleteCount);
       }
-
-      newValue = newValue.slice(0, length);
-      updateValue(newValue);
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(cursorPos, cursorPos);
-        }
-      }, 0);
+      setTimeout(() => inputRef.current?.setSelectionRange(cursorPos, cursorPos), 0);
     } else {
-      const val = filterInput(inputValue);
-      updateValue(val.slice(0, length));
+      newValue = filterOtp(type, inputValue);
     }
+    commit(toCells(newValue.slice(0, length), length));
   };
 
-  const handleBoxChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
-    const val = filterInput(e.target.value);
-    if (val.length > 1) {
-      const pasted = val.slice(0, length);
-      updateValue(pasted);
-      const nextIdx = Math.min(index + pasted.length, length - 1);
-      boxRefs.current[nextIdx]?.focus();
-      return;
-    }
-    const char = val.slice(-1);
-    if (char) {
-      const arr = [...otpValue.split(""), ""];
-      arr[index] = char;
-      const newVal = arr.join("").slice(0, length);
-      updateValue(newVal);
-      if (index < length - 1) boxRefs.current[index + 1]?.focus();
-    } else {
-      const arr = otpValue.split("");
-      arr[index] = "";
-      updateValue(arr.join(""));
-    }
-  };
-
-  const handleBoxKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !otpValue[index] && index > 0) {
-      e.preventDefault();
-      const arr = otpValue.split("");
-      arr[index - 1] = "";
-      updateValue(arr.join(""));
-      boxRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowLeft" && index > 0) {
-      e.preventDefault();
-      boxRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < length - 1) {
-      e.preventDefault();
-      boxRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleBoxPaste = (e: React.ClipboardEvent) => {
+  const handleSinglePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasted = filterInput(e.clipboardData.getData("text")).slice(0, length);
-    updateValue(pasted);
-    const nextIndex = Math.min(pasted.length, length - 1);
-    boxRefs.current[nextIndex]?.focus();
+    const pasted = filterOtp(type, e.clipboardData.getData("text"));
+    if (pasted) commit(toCells(pasted.slice(0, length), length));
   };
 
-  const isIncomplete = otpValue.length > 0 && otpValue.length < length;
-  const lengthError = showValidation && isIncomplete ? "Please enter correct OTP" : "";
-  const displayError = error || lengthError;
-  const showError = !!displayError;
-
-  const getInputMode = () => {
-    switch (type) {
-      case "numeric":
-        return "numeric";
-      default:
-        return "text";
-    }
-  };
-
-  const getPattern = () => {
-    switch (type) {
-      case "numeric":
-        return "\\d*";
-      case "alphabet":
-        return "[a-zA-Z]*";
-      case "alphanumeric":
-        return "[a-zA-Z0-9]*";
-      default:
-        return undefined;
-    }
-  };
-
-  const displayValue = mask ? "•".repeat(otpValue.length) : otpValue;
-
+  // ---------- render ----------
   const rootClasses = [
     "otp-box-root",
     `otp-box--${variant}`,
@@ -191,95 +286,117 @@ const OtpBox: React.FC<OtpBoxProps> = ({
     .filter(Boolean)
     .join(" ");
 
-  if (variant === "boxes") {
+  const inputMode = OTP_BOX_INPUT_MODE[type];
+  // A masked value ("•") would fail `pattern` and block native form submission, so drop it when masking.
+  const pattern = mask ? undefined : OTP_BOX_PATTERN[type];
+  const describedBy = showError ? errorId : undefined;
+
+  const errorNode = showError ? (
+    <div id={errorId} className="otp-box-error" role="alert">
+      <Icon src={ErrorIcon} width={14} height={14} color="var(--color-danger-strong)" decorative />
+      <span>{displayError}</span>
+    </div>
+  ) : null;
+
+  const hiddenInput = name ? (
+    <input type="hidden" name={name} value={joined} disabled={disabled} />
+  ) : null;
+
+  if (isBoxes) {
     return (
-      <div className={rootClasses} data-disabled={disabled || undefined}>
+      <div ref={rootRef} className={rootClasses} data-disabled={disabled || undefined}>
         <div className="otp-box-wrapper">
           {label && (
-            <label htmlFor={inputId} className="otp-box-label">
+            <label id={labelId} htmlFor={cellId(0)} className="otp-box-label">
               {label}
             </label>
           )}
           <div
             className="otp-box-cells"
+            role="group"
+            aria-labelledby={label ? labelId : undefined}
+            aria-label={label ? undefined : ariaLabel}
+            aria-describedby={describedBy}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           >
-            {Array.from({ length }).map((_, i) => (
+            {cells.map((char, i) => (
               <input
                 key={i}
                 ref={(el) => {
                   boxRefs.current[i] = el;
                 }}
+                id={cellId(i)}
                 type="text"
-                inputMode={getInputMode()}
-                maxLength={1}
-                value={mask ? (otpValue[i] ? "•" : "") : otpValue[i] ?? ""}
+                inputMode={inputMode}
+                pattern={pattern}
+                value={mask && char ? OTP_BOX_DEFAULTS.maskChar : char}
                 onChange={(e) => handleBoxChange(i, e)}
                 onKeyDown={(e) => handleBoxKeyDown(i, e)}
-                onPaste={handleBoxPaste}
+                onPaste={(e) => handleBoxPaste(i, e)}
+                onFocus={(e) => e.currentTarget.select()}
                 disabled={disabled}
-                placeholder=""
-                aria-label={`Digit ${i + 1} of ${length}`}
-                aria-invalid={showError}
-                aria-describedby={showError ? `error-${inputId}` : undefined}
-                autoComplete="one-time-code"
+                autoFocus={autoFocus && i === 0}
+                aria-label={getCellLabel ? getCellLabel(i, length) : defaultCellLabel(type, i, length)}
+                aria-invalid={showError || undefined}
+                aria-required={required || undefined}
+                aria-describedby={describedBy}
+                autoComplete={i === 0 ? "one-time-code" : "off"}
+                autoCorrect="off"
+                autoCapitalize="off"
                 spellCheck={false}
                 className="otp-box-cell"
-                style={{
-                  padding: 0,
-                  margin: 0,
-                  textAlign: "center",
-                  fontWeight: 700,
-                  boxSizing: "border-box",
-                  flexShrink: 0,
-                }}
               />
             ))}
           </div>
-          {showError && (
-            <div id={`error-${inputId}`} className="otp-box-error" role="alert">
-              <Icon src={ErrorIcon} width={14} height={14} color="var(--color-state-error)" />
-              {displayError}
-            </div>
-          )}
+          {hiddenInput}
+          {errorNode}
         </div>
       </div>
     );
   }
 
   return (
-    <div className={rootClasses} data-disabled={disabled || undefined}>
+    <div ref={rootRef} className={rootClasses} data-disabled={disabled || undefined}>
       <div className="otp-box-wrapper">
         {label && (
-          <label htmlFor={inputId} className="otp-box-label">
+          <label id={labelId} htmlFor={baseId} className="otp-box-label">
             {label}
           </label>
         )}
         <input
           ref={inputRef}
-          id={inputId}
+          id={baseId}
           type="text"
           maxLength={length}
-          value={displayValue}
-          onChange={handleChange}
+          value={mask ? OTP_BOX_DEFAULTS.maskChar.repeat(joined.length) : joined}
+          onChange={handleSingleChange}
+          onPaste={handleSinglePaste}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           disabled={disabled}
-          inputMode={getInputMode()}
-          pattern={getPattern()}
-          aria-invalid={showError}
-          aria-describedby={showError ? `error-${inputId}` : undefined}
+          autoFocus={autoFocus}
+          inputMode={inputMode}
+          pattern={pattern}
+          aria-label={label ? undefined : ariaLabel}
+          aria-invalid={showError || undefined}
+          aria-required={required || undefined}
+          aria-describedby={describedBy}
           autoComplete="one-time-code"
+          autoCorrect="off"
+          autoCapitalize="off"
           placeholder={Array(length).fill("·").join(" ")}
           spellCheck={false}
           className="otp-box-input"
         />
-        {showError && (
-          <div id={`error-${inputId}`} className="otp-box-error" role="alert">
-            <Icon src={ErrorIcon} width={14} height={14} color="var(--color-state-error)" />
-            {displayError}
-          </div>
-        )}
+        {hiddenInput}
+        {errorNode}
       </div>
     </div>
   );
-};
+});
+
+OtpBox.displayName = "OtpBox";
 
 export default OtpBox;
+export type { OtpBoxProps, OtpBoxVariant, OtpBoxSize, OtpBoxType, OtpBoxHandle } from "./OtpBox.types";

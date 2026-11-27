@@ -31,53 +31,53 @@
 }
 
 /* Joined button segments — overlap borders only when two segments touch (no separator between) */
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment {
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__segment {
   position: relative;
   z-index: 0;
   border-radius: 0;
 }
 
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment + .ds-button-group__segment {
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__segment + .ds-button-group__segment {
   margin-inline-start: -1.5px;
 }
 
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:first-of-type {
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__segment:first-of-type {
   border-start-start-radius: var(--radius-md, 8px);
   border-end-start-radius: var(--radius-md, 8px);
 }
 
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:last-of-type {
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__segment:last-of-type {
   border-start-end-radius: var(--radius-md, 8px);
   border-end-end-radius: var(--radius-md, 8px);
 }
 
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:focus-visible,
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__segment:hover {
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__segment:focus-visible,
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__segment:hover {
   z-index: 1;
 }
 
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment {
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__segment {
   position: relative;
   z-index: 0;
   border-radius: 0;
 }
 
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment + .ds-button-group__segment {
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__segment + .ds-button-group__segment {
   margin-block-start: -1.5px;
 }
 
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:first-of-type {
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__segment:first-of-type {
   border-start-start-radius: var(--radius-md, 8px);
   border-start-end-radius: var(--radius-md, 8px);
 }
 
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:last-of-type {
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__segment:last-of-type {
   border-end-start-radius: var(--radius-md, 8px);
   border-end-end-radius: var(--radius-md, 8px);
 }
 
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:focus-visible,
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__segment:hover {
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__segment:focus-visible,
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__segment:hover {
   z-index: 1;
 }
 
@@ -101,11 +101,11 @@
   margin-block: 0;
 }
 
-.ds-button-group[data-orientation="horizontal"] > .ds-button-group__separator[data-orientation="vertical"] {
+.ds-button-group[data-attached="true"][data-orientation="horizontal"] > .ds-button-group__separator[data-orientation="vertical"] {
   margin-inline: -1px;
 }
 
-.ds-button-group[data-orientation="vertical"] > .ds-button-group__separator[data-orientation="horizontal"] {
+.ds-button-group[data-attached="true"][data-orientation="vertical"] > .ds-button-group__separator[data-orientation="horizontal"] {
   margin-block: -1px;
 }
 
@@ -128,5 +128,36 @@
 @media (prefers-reduced-motion: reduce) {
   .ds-button-group > .ds-button-group__segment {
     transition: none;
+  }
+}
+
+/* Detached (`attached={false}`): buttons keep their own radius, 8px gap between them (WCAG 2.5.8 spacing) */
+.ds-button-group[data-attached="false"] {
+  gap: var(--space-1, 8px);
+}
+
+/* fullWidth: stretch to the container; buttons share the width equally */
+.ds-button-group[data-full-width="true"] {
+  display: flex;
+  width: 100%;
+}
+
+.ds-button-group[data-full-width="true"][data-orientation="horizontal"] {
+  flex-wrap: nowrap;
+}
+
+.ds-button-group[data-full-width="true"][data-orientation="horizontal"] > .ds-button-group__segment {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.ds-button-group[data-full-width="true"][data-orientation="vertical"] > .ds-button-group__segment {
+  width: 100%;
+}
+
+/* Joined segments overlap borders; keep the separator visible in Windows High Contrast */
+@media (forced-colors: active) {
+  .ds-button-group__separator {
+    background-color: CanvasText;
   }
 }

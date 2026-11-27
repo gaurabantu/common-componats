@@ -67,6 +67,17 @@ function ChevronDownSmall({ size = 14 }: { size?: number }) {
   );
 }
 
+const pad2 = (n: number) => String(n).padStart(2, "0");
+/** Stable local-date key used for `data-date` and roving focus (YYYY-MM-DD). */
+const toDayKey = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const toMonthKey = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+/** Same day-of-month `delta` months away, clamped to the target month's last day. */
+const shiftMonthClamped = (d: Date, delta: number) => {
+  const target = new Date(d.getFullYear(), d.getMonth() + delta, 1);
+  const last = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  return new Date(target.getFullYear(), target.getMonth(), Math.min(d.getDate(), last));
+};
+
 const Calendar: React.FC<CalendarProps> = ({
   month: monthProp,
   hideNavigation = false,
@@ -166,6 +177,11 @@ const Calendar: React.FC<CalendarProps> = ({
     [visibleMonth, firstDayOfWeek]
   );
 
+  /* ── Keyboard grid navigation (APG date-picker grid): roving tabindex + arrow / Home / End / PageUp / PageDown ── */
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [focusedDate, setFocusedDate] = useState<Date | null>(null);
+  const pendingFocusRef = useRef<{ key: string; month: string } | null>(null);
+
   const weekdayLabels = useMemo(
     () => getWeekdayLabels(firstDayOfWeek),
     [firstDayOfWeek]
@@ -239,9 +255,12 @@ const Calendar: React.FC<CalendarProps> = ({
     []
   );
 
+  // Depend on the timestamp: with a controlled `month`, `visibleMonth` is a new Date every render,
+  // which closed the month/year menus immediately after they opened.
+  const visibleMonthTime = visibleMonth.getTime();
   useEffect(() => {
     setCaptionPick(null);
-  }, [visibleMonth]);
+  }, [visibleMonthTime]);
 
   useEffect(() => {
     if (!captionPick) return;
@@ -274,6 +293,88 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const today = new Date();
   const [rangeStart, rangeEnd] = selectedRange;
+
+  const isInVisibleMonth = (d: Date | null | undefined): boolean =>
+    !!d && d.getMonth() === visibleMonth.getMonth() && d.getFullYear() === visibleMonth.getFullYear();
+
+  // Exactly one day button is in the Tab order: last focused → selected → range ends → today → first enabled day.
+  const tabbableKey = (() => {
+    const candidates = [focusedDate, selectedDate, rangeStart, rangeEnd, today];
+    const hit = candidates.find((d) => isInVisibleMonth(d) && !isDisabledDate(d as Date));
+    if (hit) return toDayKey(hit);
+    const firstEnabled = calendarDays.find((d) => d.inCurrentMonth && !isDisabledDate(d.date));
+    return firstEnabled ? toDayKey(firstEnabled.date) : toDayKey(visibleMonth);
+  })();
+
+  useEffect(() => {
+    const pending = pendingFocusRef.current;
+    if (!pending) return;
+    const el = rootRef.current?.querySelector<HTMLButtonElement>(`[data-date="${pending.key}"]`);
+    if (el) {
+      pendingFocusRef.current = null;
+      el.focus();
+    } else if (pending.month === toMonthKey(visibleMonth)) {
+      pendingFocusRef.current = null;
+    }
+  });
+
+  const focusDay = (target: Date) => {
+    setFocusedDate(target);
+    pendingFocusRef.current = { key: toDayKey(target), month: toMonthKey(target) };
+    if (!isInVisibleMonth(target)) {
+      isInitialMountRef.current = false;
+      slideDirectionRef.current = target.getTime() > visibleMonth.getTime() ? "next" : "prev";
+      goToMonth(target);
+    }
+  };
+
+  const handleDayKeyDown = (from: Date, e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const y = from.getFullYear();
+    const m = from.getMonth();
+    const d = from.getDate();
+    const weekOffset = (from.getDay() - firstDayOfWeek + 7) % 7;
+    let next: Date;
+    let step = 0;
+    switch (e.key) {
+      case "ArrowLeft":
+        step = -1;
+        next = new Date(y, m, d - 1);
+        break;
+      case "ArrowRight":
+        step = 1;
+        next = new Date(y, m, d + 1);
+        break;
+      case "ArrowUp":
+        step = -7;
+        next = new Date(y, m, d - 7);
+        break;
+      case "ArrowDown":
+        step = 7;
+        next = new Date(y, m, d + 7);
+        break;
+      case "Home":
+        next = new Date(y, m, d - weekOffset);
+        break;
+      case "End":
+        next = new Date(y, m, d + 6 - weekOffset);
+        break;
+      case "PageUp":
+        next = shiftMonthClamped(from, e.shiftKey ? -12 : -1);
+        break;
+      case "PageDown":
+        next = shiftMonthClamped(from, e.shiftKey ? 12 : 1);
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+    // Arrow keys skip disabled days in the direction of travel (bounded).
+    for (let i = 0; step !== 0 && isDisabledDate(next) && i < 42; i++) {
+      next = new Date(next.getFullYear(), next.getMonth(), next.getDate() + step);
+    }
+    if (isDisabledDate(next)) return;
+    focusDay(next);
+  };
 
   const animClass =
     animation === "none" || isInitialMountRef.current
@@ -400,6 +501,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <div
+      ref={rootRef}
       className={`calendar-root calendar-root--variant-${variant} ${captionLayout === "label" ? "calendar-root--caption-label" : ""} ${captionLayout === "menus" ? "calendar-root--caption-menus" : ""} ${className}`.trim()}
       style={containerStyle}
       onMouseEnter={() => hoverable && setIsHovered(true)}
@@ -659,8 +761,15 @@ const Calendar: React.FC<CalendarProps> = ({
                   style={cellStyle}
                   className={`calendar-cell ${!day.inCurrentMonth ? "calendar-cell--outside" : ""} ${isSelectable && cellHoverAnimation ? "calendar-cell--hoverable" : ""}`}
                   aria-label={day.date.toLocaleDateString()}
-                  aria-selected={isSelected}
+                  // aria-selected is not allowed on role=button — aria-pressed exposes the selected state.
+                  aria-pressed={isSelected}
+                  aria-current={isToday ? "date" : undefined}
+                  aria-disabled={disabled || readOnly ? true : undefined}
                   data-outside={!day.inCurrentMonth ? "true" : undefined}
+                  data-date={toDayKey(day.date)}
+                  tabIndex={toDayKey(day.date) === tabbableKey ? 0 : -1}
+                  onFocus={() => setFocusedDate(day.date)}
+                  onKeyDown={(e) => handleDayKeyDown(day.date, e)}
                 >
                   {dateCellRender ? (
                     dateCellRender(day.date)

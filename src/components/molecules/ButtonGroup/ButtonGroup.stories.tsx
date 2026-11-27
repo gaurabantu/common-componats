@@ -11,8 +11,37 @@ const meta: Meta<typeof ButtonGroup> = {
   title: "Design System/Molecules/ButtonGroup",
   component: ButtonGroup,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Groups related buttons under `role=\"group\"` — always give it an `aria-label`. Segments are joined by default " +
+          "(`attached`); set `attached={false}` for spaced buttons. `size`, `variant` and `disabled` cascade to direct " +
+          "`Button` children that leave those props unset (child props win; nested groups inherit). `fullWidth` stretches " +
+          "the group and shares the width equally. Components that wrap a Button can read the group via `useButtonGroupContext()`.",
+      },
+    },
+  },
   argTypes: {
     orientation: { control: "radio", options: ["horizontal", "vertical"] },
+    attached: { control: "boolean" },
+    size: { control: "select", options: [undefined, "xxs", "xs", "sm", "md", "lg"] },
+    variant: {
+      control: "select",
+      options: [
+        undefined,
+        "primary",
+        "secondary",
+        "outlinePrimary",
+        "outlineSecondary",
+        "success",
+        "danger",
+        "warning",
+        "ghost",
+      ],
+    },
+    disabled: { control: "boolean" },
+    fullWidth: { control: "boolean" },
   },
 };
 
@@ -23,19 +52,18 @@ type Story = StoryObj<typeof ButtonGroup>;
 export const Playground: Story = {
   render: (args) => (
     <ButtonGroup {...args} aria-label="Document actions">
-      <Button variant="outlinePrimary" size="md">
-        Archive
-      </Button>
-      <Button variant="outlinePrimary" size="md">
-        Report
-      </Button>
-      <Button variant="outlinePrimary" size="md">
-        Snooze
-      </Button>
+      <Button>Archive</Button>
+      <Button>Report</Button>
+      <Button>Snooze</Button>
     </ButtonGroup>
   ),
   args: {
     orientation: "horizontal",
+    attached: true,
+    size: "md",
+    variant: "outlinePrimary",
+    disabled: false,
+    fullWidth: false,
   },
 };
 
@@ -131,4 +159,49 @@ export const Nested: Story = {
       </ButtonGroup>
     </ButtonGroup>
   ),
+};
+
+export const Detached: Story = {
+  render: () => (
+    <ButtonGroup aria-label="Spaced actions" attached={false} size="md" variant="outlineSecondary">
+      <Button>Cancel</Button>
+      <Button>Save draft</Button>
+      <Button variant="primary">Publish</Button>
+    </ButtonGroup>
+  ),
+};
+
+export const CascadedSizeAndVariant: Story = {
+  render: () => (
+    <div className="sb-stack">
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <ButtonGroup key={size} aria-label={`Size ${size}`} size={size} variant="outlinePrimary">
+          <Button>Day</Button>
+          <Button>Week</Button>
+          <Button>Month</Button>
+        </ButtonGroup>
+      ))}
+    </div>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <ButtonGroup aria-label="Disabled actions" disabled size="md" variant="outlinePrimary">
+      <Button>Archive</Button>
+      <Button>Report</Button>
+      <Button disabled={false}>Help (opted out)</Button>
+    </ButtonGroup>
+  ),
+};
+
+export const FullWidth: Story = {
+  render: () => (
+    <ButtonGroup aria-label="View mode" fullWidth size="md" variant="outlineSecondary">
+      <Button>List</Button>
+      <Button>Board</Button>
+      <Button>Calendar</Button>
+    </ButtonGroup>
+  ),
+  parameters: { viewport: { defaultViewport: "mobile1" } },
 };

@@ -1,0 +1,138 @@
+/* AvatarGroup — overlapping avatars + "+N" chip. Token-driven; follows data-theme.
+   --ag-size (px) is set inline from the `size` prop (Avatar itself takes a numeric size). */
+
+.ds-avatar-group {
+  --ag-size: 40px;
+  --ag-overlap: 0.25;
+  --ag-ring: var(--color-bg-surface);
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ds-avatar-group[data-spacing="tight"] { --ag-overlap: 0.4; }
+.ds-avatar-group[data-spacing="normal"] { --ag-overlap: 0.25; }
+.ds-avatar-group[data-spacing="loose"] { --ag-overlap: 0.1; }
+
+.ds-avatar-group__item,
+.ds-avatar-group__overflow {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-inline-start: calc(var(--ag-size) * var(--ag-overlap) * -1);
+  border-radius: var(--radius-pill);
+  /* Ring separates overlapping avatars on any surface. */
+  outline: 2px solid var(--ag-ring);
+}
+
+.ds-avatar-group > :first-child {
+  margin-inline-start: 0;
+}
+
+.ds-avatar-group__avatar {
+  display: inline-flex;
+  border-radius: inherit;
+}
+
+/* Later avatars sit on top so the overlap reads left → right; hovered one lifts. */
+.ds-avatar-group__item:hover {
+  z-index: 1;
+}
+
+.ds-avatar-group__overflow {
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  /* WCAG 2.5.8: the chip keeps ≥ 24px even when avatars are xs. */
+  min-width: max(var(--ag-size), 1.5rem);
+  height: max(var(--ag-size), 1.5rem);
+  padding: 0 var(--space-0);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-fill-muted);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: calc(var(--ag-size) * 0.34);
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--duration-instant) var(--easing-default);
+}
+
+.ds-avatar-group__overflow[data-static="true"] {
+  cursor: default;
+}
+
+.ds-avatar-group__overflow:not([data-static]):hover {
+  background: var(--color-state-hover-bg);
+}
+
+.ds-avatar-group__overflow:focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-avatar-group__popover {
+  min-width: 12rem;
+}
+
+.ds-avatar-group__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0);
+  max-height: 16rem;
+  margin: 0;
+  padding: var(--space-0);
+  overflow-y: auto;
+  list-style: none;
+  border-radius: var(--radius-sm);
+}
+
+.ds-avatar-group__list:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+.ds-avatar-group__list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2rem;
+  font-size: var(--text-secondary-size);
+  color: var(--color-text-primary);
+}
+
+.ds-avatar-group__list-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.ds-avatar-group__list-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ds-avatar-group__list-more {
+  color: var(--color-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-avatar-group__overflow {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-avatar-group__item,
+  .ds-avatar-group__overflow {
+    outline-color: Canvas;
+  }
+  .ds-avatar-group__overflow {
+    border-color: CanvasText;
+  }
+  .ds-avatar-group__overflow:focus-visible {
+    outline-color: Highlight;
+  }
+}

@@ -216,22 +216,30 @@ interface AppSidebarProps extends Omit<React__default.HTMLAttributes<HTMLElement
 
 declare function AppSidebar({ sections: sectionsProp, items: itemsProp, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, showCollapseToggle, collapseToggleLabel, widthExpanded, density, widthCollapsed, fixed, responsive, collapseBelowWidth, drawerOverlayBelowWidth, publishLayoutOffsetVar, closeOnNavigateWhenNarrow, backdropCloseLabel, lockBodyScrollWhenDrawer, header, activeItemId: activeItemIdProp, defaultActiveItemId, onItemSelect, navLabel, user, footerActions, maxFooterActions, footerLayout, footerSlot, tokens, classNames, persistenceKey, expandedIds: expandedIdsProp, defaultExpandedIds, onExpandedChange, className, style, ...rest }: AppSidebarProps): react_jsx_runtime.JSX.Element;
 
-type DashboardShellProps = {
+/** Element used for the scrolling content slot. `main` (default) exposes the `main` landmark. */
+type DashboardShellContentElement = "main" | "div";
+/** Sidebar config — `AppSidebarProps` with `fixed` optional (the shell defaults it to `true`). */
+type DashboardShellSidebarProps = Omit<AppSidebarProps, "fixed"> & {
+    fixed?: boolean;
+};
+interface DashboardShellProps extends Omit<React__default.HTMLAttributes<HTMLDivElement>, "children" | "className"> {
     /**
      * Props for `AppSidebar`. **`fixed`** here means the **sidebar rail** is viewport-fixed (left), not
      * that the main column or `AppTopbar` are CSS-fixed. When `fixed`, the main column uses
      * **`margin-inline-start: var(--app-sidebar-offset)`** from `AppSidebar` — do not hard-code rail width.
+     *
+     * Responsive: `AppSidebar` collapses to its rail below `collapseBelowWidth` (default 1024) and becomes an
+     * overlay drawer below `drawerOverlayBelowWidth` (the shell defaults this to **768**).
      */
-    sidebar: Omit<AppSidebarProps, "fixed"> & {
-        fixed?: boolean;
-    };
+    sidebar: DashboardShellSidebarProps;
     /**
-     * Top of the main column (commonly `<AppTopbar />`). Pinned **above** the scrolling `children`
-     * region — it does not scroll with `children`.
+     * Top of the main column (commonly `<AppTopbar />`, which renders the `banner` landmark). Pinned
+     * **above** the scrolling `children` region — it does not scroll with `children`.
      */
     topbar?: React__default.ReactNode;
     /** Main page body: **only this** scrolls vertically inside the shell. */
     children: React__default.ReactNode;
+    /** Root element class — merged last (escape hatch). */
     className?: string;
     insetClassName?: string;
     insetStyle?: React__default.CSSProperties;
@@ -247,17 +255,35 @@ type DashboardShellProps = {
      * `sticky`. Set `false` only if you must set `AppTopbar`’s `sticky` yourself.
      */
     pinTopbar?: boolean;
-};
+    /**
+     * Element for the content slot. Default `"main"` (landmark + skip-link target). Use `"div"` only when
+     * `children` already render their own `<main>` (a page must have exactly one `main` landmark).
+     */
+    contentAs?: DashboardShellContentElement;
+    /** `id` of the content slot (skip-link target). Defaults to a generated, unique id. */
+    mainId?: string;
+    /** Optional accessible name for the content landmark (e.g. the page title). */
+    mainLabel?: string;
+    /** Visible-on-focus skip link text (WCAG 2.4.1 Bypass Blocks). Default "Skip to main content". */
+    skipLinkLabel?: string;
+    /** Hide the built-in skip link (only when the host app already provides one). Default `false`. */
+    hideSkipLink?: boolean;
+}
+/** @deprecated Use `DashboardShellProps`. */
+type AppShellProps = DashboardShellProps;
+
 /**
  * Dashboard shell: viewport-fixed **sidebar rail** + main column with **`margin-inline-start`**
- * from `--app-sidebar-offset`. **Top bar** above, **scrollable `children`** below — main content is
- * never locked; only the left rail uses `fixed` (when `sidebar.fixed` is true).
+ * from `--app-sidebar-offset`. **Top bar** above, **scrollable `children`** below in the `main`
+ * landmark, plus a skip link that moves focus past the navigation (WCAG 2.4.1).
+ *
+ * Responsive: the sidebar collapses to its rail below 1024px and becomes an overlay drawer below
+ * 768px (`AppSidebar` publishes the matching offset, so the main column always fills the rest).
  */
-declare function DashboardShell({ sidebar, topbar, children, className, insetClassName, insetStyle, topbarClassName, topbarStyle, contentClassName, contentStyle, pinTopbar, }: DashboardShellProps): react_jsx_runtime.JSX.Element;
+declare const DashboardShell: React__default.ForwardRefExoticComponent<DashboardShellProps & React__default.RefAttributes<HTMLDivElement>>;
 
 /** @deprecated Use `DashboardShell` — same component, clearer name for dashboard layouts. */
-declare const AppShell: typeof DashboardShell;
-type AppShellProps = DashboardShellProps;
+declare const AppShell: React__default.ForwardRefExoticComponent<DashboardShellProps & React__default.RefAttributes<HTMLDivElement>>;
 
 type AppTopbarTheme = "dark" | "light";
 interface AppTopbarSearchConfig {
@@ -386,4 +412,4 @@ declare function writeAppSidebarPersist(key: string, collapsed: boolean, expande
 
 declare function mergeTopbarTokensStyle(tokens: AppTopbarTokens | undefined, base?: React__default.CSSProperties): React__default.CSSProperties;
 
-export { AvatarProps as A, mergeSidebarTokensStyle as B, readAppSidebarPersist as C, DashboardShell as D, writeAppSidebarPersist as E, AppSidebarPersistPayload as F, mergeTopbarTokensStyle as G, AppSidebar as a, AppShell as b, AppTopbar as c, DashboardShellProps as d, AppShellProps as e, AppSidebarProps as f, AppSidebarNavItem as g, AppSidebarSection as h, AppSidebarTier as i, AppSidebarDensity as j, AppSidebarSectionGrouping as k, AppSidebarHeader as l, AppSidebarUser as m, AppSidebarFooterAction as n, AppSidebarTrailingPreset as o, AppSidebarTokens as p, AppSidebarClassNames as q, AppSidebarFooterLayout as r, AppTopbarProps as s, AppTopbarTheme as t, AppTopbarSearchConfig as u, AppTopbarAction as v, AppTopbarProfile as w, AppTopbarTokens as x, AppTopbarClassNames as y, AppTopbarMenuItem as z };
+export { AvatarProps as A, AppTopbarClassNames as B, AppTopbarMenuItem as C, DashboardShell as D, mergeSidebarTokensStyle as E, readAppSidebarPersist as F, writeAppSidebarPersist as G, AppSidebarPersistPayload as H, mergeTopbarTokensStyle as I, AppSidebar as a, AppShell as b, AppTopbar as c, DashboardShellProps as d, AppShellProps as e, DashboardShellContentElement as f, DashboardShellSidebarProps as g, AppSidebarProps as h, AppSidebarNavItem as i, AppSidebarSection as j, AppSidebarTier as k, AppSidebarDensity as l, AppSidebarSectionGrouping as m, AppSidebarHeader as n, AppSidebarUser as o, AppSidebarFooterAction as p, AppSidebarTrailingPreset as q, AppSidebarTokens as r, AppSidebarClassNames as s, AppSidebarFooterLayout as t, AppTopbarProps as u, AppTopbarTheme as v, AppTopbarSearchConfig as w, AppTopbarAction as x, AppTopbarProfile as y, AppTopbarTokens as z };

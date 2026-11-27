@@ -15,6 +15,8 @@ import {
   startOfMonth,
 } from "./DatePicker.utils";
 import Calendar from "../../molecules/Calendar";
+import { useFormField } from "../../molecules/FormField";
+import { FORM_FIELD_CONSUMER_KEY } from "../../molecules/FormField/FormField.config";
 import { getAncestorZIndex } from "../../molecules/Popover/layering";
 
 function splitRangeValue(value: string): [string, string] {
@@ -65,10 +67,21 @@ const DatePicker: React.FC<DatePickerProps> = ({
   variant = defaultDatePickerOptions.variant,
   status,
   rangeSeparator = defaultDatePickerOptions.rangeSeparator,
+  id: idProp,
+  name,
+  ariaLabel,
 }) => {
   const dateFormat = (dateFormatProp || defaultDatePickerOptions.dateFormat).trim() || defaultDatePickerOptions.dateFormat;
-  const inputId = useId();
+  const reactId = useId();
+  /** Enclosing FormField (single mode only — range mode renders its own labelled pair). */
+  const formField = useFormField();
+  const field = range ? null : formField;
+  const inputId = idProp ?? field?.id ?? reactId;
+  const labelId = `${inputId}-label`;
+  const helperId = `${inputId}-helper`;
   const wrapperRef = useRef<HTMLDivElement>(null);
+  /** Calendar toggle — focus returns here when the popover closes with focus inside it. */
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -117,6 +130,33 @@ const DatePicker: React.FC<DatePickerProps> = ({
   useEffect(() => {
     setIsPortalReady(true);
   }, []);
+
+  /** Close; if focus was inside the (portaled) popover, return it to the toggle so it is not lost to <body>. */
+  const closePopover = useCallback(() => {
+    const active = typeof document !== "undefined" ? document.activeElement : null;
+    const focusInside = !!active && !!popoverRef.current?.contains(active);
+    setIsOpen(false);
+    if (focusInside) toggleRef.current?.focus();
+  }, []);
+
+  /**
+   * Escape closes only the calendar (one press = one layer). Capture phase + preventDefault so an
+   * enclosing Modal / Drawer, which skips handled (defaultPrevented) Escapes, stays open.
+   */
+  useEffect(() => {
+    if (!isOpen || typeof document === "undefined") return undefined;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || e.defaultPrevented || e.isComposing) return;
+      const target = e.target as Node | null;
+      const inside = !!target && (!!wrapperRef.current?.contains(target) || !!popoverRef.current?.contains(target));
+      if (!inside) return;
+      e.preventDefault();
+      e.stopPropagation();
+      closePopover();
+    };
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => document.removeEventListener("keydown", onKeyDown, true);
+  }, [isOpen, closePopover]);
 
   const updatePopoverPosition = useCallback(() => {
     const anchorEl = wrapperRef.current;
@@ -168,7 +208,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       if (!isInTrigger && !isInPopover) setIsOpen(false);
     };
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
+      if (event.key === "Escape") closePopover();
     };
 
     window.addEventListener("resize", handleWindowChange);
@@ -182,7 +222,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       document.removeEventListener("mousedown", handleOutsidePress);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [isOpen, updatePopoverPosition]);
+  }, [isOpen, updatePopoverPosition, closePopover]);
 
   const currentSize = {
     sm: { minHeight: "var(--button-height-sm)", paddingX: 10, fontSize: "var(--text-small-size, 12px)" },
@@ -258,6 +298,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   const helperMessage = error || internalError || helperText;
+  const showsError = Boolean(error || internalError);
+  /** Shared a11y wiring for every text input (single + both range ends). */
+  const fieldA11y = {
+    "aria-describedby": [helperMessage ? helperId : undefined, field?.describedBy].filter(Boolean).join(" ") || undefined,
+    "aria-invalid": showsError || resolvedStatus === "error" || field?.invalid ? true : undefined,
+    "aria-required": required || field?.required ? true : undefined,
+  } as const;
   const helperStyle: React.CSSProperties = {
     marginTop: 8,
     marginBottom: 0,
@@ -426,7 +473,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     else setRangeEndInput("");
     emitValue(a ?? null, b ?? null);
     if (a && b) {
-      setIsOpen(false);
+      closePopover();
     }
   };
 
@@ -479,7 +526,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   if (range) {
     return (
       <div className={className} style={shellStyle} ref={wrapperRef}>
-        {label && <label style={labelStyle}>{label}</label>}
+        {label && <label id={labelId} style={labelStyle}>{label}</label>}
         <div style={triggerShellStyle}>
           <input
             type="text"
@@ -492,12 +539,14 @@ const DatePicker: React.FC<DatePickerProps> = ({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 applyTypedRange(rangeStartInput, rangeEndInput);
-                (e.target as HTMLInputElement).blur();
+                setIsOpen(false);
               }
             }}
             placeholder={startPlaceholder}
             disabled={disabled}
             readOnly={disabled}
+            aria-label={label ? `${label}, ${startPlaceholder}` : startPlaceholder}
+            {...fieldA11y}
             style={{
               ...inputStyle,
               flex: 1,
@@ -521,12 +570,14 @@ const DatePicker: React.FC<DatePickerProps> = ({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 applyTypedRange(rangeStartInput, rangeEndInput);
-                (e.target as HTMLInputElement).blur();
+                setIsOpen(false);
               }
             }}
             placeholder={endPlaceholder}
             disabled={disabled}
             readOnly={disabled}
+            aria-label={label ? `${label}, ${endPlaceholder}` : endPlaceholder}
+            {...fieldA11y}
             style={{
               ...inputStyle,
               flex: 1,
@@ -554,6 +605,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
             }}
             onClick={() => !disabled && setIsOpen((prev) => !prev)}
             onMouseDown={(e) => e.preventDefault()}
+            ref={toggleRef}
+            aria-haspopup="dialog"
+            aria-expanded={isOpen}
             aria-label="Open calendar"
             disabled={disabled}
           >
@@ -629,8 +683,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
                   onMonthChange={setVisibleMonth}
                   hideNavigation
                   captionLayout="label"
-                  minDate={minDate}
-                  maxDate={maxDate}
+                  minDate={minParsedDate ?? undefined}
+                  maxDate={maxParsedDate ?? undefined}
                   disabledDate={isDisabledDate}
                   disabled={disabled}
                   variant="outlined"
@@ -648,8 +702,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
                   onMonthChange={(d) => setVisibleMonth(addMonths(d, -1))}
                   hideNavigation
                   captionLayout="label"
-                  minDate={minDate}
-                  maxDate={maxDate}
+                  minDate={minParsedDate ?? undefined}
+                  maxDate={maxParsedDate ?? undefined}
                   disabledDate={isDisabledDate}
                   disabled={disabled}
                   variant="outlined"
@@ -664,7 +718,11 @@ const DatePicker: React.FC<DatePickerProps> = ({
           </div>,
           document.body
         )}
-        {helperMessage && <p style={helperStyle}>{helperMessage}</p>}
+        {helperMessage && (
+          <p id={helperId} style={helperStyle} role={showsError ? "alert" : undefined}>
+            {helperMessage}
+          </p>
+        )}
       </div>
     );
   }
@@ -683,13 +741,16 @@ const DatePicker: React.FC<DatePickerProps> = ({
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               applyTypedDate(inputText);
-              (e.target as HTMLInputElement).blur();
+              setIsOpen(false);
             }
           }}
           placeholder={placeholder}
           disabled={disabled}
           readOnly={disabled}
-          aria-label={placeholder}
+          name={name}
+          // Visible <label htmlFor> (own or FormField's) names the field; aria-label would override it (WCAG 2.5.3 / 4.1.2).
+          aria-label={ariaLabel ?? (label || field ? undefined : placeholder)}
+          {...fieldA11y}
           style={{
             ...inputStyle,
             flex: 1,
@@ -717,6 +778,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
           }}
           onClick={() => !disabled && setIsOpen((prev) => !prev)}
           onMouseDown={(e) => e.preventDefault()}
+          ref={toggleRef}
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
           aria-label="Open calendar"
           disabled={disabled}
         >
@@ -742,13 +806,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
               setSingleDate(d);
               setInputText(formatDateForDisplay(d, dateFormat));
               emitValue(d);
-              setIsOpen(false);
+              closePopover();
             }}
             month={visibleMonth}
             onMonthChange={setVisibleMonth}
             captionLayout="label"
-            minDate={minDate}
-            maxDate={maxDate}
+            minDate={minParsedDate ?? undefined}
+            maxDate={maxParsedDate ?? undefined}
             disabledDate={isDisabledDate}
             disabled={disabled}
             variant="outlined"
@@ -761,9 +825,16 @@ const DatePicker: React.FC<DatePickerProps> = ({
         </div>,
         document.body
       )}
-      {helperMessage && <p style={helperStyle}>{helperMessage}</p>}
+      {helperMessage && (
+        <p id={helperId} style={helperStyle} role={showsError ? "alert" : undefined}>
+          {helperMessage}
+        </p>
+      )}
     </div>
   );
 };
+
+/** Tells FormField this control wires itself via `useFormField()` (no cloneElement injection). */
+(DatePicker as unknown as Record<string, unknown>)[FORM_FIELD_CONSUMER_KEY] = true;
 
 export default DatePicker;

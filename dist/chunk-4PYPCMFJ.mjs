@@ -856,7 +856,7 @@ var LineChartComponent = (props) => {
 var LineChart_default = React3.memo(LineChartComponent);
 
 // src/components/charts/BarChart.tsx
-import React4, { useCallback as useCallback2, useMemo as useMemo2, useRef as useRef3, useState as useState5 } from "react";
+import React4, { useCallback as useCallback2, useId, useMemo as useMemo2, useRef as useRef3, useState as useState5 } from "react";
 import { Fragment, jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
 var DEFAULT_COLORS2 = [
   "var(--button-primary-default-bg)",
@@ -865,6 +865,7 @@ var DEFAULT_COLORS2 = [
   "var(--color-state-error)",
   "var(--color-accent-lavender-40)"
 ];
+var STACK_GAP = 2;
 function valueExtent(data, series, stacked) {
   let lo = 0;
   let hi = 0;
@@ -1010,10 +1011,18 @@ var BarChartComponent = (props) => {
       const b = sc(v1 * growth);
       const offset = groupStart + pos * (barWidth + barGap);
       const fill = colorOf(row, idx, s, si);
+      const negative = v < 0;
+      const group = stacked ? `${idx}-${side}-${negative ? "n" : "p"}` : `${idx}-${s.dataKey}`;
+      const gap = stacked && v0 !== 0 && Math.abs(b - a) > STACK_GAP * 2 ? STACK_GAP : 0;
       if (horizontal) {
-        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + Math.min(a, b), y: m.top + offset, w: Math.abs(b - a), h: barWidth, fill, idx });
+        const dir = negative ? "left" : "right";
+        const x0 = m.left + Math.min(a, b) + (dir === "right" ? gap : 0);
+        rects.push({ key: `${idx}-${s.dataKey}`, x: x0, y: m.top + offset, w: Math.max(0, Math.abs(b - a) - gap), h: barWidth, fill, idx, group, dir });
       } else {
-        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + offset, y: m.top + Math.min(a, b), w: barWidth, h: Math.abs(b - a), fill, idx });
+        const dir = negative ? "down" : "up";
+        const y0 = m.top + Math.min(a, b);
+        const hh = Math.max(0, Math.abs(b - a) - gap);
+        rects.push({ key: `${idx}-${s.dataKey}`, x: m.left + offset, y: dir === "down" ? y0 + gap : y0, w: barWidth, h: hh, fill, idx, group, dir });
       }
     });
   });
@@ -1056,6 +1065,36 @@ var BarChartComponent = (props) => {
   );
   const handleMouseLeave = useCallback2(() => setTooltip(null), []);
   const r = Array.isArray(radius) ? radius[0] : radius;
+  const clipUid = `ds-bar-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  const clips = useMemo2(() => {
+    if (!(r > 0))
+      return [];
+    const byGroup = /* @__PURE__ */ new Map();
+    rects.forEach((b) => {
+      const g = byGroup.get(b.group);
+      if (!g)
+        byGroup.set(b.group, { x0: b.x, y0: b.y, x1: b.x + b.w, y1: b.y + b.h, dir: b.dir });
+      else {
+        g.x0 = Math.min(g.x0, b.x);
+        g.y0 = Math.min(g.y0, b.y);
+        g.x1 = Math.max(g.x1, b.x + b.w);
+        g.y1 = Math.max(g.y1, b.y + b.h);
+      }
+    });
+    return Array.from(byGroup.entries()).map(([group, g], i) => {
+      let { x0, y0, x1, y1 } = g;
+      if (g.dir === "up")
+        y1 += r;
+      else if (g.dir === "down")
+        y0 -= r;
+      else if (g.dir === "right")
+        x0 -= r;
+      else
+        x1 += r;
+      return { group, id: `${clipUid}-b${i}`, x: x0, y: y0, w: Math.max(0, x1 - x0), h: Math.max(0, y1 - y0) };
+    });
+  }, [rects.map((b) => `${b.group}:${b.x},${b.y},${b.w},${b.h}`).join("|"), r, clipUid]);
+  const clipOf = useMemo2(() => new Map(clips.map((c) => [c.group, c.id])), [clips]);
   const bandCenters = data.map((_, i) => (horizontal ? m.top : m.left) + (i + 0.5) * slot);
   const tickIdx = horizontal ? data.map((_, i) => i) : xTickIndices(categoryLabels, xTickInterval, slot, xTickAngle);
   const gridLines = axes.showYAxis ? leftAxis.ticks.map((t) => leftAxis.scale(t)) : [0.25, 0.5, 0.75].map((t) => (horizontal ? innerW : innerH) * t);
@@ -1086,6 +1125,7 @@ var BarChartComponent = (props) => {
               showTooltip && /* @__PURE__ */ jsx5("g", { className: "ds-chart-bar-bands", fill: "transparent", children: data.map(
                 (_, idx) => horizontal ? /* @__PURE__ */ jsx5("rect", { x: m.left, y: m.top + idx * slot, width: innerW, height: slot, onMouseMove: (e) => handleMouseMove(e, idx) }, idx) : /* @__PURE__ */ jsx5("rect", { x: m.left + idx * slot, y: m.top, width: slot, height: innerH, onMouseMove: (e) => handleMouseMove(e, idx) }, idx)
               ) }),
+              clips.length > 0 && /* @__PURE__ */ jsx5("defs", { children: clips.map((c) => /* @__PURE__ */ jsx5("clipPath", { id: c.id, children: /* @__PURE__ */ jsx5("rect", { x: c.x, y: c.y, width: c.w, height: c.h, rx: r, ry: r }) }, c.id)) }),
               rects.map((b) => /* @__PURE__ */ jsx5(
                 "rect",
                 {
@@ -1094,8 +1134,7 @@ var BarChartComponent = (props) => {
                   width: Math.max(0, b.w),
                   height: Math.max(0, b.h),
                   fill: b.fill,
-                  rx: r,
-                  ry: r,
+                  clipPath: clipOf.has(b.group) ? `url(#${clipOf.get(b.group)})` : void 0,
                   "data-testid": "ds-chart-bar",
                   onMouseMove: (e) => handleMouseMove(e, b.idx)
                 },
@@ -1496,4 +1535,4 @@ export {
   pieLabelNamePercent,
   PieChart_default
 };
-//# sourceMappingURL=chunk-RQI76EUK.mjs.map
+//# sourceMappingURL=chunk-4PYPCMFJ.mjs.map

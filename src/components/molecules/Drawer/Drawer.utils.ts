@@ -47,3 +47,32 @@ export function trapTabKey(e: KeyboardEvent, container: HTMLElement): boolean {
   }
   return false;
 }
+
+/**
+ * Resolve a snap point (CSS length) to pixels. `%`, `vh`, `dvh`, `svh`, `lvh` are of `viewportHeight`;
+ * `rem` uses the root font size; `px` / unitless are pixels. Unknown units return `NaN`.
+ */
+export function resolveSnapPx(point: string, viewportHeight: number, rootFontSize = 16): number {
+  const match = /^\s*(-?\d*\.?\d+)\s*(%|px|rem|em|[dsl]?vh)?\s*$/.exec(point);
+  if (!match) return Number.NaN;
+  const n = Number(match[1]);
+  const unit = match[2] ?? "px";
+  if (unit === "%" || unit.endsWith("vh")) return (n / 100) * viewportHeight;
+  if (unit === "rem" || unit === "em") return n * rootFontSize;
+  return n;
+}
+
+/** Index of the snap height closest to `height` (ignores unresolvable points). */
+export function nearestSnapIndex(height: number, snapPx: number[]): number {
+  let best = 0;
+  let bestDist = Number.POSITIVE_INFINITY;
+  snapPx.forEach((px, i) => {
+    if (Number.isNaN(px)) return;
+    const d = Math.abs(px - height);
+    if (d < bestDist) {
+      bestDist = d;
+      best = i;
+    }
+  });
+  return best;
+}

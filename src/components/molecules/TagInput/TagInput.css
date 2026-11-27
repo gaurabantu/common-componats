@@ -1,0 +1,224 @@
+/* TagInput — chips (Badge) + text box + optional suggestions listbox. Tokens only. */
+
+.ds-tag-input {
+  --ds-tag-input-h: var(--button-height-lg);
+  --ds-tag-input-font: var(--text-body-size);
+  position: relative;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+}
+
+.ds-tag-input[data-size="sm"] {
+  --ds-tag-input-h: var(--button-height-sm);
+  --ds-tag-input-font: var(--text-secondary-size);
+}
+
+.ds-tag-input[data-size="lg"] {
+  --ds-tag-input-h: var(--space-6);
+}
+
+.ds-tag-input__label {
+  display: block;
+  margin-bottom: var(--space-0);
+  color: var(--color-text-primary);
+  font-size: var(--text-secondary-size);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.ds-tag-input__required {
+  color: var(--color-danger-strong);
+}
+
+.ds-tag-input__field {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-0);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--ds-tag-input-h);
+  padding: var(--space-0) var(--space-1);
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  cursor: text;
+  transition: border-color var(--duration-instant) var(--easing-default);
+}
+
+.ds-tag-input__field:hover {
+  border-color: var(--color-text-secondary);
+}
+
+/* Ring on the field when the text box has keyboard focus; chip buttons draw their own ring. */
+.ds-tag-input__field:has(.ds-tag-input__input:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ds-tag-input[data-invalid="true"] .ds-tag-input__field {
+  border-color: var(--color-state-error);
+}
+
+.ds-tag-input[data-disabled="true"] .ds-tag-input__field {
+  background: var(--color-bg-page);
+  cursor: not-allowed;
+}
+
+.ds-tag-input[data-readonly="true"] .ds-tag-input__field {
+  background: var(--color-fill-muted);
+  cursor: default;
+}
+
+.ds-tag-input__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-0);
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ds-tag-input__chip {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Long tags truncate inside the chip instead of overflowing the field at 375px. */
+.ds-tag-input__chip > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ds-tag-input__input {
+  flex: 1 1 6rem;
+  min-width: 6rem;
+  min-height: calc(var(--ds-tag-input-h) - var(--space-1));
+  margin: 0;
+  padding: 0 var(--space-0);
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--ds-tag-input-font);
+  line-height: 1.5;
+}
+
+.ds-tag-input__input:focus {
+  outline: none;
+}
+
+@supports not selector(:has(*)) {
+  .ds-tag-input__input:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.ds-tag-input__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.ds-tag-input__input:disabled {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+/* Suggestions listbox — anchored under the field (inline, so it works inside Drawer / Modal traps). */
+.ds-tag-input__listbox {
+  position: absolute;
+  top: calc(100% + var(--space-0));
+  left: 0;
+  right: 0;
+  z-index: var(--z-dropdown);
+  box-sizing: border-box;
+  max-height: 15rem;
+  margin: 0;
+  padding: var(--space-0) 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-popover);
+}
+
+.ds-tag-input__listbox[hidden] {
+  display: none;
+}
+
+.ds-tag-input__option {
+  display: flex;
+  align-items: center;
+  min-height: var(--size-touch-target);
+  padding: 0 var(--space-2);
+  color: var(--color-text-primary);
+  font-size: var(--ds-tag-input-font);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.ds-tag-input__option[data-active="true"] {
+  background: var(--color-option-active-bg, var(--color-fill-muted));
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+.ds-tag-input__error {
+  margin: var(--space-0) 0 0;
+  color: var(--color-danger-strong);
+  font-size: var(--text-small-size);
+  line-height: 1.5;
+}
+
+.ds-tag-input__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (pointer: coarse) {
+  .ds-tag-input,
+  .ds-tag-input[data-size="sm"] {
+    --ds-tag-input-h: var(--size-touch-target);
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-tag-input__field {
+    border-color: CanvasText;
+  }
+
+  .ds-tag-input__field:has(.ds-tag-input__input:focus-visible),
+  .ds-tag-input__option[data-active="true"] {
+    outline-color: Highlight;
+  }
+
+  .ds-tag-input__listbox {
+    border-color: CanvasText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-tag-input__field {
+    transition: none;
+  }
+}

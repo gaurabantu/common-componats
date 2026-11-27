@@ -1,7 +1,7 @@
 export { default as AppSidebar } from "../components/molecules/AppSidebar";
 export { default as DashboardShell, AppShell } from "../components/molecules/DashboardShell/DashboardShell";
 export { default as AppTopbar } from "../components/molecules/AppTopbar";
-export type { DashboardShellProps, AppShellProps } from "../components/molecules/DashboardShell/DashboardShell";
+export type { DashboardShellProps, AppShellProps, DashboardShellContentElement, DashboardShellSidebarProps } from "../components/molecules/DashboardShell/DashboardShell";
 export type {
   AppSidebarProps,
   AppSidebarNavItem,

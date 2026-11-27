@@ -32,6 +32,7 @@ export {
   ButtonGroup,
   ButtonGroupSeparator,
   ButtonGroupText,
+  useButtonGroupContext,
 } from "./components/molecules/ButtonGroup";
 export { Stepper, StepperStep } from "./components/molecules/Stepper";
 export {
@@ -133,7 +134,27 @@ export { default as StatCard } from "./components/molecules/StatCard";
 export { default as CodeBlock } from "./components/molecules/CodeBlock";
 export { default as Alert } from "./components/molecules/Alert";
 export { default as Toast, ToastProvider, useToast } from "./components/molecules/Toast";
-export { default as Drawer, Sheet } from "./components/molecules/Drawer";
+export { default as Drawer, Sheet, BottomSheet } from "./components/molecules/Drawer";
+export { default as TagInput } from "./components/molecules/TagInput";
+export { default as TimePicker } from "./components/molecules/TimePicker";
+export {
+  Menu,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  MenuCheckboxItem,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuGroup,
+  MenuLabel,
+  MenuSeparator,
+  MenuSub,
+  MenuSubTrigger,
+  MenuSubContent,
+} from "./components/molecules/Menu";
+export { default as AvatarGroup } from "./components/atoms/AvatarGroup";
+export { default as Rating } from "./components/atoms/Rating";
+export { Timeline, TimelineItem } from "./components/molecules/Timeline";
 export { default as Spinner } from "./components/atoms/Spinner";
 export { default as LoadingOverlay } from "./components/molecules/LoadingOverlay";
 export { default as Skeleton, SkeletonGroup } from "./components/atoms/Skeleton";
@@ -164,8 +185,8 @@ export {
 // Optionally export prop types
 export type { ButtonProps } from "./components/atoms/Button/Button.types";
 export type { ButtonElement } from "./components/atoms/Button";
-export type { FormProps } from "./components/molecules/Form";
-export type { BreadcrumbProps, BreadcrumbItemProps, BreadcrumbSeparator } from "./components/molecules/Breadcrumb/Breadcrumb.types";
+export type { FormProps, FormLayout, FormColumns, FormColumnBreakpoint, FormResponsiveColumns, FormErrorSummaryItem, FormSlot, FormClassNames, FormStyles, FormSubmitValues, FormTitleElement } from "./components/molecules/Form";
+export type { BreadcrumbProps, BreadcrumbItemProps, BreadcrumbSeparator, BreadcrumbSeparatorProp, BreadcrumbSize, BreadcrumbItemData, BreadcrumbLinkRenderProps, BreadcrumbRenderLink } from "./components/molecules/Breadcrumb/Breadcrumb.types";
 export type { FileUploadProps, FileUploadSize, FileUploadVariant, DropzoneProps } from "./components/molecules/FileUpload/FileUpload.types";
 export type { UseFilePickerOptions, UseFilePickerResult, FilePickerInputProps } from "./components/molecules/FileUpload/useFilePicker";
 export type { DetectedKind, FileUploadSecurityOptions } from "./components/molecules/FileUpload";
@@ -231,6 +252,8 @@ export type {
   ButtonGroupTextProps,
   ButtonGroupContextValue,
   ButtonGroupOrientation,
+  ButtonGroupSize,
+  ButtonGroupVariant,
 } from "./components/molecules/ButtonGroup/ButtonGroup.types";
 export type { GridProps, GridItemProps } from "./components/molecules/Grid";
 export type {
@@ -265,7 +288,7 @@ export type {
 export type { RadioButtonProps } from "./components/atoms/RadioGroup/RadioGroup.types";
 export type { TextViewProps } from "./components/atoms/TextView/TextView.types";
 export type { TextInputProps as InputProps } from "./components/atoms/TextInput/TextInput.types";
-export type { TooltipIconProps } from "./components/atoms/ToolTip/TooltipIcon.types";
+export type { TooltipIconProps, TooltipPlacement } from "./components/atoms/ToolTip/TooltipIcon.types";
 export type { AvatarProps } from "./components/atoms/Avatar/Avatar.types";
 export type { DatePickerProps } from "./components/atoms/DatePicker/DatePicker.types";
 export type {
@@ -301,7 +324,7 @@ export type {
   TableCellProps,
   TableHeadCasing,
 } from "./components/molecules/Table";
-export type { DashboardShellProps, AppShellProps } from "./components/molecules/DashboardShell/DashboardShell";
+export type { DashboardShellProps, AppShellProps, DashboardShellContentElement, DashboardShellSidebarProps } from "./components/molecules/DashboardShell/DashboardShell";
 export type {
   AppSidebarProps,
   AppSidebarNavItem,
@@ -346,11 +369,43 @@ export type {
 } from "./components/molecules/FeedbackStates";
 export type { ModalProps, ModalSize, ModalAnimation, ModalScrollBehavior, ModalAutoFocusEvent, ModalRootProps, BeforeCloseGuard } from "./components/molecules/Modal";
 export type { LoadingOverlayProps, LoadingOverlayBackdrop } from "./components/molecules/LoadingOverlay";
-export type { DrawerProps, DrawerSide, DrawerSize, SheetProps } from "./components/molecules/Drawer";
+export type { DrawerProps, DrawerSide, DrawerSize, SheetProps, BottomSheetProps } from "./components/molecules/Drawer";
+export type { TagInputProps, TagInputSize, TagInputLabels, TagInputValidateResult } from "./components/molecules/TagInput";
+export type { TimePickerProps, TimePickerSize, TimePickerFormat, TimePickerSegment, TimePickerLabels } from "./components/molecules/TimePicker";
+export type {
+  MenuProps,
+  MenuTriggerProps,
+  MenuContentProps,
+  MenuItemProps,
+  MenuItemVariant,
+  MenuCheckboxItemProps,
+  MenuRadioGroupProps,
+  MenuRadioItemProps,
+  MenuGroupProps,
+  MenuLabelProps,
+  MenuSeparatorProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
+  MenuSubContentProps,
+  MenuPlacement,
+  MenuSelectEvent,
+  MenuFocusIntent,
+} from "./components/molecules/Menu";
+export type { AvatarGroupProps, AvatarGroupItem, AvatarGroupSize, AvatarGroupSpacing } from "./components/atoms/AvatarGroup";
+export type { RatingProps, RatingSize, RatingPrecision } from "./components/atoms/Rating";
+export type {
+  TimelineProps,
+  TimelineItemProps,
+  TimelineItemData,
+  TimelineOrientation,
+  TimelineAlign,
+  TimelineStatus,
+  TimelineSize,
+} from "./components/molecules/Timeline";
 export type { AlertDialogProps, AlertDialogVariant } from "./components/molecules/AlertDialog";
 export type { ProgressBarProps } from "./components/atoms/ProgressBar/ProgresBar.types";
-export type { HyperlinkProps } from "./components/atoms/Hyperlink/Hyperlink.types";
-export type { OtpBoxProps, OtpBoxVariant, OtpBoxSize } from "./components/atoms/OtpBox";
+export type { HyperlinkProps, HyperlinkVariant, HyperlinkUnderline, HyperlinkSize } from "./components/atoms/Hyperlink";
+export type { OtpBoxProps, OtpBoxVariant, OtpBoxSize, OtpBoxType, OtpBoxHandle } from "./components/atoms/OtpBox";
 export type {
   LineChartProps,
   BarChartProps,
@@ -380,7 +435,7 @@ export type { StatCardProps, StatDelta, StatTrend } from "./components/molecules
 export type { CodeBlockProps, CodeBlockTone } from "./components/molecules/CodeBlock";
 export type { AlertProps, AlertVariant, AlertAppearance, AlertLive } from "./components/molecules/Alert";
 export type { ToastProps, ToastOptions, ToastAction, ToastPosition, ToastVariant, ToastProviderProps, ToastContextValue } from "./components/molecules/Toast";
-export type { SpinnerProps, SpinnerSize, SpinnerTone } from "./components/atoms/Spinner";
+export type { SpinnerProps, SpinnerSize, SpinnerTone, SpinnerVariant, SpinnerThickness, SpinnerSpeed } from "./components/atoms/Spinner";
 export type { SkeletonProps, SkeletonGroupProps, SkeletonShape, SkeletonDimension } from "./components/atoms/Skeleton";
 export type { PaginationProps, PaginationSize, PaginationRange, PaginationItem, PaginationLabels } from "./components/molecules/Pagination";
 export type { CheckboxSize } from "./components/atoms/Checkbox/Checkbox.types";

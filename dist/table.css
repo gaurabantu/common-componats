@@ -817,7 +817,7 @@
   background: color-mix(in srgb, var(--color-text-primary) 4%, var(--color-bg-surface));
 }
 .table-hover .table-tbody tr:hover td {
-  background: color-mix(in srgb, var(--color-text-primary) 7%, var(--color-bg-surface));
+  background: var(--color-row-hover-bg, color-mix(in srgb, var(--color-text-primary) 7%, var(--color-bg-surface)));
 }
 .table-hover .table-tbody tr:hover td[style*=background] {
   background: color-mix(in srgb, var(--color-text-primary) 9%, var(--color-bg-surface)) !important;
@@ -1113,7 +1113,7 @@
   vertical-align: middle;
 }
 .table-ui-tbody .table-ui-tr:hover .table-ui-td {
-  background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface));
+  background: var(--color-grid-row-hover-bg, color-mix(in srgb, var(--color-text-primary) 5%, var(--color-bg-surface)));
 }
 .table-ui-tfoot {
   background: var(--color-bg-secondary);

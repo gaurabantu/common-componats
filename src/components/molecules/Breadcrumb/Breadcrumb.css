@@ -46,6 +46,8 @@
 
 .ds-breadcrumb[data-separator="slash"] .ds-breadcrumb__item:not(:last-child)::after {
   content: "/";
+  /* Empty alt text: the glyph is decorative and must not be announced (falls back to the line above). */
+  content: "/" / "";
 }
 
 .ds-breadcrumb[data-separator="chevron"] .ds-breadcrumb__item:not(:last-child)::after {
@@ -109,4 +111,96 @@
 
 .ds-breadcrumb__item--current .ds-breadcrumb__text {
   cursor: default;
+}
+
+/* Custom separator node (rendered aria-hidden inside each li) */
+.ds-breadcrumb__separator {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-inline: var(--space-1, 8px);
+  color: var(--color-text-secondary);
+  user-select: none;
+}
+
+.ds-breadcrumb__item:last-child .ds-breadcrumb__separator {
+  display: none;
+}
+
+/* Leading icon */
+.ds-breadcrumb__link--icon,
+.ds-breadcrumb__item .ds-breadcrumb__text:has(.ds-breadcrumb__icon) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0, 4px);
+}
+
+.ds-breadcrumb__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.ds-breadcrumb__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Non-current segment without a usable link */
+.ds-breadcrumb__text--plain {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+/* Collapsed-middle "…" button — 44px target (WCAG 2.5.8 / AGENTS.md) */
+.ds-breadcrumb__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0 var(--space-1, 8px);
+  border: 0;
+  border-radius: var(--radius-sm, 3px);
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ds-breadcrumb__ellipsis:hover {
+  background-color: var(--color-fill-muted);
+}
+
+.ds-breadcrumb__ellipsis:focus {
+  outline: none;
+}
+
+.ds-breadcrumb__ellipsis:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Narrow viewports: keep long labels from pushing the trail off-screen */
+@media (max-width: 640px) {
+  .ds-breadcrumb__link,
+  .ds-breadcrumb__text {
+    max-width: 12rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-breadcrumb[data-separator="chevron"] .ds-breadcrumb__item:not(:last-child)::after {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+
+  .ds-breadcrumb__ellipsis {
+    border: 1px solid ButtonText;
+  }
 }

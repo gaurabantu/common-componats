@@ -154,6 +154,7 @@ describe("gallery inventory is complete and linked", () => {
     const notComponents = new Set([
       "Design System/Molecules/Stepper · Icons",
       "Design System/Molecules/Feedback states/Real-world usage",
+      "Design System/Molecules/FeedbackStates", // overview page of the Feedback states family
     ]);
     const orphans = [...STORY_TITLES].filter(
       (t) => /^Design System\/(Atoms|Molecules)\//.test(t) && !linked.has(t) && !notComponents.has(t),

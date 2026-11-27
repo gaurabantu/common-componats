@@ -506,6 +506,10 @@ function AppSidebarTooltipHost({ collapsed, label, children }) {
       onMouseLeave: () => setVisible(false),
       onFocusCapture: () => setVisible(true),
       onBlurCapture: () => setVisible(false),
+      onKeyDown: (e) => {
+        if (e.key === "Escape" && visible)
+          setVisible(false);
+      },
       children: [
         child,
         tooltip
@@ -552,6 +556,17 @@ function useBelowWidth(collapseBelowWidth, enabled) {
     },
     () => false
   );
+}
+
+// src/utils/safeHref.ts
+var SAFE_PROTOCOLS = /* @__PURE__ */ new Set(["http:", "https:", "mailto:", "tel:"]);
+function isSafeHref(href) {
+  try {
+    const url = new URL(href, "https://relative.invalid/");
+    return SAFE_PROTOCOLS.has(url.protocol);
+  } catch (e) {
+    return false;
+  }
 }
 
 // src/components/molecules/AppSidebar/index.tsx
@@ -800,24 +815,23 @@ function AppSidebar({
   const toggleExpand = (0, import_react6.useCallback)(
     (id) => {
       if (expandedIdsProp != null) {
-        const n = new Set(expandedIdsProp);
-        if (n.has(id))
-          n.delete(id);
+        const n2 = new Set(expandedIdsProp);
+        if (n2.has(id))
+          n2.delete(id);
         else
-          n.add(id);
-        onExpandedChange == null ? void 0 : onExpandedChange([...n]);
+          n2.add(id);
+        onExpandedChange == null ? void 0 : onExpandedChange([...n2]);
         return;
       }
-      setInternalExpanded((prev) => {
-        const n = new Set(prev);
-        if (n.has(id))
-          n.delete(id);
-        else
-          n.add(id);
-        return n;
-      });
+      const n = new Set(internalExpanded);
+      if (n.has(id))
+        n.delete(id);
+      else
+        n.add(id);
+      setInternalExpanded(n);
+      onExpandedChange == null ? void 0 : onExpandedChange([...n]);
     },
-    [expandedIdsProp, onExpandedChange]
+    [expandedIdsProp, onExpandedChange, internalExpanded]
   );
   const handleSelect = (0, import_react6.useCallback)(
     (item) => {
@@ -855,31 +869,34 @@ function AppSidebar({
         }
       ) : null
     ] });
-    const control = item.href && !item.disabled ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-      "a",
-      {
-        href: item.href,
-        className: inactiveCls,
-        "aria-current": isActive ? "page" : void 0,
-        onClick: (e) => {
-          if (item.disabled) {
-            e.preventDefault();
-            return;
-          }
-          handleSelect(item);
-        },
-        children: inner
-      }
-    ) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-      "button",
-      {
-        type: "button",
-        className: inactiveCls,
-        disabled: item.disabled,
-        "aria-current": isActive ? "page" : void 0,
-        onClick: () => handleSelect(item),
-        children: inner
-      }
+    const control = (
+      // Unsafe schemes (javascript:, data: …) fall back to a <button> (B1).
+      item.href && isSafeHref(item.href) && !item.disabled ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        "a",
+        {
+          href: item.href,
+          className: inactiveCls,
+          "aria-current": isActive ? "page" : void 0,
+          onClick: (e) => {
+            if (item.disabled) {
+              e.preventDefault();
+              return;
+            }
+            handleSelect(item);
+          },
+          children: inner
+        }
+      ) : /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        "button",
+        {
+          type: "button",
+          className: inactiveCls,
+          disabled: item.disabled,
+          "aria-current": isActive ? "page" : void 0,
+          onClick: () => handleSelect(item),
+          children: inner
+        }
+      )
     );
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(AppSidebarTooltipHost, { collapsed, label: item.label, children: control });
   };
@@ -1111,7 +1128,7 @@ function AppSidebar({
                           color: "currentColor"
                         }
                       );
-                      const node = action.href ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                      const node = action.href && isSafeHref(action.href) ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
                         "a",
                         {
                           href: action.href,
@@ -1143,7 +1160,7 @@ function AppSidebar({
   ] });
 }
 
-// src/components/molecules/DashboardShell/DashboardShell.tsx
+// src/components/molecules/DashboardShell/index.tsx
 var import_react16 = __toESM(require("react"));
 
 // src/components/molecules/AppTopbar/index.tsx
@@ -1237,17 +1254,6 @@ var defaultIconConfig = {
   height: defaultIconWithLabelSizeBySize.lg.height,
   color: "currentColor"
 };
-
-// src/utils/safeHref.ts
-var SAFE_PROTOCOLS = /* @__PURE__ */ new Set(["http:", "https:", "mailto:", "tel:"]);
-function isSafeHref(href) {
-  try {
-    const url = new URL(href, "https://relative.invalid/");
-    return SAFE_PROTOCOLS.has(url.protocol);
-  } catch (e) {
-    return false;
-  }
-}
 
 // src/components/atoms/Button/index.tsx
 var import_jsx_runtime7 = require("react/jsx-runtime");
@@ -4181,7 +4187,26 @@ var AppTopbar = ({
 AppTopbar.displayName = "AppTopbar";
 var AppTopbar_default = AppTopbar;
 
-// src/components/molecules/DashboardShell/DashboardShell.tsx
+// src/components/molecules/DashboardShell/DashboardShell.config.ts
+var DASHBOARD_SHELL_DEFAULTS = {
+  pinTopbar: true,
+  contentAs: "main",
+  skipLinkLabel: "Skip to main content",
+  hideSkipLink: false,
+  /** Sidebar rail is viewport-fixed unless `sidebar.fixed === false`. */
+  sidebarFixed: true,
+  /** Below this width (px) the expanded sidebar becomes an overlay drawer (CSS `max-width: 767px`). */
+  drawerOverlayBelowWidth: 768
+};
+var DASHBOARD_SHELL_CLASSES = {
+  root: "ds-shell",
+  skipLink: "ds-shell__skip",
+  inset: "ds-shell__inset",
+  topbar: "ds-shell__topbar",
+  content: "ds-shell__content"
+};
+
+// src/components/molecules/DashboardShell/index.tsx
 var import_jsx_runtime13 = require("react/jsx-runtime");
 function cls5(...parts) {
   return parts.filter(Boolean).join(" ");
@@ -4196,11 +4221,7 @@ function prepareTopbar(topbar, pinTopbar) {
   }
   return import_react16.default.cloneElement(topbar, { sticky: false });
 }
-var DEFAULT_ROOT_CLASSNAME = "flex flex-nowrap h-[100dvh] max-h-[100dvh] min-h-0 w-full min-w-0 max-w-[100vw] items-stretch overflow-hidden bg-[var(--color-bg-page)] text-[var(--color-text-primary)]";
-var DEFAULT_INSET_CLASSNAME = "isolate flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden";
-var DEFAULT_TOPBAR_WRAPPER_CLASSNAME = "relative z-10 min-w-0 shrink-0";
-var DEFAULT_CONTENT_CLASSNAME = "min-w-0 w-full min-h-0 flex-1 basis-0 overflow-y-auto overscroll-y-contain";
-function DashboardShell({
+var DashboardShell = import_react16.default.forwardRef(function DashboardShell2({
   sidebar,
   topbar,
   children,
@@ -4211,56 +4232,75 @@ function DashboardShell({
   topbarStyle,
   contentClassName,
   contentStyle,
-  pinTopbar = true
-}) {
-  const { fixed: fixedProp, className: sidebarClassName, classNames: sidebarClassNames, ...restSidebar } = sidebar;
+  pinTopbar = DASHBOARD_SHELL_DEFAULTS.pinTopbar,
+  contentAs = DASHBOARD_SHELL_DEFAULTS.contentAs,
+  mainId,
+  mainLabel,
+  skipLinkLabel = DASHBOARD_SHELL_DEFAULTS.skipLinkLabel,
+  hideSkipLink = DASHBOARD_SHELL_DEFAULTS.hideSkipLink,
+  ...rest
+}, ref) {
+  const generatedId = import_react16.default.useId().replace(/:/g, "");
+  const contentId = mainId != null ? mainId : `ds-shell-main-${generatedId}`;
+  const contentRef = import_react16.default.useRef(null);
+  const {
+    fixed: fixedProp,
+    className: sidebarClassName,
+    classNames: sidebarClassNames,
+    drawerOverlayBelowWidth = DASHBOARD_SHELL_DEFAULTS.drawerOverlayBelowWidth,
+    ...restSidebar
+  } = sidebar;
   const fixed = fixedProp !== false;
   const topbarNode = prepareTopbar(topbar, pinTopbar);
-  const renderInset = (style) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: cls5(DEFAULT_INSET_CLASSNAME, insetClassName), style, children: [
-    topbar ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cls5(DEFAULT_TOPBAR_WRAPPER_CLASSNAME, topbarClassName), style: topbarStyle, children: topbarNode }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cls5(DEFAULT_CONTENT_CLASSNAME, contentClassName), style: contentStyle, children })
-  ] });
-  if (!fixed) {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: cls5(DEFAULT_ROOT_CLASSNAME, className), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-        AppSidebar,
-        {
-          ...restSidebar,
-          fixed: false,
-          className: sidebarClassName,
-          classNames: sidebarClassNames
-        }
-      ),
-      renderInset({
-        flex: "1 1 0%",
-        maxHeight: "100%",
-        minHeight: 0,
-        alignSelf: "stretch",
-        ...insetStyle
-      })
-    ] });
-  }
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: cls5(DEFAULT_ROOT_CLASSNAME, className), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-      AppSidebar,
-      {
-        ...restSidebar,
-        fixed: true,
-        className: sidebarClassName,
-        classNames: sidebarClassNames
-      }
-    ),
-    renderInset({
-      marginInlineStart: "var(--app-sidebar-offset, 0px)",
-      transition: "margin-inline-start 200ms ease",
-      minHeight: 0,
-      flex: "1 1 0%",
-      maxHeight: "100%",
-      alignSelf: "stretch",
-      ...insetStyle
-    })
-  ] });
-}
+  const ContentTag = contentAs;
+  const handleSkip = (event) => {
+    const target = contentRef.current;
+    if (!target)
+      return;
+    event.preventDefault();
+    target.focus();
+    if (typeof target.scrollIntoView === "function")
+      target.scrollIntoView({ block: "start" });
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+    "div",
+    {
+      ...rest,
+      ref,
+      className: cls5(DASHBOARD_SHELL_CLASSES.root, className),
+      "data-sidebar-fixed": fixed ? "true" : "false",
+      children: [
+        hideSkipLink ? null : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: `#${contentId}`, className: DASHBOARD_SHELL_CLASSES.skipLink, onClick: handleSkip, children: skipLinkLabel }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          AppSidebar,
+          {
+            ...restSidebar,
+            drawerOverlayBelowWidth,
+            fixed,
+            className: sidebarClassName,
+            classNames: sidebarClassNames
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: cls5(DASHBOARD_SHELL_CLASSES.inset, insetClassName), style: insetStyle, children: [
+          topbar ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: cls5(DASHBOARD_SHELL_CLASSES.topbar, topbarClassName), style: topbarStyle, children: topbarNode }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            ContentTag,
+            {
+              ref: contentRef,
+              id: contentId,
+              tabIndex: -1,
+              "aria-label": mainLabel,
+              className: cls5(DASHBOARD_SHELL_CLASSES.content, contentClassName),
+              style: contentStyle,
+              children
+            }
+          )
+        ] })
+      ]
+    }
+  );
+});
+DashboardShell.displayName = "DashboardShell";
 var DashboardShell_default = DashboardShell;
 var AppShell = DashboardShell;
 // Annotate the CommonJS export names for ESM import in node:

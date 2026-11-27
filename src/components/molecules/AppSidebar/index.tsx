@@ -16,6 +16,7 @@ import {
 import AppSidebarTooltipHost from "./AppSidebarTooltipHost";
 import { readAppSidebarPersist, writeAppSidebarPersist } from "./AppSidebar.persist";
 import { useBelowWidth } from "./AppSidebar.responsive";
+import { isSafeHref } from "../../../utils/safeHref";
 import "./AppSidebar.css";
 
 const NAV_ICON = 24;
@@ -298,14 +299,14 @@ export default function AppSidebar({
         onExpandedChange?.([...n]);
         return;
       }
-      setInternalExpanded((prev) => {
-        const n = new Set(prev);
-        if (n.has(id)) n.delete(id);
-        else n.add(id);
-        return n;
-      });
+      // Uncontrolled: still report the new set (previously only fired when controlled).
+      const n = new Set(internalExpanded);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      setInternalExpanded(n);
+      onExpandedChange?.([...n]);
     },
-    [expandedIdsProp, onExpandedChange]
+    [expandedIdsProp, onExpandedChange, internalExpanded]
   );
 
   const handleSelect = useCallback(
@@ -353,7 +354,8 @@ export default function AppSidebar({
     );
 
     const control =
-      item.href && !item.disabled ? (
+      // Unsafe schemes (javascript:, data: …) fall back to a <button> (B1).
+      item.href && isSafeHref(item.href) && !item.disabled ? (
         <a
           href={item.href}
           className={inactiveCls}
@@ -687,7 +689,7 @@ export default function AppSidebar({
                       color="currentColor"
                     />
                   );
-                  const node = action.href ? (
+                  const node = action.href && isSafeHref(action.href) ? (
                     <a
                       href={action.href}
                       className="app-sidebar__action"

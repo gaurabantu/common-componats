@@ -23,4 +23,10 @@ export interface DatePickerProps {
   variant?: "outlined" | "filled" | "underlined";
   status?: "error" | "warning" | "success";
   rangeSeparator?: string;
+  /** Input id. Inside a `FormField` the field's control id is used when omitted. (Single mode.) */
+  id?: string;
+  /** Form field name for the text input. (Single mode.) */
+  name?: string;
+  /** Accessible name when there is no visible `label` and no enclosing `FormField`. (Single mode.) */
+  ariaLabel?: string;
 }

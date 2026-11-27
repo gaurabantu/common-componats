@@ -1,0 +1,102 @@
+/* Hyperlink — token-driven text link. Variants/underline/size are data-attributes. */
+
+.ds-hyperlink {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-size);
+  color: var(--color-brand-link);
+  text-decoration: none;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.18em;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--easing-default);
+}
+
+/* ---------- underline ---------- */
+.ds-hyperlink[data-underline="always"] { text-decoration-line: underline; }
+.ds-hyperlink[data-underline="hover"]:hover { text-decoration-line: underline; }
+.ds-hyperlink[data-underline="none"],
+.ds-hyperlink[data-underline="none"]:hover { text-decoration-line: none; }
+
+/* ---------- size ---------- */
+.ds-hyperlink[data-size="sm"] { font-size: var(--text-secondary-size); }
+.ds-hyperlink[data-size="md"] { font-size: var(--text-body-size); }
+.ds-hyperlink[data-size="lg"] { font-size: var(--text-h3-size); }
+
+/* ---------- variant ---------- */
+.ds-hyperlink[data-variant="subtle"] { color: var(--color-text-secondary); }
+.ds-hyperlink[data-variant="subtle"]:hover { color: var(--color-brand-link); }
+
+/* Inline links take the surrounding paragraph's size and family unless a size is passed. */
+.ds-hyperlink[data-variant="inline"] { font-family: inherit; }
+.ds-hyperlink[data-variant="inline"]:not([data-size]) { font-size: inherit; }
+
+.ds-hyperlink[data-variant="standalone"] {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--space-3); /* 24px — WCAG 2.2 target size (minimum) */
+  font-weight: 600;
+}
+
+/* ---------- icons ---------- */
+.ds-hyperlink__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -0.125em;
+  line-height: 0;
+  margin-inline-start: var(--space-0);
+}
+
+.ds-hyperlink__icon:first-child {
+  margin-inline-start: 0;
+  margin-inline-end: var(--space-0);
+}
+
+.ds-hyperlink__icon > svg {
+  width: 1em;
+  height: 1em;
+}
+
+.ds-hyperlink__icon--external {
+  font-size: 0.875em;
+}
+
+/* ---------- focus ---------- */
+.ds-hyperlink:focus { outline: none; }
+
+.ds-hyperlink:focus-visible {
+  outline: var(--border-width-medium) solid var(--color-focus-ring);
+  outline-offset: var(--border-width-medium);
+}
+
+/* ---------- disabled ---------- */
+.ds-hyperlink[data-disabled],
+.ds-hyperlink[data-disabled]:hover {
+  color: var(--color-text-disabled);
+  text-decoration-line: none;
+  cursor: not-allowed;
+}
+
+.ds-hyperlink__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-hyperlink { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .ds-hyperlink,
+  .ds-hyperlink[data-variant="subtle"] { color: LinkText; }
+  .ds-hyperlink[data-disabled] { color: GrayText; }
+  .ds-hyperlink:focus-visible { outline-color: Highlight; }
+}
