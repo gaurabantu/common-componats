@@ -4924,6 +4924,9 @@ button.ucs-toggle:focus-visible {
   border-color: var(--color-border-focus) !important;
   background-color: var(--color-bg-surface) !important;
 }
+.table-ui-cell-editor select.ds-select:focus {
+  border-color: var(--table-ui-divider) !important;
+}
 .table-ui-clamp {
   display: -webkit-box;
   -webkit-box-orient: vertical;

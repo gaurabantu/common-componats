@@ -786,6 +786,14 @@
   background-color: var(--color-bg-surface) !important;
 }
 
+/* The library Select already draws its own focus ring (2px --color-focus-ring outline, 2px offset —
+   Select.css). Colouring its border with the focus colour as well rendered a double ring (border +
+   gap + outline, same colour). Keep a neutral border so it looks like a Select anywhere else; a plain
+   <select> without .ds-select keeps the focus border above, its only focus indicator. */
+.table-ui-cell-editor select.ds-select:focus {
+  border-color: var(--table-ui-divider) !important;
+}
+
 /* —— Long-text cells (0.0.4) ——
    `.table-ui-clamp` on a cell's content: a readable column width and at most 3 lines (override
    with --table-ui-clamp-lines); pair it with `title={fullText}` so the rest shows on hover. Stops a
